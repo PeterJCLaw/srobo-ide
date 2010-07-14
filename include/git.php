@@ -39,6 +39,26 @@ class GitRepository
 		return $this->gitExecute("describe --always");
 	}
 
+	public function log($oldCommit, $newCommit)
+	{
+		$log = $this->gitExecute("log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
+		$lines = explode("\n", $log);
+		$results = array();
+		foreach ($lines as $line)
+		{
+			$exp     = explode(';', $line);
+			$hash    = array_shift($exp);
+			$author  = array_shift($exp);
+			$time    = (int)array_shift($exp);
+			$message = implode(';', $exp);
+			$results[] = array('hash'    => $hash,
+			                   'author'  => $author,
+			                   'time'    => $time,
+			                   'message' => $message);
+		}
+		return $results;
+	}
+
 	public function reset()
 	{
 		$this->gitExecute("reset --hard");
