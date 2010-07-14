@@ -1,0 +1,102 @@
+#!/usr/bin/env php
+<?php
+
+array_pop($argv);
+$test_restrict = empty($argv) ? null : $argv;
+$sched = file('tests/test-schedule');
+
+$passes = 0;
+$fails  = 0;
+$xfails = 0;
+$fixes  = 0;
+
+$line = 0;
+
+foreach ($sched as $value)
+{
+	++$line;
+	$value = preg_replace('/#.*$/', '', $value);
+	$value = trim($value);
+	if ($value == '')
+		continue;
+	$exp = explode(' ', $value);
+	if (count($exp) != 2 && count($exp) != 4)
+	{
+		++$fails;
+		echo "FAIL    bad schedule line %d\n";
+	}
+	$xfail  = $exp[0] == 'XFAIL';
+	$tn     = $exp[1];
+	// check against tests
+	if ($test_restrict != null)
+	{
+		$continue = false;
+		foreach ($test_restrict as $restriction)
+		{
+			if (fnmatch($restriction, $tn))
+			{
+				$continue = true;
+				break;
+			}
+		}
+		if (!$continue)
+			continue;
+	}
+	$test   = realpath($tn . '.php');
+	$infile = isset($exp[2]) ? $exp[2] : '/dev/null';
+	$process = proc_open("php $test 2>&1", array(0 => array('file', $infile, 'r'),
+	                                             1 => array('pipe', 'w'),
+	                                             2 => array('file', '/dev/null', 'w')),
+	                                  $pipes,
+	                                  realpath('..'));
+	$output = trim(stream_get_contents($pipes[1]));
+	$rc = proc_close($process);
+	if ($rc == 0)
+	{
+		if ($xfail)
+		{
+			++$fixes;
+			echo "FIXED   $tn\n";
+		}
+		else
+		{
+			++$passes;
+			echo "PASS    $tn\n";
+		}
+	}
+	else
+	{
+		if ($xfail)
+		{
+			++$xfails;
+			echo "XFAIL   $tn\n";
+		}
+		else
+		{
+			++$fails;
+			echo "FAIL    $tn\n";
+			if (count(explode('\n', $output)) > 6)
+			{
+				$tmpfile = tempnam("/tmp", "ide-test-");
+				file_put_contents($tmpfile, "$output\n");
+				echo "\tSee $outfile for output.\n";
+			}
+			else
+			{
+				echo "=== BEGIN OUTPUT ===\n";
+				echo "$output\n";
+				echo "===  END OUTPUT  ===\n";
+			}
+		}
+	}
+}
+
+printf("%4d tests passed.\n", $passes);
+if ($fails > 0)
+	printf("%4d tests failed.\n", $fails);
+if ($xfails > 0)
+	printf("%4d xfails.\n", $xfails);
+if ($fixes > 0)
+	printf("%4d fixes.\n", $fixes);
+exit($fails > 0 ? 1 : 0);
+
