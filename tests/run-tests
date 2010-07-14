@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-array_pop($argv);
+array_shift($argv);
 $test_restrict = empty($argv) ? null : $argv;
 $sched = file('tests/test-schedule');
 
@@ -30,16 +30,16 @@ foreach ($sched as $value)
 	// check against tests
 	if ($test_restrict != null)
 	{
-		$continue = false;
+		$skip = true;
 		foreach ($test_restrict as $restriction)
 		{
-			if (fnmatch($restriction, $tn))
+			if (fnmatch("*$restriction*", $tn))
 			{
-				$continue = true;
+				$skip = false;
 				break;
 			}
 		}
-		if (!$continue)
+		if ($skip)
 			continue;
 	}
 	$test   = realpath($tn . '.php');

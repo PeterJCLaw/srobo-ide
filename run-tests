@@ -1,2 +1,2 @@
 #!/bin/bash
-exec tests/run-tests
+exec tests/run-tests $*
