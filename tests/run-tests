@@ -12,6 +12,8 @@ $fixes  = 0;
 
 $line = 0;
 
+$helper = realpath('tests/test-helper.php');
+
 foreach ($sched as $value)
 {
 	++$line;
@@ -42,13 +44,12 @@ foreach ($sched as $value)
 		if ($skip)
 			continue;
 	}
-	$test   = realpath($tn . '.php');
+	$test   = realpath('tests/' . $tn . '.php');
 	$infile = isset($exp[2]) ? $exp[2] : '/dev/null';
-	$process = proc_open("php $test 2>&1", array(0 => array('file', $infile, 'r'),
-	                                             1 => array('pipe', 'w'),
-	                                             2 => array('file', '/dev/null', 'w')),
-	                                  $pipes,
-	                                  realpath('..'));
+	$process = proc_open("php $helper $test 2>&1", array(0 => array('file', $infile, 'r'),
+	                                                     1 => array('pipe', 'w'),
+	                                                     2 => array('file', '/dev/null', 'w')),
+	                                               $pipes);
 	$output = trim(stream_get_contents($pipes[1]));
 	$rc = proc_close($process);
 	if ($rc == 0)
