@@ -12,7 +12,7 @@ abstract class Module
 	public function dispatchCommand($name)
 	{
 		if (isset($this->commandHandlers[$name]))
-			return $this->commandHandlers[$name]();
+			return call_user_func($this->commandHandlers[$name]);
 		else
 			return false;
 	}
