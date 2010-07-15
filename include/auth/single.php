@@ -52,4 +52,17 @@ class SingleAuth extends AuthBackend
         $this->authed = false;
     }
 
+    public function getCurrentUserGroups()
+    {
+        if ($this->authed)
+        {
+            return Configuration::getInstance()->getConfig("user.default.groups");
+        }
+        else
+        {
+            return array();
+        }
+
+    }
+
 }
