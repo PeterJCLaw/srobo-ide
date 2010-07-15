@@ -42,7 +42,7 @@ class ModuleManager
 	{
 		$config = Configuration::getInstance();
 		$module_list = $config->getConfig('modules');
-		foreach ($this->modules as $module)
+		foreach ($module_list as $module)
 		{
 			require_once("modules/$module.php");
 			$class = $this->moduleNameToClass($module);

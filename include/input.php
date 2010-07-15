@@ -29,7 +29,7 @@ class Input
 	{
 		$parts = explode('/', $newRequest);
 		$this->requestCommand = array_pop($parts);
-		$this->requestModule = implode('/', $parts);
+		$this->requestModule = implode('/', array_slice($parts, 1, count($parts)));
 	}
 
 	public function getInput($key)
