@@ -8,7 +8,7 @@ ob_start();
 require_once('include/main.php');
 
 // decode input
-$request = $_SERVER['PATH_INFO'];
+$request = substr($_SERVER['PATH_INFO'], 1);
 $data = json_decode(file_get_contents('php://input'));
 if (empty($data))
 	$data = array();
