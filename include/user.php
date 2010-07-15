@@ -4,10 +4,14 @@ class UserInfo
 {
     private static $instance = null;
 	private $info = array();
+    private $user = null;
 
     //TODO: things here
-    private function __construct($userAuthToken)
+    private function __construct()
     {
+        $auth = AuthBackend::getInstance();
+        $this->user = $auth->getCurrentUser();
+        $this->info["groups"] = $auth->getCurrentUserGroups();
     }
 
     public static function getInstance()
@@ -15,7 +19,7 @@ class UserInfo
         if (self::$instance == null)
         {
             $input = Input::getInstance();
-            self::$instance = new UserInfo($input->getInput("auth_token"));
+            self::$instance = new UserInfo();
         }
 
         return self::$instance;
