@@ -13,7 +13,7 @@ class SingleAuth extends AuthBackend
 
     public function getCurrentUser()
     {
-        if ($this->authed)
+        if (!$this->authed)
         {
             return null;
         }
