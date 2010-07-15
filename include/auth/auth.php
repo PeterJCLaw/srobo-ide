@@ -11,7 +11,7 @@ abstract class AuthBackend
 			$config = Configuration::getInstance();
 			$module = $config->getConfig('auth_module');
 			require_once("include/auth/$module.php");
-			$class = caseTransform($module, CASE_SLASHES, CASE_CAMEL_UCFIRST) . 'Auth';
+			$class = transformCase($module, CASE_SLASHES, CASE_CAMEL_UCFIRST) . 'Auth';
 			self::$singleton = new $class();
 		}
 		return self::$singleton;

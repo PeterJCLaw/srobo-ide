@@ -5,7 +5,7 @@ class SingleAuth extends AuthBackend
     private $authed = false;
     private $user;
 
-    private function __construct()
+    public function __construct()
     {
         $config = Configuration::getInstance();
         $this->user = $config->getConfig("user.default");
