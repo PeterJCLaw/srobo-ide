@@ -11,7 +11,7 @@ class UserInfo
     }
 
     public static function getInstance() {
-        if (self::instance == null) {
+        if (self::$instance == null) {
             $input = Input::getInstance();
             self::$instance = new UserInfo($input->getInput("auth_token"));
         }
