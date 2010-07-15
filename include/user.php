@@ -6,7 +6,7 @@ class UserInfo
 	private $info = array();
 
     //TODO: things here
-    private function __construct($user_auth_token)
+    private function __construct($userAuthToken)
     {
     }
 
