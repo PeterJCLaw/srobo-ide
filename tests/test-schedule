@@ -3,3 +3,5 @@ TEST basic/input
 TEST basic/output
 TEST basic/user
 TEST basic/case-transform
+
+XFAIL auth/single
