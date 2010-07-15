@@ -33,9 +33,7 @@ class ModuleManager
 
 	private function moduleNameToClass($mod)
 	{
-		$parts = explode('/', $mod);
-		$parts = array_map('ucfirst', $parts);
-		return implode('', $parts) . 'Module';
+		return transformCase($mod, CASE_SLASHES, CASE_CAMEL_UCFIRST) . 'Module';
 	}
 
 	public function importModules()
