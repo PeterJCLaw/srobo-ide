@@ -1,8 +1,6 @@
 <?php
 
-require_once("auth.php");
-
-class NoCredentialsAuth extends AuthBackend
+class SingleAuth extends AuthBackend
 {
     private $authed = false;
     private $user;
