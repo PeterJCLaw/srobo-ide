@@ -51,7 +51,7 @@ function test_nonnull($a, $message)
 
 function test_equal($a, $b, $message)
 {
-	__test($a == $b, $message);
+	__test($a == $b, $message . " (expected $b, got $a)");
 }
 
 function test_nonequal($a, $b, $message)
@@ -61,10 +61,12 @@ function test_nonequal($a, $b, $message)
 
 function test_type($a, $t, $message)
 {
-	__test(gettype($a) == $t, $message);
+	$type = gettype($a);
+	__test($type == $t, $message . " (expected $t, got $type)");
 }
 
 function test_class($a, $c, $message)
 {
-	__test(get_class($a) == $c, $message);
+	$class = get_class($a);
+	__test($class == $c, $message . " (expected $c, got $class)");
 }
