@@ -3,6 +3,7 @@
 $config = Configuration::getInstance();
 $config->override('auth_module', 'single');
 $config->override('user.default', 'cake');
+$config->override('user.default.groups', array('team1', 'team2'));
 
 // get the module
 $auth = AuthBackend::getInstance();
@@ -13,7 +14,7 @@ test_null($auth->getCurrentUser(), "auth falsely returned a user");
 $auth->authUser(array('user'     => 'cake',
                       'password' => 'bees'));
 test_equal($auth->getCurrentUser(), 'cake', 'auth returned incorrect user');
-test_equal($auth->getCurrentUserGroups(), $config->getConfig("user.default.groups"), "user not in 2 groups as per config file");
+test_equal($auth->getCurrentUserGroups(), array('team1', 'team2'), "user not in 2 groups as per config file");
 $token = $auth->getNextAuthToken();
 $auth->deauthUser($token);
 test_null($auth->getCurrentUser(), 'auth did not deauthenticate user');
