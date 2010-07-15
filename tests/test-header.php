@@ -29,6 +29,26 @@ function test_false($cond, $message)
 	__test(!$cond, $message);
 }
 
+function test_empty($a, $message)
+{
+	__test(empty($a), $message);
+}
+
+function test_nonempty($a, $message)
+{
+	__test(!empty($a), $message);
+}
+
+function test_null($a, $message)
+{
+	__test($a === null, $message);
+}
+
+function test_nonnull($a, $message)
+{
+	__test($a !== null, $message);
+}
+
 function test_equal($a, $b, $message)
 {
 	__test($a == $b, $message);
