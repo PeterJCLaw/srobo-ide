@@ -41,6 +41,8 @@ class Output
 
 	public function encodeOutput()
 	{
+		if (empty($this->outputs))
+			return '{}';
 		return json_encode($this->outputs);
 	}
 }
