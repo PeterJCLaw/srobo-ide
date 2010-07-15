@@ -25,5 +25,10 @@ class Configuration
 		else
 			return null;
 	}
+
+	public function override($key, $value)
+	{
+		$this->config[$key] = $value;
+	}
 }
 
