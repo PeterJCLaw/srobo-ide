@@ -1,4 +1,11 @@
 <?php
 
 require_once('tests/test-header.php');
-require_once($argv[1]);
+try
+{
+	require_once($argv[1]);
+}
+catch (Exception $e)
+{
+	test_abort_exception($e);
+}

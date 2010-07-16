@@ -14,6 +14,14 @@ function __test($cond, $message)
 	exit(1);
 }
 
+function test_abort_exception($exception)
+{
+	echo "Exception '" . $exception->getMessage() . "' (" . $exception->getCode() . ")\n";
+	echo "\tthrown in " . $exception->getFile() . " line " . $exception->getLine() . "\n";
+	echo $exception->getTraceAsString();
+	exit(1);
+}
+
 function test_unreachable($message)
 {
 	__test(false, $message);
