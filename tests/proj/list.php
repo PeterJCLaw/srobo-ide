@@ -26,7 +26,7 @@ $input->setInput("project", "testing-project");
 //get a project instance
 $mm = ModuleManager::getInstance();
 $mm->importModules();
-test_equal($mm->moduleExists("proj"), TRUE, "proj module does not exist");
+test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
 $proj = $mm->getModule("proj");
 test_nonnull($proj, "recieved proj module was null");
 //list the emtpy project
