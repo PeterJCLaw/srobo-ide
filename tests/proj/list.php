@@ -1,13 +1,13 @@
 <?php
 //delete any already existing test repos
-if (is_dir(getcwd()."/test-repos"))
+if (is_dir("/tmp/test-repos"))
 {
-    unlink(getcwd()."/test-repos");
+    unlink("/tmp/test-repos");
 }
 
 //override the configuration
 $config = Configuration::getInstance();
-$config->override("repopath", "ROOT/test-repos");
+$config->override("repopath", "/tmp/test-repos");
 $config->override("user.default", "death");
 $config->override("user.default.groups", array("beedogs", "failcakes"));
 $config->override("auth_module", "single");
@@ -35,8 +35,8 @@ print_r($list);
 test_equal(count($list), 0, "the project wasn't empty");
 
 // delete the created repos
-if (is_dir(getcwd()."/test-repos"))
+if (is_dir("/tmp/test-repos"))
 {
-    unlink(getcwd()."/test-repos");
+    unlink("/tmp/test-repos");
 }
 
