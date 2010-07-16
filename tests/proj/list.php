@@ -30,7 +30,7 @@ $proj = $mm->getModule("proj");
 test_nonnull($proj, "recieved proj module was null");
 //list the emmtpy project
 $list = Output::getInstance()->getOutput("files");
-test_equal(count($list), 0, "the project wasn't empty);
+test_equal(count($list), 0, "the project wasn't empty");
 
 // delete the created repos
 if (is_dir("/tmp/test-repos"))
