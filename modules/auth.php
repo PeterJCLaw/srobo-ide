@@ -36,6 +36,7 @@ class AuthModule extends Module
 		if (!$this->authModule->authUser($username, $password))
 			throw new Exception("authentication failed", 6);
 		$output->setOutput('auth-token', $this->authModule->getNextAuthToken());
+		return true;
 	}
 
 	public function deauthenticate()
@@ -46,5 +47,6 @@ class AuthModule extends Module
 			throw new Exception("you are not authenticated", 5);
 		$this->authModule->deauthUser();
 		$output->removeOutput('auth-token');
+		return true;
 	}
 }
