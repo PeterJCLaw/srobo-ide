@@ -77,6 +77,18 @@ class GitRepository
 
 	public function listFiles($path)
 	{
+        $files = scandir($this->path . $path);
+        $result = array();
+        foreach ($files as $file)
+        {
+            if ($file[0] != ".")
+            {
+                $result[] = file;
+            }
+
+        }
+
+        return $result;
 	}
 
 	public function createFile($path)
