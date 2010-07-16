@@ -5,3 +5,5 @@ TEST basic/user
 TEST basic/case-transform
 
 TEST auth/single
+
+TEST proj/list
