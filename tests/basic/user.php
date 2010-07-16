@@ -7,8 +7,7 @@ $config->override('user.default.groups', array('team1', 'team2'));
 
 //we have to do an auth before we can start using ui
 $auth = AuthBackend::getInstance();
-$next_auth_token = $auth->authUser(array("user"=>"", "password"=>""));
-test_equal($next_auth_token, 1, "auth token was not 1");
+test_true($auth->authUser('', ''), 'authentication failed');
 
 $ui = UserInfo::getInstance();
 test_nonnull($ui, "failed to get UserInfo instance");

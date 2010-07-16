@@ -21,35 +21,42 @@ class SingleAuth extends AuthBackend
         {
             return $this->user;
         }
-
     }
 
-    public function authUser($authtoken)
+    public function authUser($username, $password)
     {
-        if (isset($authtoken["user"]) && isset($authtoken["password"]))
+        if ($username !== null && $password !== null)
         {
             $this->authed = true;
-            return 1;
+            return true;
         }
         else
         {
-            return 0;
+            return false;
         }
     }
+
+	public function validateAuthToken($token)
+	{
+		if ($token === 1)
+		{
+			$this->authed = true;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
     public function getNextAuthToken()
     {
         return 1;
     }
 
-    public function deauthUser($authtoken)
+    public function deauthUser()
     {
-        if ($authtoken != 1)
-        {
-            throw new Exception("invalid deauth token", 0x34);
-        }
-
-        $this->authed = false;
+    	$this->authed = false;
     }
 
     public function getCurrentUserGroups()
@@ -62,7 +69,5 @@ class SingleAuth extends AuthBackend
         {
             return array();
         }
-
     }
-
 }

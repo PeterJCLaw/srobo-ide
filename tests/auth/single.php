@@ -11,8 +11,7 @@ test_nonnull($auth, "failed to get auth backend");
 test_class($auth, 'SingleAuth', "auth backend was of the wrong class");
 
 test_null($auth->getCurrentUser(), "auth falsely returned a user");
-$auth->authUser(array('user'     => 'cake',
-                      'password' => 'bees'));
+test_true($auth->authUser('cake', 'bees'), 'authentication failed');
 test_equal($auth->getCurrentUser(), 'cake', 'auth returned incorrect user');
 test_equal($auth->getCurrentUserGroups(), array('team1', 'team2'), "user not in 2 groups as per config file");
 $token = $auth->getNextAuthToken();
