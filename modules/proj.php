@@ -40,7 +40,9 @@ class ProjModule extends Module
 
     public function listProject()
     {
-        return $this->projRepo->listFiles("/");
+        $output = Output::getInstance();
+        $output->setOutput("files", $this->projRepo->listFiles("/"));
+        return TRUE;
     }
 
     private function getRootRepoPath()
