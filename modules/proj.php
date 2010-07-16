@@ -6,10 +6,9 @@ class ProjModule extends Module
     private $projectName;
     private $projRepo;
 
-    private static $instance;
-    private static $PROJ_ERROR_KEY = 0x20;
-    private static $AUTH_MASK = 1;
-    private static $NOT_IN_TEAM_MASK = 2;
+	const PROJ_ERROR_KEY   = 0x20;
+	const AUTH_MASK        = 0x01;
+	const NOT_IN_TEAM_MASK = 0x02;
 
 	public function __construct()
 	{
@@ -18,7 +17,7 @@ class ProjModule extends Module
         // bail if we aren't authenticated
         if ($auth->getCurrentUser() == null)
         {
-            throw new Exception("proj/list attempted without authentication", ProjModule::PROJ_ERROR_KEY | ProjModule::AUTH_MASK);
+            throw new Exception("proj/list attempted without authentication", self::PROJ_ERROR_KEY | self::AUTH_MASK);
         }
 
         $input = Input::getInstance();
@@ -27,7 +26,7 @@ class ProjModule extends Module
         // also bail if the user isn't in the team they're trying to list
         if (!in_array($this->team, $auth->getCurrentUserGroups()))
         {
-            throw new Exception("proj/list attempted on team you aren't in", ProjModule::PROJ_ERROR_KEY | ProjModule::NOT_IN_TEAM_MASK);
+            throw new Exception("proj/list attempted on team you aren't in", self::PROJ_ERROR_KEY | self::NOT_IN_TEAM_MASK);
         }
 
         // check that the project exists and is a git repo otherwise construct
@@ -36,25 +35,27 @@ class ProjModule extends Module
         $this->createProjectIfNonExistant($this->team, $project);
         $this->projectName = $project;
 
-		$this->installCommand('list', "ProjModule::listProject");
-
-        ProjModule::$instance = $this;
+		$this->installCommand('list', array($this, 'listProject'));
 	}
 
-    public static function listProject()
+    public function listProject()
     {
-        $instance = ProjModule::$instance;
-        return $instance->projRepo->listFiles("/");
+        return $this->projRepo->listFiles("/");
     }
 
     private function getRootRepoPath()
     {
         $config = Configuration::getInstance();
         $repoPath = $config->getConfig("repopath");
-        return str_replace("ROOT", getcwd(), $repoPath);
+        $repoPath = str_replace('ROOT', '.', $repoPath);
+        if (!file_exists($repoPath) || !is_dir($repoPath))
+        {
+        	mkdir($repoPath);
+        }
+        return $repoPath;
     }
 
-    private function createprojectIfNonExistant($team, $project)
+    private function createProjectIfNonExistant($team, $project)
     {
         $this->createRepoIfNoneExists($team);
         $repoPath = $this->getRootRepoPath();
@@ -82,7 +83,6 @@ class ProjModule extends Module
         {
             mkdir($teamRepoPath);
         }
-
     }
 
 }
