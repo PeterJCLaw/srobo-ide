@@ -2,7 +2,7 @@
 //delete any already existing test repos
 if (is_dir("/tmp/test-repos"))
 {
-    unlink("/tmp/test-repos");
+	exec("rm -rf /tmp/test-repos");
 }
 
 //override the configuration
@@ -22,15 +22,17 @@ $input = Input::getInstance();
 $input->setInput("team", "beedogs");
 $input->setInput("project", "testing-project");
 
+$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
+//setup the required repo dirs
+exec("mkdir -p $repopath");
+//manually create the repo
+GitRepository::createRepository($repopath);
+
+
 //get a project instance
 $mm = ModuleManager::getInstance();
 $mm->importModules();
 test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
-
-$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
-//manually create the repo
-mkdir($repopath);
-GitRepository::createRepository($repopath);
 
 $proj = $mm->getModule("proj");
 $proj->dispatchCommand("list");
@@ -43,6 +45,6 @@ test_nonnull($list, "the file list was null");
 // delete the created repos
 if (is_dir("/tmp/test-repos"))
 {
-    unlink("/tmp/test-repos");
+	exec("rm -rf /tmp/test-repos");
 }
 
