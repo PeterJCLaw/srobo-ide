@@ -25,12 +25,6 @@ class ProjModule extends Module
 		$input = Input::getInstance();
 		$this->team = $input->getInput("team");
 
-		// also bail if the user isn't in the team they're trying to list
-		if (!in_array($this->team, $auth->getCurrentUserGroups()))
-		{
-			throw new Exception("proj attempted on team you aren't in", self::PROJ_ERROR_KEY | self::NOT_IN_TEAM_MASK);
-		}
-
 		// check that the project exists and is a git repo otherwise construct
 		// the project directory and git init it
 		$project = $input->getInput("project");
@@ -41,8 +35,19 @@ class ProjModule extends Module
 		$this->installCommand('list', array($this, 'listProject'));
 	}
 
+	private function verifyTeam()
+	{
+		$auth = AuthBackend::getInstance();
+		if (!in_array($this->team, $auth->getCurrentUserGroups()))
+		{
+			throw new Exception("proj attempted on team you aren't in", self::PROJ_ERROR_KEY | self::NOT_IN_TEAM_MASK);
+		}
+
+	}
+
 	public function listProject()
 	{
+		$this->verifyTeam();
 		$output = Output::getInstance();
 		if ($this->projRepo != NULL)
 		{
