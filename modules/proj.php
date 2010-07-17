@@ -32,6 +32,7 @@ class ProjModule extends Module
 
 		$this->installCommand('new', array($this, 'createProject'));
 		$this->installCommand('info', array($this, 'projectInfo'));
+		$this->installCommand('log', array($this, 'projectLog'));
 	}
 
 	private function verifyTeam()
@@ -54,6 +55,27 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$this->verifyTeam();
 		$output->setOutput('project-info', array());
+	}
+
+	public function projectLog()
+	{
+		$output = Output::getInstance();
+		$input = Input::getInstance();
+		$currRev = $input->getInput("start-commit");
+
+		if ($currRev == null)
+		{
+			$currRev = $this->projectRepository->getCurrentRevision();
+		}
+
+		$firstRev = $input->getInput("end-commit");
+
+		if ($firstRev == null) {
+			$firstRev = $this->projectRepository->getFirstRevision();
+		}
+
+		$output->setOutput("log", $this->projectRepository->log($firstRev, $currRev));
+		return TRUE;
 	}
 
 	private function getRootRepoPath()
