@@ -73,6 +73,7 @@ class GitRepository
 		                                          'GIT_AUTHOR_EMAIL'   => $email,
 		                                          'GIT_COMMITER_NAME'  => $name,
 		                                          'GIT_COMMITER_EMAIL' => $email));
+		unlink($tmp);
 	}
 
 	public function listFiles($path)
