@@ -31,6 +31,7 @@ class ProjModule extends Module
 		$this->projectName = $project;
 
 		$this->installCommand('new', array($this, 'createProject'));
+		$this->installCommand('info', array($this, 'projectInfo'));
 	}
 
 	private function verifyTeam()
@@ -46,6 +47,13 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$this->openProject($this->team, $this->projectName);
+	}
+
+	public function projectInfo()
+	{
+		$output = Output::getInstance();
+		$this->verifyTeam();
+		$output->setOutput('project-info', array());
 	}
 
 	private function getRootRepoPath()
