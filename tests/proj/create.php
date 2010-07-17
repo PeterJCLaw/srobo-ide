@@ -5,6 +5,7 @@ if (is_dir("/tmp/test-repos"))
 {
 	exec("rm -rf /tmp/test-repos");
 }
+exec("mkdir -p /tmp/test-repos");
 
 //override the configuration
 $config = Configuration::getInstance();
