@@ -2,6 +2,22 @@
 
 require_once('include/main.php');
 
+function __test_value($stuff)
+{
+	if (is_bool($stuff))
+		return $stuff ? 'true' : 'false';
+	if (is_integer($stuff) ||
+	    is_float($stuff))
+		return $stuff;
+	if (is_string($stuff))
+		return "'$stuff'";
+	ob_start();
+	var_dump($stuff);
+	$stuff = ob_get_contents();
+	ob_end_clean();
+	return trim($stuff);
+}
+
 function __test($cond, $message)
 {
 	if ($cond)
@@ -59,7 +75,7 @@ function test_nonnull($a, $message)
 
 function test_equal($a, $b, $message)
 {
-	__test($a == $b, $message . " (expected $b, got $a)");
+	__test($a == $b, $message . " (expected " . __test_value($b) . ", got " . __test_value($a) . ")");
 }
 
 function test_nonequal($a, $b, $message)
