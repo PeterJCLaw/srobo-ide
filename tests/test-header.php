@@ -78,3 +78,17 @@ function test_class($a, $c, $message)
 	$class = get_class($a);
 	__test($class == $c, $message . " (expected $c, got $class)");
 }
+
+function test_exception($callback, $code, $message)
+{
+	try
+	{
+		call_user_func($callback);
+		__test(false, $message . " (did not throw)");
+	}
+	catch (Exception $e)
+	{
+		$rcode = $e->getCode();
+		__test($rcode == $code, $message . " (wrong code, expected $code, got $rcode)");
+	}
+}
