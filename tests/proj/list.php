@@ -28,9 +28,8 @@ $mm->importModules();
 test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
 $proj = $mm->getModule("proj");
 test_nonnull($proj, "recieved proj module was null");
-//list the emtpy project
-$list = $proj->dispatchCommand("list");
-print_r($list);
+//list the emmtpy project
+$list = Output::getInstance()->getOutput("files");
 test_equal(count($list), 0, "the project wasn't empty");
 
 // delete the created repos
