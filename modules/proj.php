@@ -11,6 +11,7 @@ class ProjModule extends Module
 	const AUTH_MASK             = 0x01;
 	const NOT_IN_TEAM_MASK      = 0x02;
 	const PROJ_NONEXISTANT_MASK = 0x04;
+	const PROJ_EXISTS_MASK      = 0x08;
 
 	public function __construct()
 	{
@@ -36,6 +37,7 @@ class ProjModule extends Module
 		$this->projectName = $project;
 
 		$this->installCommand('list', array($this, 'listProject'));
+		$this->installCommand('new', array($this, 'createProject'));
 	}
 
 	private function verifyTeam()
