@@ -6,7 +6,6 @@ TEST basic/case-transform
 
 TEST auth/single
 
-TEST proj/list
 TEST proj/create
 
 TEST file/simulate/unimplemented

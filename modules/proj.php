@@ -30,7 +30,6 @@ class ProjModule extends Module
 		$this->openProject($this->team, $project);
 		$this->projectName = $project;
 
-		$this->installCommand('list', array($this, 'listProject'));
 		$this->installCommand('new', array($this, 'createProject'));
 	}
 
@@ -42,13 +41,6 @@ class ProjModule extends Module
 			throw new Exception("proj attempted on team you aren't in", E_PERM_DENIED);
 		}
 
-	}
-
-	public function listProject()
-	{
-		$this->verifyTeam();
-		$output = Output::getInstance();
-		$output->setOutput('files', $this->projectManager->listRepositories($this->team));
 	}
 
 	public function createProject()
