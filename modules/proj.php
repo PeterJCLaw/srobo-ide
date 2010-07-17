@@ -57,6 +57,12 @@ class ProjModule extends Module
 		$output->setOutput('files', $this->projectManager->listRepositories($this->team));
 	}
 
+	public function createProject()
+	{
+		$this->verifyTeam();
+		$this->openProject($this->team, $this->projectName);
+	}
+
 	private function getRootRepoPath()
 	{
 		$config = Configuration::getInstance();
@@ -73,11 +79,11 @@ class ProjModule extends Module
 	{
 		if (in_array($team, $this->projectManager->listRepositories($team)))
 		{
-			$this->projectRepository = $this->projectManager->createRepository($team, $project);
+			$this->projectRepository = $this->projectManager->getRepository($team, $project);
 		}
 		else
 		{
-			$this->projectRepository = $this->projectManager->getRepository($team, $project);
+			$this->projectRepository = $this->projectManager->createRepository($team, $project);
 		}
 	}
 }
