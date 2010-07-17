@@ -36,6 +36,7 @@ class AuthModule extends Module
 		if (!$this->authModule->authUser($username, $password))
 			throw new Exception("authentication failed", 6);
 		$output->setOutput('auth-token', $this->authModule->getNextAuthToken());
+		$output->setOutput('display-name', $this->authModule->displayNameForUser($username));
 		return true;
 	}
 
