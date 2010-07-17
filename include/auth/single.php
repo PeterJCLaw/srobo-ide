@@ -80,4 +80,9 @@ class SingleAuth extends AuthBackend
 	{
 		return $user;
 	}
+
+	public function emailForUser($user)
+	{
+		return $user . "@" . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'example.com');
+	}
 }
