@@ -12,6 +12,12 @@ class ProjectManager
 		return self::$singleton;
 	}
 
+	private function verifyName($name)
+	{
+		if (!is_string($name) || $name == '')
+			throw new Exception('name was not a name', 2);
+	}
+
 	public function __construct()
 	{
 		$config = Configuration::getInstance();
@@ -22,7 +28,7 @@ class ProjectManager
 	{
 		if (!is_dir($rpp))
 		{
-			throw new Exception(2, "couldn't find project dir");
+			throw new Exception("couldn't find project dir: $rpp", 2);
 		}
 		$this->rootProjectPath = $rpp;
 	}
@@ -42,6 +48,7 @@ class ProjectManager
 
 	public function listRepositories($team)
 	{
+		$this->verifyName($team);
 		$contents = array_filter(scandir($this->teamDirectory($team)),
 		                         function ($x) { return $x[0] != '.'; });
 		sort($contents);
@@ -50,6 +57,7 @@ class ProjectManager
 
 	public function teamDirectory($team)
 	{
+		$this->verifyName($team);
 		$dir = $this->rootProjectPath . '/' . $team;
 		if (!is_dir($dir))
 			mkdir($dir);
@@ -58,16 +66,22 @@ class ProjectManager
 
 	public function getRepository($team, $path)
 	{
-		return new GitRepository($this->teamDirectory($team) . '/' . $path);
+		$this->verifyName($team);
+		$this->verifyName($name);
+		return new GitRepository($this->teamDirectory($team) . '/' . $name);
 	}
 
 	public function createRepository($team, $name)
 	{
-		return GitRepository::createRepository($this->teamDirectory($team) . '/' . $path);
+		$this->verifyName($team);
+		$this->verifyName($name);
+		return GitRepository::createRepository($this->teamDirectory($team) . '/' . $name);
 	}
 
 	public function deleteRepository($team, $path)
 	{
+		$this->verifyName($team);
+		$this->verifyName($path);
 		// DELETE EVERYTHING RAAAAARGH
 		$path = $this->teamDirectory($team) . '/' . $path;
 		shell_exec("rm -rf $path");
