@@ -17,7 +17,8 @@ class ProjModule extends Module
         // bail if we aren't authenticated
         if ($auth->getCurrentUser() == null)
         {
-            throw new Exception("proj/list attempted without authentication", self::PROJ_ERROR_KEY | self::AUTH_MASK);
+        	// module does nothing if no authentication
+            return;
         }
 
         $input = Input::getInstance();
