@@ -22,9 +22,10 @@ $input = Input::getInstance();
 $input->setInput("team", "beedogs");
 $input->setInput("project", "testing-project");
 
-$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
+$teampath = $config->getConfig("repopath") . "/" . $input->getInput("team");
+$repopath = "$teampath/" . $input->getInput('project');
 //setup the required repo dirs
-exec("mkdir -p $repopath");
+exec("mkdir -p $teampath");
 //manually create the repo
 GitRepository::createRepository($repopath);
 
@@ -39,7 +40,7 @@ $proj->dispatchCommand("list");
 test_nonnull($proj, "recieved proj module was null");
 //list the emmtpy project
 $list = Output::getInstance()->getOutput("files");
-test_equal(count($list), 0, "the project wasn't empty");
+test_equal($list, array('testing-project'), "wrong repository list");
 test_nonnull($list, "the file list was null");
 
 // delete the created repos

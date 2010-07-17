@@ -4,7 +4,8 @@ class ProjModule extends Module
 {
 	private $team;
 	private $projectName;
-	private $projRepo;
+	private $projectManager;
+	private $projectRepository;
 
 	const PROJ_ERROR_KEY        = 0x20;
 	const AUTH_MASK             = 0x01;
@@ -21,6 +22,8 @@ class ProjModule extends Module
         	// module does nothing if no authentication
             return;
         }
+
+		$this->projectManager = ProjectManager::getInstance();
 
 		$input = Input::getInstance();
 		$this->team = $input->getInput("team");
@@ -49,16 +52,7 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$output = Output::getInstance();
-		if ($this->projRepo != NULL)
-		{
-			$output->setOutput("files", $this->projRepo->listFiles("/"));
-			return true;
-		}
-		else
-		{
-			throw new Exception("the project you attempted to list $this->projectName does not exist", self::PROJ_ERROR_KEY | self::PROJ_NONEXISTANT_MASK);
-		}
-
+		$output->setOutput('files', $this->projectManager->listRepositories($this->team));
 	}
 
 	private function getRootRepoPath()
@@ -75,28 +69,13 @@ class ProjModule extends Module
 
 	private function openProject($team, $project)
 	{
-		$this->createRepoIfNoneExists($team);
-		$repoPath = $this->getRootRepoPath();
-		$projPath = "$repoPath/$team/$project";
-
-		$repo = null;
-		if (is_dir($projPath))
+		if (in_array($team, $this->projectManager->listRepositories($team)))
 		{
-			$repo = new GitRepository($projPath);
+			$this->projectRepository = $this->projectManager->createRepository($team, $project);
 		}
-
-		$this->projRepo = $repo;
-	}
-
-	private function createRepoIfNoneExists($team)
-	{
-		$repoPath = $this->getRootRepoPath();
-		$teamRepoPath = "$repoPath/$team";
-
-		if (!is_dir($teamRepoPath))
+		else
 		{
-			mkdir($teamRepoPath);
+			$this->projectRepository = $this->projectManager->getRepository($team, $project);
 		}
 	}
-
 }
