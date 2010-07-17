@@ -8,7 +8,7 @@ class GitRepository
 	{
 		$this->path = $path;
 		if (!file_exists("$path/.git") || !is_dir("$path/.git"))
-			throw new Exception("git repository is corrupt", 2);
+			throw new Exception("git repository at $path is corrupt", 2);
 	}
 
 	private function gitExecute($command, $env = array())
