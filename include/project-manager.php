@@ -15,7 +15,7 @@ class ProjectManager
 	private function verifyName($name)
 	{
 		if (!is_string($name) || $name == '')
-			throw new Exception('name was not a name', 2);
+			throw new Exception('name was not a name', E_INTERNAL_ERROR);
 	}
 
 	public function __construct()
@@ -28,7 +28,7 @@ class ProjectManager
 	{
 		if (!is_dir($rpp))
 		{
-			throw new Exception("couldn't find project dir: $rpp", 2);
+			throw new Exception("couldn't find project dir: $rpp", E_INTERNAL_ERROR);
 		}
 		$this->rootProjectPath = $rpp;
 	}

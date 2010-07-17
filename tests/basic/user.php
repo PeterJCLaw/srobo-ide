@@ -19,7 +19,7 @@ try
 }
 catch (Exception $e)
 {
-	test_equal($e->getCode(), 4, 'UserInfo->getInfo threw the wrong exception');
+	test_equal($e->getCode(), E_INTERNAL_ERROR, 'UserInfo->getInfo threw the wrong exception');
 }
 
 test_equal($ui->getInfo('groups'), $auth->getCurrentUserGroups(), "the user was not in the groups the authbackend returned");

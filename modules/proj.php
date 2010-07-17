@@ -39,7 +39,7 @@ class ProjModule extends Module
 		$auth = AuthBackend::getInstance();
 		if (!in_array($this->team, $auth->getCurrentUserGroups()))
 		{
-			throw new Exception("proj attempted on team you aren't in", 4);
+			throw new Exception("proj attempted on team you aren't in", E_PERM_DENIED);
 		}
 
 	}

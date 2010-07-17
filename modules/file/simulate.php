@@ -4,7 +4,7 @@ class FileSimulateModule extends Module
 {
 	public function dieUnpleasantly()
 	{
-		throw new Exception('unimplemented', 7);
+		throw new Exception('unimplemented', E_NOT_IMPL);
 	}
 
 	public function __construct()

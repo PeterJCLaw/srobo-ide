@@ -10,16 +10,16 @@ class TeamModule extends Module
 	{
 		$authModule = AuthBackend::getInstance();
 		if ($authModule->getCurrentUser() == null)
-			throw new Exception("not authenticated", 4);
+			throw new Exception("not authenticated", E_PERM_DENIED);
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$team = $input->getInput('team');
 		if ($team == null)
-			throw new Exception("need a team", 1);
+			throw new Exception("need a team", E_MALFORMED_REQUEST);
 		if (in_array($team, $authModule->getCurrentUserGroups()))
 			$members = array($team);
 		else
-			throw new Exception("you are not a member of that team", 4);
+			throw new Exception("you are not a member of that team", E_PERM_DENIED);
 		$output->addOutput('team-members', $members);
 	}
 
@@ -31,11 +31,11 @@ class TeamModule extends Module
 		$output     = Output::getInstance();
 		$team = $input->getInput('team');
 		if ($team == null)
-			throw new Exception("need a team", 1);
+			throw new Exception("need a team", E_MALFORMED_REQUEST);
 		if (in_array($team, $authModule->getCurrentUserGroups()))
 			$projects = $manager->listRepositories($team);
 		else
-			throw new Exception("you are not a member of that team", 4);
+			throw new Exception("you are not a member of that team", E_PERM_DENIED);
 		$output->addOutput('team-projects', $members);
 	}
 }

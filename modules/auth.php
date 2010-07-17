@@ -14,7 +14,7 @@ class AuthModule extends Module
 			$tok = $this->authModule->validateAuthToken($in);
 			if (!$tok)
 			{
-				throw new Exception("failed to validate auth token", 3);
+				throw new Exception("failed to validate auth token", E_BAD_AUTH_TOKEN);
 			}
 			$next = $this->authModule->getNextAuthToken();
 			$output->setOutput('auth-token', $next);
@@ -28,13 +28,13 @@ class AuthModule extends Module
 		$input    = Input::getInstance();
 		$output   = Output::getInstance();
 		if ($this->authModule->getCurrentUser() !== null)
-			throw new Exception("you are already authenticated", 5);
+			throw new Exception("you are already authenticated", E_AUTH_FAILED);
 		$username = $input->getInput('username');
 		$password = $input->getInput('password');
 		if (!$username || !$password)
-			throw new Exception("username/password not provided", 5);
+			throw new Exception("username/password not provided", E_AUTH_FAILED);
 		if (!$this->authModule->authUser($username, $password))
-			throw new Exception("authentication failed", 6);
+			throw new Exception("authentication failed", E_AUTH_DENIED);
 		$output->setOutput('auth-token', $this->authModule->getNextAuthToken());
 		$output->setOutput('display-name', $this->authModule->displayNameForUser($username));
 		return true;
@@ -45,7 +45,7 @@ class AuthModule extends Module
 		$input    = Input::getInstance();
 		$output   = Output::getInstance();
 		if ($this->authModule->getCurrentUser() === null)
-			throw new Exception("you are not authenticated", 5);
+			throw new Exception("you are not authenticated", E_AUTH_FAILED);
 		$this->authModule->deauthUser();
 		$output->removeOutput('auth-token');
 		return true;

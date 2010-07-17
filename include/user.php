@@ -34,7 +34,7 @@ class UserInfo
         }
         else
         {
-            throw new Exception("key in user info did not exist", 4);
+            throw new Exception("key in user info did not exist", E_INTERNAL_ERROR);
         }
     }
 

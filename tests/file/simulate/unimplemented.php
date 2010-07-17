@@ -11,8 +11,8 @@ $mod = $mm->getModule("file/simulate");
 test_nonnull($mod, "simulate module was null");
 
 test_exception(function () use ($mod) { $mod->dispatchCommand('begin'); },
-               7, "'begin' did not throw");
+               E_NOT_IMPL, "'begin' did not throw");
 test_exception(function () use ($mod) { $mod->dispatchCommand('end'); },
-               7, "'end' did not throw");
+               E_NOT_IMPL, "'end' did not throw");
 test_exception(function () use ($mod) { $mod->dispatchCommand('status'); },
-               7, "'status' did not throw");
+               E_NOT_IMPL, "'status' did not throw");

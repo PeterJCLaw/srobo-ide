@@ -31,7 +31,7 @@ try
 	$modname = $input->getRequestModule();
 	if (!$mm->moduleExists($modname))
 	{
-		throw new Exception("module $modname not found", 1);
+		throw new Exception("module $modname not found", E_MALFORMED_REQUEST);
 	}
 	$mod = $mm->getModule($modname);
 	$mod->dispatchCommand($input->getRequestCommand());
