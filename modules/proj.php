@@ -59,6 +59,7 @@ class ProjModule extends Module
 
 	public function projectLog()
 	{
+		$this->verifyTeam();
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 		$currRev = $input->getInput("start-commit");
