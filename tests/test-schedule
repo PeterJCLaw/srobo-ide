@@ -7,3 +7,5 @@ TEST basic/case-transform
 TEST auth/single
 
 TEST proj/list
+
+XFAIL file/simulate/unimplemented
