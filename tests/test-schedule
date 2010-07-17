@@ -8,4 +8,4 @@ TEST auth/single
 
 TEST proj/list
 
-XFAIL file/simulate/unimplemented
+TEST file/simulate/unimplemented
