@@ -14,17 +14,18 @@ class GitRepository
 	private function gitExecute($command, $env = array())
 	{
 		$path = $this->path;
-		$command = "cd $path ; ";
+		$buildCommand = "cd $path ; ";
 		if (!empty($env))
 		{
-			$command .= "env ";
+			$buildCommand .= "env ";
 			foreach ($env as $key=>$value)
 			{
-				$command .= escapeshellarg("$key=$value ");
+				$buildCommand .= escapeshellarg("$key=$value") . " ";
 			}
+			$buildCommand .= ";";
 		}
-		$command .= "git $command";
-		return trim(shell_exec($command));
+		$buildCommand .= " git $command";
+		return trim(shell_exec($buildCommand));
 	}
 
 	public static function createRepository($path)
