@@ -70,4 +70,14 @@ class SingleAuth extends AuthBackend
             return array();
         }
     }
+
+	public function displayNameForGroup($group)
+	{
+		return $group;
+	}
+
+	public function displayNameForUser($user)
+	{
+		return $user;
+	}
 }
