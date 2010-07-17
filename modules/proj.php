@@ -6,9 +6,10 @@ class ProjModule extends Module
 	private $projectName;
 	private $projRepo;
 
-	const PROJ_ERROR_KEY   = 0x20;
-	const AUTH_MASK        = 0x01;
-	const NOT_IN_TEAM_MASK = 0x02;
+	const PROJ_ERROR_KEY        = 0x20;
+	const AUTH_MASK             = 0x01;
+	const NOT_IN_TEAM_MASK      = 0x02;
+	const PROJ_NONEXISTANT_MASK = 0x04;
 
 	public function __construct()
 	{
@@ -27,13 +28,14 @@ class ProjModule extends Module
 		// also bail if the user isn't in the team they're trying to list
 		if (!in_array($this->team, $auth->getCurrentUserGroups()))
 		{
-			throw new Exception("proj/list attempted on team you aren't in", self::PROJ_ERROR_KEY | self::NOT_IN_TEAM_MASK);
+			throw new Exception("proj attempted on team you aren't in", self::PROJ_ERROR_KEY | self::NOT_IN_TEAM_MASK);
 		}
 
 		// check that the project exists and is a git repo otherwise construct
 		// the project directory and git init it
 		$project = $input->getInput("project");
-		$this->createProjectIfNonExistant($this->team, $project);
+
+		$this->createProject($this->team, $project);
 		$this->projectName = $project;
 
 		$this->installCommand('list', array($this, 'listProject'));
@@ -42,8 +44,16 @@ class ProjModule extends Module
 	public function listProject()
 	{
 		$output = Output::getInstance();
-		$output->setOutput("files", $this->projRepo->listFiles("/"));
-		return true;
+		if ($this->projRepo != NULL)
+		{
+			$output->setOutput("files", $this->projRepo->listFiles("/"));
+			return true;
+		}
+		else
+		{
+			throw new Exception("the project you attempted to list $this->projectName does not exist", self::PROJ_ERROR_KEY | self::PROJ_NONEXISTANT_MASK);
+		}
+
 	}
 
 	private function getRootRepoPath()
@@ -58,18 +68,14 @@ class ProjModule extends Module
 		return $repoPath;
 	}
 
-	private function createProjectIfNonExistant($team, $project)
+	private function createProject($team, $project)
 	{
 		$this->createRepoIfNoneExists($team);
 		$repoPath = $this->getRootRepoPath();
 		$projPath = "$repoPath/$team/$project";
 
 		$repo = null;
-		if (!is_dir($projPath))
-		{
-			$repo = GitRepository::createRepository($projPath);
-		}
-		else
+		if (is_dir($projPath))
 		{
 			$repo = new GitRepository($projPath);
 		}

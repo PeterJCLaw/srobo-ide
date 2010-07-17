@@ -26,11 +26,19 @@ $input->setInput("project", "testing-project");
 $mm = ModuleManager::getInstance();
 $mm->importModules();
 test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
+
+$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
+//manually create the repo
+mkdir($repopath);
+GitRepository::createRepository($repopath);
+
 $proj = $mm->getModule("proj");
+$proj->dispatchCommand("list");
 test_nonnull($proj, "recieved proj module was null");
 //list the emmtpy project
 $list = Output::getInstance()->getOutput("files");
 test_equal(count($list), 0, "the project wasn't empty");
+test_nonnull($list, "the file list was null");
 
 // delete the created repos
 if (is_dir("/tmp/test-repos"))
