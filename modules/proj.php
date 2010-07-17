@@ -35,7 +35,7 @@ class ProjModule extends Module
 		// the project directory and git init it
 		$project = $input->getInput("project");
 
-		$this->createProject($this->team, $project);
+		$this->openProject($this->team, $project);
 		$this->projectName = $project;
 
 		$this->installCommand('list', array($this, 'listProject'));
@@ -68,7 +68,7 @@ class ProjModule extends Module
 		return $repoPath;
 	}
 
-	private function createProject($team, $project)
+	private function openProject($team, $project)
 	{
 		$this->createRepoIfNoneExists($team);
 		$repoPath = $this->getRootRepoPath();
