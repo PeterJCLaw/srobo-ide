@@ -42,7 +42,7 @@ class ProjModule extends Module
     {
         $output = Output::getInstance();
         $output->setOutput("files", $this->projRepo->listFiles("/"));
-        return TRUE;
+        return true;
     }
 
     private function getRootRepoPath()
