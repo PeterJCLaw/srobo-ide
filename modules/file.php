@@ -35,6 +35,7 @@ class FileModule extends Module
 		$this->installCommand('del', array($this, 'deleteFile'));
 		$this->installCommand('cp', array($this, 'copyFile'));
 		$this->installCommand('mv', array($this, 'moveFile'));
+		$this->installCommand('lint', array($this, 'lintFile'));
 	}
 
 	private function verifyTeam()
@@ -111,5 +112,14 @@ class FileModule extends Module
 		$oldPath = $input->getInput('old-path');
 		$newPath = $input->getInput('new-path');
 		$this->repository()->moveFile($oldPath, $newPath);
+	}
+
+	public function lintFile()
+	{
+		$input  = Input::getInstance();
+		$output = Output::getInstance();
+		$path   = $input->getInput('path');
+		$output->setOutput('errors', array());
+		$output->setOutput('warnings', array("lint not implemented"));
 	}
 }
