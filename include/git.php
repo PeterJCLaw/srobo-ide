@@ -42,6 +42,13 @@ class GitRepository
 		return $this->gitExecute("describe --always");
 	}
 
+	public function getFirstRevision()
+	{
+		$revisions = explode("\n", $this->gitExecute("rev-list --all"));
+		return $revisions[count($revisions)-1];
+
+	}
+
 	public function log($oldCommit, $newCommit)
 	{
 		$log = $this->gitExecute("log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
