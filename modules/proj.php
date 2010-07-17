@@ -40,7 +40,6 @@ class ProjModule extends Module
 		{
 			throw new Exception("proj attempted on team you aren't in", E_PERM_DENIED);
 		}
-
 	}
 
 	public function createProject()
