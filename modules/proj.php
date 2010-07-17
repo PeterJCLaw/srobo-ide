@@ -7,12 +7,6 @@ class ProjModule extends Module
 	private $projectManager;
 	private $projectRepository;
 
-	const PROJ_ERROR_KEY        = 0x20;
-	const AUTH_MASK             = 0x01;
-	const NOT_IN_TEAM_MASK      = 0x02;
-	const PROJ_NONEXISTANT_MASK = 0x04;
-	const PROJ_EXISTS_MASK      = 0x08;
-
 	public function __construct()
 	{
 		$auth = AuthBackend::getInstance();
@@ -45,7 +39,7 @@ class ProjModule extends Module
 		$auth = AuthBackend::getInstance();
 		if (!in_array($this->team, $auth->getCurrentUserGroups()))
 		{
-			throw new Exception("proj attempted on team you aren't in", self::PROJ_ERROR_KEY | self::NOT_IN_TEAM_MASK);
+			throw new Exception("proj attempted on team you aren't in", 4);
 		}
 
 	}
