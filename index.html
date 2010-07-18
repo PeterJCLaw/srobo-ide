@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+        <!-- Style Sheets -->
+        <link rel="stylesheet" href="./css/newstyle.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/editmode.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/projpage.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/browser.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/log.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/calendar.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/errors.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/menubar.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/switchboard.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/admin.css" type="text/css"/>
+        <link rel="stylesheet" href="./css/diff.css" type="text/css"/>
+        <!-- Javascript Source Files -->
+        <script src="./javascript/MochiKit.js" type="text/javascript"></script>
+        <script src="./javascript/gui.js" type="text/javascript"></script>
+        <script src="./javascript/projpage.js" type="text/javascript"></script>
+        <script src="./javascript/tabs.js" type="text/javascript"></script>
+        <script src="./javascript/browser.js" type="text/javascript"></script>
+        <script src="./javascript/edit.js" type="text/javascript"></script>
+        <script src="./javascript/log.js" type="text/javascript"></script>
+        <script src="./javascript/calendar.js" type="text/javascript"></script>
+        <script src="./javascript/errors.js" type="text/javascript"></script>
+        <script src="./javascript/robolog.js" type="text/javascript"></script>
+        <script src="./javascript/switchboard.js" type="text/javascript"></script>
+        <script src="./javascript/admin.js" type="text/javascript"></script>
+        <script src="./javascript/diff.js" type="text/javascript"></script>
+        <script src="javascript/edit_area/edit_area_loader.js" type="text/javascript"></script><!-- editarea can die in ie6 if there is a leading ./ on the src line -->
+        <title>Robotics IDE</title>
+    </head>
+    <body>
+
+        <div id="login-back">
+            <!-- This will produce the greyed out background for login/filename prompts -->
+            <div id="login-box">
+                <strong>Student Robotics IDE Login:</strong>
+                <em id="login-feedback">You must be logged in to use the IDE</em>
+                <input type="text" name="username" value="username" id="username" />
+                <input type="password" name="password" id="password" />
+                <a href="Login" id="login-button" class="button" >Log In</a>
+                <br /><a href="http://www.srobo.org/user/password">&raquo; Forgotten password</a>
+            </div>
+        </div>
+        <!-- File Browser    -->
+        <div id="file-browser">
+            <div style="clear: both">&nbsp;</div>
+            <span id="browser-title"></span>
+            <span id="save-path">
+                Save Path: <select id="browser-project-select"><option>loading...</option></select>
+                <span id="selected-dir"></span>
+            </span>
+            <div id="left-pane">
+                <ul id="left-pane-list" ><li class="dummy"></li></ul>
+            </div>
+            <div id="right-pane">
+                <ul id="right-pane-list"><li class="dummy"></li></ul>
+            </div>
+            <textarea id="new-commit-msg" rows="3" cols="50"></textarea>
+            <span id="browser-status">New Filename: </span>
+            <div id="new-file-inputs">
+                <input type="text" id="new-file-name" value="new.py" ></input>
+                <button id="save-new-file" >Save</button>
+                <button id="cancel-new-file" >Cancel</button>
+            </div>
+        </div>
+
+        <div id="grey-out"></div>
+
+	<!-- About Box -->
+	<div id="about-box" class="hidden">
+		<span id="about-title">Student Robotics IDE</span>
+		<fieldset>
+			<legend>About the IDE</legend>
+			<dl id="about-list"><dt>Loading...</dt></dl>
+		</fieldset>
+		<fieldset id="about-shortcuts">
+			<legend>Keyboard Shortcuts</legend>
+			<dl>
+				<dt>Ctrl+E</dt><dd>Export the current Project</dd>
+				<dt>Alt+PageUp</dt><dd>Switch one tab to the left</dd>
+				<dt>Alt+PageDown</dt><dd>Switch one tab to the right</dd>
+			</dl><dl>
+				<dt>Ctrl+S</dt><dd>Save the current file</dd>
+			</dl><dl>
+				<dt>Esc</dt><dd>Close (and cancel) the Browser</dd>
+			</dl>
+		</fieldset>
+		<span>Click anywhere in this box to close</span>
+	</div>
+
+        <div id="top">
+            <ul id="topleft">
+                <li><a href="#" id="logout-button">Logout</a></li>
+                <li id="teaminfo">Loading...</li>
+            </ul>
+            <div id="static-box"><img src="./images/static.png" /></div>
+            <div id="rotating-box"><img src="./images/anim.gif" /></div>
+        </div>
+
+        <div id="tabs">
+            <ul id="tab-list"><li class="dummy"></li></ul>
+        </div>
+
+        <div id="dropShortcuts" class="hidden">
+        </div>
+
+        <div id="status" >
+            <span id="status-span"></span>
+        </div>
+
+        <div id="page">
+
+            <div id="edit-mode">
+                <div class="menu-bar">
+                    <ul id="filemenu">
+                        <li><button id="save-file" >Save</button></li>
+                        <li><button id="check-syntax">Check Syntax</button></li>
+                        <li><button id="edit-diff">View Changes</button></li>
+                        <li><button id="close-edit-area">Close</button></li>
+                        <li><div id="tab-filename">Competition/linefollower.py</div></li>
+                        <li class= "file-history">
+                            <select name="history" id="history">
+                                <option value="1" title="Log Msg: [commit msg]">hh:mm:ss dd/mm/yyyy [user]</option>
+                            </select>
+                        </li>
+                    </ul>
+                    <div class="ie6-prop-clear" style="clear:both;"></div>
+                </div>
+            </div>
+
+            <div id="log-mode">
+                <!-- Log Viewer -->
+                <div class="menu-bar">
+                    <ul id="logmenu">
+                        <li><button id="revert" title="Click to revert to the selected revision">Revert</button></li>
+                        <li><button id="log-diff">View Diff</button></li>
+                        <li><button id="log-close">Close</button></li>
+                        <li class="log-navigate">
+                            <button id="older">&lt;&lt;&lt; Older</button>
+                            <button id="newer">Newer &gt;&gt;&gt;</button>
+                        </li>
+                        <li class="log-user">
+                            <select id="repo-users"><option>Dummy Option</option></select>
+                        </li>
+                    </ul>
+                    <div class="ie6-prop-clear" style="clear:both;"></div>
+                </div>
+                <div id="logs">
+                    <em id="log-summary"> Displaying [n] revisions between [datetime] & [datetime] Page [n] of [n]</em>
+                    <ul id="log-list"><li class="dummy"></li></ul>
+                </div>
+            </div><!-- end log viewer -->
+
+            <div id="robolog-page">
+                <div>
+                    <button id="robolog-clear">Clear</button>
+                    <span id="robolog-status"></span>
+                </div>
+                <pre id="robolog-pre">
+                    Robot log
+                </pre>
+            </div>
+
+            <div id="projects-page">
+
+                <div id="proj-sidebar">
+
+                    <div id="proj-options">
+                        <div>Project:<select id="project-select"><option>loading...</option></select></div>
+                        <button id="new-project">New Project</button>
+                        <button id="archive-project" disabled="disabled">Archive Project</button>
+                        <button id="copy-project">Copy Project</button>
+                        <button id="check-code">Check Code</button>
+                        <button id="simulate-project" disabled="disabled">Simulate Project</button>
+                        <button id="export-project">Export Project</button>
+                    </div>
+
+                    <div id="proj-revselect">
+                        <select id="cal-revs">
+                            <option value="v1">Select a date: </option>
+                        </select>
+                        <table id="calendar">
+                            <tr><td id="cal-prev-month">&lt;&lt;</td><td colspan="5" id="cal-header" class="calendar-month"> September </td><td id="cal-next-month">&gt;&gt;</td></tr>
+                            <tr class="calendar-days">
+                                <td title="Sunday">S</td>
+                                <td title="Monday">M</td>
+                                <td title="Tuesday">T</td>
+                                <td title="Wednesday">W</td>
+                                <td title="Thursday">T</td>
+                                <td title="Friday">F</td>
+                                <td title="Saturday">S</td>
+                            </tr>
+                            <tr id="cal-row-0"><td>&nbsp;</td></tr>
+                            <tr id="cal-row-1"><td>&nbsp;</td></tr>
+                            <tr id="cal-row-2"><td>&nbsp;</td></tr>
+                            <tr id="cal-row-3"><td>&nbsp;</td></tr>
+                            <tr id="cal-row-4"><td>&nbsp;</td></tr>
+                            <tr id="cal-row-5"><td>&nbsp;</td></tr>
+                        </table>
+
+                    </div>
+
+                    <div id="proj-fileops">
+                        <span>
+                            <button id="proj-select-none">Select None</button><br />
+                            <button id="proj-select-all">Select All</button>
+                        </span>
+                        Selection operations:
+                        <ul>
+                            <li><a id="op-newfile"             href="#">New File</a></li>
+                            <li><a id="op-mkdir"                 href="#">New Directory</a></li>
+                            <li><a id="op-mv"                        href="#">Move (including rename)</a></li>
+                            <li><a id="op-cp"                        href="#">Copy</a></li>
+                            <li><a id="op-rm"                        href="#">Delete</a></li>
+                            <li><a id="op-undel"                 href="#">Undelete</a></li>
+                            <li><a id="op-rm_autosaves"    href="#">Delete Autosaves</a></li>
+                            <li><a id="op-check"                 href="#">Check Files' Syntax</a></li>
+                            <li><a id="op-log"                     href="#">View Log</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="proj-rpane">
+                    <div id="proj-rpane-header">
+                        <div id="proj-name"></div>
+                        Ctrl+Click to Select (Cmd+Click on a Mac)<br />
+                        Click to Open<br/>
+                    </div>
+                    <ul id="proj-filelist"><li class="dummy"></li></ul>
+                    <div class="ie6-prop-clear" style="clear:both;"></div>
+                </div>
+
+
+            </div>
+
+            <div id="errors-page">
+                <div class="menu-bar">
+                    <ul id="errors-menu">
+                        <li><button id="collapse-errors-page" title="Click to collapse all files">Collapse All</button></li>
+                        <li><button id="expand-errors-page" title="Click to expand all files">Expand All</button></li>
+                        <li><button id="check-errors-page" title="Click to re-check the current saved version of all files">Check All Again</button></li>
+                        <li><button id="close-errors-page" title="Click to close page">Close</button></li>
+                    </ul>
+                    <div class="ie6-prop-clear" style="clear:both;"></div>
+                </div>
+                <em>Click a filename to view the file, click the error output to view more details (advanced)</em>
+                <dl id="errors-listing">
+                    <dt class="dummy"></dt>
+                    <dd class="dummy"></dd>
+                </dl>
+            </div>
+
+	<div id="switchboard-page">
+		<div id="message-window" class="switchboard-window">
+			<strong>Messages for Competitors</strong>
+			<ul id="message-list">
+			</ul>
+		</div>
+		<div id="timeline-window" class="switchboard-window">
+			<strong>Student Robotics Milestones 2010</strong>
+			<div id="timeline-bar-out">
+				<div id="timeline-bar-in">
+				</div>
+			</div>
+			<span id="timeline-description">Click on a milestone for details</span>
+		</div>
+		<div id="links-window" class="switchboard-window">
+		<strong> Sources of Information </strong>
+			<div>
+			<span class="switch-link"><a href="http://www.studentrobotics.org/forum/"><img src="images/Forums.png" />Forum</a></span>
+			<span class="switch-link"><a href="http://www.studentrobotics.org/rulebook.pdf"><img src="images/Game.png" />Rules</a></span>
+			<span class="switch-link"><a href="http://www.studentrobotics.org/docs/"><img src="images/Docs.png" />Docs</a></span>
+			</div>
+		</div>
+		<div id="user-feed-box" class="switchboard-window">
+		<form name="user_feed_form" method="post" onSubmit="return false;">
+			<strong>Your Student Robotics Blog feed</strong>
+			<input type="text" name="user_feed_input" id="user-feed-url" />
+			If you enter the URL of your blog's RSS/Atom feed here, then other teams can read about your progress. You can enter a maximum of 1 blog feed but can change it using the box above. If you do not have a blog you can set one up for free at <a href="http://www.blogger.com" target="_blank">Blogger</a> or <a href="http://wordpress.com/" target="_blank">Wordpress</a> amongst many other sites. All feeds are verified by an SR mentor before appearing on the site, if your feed url has been verified, it will have a green background.
+			If your feed has been checked and rejected it will have a red background.
+		</form>
+		</div>
+		<div id="student-blogs-window" class="switchboard-window">
+			<strong>Competitors' Blog Posts</strong>
+			<ul id="student-blogs-list">
+				
+			</ul>
+		</div>
+		<!--
+		<div id="kickstart-window" class="switchboard-window">
+			<strong>Where I was this time at Kickstart</strong>
+			<img src="http://www.johnbgrimes.com/blog/bees.jpg" id="kickstart-photo" />
+			At this point in the 'year' during the Kickstart challenge you were...covered in bees
+		</div>
+		-->
+	</div> <!-- end of "switchboard-page" -->
+
+        <div id="admin-page">
+            <div id="admin-teams-window" class="switchboard-window">
+                <strong>Your Teams</strong>
+                <table id="admin-teams-table"></table>
+            </div>
+            <div id="admin-feeds-window" class="switchboard-window">
+                <strong>Student Blog Feeds</strong>
+                <table id="admin-feeds-table"></table>
+            </div>
+        </div> <!-- end of "admin-page" -->
+
+        <div id="simulator-page">
+            <div id="graphics"></div>
+        </div> <!--end "simulator-page" -->
+
+	<div id="diff-page">
+		<div class="menu-bar">
+			<em id="diff-page-summary">Displaying differences on [file] between [old-rev] and [new-rev].</em>
+			<div class="ie6-prop-clear" style="clear:both;"></div>
+		</div>
+		<pre id="diff-page-diff"></pre>
+	</div> <!--end "diff-page" -->
+
+        </div> <!-- end of "page" div -->
+
+        <iframe id="robot-zip" style="display:none;"></iframe>
+
+    </body>
+
+</html>

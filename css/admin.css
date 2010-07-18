@@ -1,0 +1,42 @@
+#admin-page {
+	width: 90%;
+	padding-left: 5%;
+	padding-right: 5%;
+	display: none;
+}
+#admin-page strong {
+	font-size: 1.1em;
+}
+
+#admin-page table {
+	border-collapse: collapse;
+	margin: 0 10px;
+}
+#admin-page table tr {
+	height: 30px;
+}
+#admin-page table tr.even {
+	background-color: #eee;
+}
+#admin-page table th {
+	text-align: left;
+	padding-right: 7px;
+}
+#admin-page table td {
+	padding-left: 5px;
+}
+
+#admin-teams-table td.name {
+	width: 185px;
+}
+#admin-teams-table td.name input {
+	margin-left: -3px;
+	width: 180px;
+}
+
+.valid-feed-url {
+	background-color: #98FF4F !important;
+}
+.invalid-feed-url {
+	background-color: #FF6666 !important;
+}

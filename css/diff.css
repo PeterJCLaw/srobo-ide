@@ -1,0 +1,19 @@
+#diff-page {
+	display: none;
+}
+#diff-page .menu-bar {
+	padding-left: 10px;
+}
+
+#diff-page-diff {
+	margin: 12px;
+}
+#diff-page-diff .at {
+	color: orange;
+}
+#diff-page-diff .add {
+	color: green;
+}
+#diff-page-diff .remove {
+	color: red;
+}

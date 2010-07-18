@@ -1,0 +1,24 @@
+#filemenu li.file-history {
+	margin-right: 0.2em;
+	float: right;
+}
+
+#tab-filename {
+	color: #000000;
+	float: left;
+	padding-top: 5px;
+	margin-right: 0.2em;
+	font-family: 'Courier New';
+	font-size: 1.2em;
+	min-width: 300px;
+	overflow: hidden;
+	text-align: center;
+}
+
+#codebox {
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	border: none;
+	height: 30em;
+}

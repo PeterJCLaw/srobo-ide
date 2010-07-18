@@ -1,0 +1,130 @@
+#projects-page { width: 100%; }
+
+#proj-sidebar {
+  float:left;
+  width: 18em;
+  border-style: none solid none none;
+  border-color: #dfdbd7;
+  border-width: 1px;
+  margin-left: 1em;
+}
+
+#proj-options {
+  text-align: center;
+}
+
+#proj-options div {
+  text-align: left;
+}
+
+#proj-revselect {
+  border-style: solid none solid none;
+}
+
+#proj-fileops span {
+	text-align: right;
+	float: right;
+	margin-right: 10px;
+}
+
+#proj-fileops ul {
+  margin: 0;
+  padding: 0.5em 0 0 2em;
+}
+
+#proj-fileops li {
+  list-style-type: none;
+  border: 1px solid white;
+}
+
+#proj-fileops li a {
+  text-decoration: none;
+  color: black;
+  display: block;
+}
+
+#proj-fileops li a:hover {
+  background-color: #253571;
+  color: #ffffff;
+}
+
+#proj-rpane {
+  margin-left: 20em;
+}
+
+#proj-name {
+  font-size: 3em;
+  font-weight: bold;
+  text-align: center;
+}
+
+#proj-filelist li {
+  list-style-type: none;
+}
+
+#proj-filelist ul {
+  margin: 0;
+  padding: 0;
+}
+
+#proj-filelist > ul {
+  padding-top: 1em;
+  padding-left: 2em;
+}
+
+.flist-l li a { padding-left: 1em; }
+.flist-l li a.autosave { padding-left: 0; }
+
+.flist-l div div { margin-left: 0.5em; }
+
+#proj-filelist li a {
+  display: block;
+  text-decoration: none;
+  margin-right: 1em;
+  color: black;
+}
+
+#proj-filelist li a.autosave {
+  margin-top: -1.2em;
+  margin-left: 27%;
+  display: inline;
+  float: left;
+}
+
+/* The vertical bar along the side of each directory */
+#proj-filelist li a div {
+  border-style: none none none solid;
+  border-width: 1px;
+  border-color: #dfdbd7;
+  padding-left: 1em;
+}
+
+#proj-filelist li a:hover {
+  background-color: #dfdbd7;
+}
+
+#proj-filelist li a:visited {
+  color: black;
+}
+
+#proj-filelist li.selected a, #proj-filelist li.selected a:visited  {
+  color: #ffffff;
+}
+
+#proj-filelist li.selected {
+  background-color: #253571;
+}
+
+/* The "loading" DIV displayed whilst the filelist is loading  */
+#proj-filelist.loading {
+  font-weight: bold;
+  padding-left: 2em;
+  padding-top: 2em;
+}
+
+.proj-filelist-dir-collapse {
+  font-style: italic;
+  color: rgb(100,100,100);
+}
+
+#clearboth { clear: both; }

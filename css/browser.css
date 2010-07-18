@@ -1,0 +1,101 @@
+#file-browser {
+	background-color: #253571;
+	color: #fff;
+	position: absolute;
+	left: 20%;
+	top: 20%;
+	padding: 0;
+	margin: 0;
+	width: 60%;
+	display: none;
+	text-align: left;
+	z-index: 100;
+}
+#save-path, #browser-title {
+	color: #ffffff;
+	display: block;
+	font-weight: bold;
+	padding: 1%;
+}
+#browser-title {
+	font-size: 1.6em;
+	margin: 0 1%;
+	width: 96%;
+}
+#save-path {
+	font-size: 1.35em;
+	margin: 3px 1% 3px 2%;
+}
+#save-path select {
+	font-size: 0.9em;
+}
+#left-pane, #right-pane {
+	display: block;
+	width: 40%;
+	height: 200px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	background-color: #DFDBD8;
+	margin: 10px 2.5%;
+	border: 5px solid #ffffff;
+	float: left;
+}
+
+#right-pane ul, #left-pane ul {
+	background-color: #EEEEEE;
+	color: #000;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#left-pane ul {
+	padding-left: 15px;
+	cursor: pointer;
+}
+#left-pane li, #right-pane li {
+	padding: 1px 0 1px 5px;
+	border-bottom: 1px dashed #DFDBD8;
+}
+#left-pane li:hover {
+	background-color: #ffffff;
+}
+#browser-status {
+	display: block;
+	font-size: 1.2em;
+	color: #ffffff;
+	margin: 10px;
+	float: left;
+	overflow: visible;
+}
+#new-file-inputs {
+	float: right;
+	margin-right: 8%;
+	margin-bottom: 1em;
+}
+#new-file-name {
+	display: block;
+	font-size: 1em;
+	font-weight: bold;
+	/* color: #000000; */
+	margin: 10px;
+	width: 250px;
+	float: left;
+}
+#save-new-file, #cancel-new-file {
+	display: block;
+	font-size: 1em;
+	font-weight: bold;
+	/* color: #000000; */
+	margin: 10px;
+	float: left;
+}
+#new-commit-msg {
+	display: block;
+	width: 87.5%;
+	height: 50px;
+	background-color: #DFDBD8;
+	color: #000;
+	margin: 10px 2.5%;
+	border: 5px solid #ffffff;
+	float: left;
+}
