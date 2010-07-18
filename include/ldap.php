@@ -4,18 +4,20 @@ class LDAPManager
 {
 	private $connection = null;
 	private $authed = FALSE;
+	private $user;
 
 	public function __construct($host, $user, $pass)
 	{
 		$this->connection = ldap_connect($host);
 		$dn = "uid=$user,ou=users,o=sr";
 		$this->authed = ldap_bind($this->connection, $dn, $pass);
+		$this->user = $user;
 
 	}
 
 	public function getGroupsForUser($user)
 	{
-		if ($this->authed)
+		if ($this->authed && $this->user == "ide")
 		{
 			//do an ldap search
 			$resultsID = ldap_search($this->connection,"ou=groups,o=sr", "memberUid=$user");
