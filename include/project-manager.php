@@ -67,8 +67,8 @@ class ProjectManager
 	public function getRepository($team, $path)
 	{
 		$this->verifyName($team);
-		$this->verifyName($name);
-		return new GitRepository($this->teamDirectory($team) . '/' . $name);
+		$this->verifyName($path);
+		return new GitRepository($this->teamDirectory($team) . '/' . $path);
 	}
 
 	public function createRepository($team, $name)
