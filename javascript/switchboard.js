@@ -148,7 +148,7 @@ Switchboard.prototype._receiveGetFeed = function(nodes)
 	else
 	{
 		//update url on page
-		document.user_feed_form.user_feed_input.value = nodes.feedurl;
+		document.user_feed_form.user_feed_input.value = nodes.url;
 	}
 	if(nodes.checked > 0 && nodes.valid > 0)	//it's been checked and found valid
 	{
@@ -173,10 +173,9 @@ Switchboard.prototype._errorGetFeed = function()
 Switchboard.prototype.GetFeed = function()
 {
 	logDebug("Switchboard: Retrieving blog feed");
-	var d = loadJSONDoc("./switchboard/getblogfeed", {});
-
-	d.addCallback( bind(this._receiveGetFeed, this) );
-	d.addErrback( bind(this._errorGetFeed, this) );
+	IDE_backend_request("user/blog-feed", {},
+	                    bind(this._receiveGetFeed, this),
+	                    bind(this._errorGetFeed, this));
 }
 /* *****    End Student blog feed code	***** */
 
@@ -185,9 +184,9 @@ Switchboard.prototype.receiveMessages = function(nodes)
 {
 	// Remove any existing messages before adding new ones
 	replaceChildNodes($("message-list"));
-	for(var m in nodes.msgs)
+	for(var m in nodes.messages)
 	{
-		var item = nodes.msgs[m];
+		var item = nodes.messages[m];
 		var a = A({'href':item.link, 'target':'_blank'}, item.title);	//Write message title link
 		var s = SPAN({}, "");
 		s.innerHTML = ": "+item.body+" [by "+item.author+"]";		//message body
@@ -207,10 +206,9 @@ Switchboard.prototype.errorReceiveMessages = function()
 Switchboard.prototype.GetMessages = function()
 {
 	logDebug("Switchboard: Retrieving SR message feed");
-	var d = loadJSONDoc("./switchboard/getmessages", {});
-
-	d.addCallback( bind(this.receiveMessages, this));
-	d.addErrback( bind(this.errorReceiveMessages, this));
+	IDE_backend_request("switchboard/messages", {},
+	                    bind(this.receiveMessages, this),
+	                    bind(this.errorReceiveMessages, this));
 }
 /* *****	End Message Feed code	***** */
 
@@ -293,10 +291,9 @@ Switchboard.prototype.errorReceiveMilestones = function()
 Switchboard.prototype.GetMilestones = function()
 {
 	logDebug("Switchboard: Retrieving SR timeline");
-	var d = loadJSONDoc("./switchboard/milestones", {});
-
-	d.addCallback( bind(this.receiveMilestones, this));
-	d.addErrback( bind(this.errorReceiveMilestones, this));
+	IDE_backend_request("switchboard/milestones", {},
+	                    bind(this.receiveMilestones, this),
+	                    bind(this.errorReceiveMilestones), this);
 }
 /* *****	End Timeline code	***** */
 
@@ -305,9 +302,9 @@ Switchboard.prototype.receiveBlogPosts = function(nodes)
 {
 	// Remove any existing messages before adding new ones
 	replaceChildNodes($("student-blogs-list"));
-	for(var m in nodes.msgs)
+	for(var m in nodes.posts)
 	{
-		var item = nodes.msgs[m];
+		var item = nodes.posts[m];
 		var a = A({'href':item.link, 'target':'_blank'}, item.title);	//Write message title link
 		var s = SPAN({}, "");
 		s.innerHTML = ": "+item.body+" [by "+item.author+"]";		//message body
@@ -327,9 +324,8 @@ Switchboard.prototype.errorReceiveBlogPosts = function()
 Switchboard.prototype.GetBlogPosts = function()
 {
 	logDebug("Switchboard: Retrieving competitors' blog posts ");
-	var d = loadJSONDoc("./switchboard/getblogposts", {});
-
-	d.addCallback( bind(this.receiveBlogPosts, this));
-	d.addErrback( bind(this.errorReceiveBlogPosts, this));
+	IDE_backend_request("user/blog-posts", {},
+	                    bind(this.receiveBlogPosts, this),
+	                    bind(this.errorReceiveBlogPosts, this));
 }
 /* *****	End Blog Post Code	***** */
