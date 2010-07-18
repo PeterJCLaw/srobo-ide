@@ -636,12 +636,9 @@ ProjList.prototype._grab_list = function(team) {
 
 	this.loaded = false;
 
-	var d = loadJSONDoc("./projlist", { 'team' : this._team });
-
-	d.addCallback( bind( this._got_list, this ) );
-
-	d.addErrback( bind( function() {
-		this._err_prompt = status_button( "Error retrieving the project list", LEVEL_ERROR,
+	IDE_backend_request("team/list-projects", {team: team}, bind(this._got_list, this),
+	                    bind( function() {
+			this._err_prompt = status_button( "Error retrieving the project list", LEVEL_ERROR,
 			       "retry", bind( this._grab_list, this) );
 	}, this ) );
 }
