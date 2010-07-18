@@ -80,7 +80,7 @@ class GitRepository
 
 	public function listFiles($path)
 	{
-        $files = scandir($this->path . $path);
+        $files = scandir($this->path . "/$path");
         $result = array();
         foreach ($files as $file)
         {
