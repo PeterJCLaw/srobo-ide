@@ -25,7 +25,6 @@ class FileModule extends Module
 		// the project directory and git init it
 		$project = $input->getInput("project");
 
-		$this->openProject($this->team, $project);
 		$this->projectName = $project;
 
 		$this->installCommand('list', array($this, 'listFiles'));
