@@ -86,9 +86,8 @@ class GitRepository
         {
             if ($file[0] != ".")
             {
-                $result[] = file;
+                $result[] = $file;
             }
-
         }
 
         return $result;

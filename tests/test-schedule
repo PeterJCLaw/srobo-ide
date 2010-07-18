@@ -8,5 +8,5 @@ TEST auth/single
 
 TEST proj/create
 
-XFAIL file/basic
+TEST file/basic
 TEST file/simulate/unimplemented
