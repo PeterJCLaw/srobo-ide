@@ -29,7 +29,7 @@ Object.prototype.clone = function() {
 };
 
 var IDE_auth_token = null
-IDE_base = "ide-backend/index.php"
+IDE_base = "control.php"
 
 function IDE_authed() {
 	return IDE_auth_token != null;
