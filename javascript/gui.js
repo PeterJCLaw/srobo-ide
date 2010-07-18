@@ -108,7 +108,7 @@ function load_gui() {
 
 	// Shortcut button
 	var shortcuts = new dropDownBox("dropShortcuts");
-	var sbutton = new Tab( "v", {can_close:false,title:'See more options'} ); // TODO: find something like ⇓
+	var sbutton = new Tab( "v", {can_close:false,title:'See more options'} ); // TODO: find something like this
 	sbutton.can_focus = false;
 	connect( sbutton, "onclick", function(){shortcuts.toggleBox();} ) ;
 	removeElementClass(sbutton._a ,"nofocus"); /* remove nofocus class */
@@ -437,9 +437,9 @@ function User() {
 	}
 
 	this._request_info = function() {
-		IDE_backend_request("user/info", {}, this._got_info, function() {
+		IDE_backend_request("user/info", {}, bind(this._got_info, this), bind(function() {
 			status_button( "Failed to load user information", LEVEL_ERROR,
-			               "retry", bind( this._request_info, this ) ) });
+			               "retry", bind( this._request_info, this ) ) }, this));
 	}
 
 	this._got_info = function( info ) {
@@ -526,12 +526,12 @@ function User() {
 		var user = $("username").value;
 		var pass = $("password").value;
 
-		IDE_backend_request("auth/authenticate", {username: user, password: pass}, this._login_complete,
-		function(errcode, errmsg) {
+		IDE_backend_request("auth/authenticate", {username: user, password: pass}, bind(this._login_complete, this),
+		bind(function(errcode, errmsg) {
 			status_msg(errmsg, LEVEL_WARN);
 			$("password").value = '';
 			$("password").focus();
-		});
+		}, this));
 	}
 
 	this._logout_click = function(ev) {
@@ -540,11 +540,11 @@ function User() {
 			ev.stopPropagation();
 		}
 
-		IDE_backend_request("auth/deauthenticate", {}, window.location.reload, function() {
+		IDE_backend_request("auth/deauthenticate", {}, window.location.reload, bind(function() {
 			status_button( "Failed to log out", LEVEL_ERROR,
 				       "retry", partial( bind( this._logout_click, this ),
 							 null ) );
-		});
+		}, this));
 	}
 
 	// do they have admin priviledges - this gets overwirtten by the info collecter if they do
