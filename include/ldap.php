@@ -35,7 +35,7 @@ class LDAPManager
 		}
 		else
 		{
-			throw new Exception("cannot search groups, not authed to ldap");
+			throw new Exception("cannot search groups, not authed to ldap", E_LDAP_NOT_AUTHED);
 		}
 
 	}
@@ -52,6 +52,10 @@ class LDAPManager
              $saneResults["username"] = $results[0]["uid"][0];
              return $saneResults;
 
+		}
+		else
+		{
+			throw new Exception("cannot search userinfo, not authed to ldap", E_LDAP_NOT_AUTHED);
 		}
 
 	}

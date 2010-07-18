@@ -8,3 +8,4 @@ define('E_AUTH_FAILED',       5);
 define('E_AUTH_DENIED',       6);
 define('E_NOT_IMPL',          7);
 define('E_PROJ_NONEXISTANT', 0x21);
+define('E_LDAP_NOT_AUTHED', 0x41);
