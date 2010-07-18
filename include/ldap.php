@@ -40,5 +40,21 @@ class LDAPManager
 
 	}
 
+	public function getUserInfo($user)
+	{
+		if ($this->authed)
+		{
+			 $resultsID = ldap_search($this->connection, "uid=$user,ou=users,o=sr", "uid=*");
+             $results = ldap_get_entries($this->connection, $resultsID);
+             $saneResults = array();
+             $saneResults["cn"] = $results[0]["cn"][0];
+             $saneResults["email"] = $results[0]["mail"][0];
+             $saneResults["username"] = $results[0]["uid"][0];
+             return $saneResults;
+
+		}
+
+	}
+
 }
 
