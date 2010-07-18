@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>IDE test</title>
+		<script type="text/javascript" src="json2.js"></script>
+		<script type="text/javascript" src="ide.js"></script>
+		<script type="text/javascript">
+			IDE_base = "../index.php";
+			function send_auth() {
+				var un = document.getElementById('username').value;
+				var pw = document.getElementById('password').value;
+				IDE_backend_request("auth/authenticate", {username: un, password: pw},
+				                    function(response) {
+				                    	alert("Authed!");
+				                    }, function(errcode, errstr) {
+				                    	alert("Error! " + errstr + " (" + errcode + ")");
+				                    });
+			}
+			function send_deauth() {
+				IDE_backend_request("auth/deauthenticate", {},
+				                    function(response) {
+				                    	alert("Deauthed!");
+				                    }, function(errcode, errstr) {
+				                    	alert("Error! " + errstr + " (" + errcode + ")");
+				                    });
+			}
+		</script>
+	</head>
+	<body>
+		<p>
+			<form id="bees">
+				UN: <input type="text" id="username"><br>
+				PW: <input type="password" id="password"><br>
+				<a href="javascript:send_auth();">auth</a>
+				<a href="javascript:send_deauth();">deauth</a>
+			</form>
+			IDE!
+		</p>
+	</body>
+</html>
