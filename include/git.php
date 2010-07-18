@@ -29,7 +29,7 @@ class GitRepository
 
 	public static function createRepository($path)
 	{
-		if (@mkdir($path))
+		if (!is_dir($path) && mkdir($path))
 		{
 			shell_exec("cd $path ; git init");
 		}
