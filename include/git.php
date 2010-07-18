@@ -11,7 +11,7 @@ class GitRepository
 			throw new Exception("git repository at $path is corrupt", E_INTERNAL_ERROR);
 	}
 
-	private function gitExecute($command, $env = array())
+	private function gitExecute($cmd, $env = array())
 	{
 		$path = $this->path;
 		$command = "cd $path ; ";
@@ -23,7 +23,7 @@ class GitRepository
 				$command .= escapeshellarg("$key=$value ");
 			}
 		}
-		$command .= "git $command";
+		$command .= "git $cmd";
 		return trim(shell_exec($command));
 	}
 
