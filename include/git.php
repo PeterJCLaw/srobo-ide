@@ -11,20 +11,21 @@ class GitRepository
 			throw new Exception("git repository at $path is corrupt", E_INTERNAL_ERROR);
 	}
 
-	private function gitExecute($cmd, $env = array())
+	private function gitExecute($command, $env = array())
 	{
 		$path = $this->path;
-		$command = "cd $path ; ";
+		$buildCommand = "cd $path ; ";
 		if (!empty($env))
 		{
-			$command .= "env ";
+			$buildCommand .= "env ";
 			foreach ($env as $key=>$value)
 			{
-				$command .= escapeshellarg("$key=$value ");
+				$buildCommand .= escapeshellarg("$key=$value") . " ";
 			}
+			$buildCommand .= ";";
 		}
-		$command .= "git $cmd";
-		return trim(shell_exec($command));
+		$buildCommand .= "git $command";
+		return trim(shell_exec($buildCommand));
 	}
 
 	public static function createRepository($path)
@@ -39,6 +40,13 @@ class GitRepository
 	public function getCurrentRevision()
 	{
 		return $this->gitExecute("describe --always");
+	}
+
+	public function getFirstRevision()
+	{
+		$revisions = explode("\n", $this->gitExecute("rev-list --all"));
+		return $revisions[count($revisions)-1];
+
 	}
 
 	public function log($oldCommit, $newCommit)
