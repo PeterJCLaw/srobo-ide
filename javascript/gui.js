@@ -437,14 +437,9 @@ function User() {
 	}
 
 	this._request_info = function() {
- 		var d = loadJSONDoc("./user/info");
-
- 		d.addCallback( bind( this._got_info, this ) );
-
- 		d.addErrback( bind( function() {
+		IDE_backend_request("user/info", {}, this._got_info, function() {
 			status_button( "Failed to load user information", LEVEL_ERROR,
-				       "retry", bind( this._request_info, this ) );
-		}, this ) );
+			               "retry", bind( this._request_info, this ) ) });
 	}
 
 	this._got_info = function( info ) {
@@ -455,13 +450,15 @@ function User() {
 		for( var team_num in info["teams"] )
 			this.teams.push( parseInt(team_num, 10) );
 
-		this._settings = info["settings"];
+		// FIXME!
+		// this._settings = info["settings"];
+		this._settings = {}
 		for( var k in this._settings ) {
 			logDebug( k + " = " + this._settings[k] );
 		}
 
-		if(info.can_admin) {
-			this.can_admin = function() {return true;};
+		if(info["is-admin"]) {
+			this.can_admin = function() { return true;};
 		}
 
 		// Connect up the logout button
@@ -475,25 +472,13 @@ function User() {
 		return this._settings[sname];
 	}
 
-	// Asks the server if we're logged in
+	// Check if we're logged in
 	this._check_logged_in = function() {
-		var d = loadJSONDoc("./user/login", {});
-
-		d.addCallback( bind( this._resp_logged_in, this ) );
-		d.addErrback( bind( function() {
-			status_button( "Failed to check whether user is logged in.", LEVEL_ERROR,
-				       "retry", bind( this._check_logged_in, this ) );
-		}, this ) );
-	}
-
-	// Handle the response from the server about whether we're logged in
-	this._resp_logged_in = function(res) {
-		if ( res["login"] ) {
-			// We're logged in -- grab user information
+		if (IDE_authed()) {
 			this._request_info();
-		}
-		else
+		} else {
 			this._show_login();
+		}
 	}
 
 	// Show the login dialog
@@ -526,6 +511,11 @@ function User() {
 		setStyle( "top", {"display":""} );
 	}
 
+	this._login_complete = function() {
+		this._hide_login();
+		this._request_info();
+	}
+
 	// Grab the username and password from the login form and start the login
 	this._do_login = function(ev) {
 		if( ev != null ) {
@@ -536,26 +526,12 @@ function User() {
 		var user = $("username").value;
 		var pass = $("password").value;
 
-		var d = postJSONDoc( "./user/login", { sendContent: {"usr": user, "pwd": pass} } );
-
-		d.addCallback( bind( this._login_resp, this ) );
-		d.addErrback( bind( function() {
-			status_button( "Error whilst logging in", LEVEL_ERROR,
-				       "retry", bind( this._do_login, this ) );
-		}, this ) );
-	}
-
-	this._login_resp = function(resp) {
-		if( resp["login"] ) {
-			// Logged in -- grab user information
-			this._hide_login();
-			this._request_info();
-		} else {
-			// Something was wrong with username/password
-			status_msg( "Incorrect username or password", LEVEL_WARN );
+		IDE_backend_request("auth/authenticate", {username: user, password: pass}, this._login_complete,
+		function(errcode, errmsg) {
+			status_msg(errmsg, LEVEL_WARN);
 			$("password").value = '';
 			$("password").focus();
-		}
+		});
 	}
 
 	this._logout_click = function(ev) {
@@ -564,18 +540,11 @@ function User() {
 			ev.stopPropagation();
 		}
 
-		var d = loadJSONDoc( "./user/logout", {} );
-
-		d.addCallback( bind( this._logout_resp, this ) );
-		d.addErrback( bind( function() {
+		IDE_backend_request("auth/deauthenticate", {}, window.location.reload, function() {
 			status_button( "Failed to log out", LEVEL_ERROR,
 				       "retry", partial( bind( this._logout_click, this ),
 							 null ) );
-		}, this ) );
-	}
-
-	this._logout_resp = function(resp) {
-		window.location.reload();
+		});
 	}
 
 	// do they have admin priviledges - this gets overwirtten by the info collecter if they do
