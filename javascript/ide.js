@@ -18,13 +18,13 @@ if (typeof XMLHttpRequest == "undefined")
     throw new Error("This browser does not support XMLHttpRequest.");
   };
 
-Object.prototype.clone = function() {
-  var newObj = (this instanceof Array) ? [] : {};
-  for (i in this) {
+var IDE_clone = function(object) {
+  var newObj = (object instanceof Array) ? [] : {};
+  for (i in object) {
     if (i == 'clone') continue;
-    if (this[i] && typeof this[i] == "object") {
-      newObj[i] = this[i].clone();
-    } else newObj[i] = this[i]
+    if (object[i] && typeof object[i] == "object") {
+      newObj[i] = object[i].clone();
+    } else newObj[i] = object[i]
   } return newObj;
 };
 
@@ -36,7 +36,7 @@ function IDE_authed() {
 }
 
 function IDE_backend_request(command, arguments, successCallback, errorCallback) {
-	var args = arguments.clone();
+	var args = IDE_clone(arguments);
 	if (IDE_auth_token != null) {
 		args["auth-token"] = IDE_auth_token
 	}
