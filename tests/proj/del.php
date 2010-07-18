@@ -12,7 +12,7 @@ exec("mkdir -p /tmp/test-repos/beedogs");
 $config = Configuration::getInstance();
 $config->override("repopath", "/tmp/test-repos");
 $config->override("user.default", "death");
-$config->override("user.default.groups", array("beedogs", "failcakes"));
+$config->override("user.default.teams", array(1, 2));
 $config->override("auth_module", "single");
 $config->override("modules", array("proj"));
 
@@ -22,7 +22,7 @@ test_true($auth->authUser('',''), "authentication failed");
 
 //setup the required input keys
 $input = Input::getInstance();
-$input->setInput("team", "beedogs");
+$input->setInput("team", 1);
 $input->setInput("project", "ponies");
 
 $mm = ModuleManager::getInstance();

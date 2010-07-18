@@ -18,7 +18,7 @@ abstract class AuthBackend
 	}
 
     abstract public function getCurrentUser();
-    abstract public function getCurrentUserGroups();
+    abstract public function getCurrentUserTeams();
     abstract public function authUser($username, $password);
     abstract public function deauthUser();
     abstract public function getNextAuthToken();

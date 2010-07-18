@@ -57,7 +57,7 @@ class FileModule extends Module
 	private function verifyTeam()
 	{
 		$auth = AuthBackend::getInstance();
-		if (!in_array($this->team, $auth->getCurrentUserGroups()))
+		if (!in_array($this->team, $auth->getCurrentUserTeams()))
 		{
 			throw new Exception("proj attempted on team you aren't in", E_PERM_DENIED);
 		}

@@ -11,7 +11,7 @@ class UserInfo
     {
         $auth = AuthBackend::getInstance();
         $this->user = $auth->getCurrentUser();
-        $this->info["groups"] = $auth->getCurrentUserGroups();
+        $this->info["teams"] = $auth->getCurrentUserTeams();
     }
 
     public static function getInstance()

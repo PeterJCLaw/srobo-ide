@@ -14,7 +14,7 @@ class ProjectManager
 
 	private function verifyName($name)
 	{
-		if (!is_string($name) || $name == '')
+		if ((!is_int($name) && !is_string($name)) || $name === '')
 			throw new Exception('name was not a name', E_INTERNAL_ERROR);
 	}
 

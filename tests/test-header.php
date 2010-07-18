@@ -119,7 +119,7 @@ error_reporting(E_ALL | E_STRICT);
 
 function __error_handler($errno, $errstr)
 {
-	__test(false, "PHP error: $errstr", 2, true);
+	__test($errno != 0, "PHP error: $errstr", 2, true);
 }
 
 set_error_handler('__error_handler');
