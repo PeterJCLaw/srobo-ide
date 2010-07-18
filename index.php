@@ -36,7 +36,7 @@ $output = Output::getInstance();
 $input->setRequest($request);
 foreach ($data as $key => $value)
 {
-	$input->addInput($key, $value);
+	$input->setInput($key, $value);
 }
 
 // install all modules
