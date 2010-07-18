@@ -40,11 +40,11 @@ foreach ($data as $key => $value)
 }
 
 // install all modules
-$mm = ModuleManager::getInstance();
-$mm->importModules();
-
 try
 {
+	$mm = ModuleManager::getInstance();
+	$mm->importModules();
+
 	$modname = $input->getRequestModule();
 	if (!$mm->moduleExists($modname))
 	{
@@ -56,6 +56,7 @@ try
 catch (Exception $e)
 {
 	$output->setOutput('error', array($e->getCode(), $e->getMessage()));
+	file_put_contents('/tmp/exception', $e->getTraceAsString());
 }
 
 $data = $output->encodeOutput();
