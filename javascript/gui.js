@@ -68,7 +68,9 @@ addLoadEvent( function() {
 	var d = user.load();
 	// Wait for the user information to come back
 	d.addCallback( load_select_team );
-	d.addErrback( function() { window.alert("Failed to get user info: TODO: replace this message mechanism"); } );
+	d.addErrback( function(err) {
+		window.alert("Failed to get user info: " + err);
+	} );
 });
 
 // 1) executed after the user's information has been acquired
@@ -444,15 +446,16 @@ function User() {
 
 	this._got_info = function( info ) {
 		logDebug( "Got user information" );
-		this.team_names = info["teams"];
 
+		this.team_names = {};
 		this.teams = [];
-		for( var team_num in info["teams"] )
-			this.teams.push( parseInt(team_num, 10) );
+		for( var i = 0; i < info["teams"].length; i++ ) {
+			var num = info["teams"][i];
+			this.team_names[num] = "Team " + num;
+			this.teams.push(parseInt(num, 10));
+		}
 
-		// FIXME!
-		// this._settings = info["settings"];
-		this._settings = {}
+		this._settings = info["settings"];
 		for( var k in this._settings ) {
 			logDebug( k + " = " + this._settings[k] );
 		}
