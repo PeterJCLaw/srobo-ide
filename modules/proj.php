@@ -44,8 +44,11 @@ class ProjModule extends Module
 		// the project directory and git init it
 		$project = $input->getInput("project");
 
-		$this->openProject($this->team, $project);
-		$this->projectName = $project;
+		if ($this->team && $project)
+		{
+			$this->openProject($this->team, $project);
+			$this->projectName = $project;
+		}
 
 		$this->installCommand('new', array($this, 'createProject'));
 		$this->installCommand('info', array($this, 'projectInfo'));
