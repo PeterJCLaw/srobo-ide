@@ -96,7 +96,7 @@ class GitRepository
 
 	public function createFile($path)
 	{
-		file_put_contents('', $this->path . "/$path");
+		touch($this->path . "/$path");
 		$this->gitExecute("add $path");
 	}
 
