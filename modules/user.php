@@ -55,11 +55,20 @@ class UserModule extends Module
 	{
 		$output = Output::getInstance();
 		$output->setOutput('url', 'file:///dev/null');
+		$output->setOutput('checked', false);
+		$output->setOutput('valid', false);
 	}
 
 	public function blogPosts()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('posts', array());
+		$output->setOutput('posts', array(
+			array(
+				'link'   => 'http://example.com',
+				'title'  => 'The Blog Post',
+				'body'   => 'of doom',
+				'author' => 'pony man\'s youngest son'
+			)
+		));
 	}
 }
