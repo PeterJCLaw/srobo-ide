@@ -18,15 +18,21 @@ function __test_value($stuff)
 	return trim($stuff);
 }
 
-function __test($cond, $message)
+function __test($cond, $message, $frame = 1, $file = false)
 {
 	if ($cond)
 		return;
 	$bt = debug_backtrace(false);
-	array_shift($bt);
-	$frame = array_shift($bt);
+	$frame = $bt[$frame];
 	$line = $frame['line'];
-	echo "Test failed on line $line: $message\n";
+	if ($file)
+	{
+		echo "Test failed in " . $frame['file'] . " on line $line: $message\n";
+	}
+	else
+	{
+		echo "Test failed on line $line: $message\n";
+	}
 	exit(1);
 }
 
@@ -108,3 +114,12 @@ function test_exception($callback, $code, $message)
 		__test($rcode == $code, $message . " (wrong code, expected $code, got $rcode)");
 	}
 }
+
+error_reporting(E_ALL | E_STRICT);
+
+function __error_handler($errno, $errstr)
+{
+	__test(false, "PHP error: $errstr", 2, true);
+}
+
+set_error_handler('__error_handler');
