@@ -4,6 +4,8 @@ class TeamModule extends Module
 {
 	public function __construct()
 	{
+		$this->installCommand('list-members', array($this, 'listMembers'));
+		$this->installCommand('list-projects', array($this, 'listProjects'));
 	}
 
 	public function listMembers()
@@ -20,7 +22,7 @@ class TeamModule extends Module
 			$members = array($team);
 		else
 			throw new Exception("you are not a member of that team", E_PERM_DENIED);
-		$output->addOutput('team-members', $members);
+		$output->setOutput('team-members', $members);
 	}
 
 	public function listProjects()
@@ -36,6 +38,6 @@ class TeamModule extends Module
 			$projects = $manager->listRepositories($team);
 		else
 			throw new Exception("you are not a member of that team", E_PERM_DENIED);
-		$output->addOutput('team-projects', $members);
+		$output->setOutput('team-projects', $members);
 	}
 }
