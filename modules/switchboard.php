@@ -24,8 +24,8 @@ class SwitchboardModule extends Module
 	public function getMilestones()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('start', (time() - 3600) . '000');
-		$output->setOutput('end',   (time() + 3600) . '000');
+		$output->setOutput('start', (int)((time() - 3600) . '000'));
+		$output->setOutput('end',   (int)((time() + 3600) . '000'));
 		$output->setOutput('events', array(
 			array(
 				'title' => 'One',
