@@ -18,7 +18,24 @@ class ProjModule extends Module
             return;
         }
 
-		$this->projectManager = ProjectManager::getInstance();
+		try
+		{
+			$this->projectManager = ProjectManager::getInstance();
+		}
+		catch (Exception $e)
+		{
+			if ($e->getCode() == E_INTERNAL_ERROR)
+			{
+				// repo dir not set up
+				// this may be valid for auth tests, so just don't init
+				return;
+			}
+			else
+			{
+				// other error, rethrow
+				throw $e;
+			}
+		}
 
 		$input = Input::getInstance();
 		$this->team = $input->getInput("team");
