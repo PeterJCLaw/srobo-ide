@@ -8,6 +8,7 @@ TEST auth/single
 
 TEST proj/create
 TEST proj/log
+TEST proj/del
 
 TEST file/basic
 TEST file/simulate/unimplemented
