@@ -20,7 +20,17 @@ class LDAPManager
 			//do an ldap search
 			$resultsID = ldap_search($this->connection,"ou=groups,o=sr", "memberUid=$user");
 			$results = ldap_get_entries($this->connection , $resultsID);
-			print_r($results);
+			$saneGroups = array();
+			for ($i = 0; $i < $results["count"]; $i++)
+			{
+				$group = $results[$i];
+				$saneGroup = array();
+				$saneGroup["cn"] = $group["cn"][0];
+				$saneGroup["description"] = $group["description"][0];
+				$saneGroups[] = $saneGroup;
+			}
+
+			return $saneGroups;
 
 		}
 		else
