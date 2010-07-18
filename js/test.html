@@ -6,23 +6,22 @@
 		<script type="text/javascript" src="ide.js"></script>
 		<script type="text/javascript">
 			IDE_base = "../index.php";
+			var error = function(errcode, errstr) {
+				alert("Error " + errcode + ": " + errstr);
+			};
 			function send_auth() {
 				var un = document.getElementById('username').value;
 				var pw = document.getElementById('password').value;
 				IDE_backend_request("auth/authenticate", {username: un, password: pw},
 				                    function(response) {
 				                    	alert("Authed!");
-				                    }, function(errcode, errstr) {
-				                    	alert("Error! " + errstr + " (" + errcode + ")");
-				                    });
+				                    }, error);
 			}
 			function send_deauth() {
 				IDE_backend_request("auth/deauthenticate", {},
 				                    function(response) {
 				                    	alert("Deauthed!");
-				                    }, function(errcode, errstr) {
-				                    	alert("Error! " + errstr + " (" + errcode + ")");
-				                    });
+				                    }, error);
 			}
 		</script>
 	</head>
