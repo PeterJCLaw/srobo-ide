@@ -16,7 +16,7 @@ class TeamModule extends Module
 		$team = $input->getInput('team');
 		if ($team == null)
 			throw new Exception("need a team", E_MALFORMED_REQUEST);
-		if (in_array($team, $authModule->getCurrentUserGroups()))
+		if (in_array($team, $authModule->getCurrentUserTeams()))
 			$members = array($team);
 		else
 			throw new Exception("you are not a member of that team", E_PERM_DENIED);
@@ -32,7 +32,7 @@ class TeamModule extends Module
 		$team = $input->getInput('team');
 		if ($team == null)
 			throw new Exception("need a team", E_MALFORMED_REQUEST);
-		if (in_array($team, $authModule->getCurrentUserGroups()))
+		if (in_array($team, $authModule->getCurrentUserTeams()))
 			$projects = $manager->listRepositories($team);
 		else
 			throw new Exception("you are not a member of that team", E_PERM_DENIED);

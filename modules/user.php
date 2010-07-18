@@ -17,7 +17,7 @@ class UserModule extends Module
 		}
 		$output->setOutput('display-name', $auth->displayNameForUser($username));
 		$output->setOutput('email', $auth->emailForUser($username));
-		$output->setOutput('teams', $auth->getCurrentUserGroups());
+		$output->setOutput('teams', $auth->getCurrentUserTeams());
 		$output->setOutput('is-admin', false);
 	}
 }

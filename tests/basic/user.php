@@ -3,7 +3,7 @@
 $config = Configuration::getInstance();
 $config->override('auth_module', 'single');
 $config->override('user.default', 'cake');
-$config->override('user.default.groups', array('team1', 'team2'));
+$config->override('user.default.teams', array(1, 2));
 
 //we have to do an auth before we can start using ui
 $auth = AuthBackend::getInstance();
@@ -22,4 +22,4 @@ catch (Exception $e)
 	test_equal($e->getCode(), E_INTERNAL_ERROR, 'UserInfo->getInfo threw the wrong exception');
 }
 
-test_equal($ui->getInfo('groups'), $auth->getCurrentUserGroups(), "the user was not in the groups the authbackend returned");
+test_equal($ui->getInfo('teams'), $auth->getCurrentUserTeams(), "the user was not in the teams the authbackend returned");
