@@ -1,19 +1,20 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
     <head>
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <!-- Style Sheets -->
-        <link rel="stylesheet" href="css/newstyle.css" type="text/css"/>
-        <link rel="stylesheet" href="css/editmode.css" type="text/css"/>
-        <link rel="stylesheet" href="css/projpage.css" type="text/css"/>
-        <link rel="stylesheet" href="css/browser.css" type="text/css"/>
-        <link rel="stylesheet" href="css/log.css" type="text/css"/>
-        <link rel="stylesheet" href="css/calendar.css" type="text/css"/>
-        <link rel="stylesheet" href="css/errors.css" type="text/css"/>
-        <link rel="stylesheet" href="css/menubar.css" type="text/css"/>
-        <link rel="stylesheet" href="css/switchboard.css" type="text/css"/>
-        <link rel="stylesheet" href="css/admin.css" type="text/css"/>
-        <link rel="stylesheet" href="css/diff.css" type="text/css"/>
+        <link rel="stylesheet" href="css/newstyle.css" type="text/css">
+        <link rel="stylesheet" href="css/editmode.css" type="text/css">
+        <link rel="stylesheet" href="css/projpage.css" type="text/css">
+        <link rel="stylesheet" href="css/browser.css" type="text/css">
+        <link rel="stylesheet" href="css/log.css" type="text/css">
+        <link rel="stylesheet" href="css/calendar.css" type="text/css">
+        <link rel="stylesheet" href="css/errors.css" type="text/css">
+        <link rel="stylesheet" href="css/menubar.css" type="text/css">
+        <link rel="stylesheet" href="css/switchboard.css" type="text/css">
+        <link rel="stylesheet" href="css/admin.css" type="text/css">
+        <link rel="stylesheet" href="css/diff.css" type="text/css">
         <!-- Javascript Source Files -->
         <script src="javascript/json2.js" type="text/javascript"></script>
         <script src="javascript/ide.js" type="text/javascript"></script>
@@ -40,10 +41,10 @@
             <div id="login-box">
                 <strong>Student Robotics IDE Login:</strong>
                 <em id="login-feedback">You must be logged in to use the IDE</em>
-                <input type="text" name="username" value="username" id="username" />
-                <input type="password" name="password" id="password" />
+                <input type="text" name="username" value="username" id="username">
+                <input type="password" name="password" id="password">
                 <a href="Login" id="login-button" class="button" >Log In</a>
-                <br /><a href="http://www.srobo.org/user/password">&raquo; Forgotten password</a>
+                <br><a href="http://www.srobo.org/user/password">&raquo; Forgotten password</a>
             </div>
         </div>
         <!-- File Browser    -->
@@ -63,7 +64,7 @@
             <textarea id="new-commit-msg" rows="3" cols="50"></textarea>
             <span id="browser-status">New Filename: </span>
             <div id="new-file-inputs">
-                <input type="text" id="new-file-name" value="new.py" ></input>
+                <input type="text" id="new-file-name" value="new.py">
                 <button id="save-new-file" >Save</button>
                 <button id="cancel-new-file" >Cancel</button>
             </div>
@@ -98,8 +99,8 @@
                 <li><a href="#" id="logout-button">Logout</a></li>
                 <li id="teaminfo">Loading...</li>
             </ul>
-            <div id="static-box"><img src="images/static.png" /></div>
-            <div id="rotating-box"><img src="images/anim.gif" /></div>
+            <div id="static-box"><img src="images/static.png" alt="logo"></div>
+            <div id="rotating-box"><img src="images/anim.gif" alt="logo"></div>
         </div>
 
         <div id="tabs">
@@ -207,7 +208,7 @@
 
                     <div id="proj-fileops">
                         <span>
-                            <button id="proj-select-none">Select None</button><br />
+                            <button id="proj-select-none">Select None</button><br>
                             <button id="proj-select-all">Select All</button>
                         </span>
                         Selection operations:
@@ -228,8 +229,8 @@
                 <div id="proj-rpane">
                     <div id="proj-rpane-header">
                         <div id="proj-name"></div>
-                        Ctrl+Click to Select (Cmd+Click on a Mac)<br />
-                        Click to Open<br/>
+                        Ctrl+Click to Select (Cmd+Click on a Mac)<br>
+                        Click to Open<br>
                     </div>
                     <ul id="proj-filelist"><li class="dummy"></li></ul>
                     <div class="ie6-prop-clear" style="clear:both;"></div>
@@ -272,17 +273,19 @@
 		<div id="links-window" class="switchboard-window">
 		<strong> Sources of Information </strong>
 			<div>
-			<span class="switch-link"><a href="http://www.studentrobotics.org/forum/"><img src="images/Forums.png" />Forum</a></span>
-			<span class="switch-link"><a href="http://www.studentrobotics.org/rulebook.pdf"><img src="images/Game.png" />Rules</a></span>
-			<span class="switch-link"><a href="http://www.studentrobotics.org/docs/"><img src="images/Docs.png" />Docs</a></span>
+			<span class="switch-link"><a href="http://www.studentrobotics.org/forum/"><img src="images/Forums.png" alt="Forum">Forum</a></span>
+			<span class="switch-link"><a href="http://www.studentrobotics.org/rulebook.pdf"><img src="images/Game.png" alt="Rules">Rules</a></span>
+			<span class="switch-link"><a href="http://www.studentrobotics.org/docs/"><img src="images/Docs.png" alt="Docs">Docs</a></span>
 			</div>
 		</div>
 		<div id="user-feed-box" class="switchboard-window">
-		<form name="user_feed_form" method="post" onSubmit="return false;">
-			<strong>Your Student Robotics Blog feed</strong>
-			<input type="text" name="user_feed_input" id="user-feed-url" />
-			If you enter the URL of your blog's RSS/Atom feed here, then other teams can read about your progress. You can enter a maximum of 1 blog feed but can change it using the box above. If you do not have a blog you can set one up for free at <a href="http://www.blogger.com" target="_blank">Blogger</a> or <a href="http://wordpress.com/" target="_blank">Wordpress</a> amongst many other sites. All feeds are verified by an SR mentor before appearing on the site, if your feed url has been verified, it will have a green background.
-			If your feed has been checked and rejected it will have a red background.
+		<form name="user_feed_form" action="#" method="post" onSubmit="return false;">
+			<p>
+				<strong>Your Student Robotics Blog feed</strong>
+				<input type="text" name="user_feed_input" id="user-feed-url">
+				If you enter the URL of your blog's RSS/Atom feed here, then other teams can read about your progress. You can enter a maximum of 1 blog feed but can change it using the box above. If you do not have a blog you can set one up for free at <a href="http://www.blogger.com" target="_blank">Blogger</a> or <a href="http://wordpress.com/" target="_blank">Wordpress</a> amongst many other sites. All feeds are verified by an SR mentor before appearing on the site, if your feed url has been verified, it will have a green background.<br>
+				If your feed has been checked and rejected it will have a red background.
+			</p>
 		</form>
 		</div>
 		<div id="student-blogs-window" class="switchboard-window">
@@ -294,7 +297,7 @@
 		<!--
 		<div id="kickstart-window" class="switchboard-window">
 			<strong>Where I was this time at Kickstart</strong>
-			<img src="http://www.johnbgrimes.com/blog/bees.jpg" id="kickstart-photo" />
+			<img src="http://www.johnbgrimes.com/blog/bees.jpg" id="kickstart-photo">
 			At this point in the 'year' during the Kickstart challenge you were...covered in bees
 		</div>
 		-->
