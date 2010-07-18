@@ -50,6 +50,7 @@ class ProjModule extends Module
 		$this->installCommand('new', array($this, 'createProject'));
 		$this->installCommand('info', array($this, 'projectInfo'));
 		$this->installCommand('log', array($this, 'projectLog'));
+		$this->installCommand('del', array($this, 'deleteProject'));
 	}
 
 	private function verifyTeam()
@@ -65,6 +66,23 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$this->openProject($this->team, $this->projectName);
+	}
+
+	public function deleteProject()
+	{
+		$this->verifyTeam();
+		$projPath = $this->projectManager->teamDirectory($this->team);
+		$projPath .= "/$this->projectName";
+		if (is_dir($projPath))
+		{
+			$this->projectManager->deleteRepository($this->team, $this->projectName);
+			return TRUE;
+		}
+		else
+		{
+			throw new Exception("attempted to delete nonexistant project", E_PROJ_NONEXISTANT);
+		}
+
 	}
 
 	public function projectInfo()
