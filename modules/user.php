@@ -10,6 +10,8 @@ class UserModule extends Module
 		$this->settingsPath = $config->getConfig('settingspath');
 		$this->installCommand('info', array($this, 'getInfo'));
 		$this->installCommand('settings-put', array($this, 'saveSettings'));
+		$this->installCommand('blog-feed', array($this, 'blogFeed'));
+		$this->installCommand('blog-posts', array($this, 'blogPosts'));
 	}
 
 	public function getInfo()
@@ -47,5 +49,17 @@ class UserModule extends Module
 		$settings = $input->getInput('settings');
 		$data = json_encode($settings);
 		file_put_contents("$this->settingsPath/$username.json", $data);
+	}
+
+	public function blogFeed()
+	{
+		$output = Output::getInstance();
+		$output->setOutput('url', 'file:///dev/null');
+	}
+
+	public function blogPosts()
+	{
+		$output = Output::getInstance();
+		$output->setOutput('posts', array());
 	}
 }
