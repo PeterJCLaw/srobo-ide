@@ -38,6 +38,6 @@ class TeamModule extends Module
 			$projects = $manager->listRepositories($team);
 		else
 			throw new Exception("you are not a member of that team", E_PERM_DENIED);
-		$output->setOutput('team-projects', $members);
+		$output->setOutput('team-projects', $projects);
 	}
 }
