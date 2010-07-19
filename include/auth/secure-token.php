@@ -7,7 +7,7 @@ abstract class SecureTokenAuth extends AuthBackend
 	private $key      = null;
 	private $tok_next = null;
 
-	const METHOD = 'AES256';
+	const METHOD = 'AES128';
 	const TIMEOUT = 600.0;
 
 	public function __construct()
