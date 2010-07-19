@@ -644,7 +644,7 @@ ProjList.prototype._grab_list = function(team) {
 }
 
 ProjList.prototype._got_list = function(resp) {
- 	this.projects = resp["projects"];
+ 	this.projects = resp["team-projects"];
  	this.loaded = true;
 
 	signal( this, "onchange", this._team );
