@@ -382,20 +382,18 @@ ProjFileList.prototype.refresh = function(auto) {
 	}
 
 	this._timeout = null;
-	var d = loadJSONDoc("./filelist", { 'team' : this._team,
-					'project' : this._project,
-					'rev' : this.rev,
-					'date' : this._birth } );
-
-	d.addCallback( bind( this._received, this ) );
-
+	var err_handler;
 	if(!auto)	//if it's an automatic call don't interrupt the user - just setup another
-		d.addErrback( bind( function (){
+		err_handler = bind( function (){
 			this._err_prompt = status_button( "Error retrieving the project file listing", LEVEL_ERROR,
 					   "retry", bind( this.refresh, this ) );
-		}, this ) );
+		}, this );
 	else
-		d.addErrback( bind( this._prepare_auto_refresh, this ) );
+		err_handler = bind( this._prepare_auto_refresh, this );
+	IDE_backend_request("file/list", {team:    this._team,
+	                                  project: this._project,
+	                                  path:    "."},
+	                                  bind(this._received, this), err_handler);
 }
 
 ProjFileList.prototype._hide = function() {
@@ -424,7 +422,7 @@ ProjFileList.prototype._received = function(nodes) {
 	swapDOM( "proj-filelist",
 		 UL( { "id" : "proj-filelist",
 		       "style" : "display:none" },
-		     map( bind(this._dir, this, 0), nodes.tree.sort(flist_cmp) ) ) );
+		     map( bind(this._dir, this, 0), nodes.files.sort(flist_cmp) ) ) );
 
 	this._show();
 }

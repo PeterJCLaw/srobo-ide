@@ -102,14 +102,13 @@ Calendar.prototype.dinm = function() {
 //ajax handler for receiving logs from server
 Calendar.prototype._receiveDates = function(nodes) {
 
-	if(nodes.history.length > 0) {
+	if(nodes.entries.length > 0) {
 		//convert string representation of date to javascript date object
 		this.logs = map(function(x) {
-			var parts = x.date.split("/");
-			var jsdate = new Date(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]);
+			var jsdate = new Date(x.time * 1000);
 			return { "date" : jsdate,
 				 "message" : x.message,
-				 "rev" : x.rev,
+				 "rev" : x.hash,
 				 "author" : x.author};
 		}, nodes.history);
 
@@ -131,14 +130,10 @@ Calendar.prototype._errorReceiveDates = function() {
 
 //get month of logs messages from server
 Calendar.prototype.getDates = function() {
-	var d = loadJSONDoc("./calendar", {
-		team : this.team,
-		file : "/"+this.proj,
-		mnth : this.date.getMonth(),
-		yr : this.date.getFullYear() } );
-
-	d.addCallback( bind(this._receiveDates, this));
-	d.addErrback( bind(this._errorReceiveDates, this));
+	IDE_backend_request("proj/log", {team: this.team,
+	                                 project: this.proj},
+	                                 bind(this._receiveDates, this),
+	                                 bind(this._errorReceiveDates, this));
 }
 
 //create a new array with one log entry per date (the last one from that day of that month)

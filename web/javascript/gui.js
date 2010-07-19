@@ -690,6 +690,7 @@ function TeamSelector() {
 var async_count = 0;
 
 function postJSONDoc( url, qa ) {
+	alert("did a postJSONDoc: " + url);
 	async_count += 1;
 	showElement( $("rotating-box") );
 
@@ -720,6 +721,7 @@ function load_postedJSONDoc( d, fail, XHR ) {
 }
 
 function loadJSONDoc( url, qa ) {
+	alert("did a loadJSONDoc: " + url);
 	async_count += 1;
 	showElement( $("rotating-box") );
 
