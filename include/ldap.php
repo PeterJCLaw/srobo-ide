@@ -3,7 +3,7 @@
 class LDAPManager
 {
 	private $connection = null;
-	private $authed = FALSE;
+	private $authed = false;
 	private $user;
 
 	public function __construct($host, $user, $pass)
@@ -12,7 +12,6 @@ class LDAPManager
 		$dn = "uid=$user,ou=users,o=sr";
 		$this->authed = ldap_bind($this->connection, $dn, $pass);
 		$this->user = $user;
-
 	}
 
 	public function getGroupsForUser($user)
@@ -33,13 +32,11 @@ class LDAPManager
 			}
 
 			return $saneGroups;
-
 		}
 		else
 		{
 			throw new Exception("cannot search groups, not authed to ldap", E_LDAP_NOT_AUTHED);
 		}
-
 	}
 
 	public function getUserInfo($user)
@@ -53,14 +50,11 @@ class LDAPManager
              $saneResults["email"] = $results[0]["mail"][0];
              $saneResults["username"] = $results[0]["uid"][0];
              return $saneResults;
-
 		}
 		else
 		{
 			throw new Exception("cannot search userinfo, not authed to ldap", E_LDAP_NOT_AUTHED);
 		}
-
 	}
-
 }
 
