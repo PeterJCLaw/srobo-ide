@@ -17,7 +17,7 @@ $config->override("modules", array("proj"));
 
 //do a quick authentication
 $auth = AuthBackend::getInstance();
-test_true($auth->authUser('',''), "authentication failed");
+test_true($auth->authUser('bees','face'), "authentication failed");
 
 //setup the required input keys
 $input = Input::getInstance();

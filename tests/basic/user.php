@@ -7,7 +7,7 @@ $config->override('user.default.teams', array(1, 2));
 
 //we have to do an auth before we can start using ui
 $auth = AuthBackend::getInstance();
-test_true($auth->authUser('', ''), 'authentication failed');
+test_true($auth->authUser('bees', 'face'), 'authentication failed');
 
 $ui = UserInfo::getInstance();
 test_nonnull($ui, "failed to get UserInfo instance");

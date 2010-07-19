@@ -1,8 +1,10 @@
 <?php
 
-class SingleAuth extends AuthBackend
+require_once('include/auth/secure-token.php');
+
+class SingleAuth extends SecureTokenAuth
 {
-    private $authed = false;
+    /*private $authed = false;
     private $user;
 
     public function __construct()
@@ -69,7 +71,22 @@ class SingleAuth extends AuthBackend
         {
             return array();
         }
-    }
+    }*/
+
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+	public function checkAuthentication($username, $password)
+	{
+		return $username != null && $password != null;
+	}
+
+	public function getTeams($username)
+	{
+		return Configuration::getInstance()->getConfig("user.default.teams");
+	}
 
 	public function displayNameForGroup($group)
 	{
