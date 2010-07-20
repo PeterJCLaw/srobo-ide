@@ -57,5 +57,16 @@ class LDAPManager
 			throw new Exception("cannot search userinfo, not authed to ldap", E_LDAP_NOT_AUTHED);
 		}
 	}
+
+	public function getAuthed()
+	{
+		return $this->authed;
+	}
+
+	public function getUser()
+	{
+		return $this->user;
+	}
+
 }
 
