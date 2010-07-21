@@ -1,6 +1,8 @@
 <?php
 $config = Configuration::getInstance();
 $config->override('auth_module', 'ldap');
+if (!$config->getConfig("ldap.host"))
+	skip_test();
 $config->override('ldap.host', 'localhost');
 
 $input = Input::getInstance();
