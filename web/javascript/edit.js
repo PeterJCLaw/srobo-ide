@@ -290,7 +290,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._load_contents = function() {
 		IDE_backend_request("file/get", { team : this.team,
 		                   project: this.project,
-						   file : this.path/*,
+						   path : this.path.substr(1)/*,
 						   revision : this.rev*/},
 						   bind(this._recv_contents, this),
 						   bind(this._recv_contents_err, this));
