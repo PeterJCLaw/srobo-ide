@@ -1,0 +1,3 @@
+<?php
+
+skip_test();

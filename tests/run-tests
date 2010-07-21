@@ -8,6 +8,7 @@ $sched = file('tests/test-schedule');
 $passes = 0;
 $fails  = 0;
 $xfails = 0;
+$skips  = 0;
 $fixes  = 0;
 
 $line = 0;
@@ -54,7 +55,12 @@ foreach ($sched as $value)
 	$rc = proc_close($process);
 	if ($rc == 0)
 	{
-		if ($xfail)
+		if (strpos($output, '___SKIP_TEST') !== false)
+		{
+			++$skips;
+			echo "SKIP    $tn\n";
+		}
+		elseif ($xfail)
 		{
 			++$fixes;
 			echo "FIXED   $tn\n";
@@ -99,5 +105,7 @@ if ($xfails > 0)
 	printf("%4d xfails.\n", $xfails);
 if ($fixes > 0)
 	printf("%4d fixes.\n", $fixes);
+if ($skips > 0)
+	printf("%4d tests skipped.\n", $skips);
 exit($fails > 0 ? 1 : 0);
 

@@ -123,3 +123,9 @@ function __error_handler($errno, $errstr)
 }
 
 set_error_handler('__error_handler');
+
+function skip_test()
+{
+	echo "___SKIP_TEST";
+	exit(0);
+}
