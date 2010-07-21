@@ -1,6 +1,7 @@
 <?php
 $config = Configuration::getInstance();
 $config->override('auth_module', 'ldap');
+$config->override('ldap.host', 'localhost');
 
 $input = Input::getInstance();
 $input->setInput("user", "your_ldap_auth_user_here");
