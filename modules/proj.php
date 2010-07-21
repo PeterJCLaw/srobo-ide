@@ -100,14 +100,14 @@ class ProjModule extends Module
 		$this->verifyTeam();
 		$output = Output::getInstance();
 		$input = Input::getInstance();
-		$currRev = $input->getInput("start-commit");
+		$currRev = $input->getInput("start-commit", true);
 
 		if ($currRev == null)
 		{
 			$currRev = $this->projectRepository->getCurrentRevision();
 		}
 
-		$firstRev = $input->getInput("end-commit");
+		$firstRev = $input->getInput("end-commit", true);
 
 		if ($firstRev == null) {
 			$firstRev = $this->projectRepository->getFirstRevision();

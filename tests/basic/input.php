@@ -13,8 +13,8 @@ test_equal($input->getRequestModule(), 'bees/cake', "wrong module on second RQ t
 test_equal($input->getRequestCommand(), 'death', "wrong command on second RQ test");
 
 // test the data handling
-test_null($input->getInput('dogbees'), "undefined input was not null");
+test_null($input->getInput('dogbees', true), "undefined input was not null");
 $input->setInput('dogbees', 'moof');
 test_equal($input->getInput('dogbees'), 'moof', "input was incorrect after addition");
 $input->removeInput('dogbees');
-test_null($input->getInput('dogbees'), "input failed to remove key");
+test_null($input->getInput('dogbees', true), "input failed to remove key");

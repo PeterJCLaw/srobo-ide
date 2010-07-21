@@ -32,12 +32,14 @@ class Input
 		$this->requestModule = implode('/', $parts);
 	}
 
-	public function getInput($key)
+	public function getInput($key, $optional = false)
 	{
 		if (isset($this->inputs[$key]))
 			return $this->inputs[$key];
-		else
+		elseif ($optional)
 			return null;
+		else
+			throw new Exception("Input key failed to exist", E_MALFORMED_REQUEST);
 	}
 
 	public function setInput($key, $value)
