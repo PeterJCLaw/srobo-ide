@@ -1,9 +1,15 @@
 <?php
 
+/**
+ * A class to manage git repositories
+ */
 class GitRepository
 {
 	private $path;
 
+	/**
+	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
+	 */
 	public function __construct($path)
 	{
 		$this->path = $path;
@@ -11,6 +17,9 @@ class GitRepository
 			throw new Exception("git repository at $path is corrupt", E_INTERNAL_ERROR);
 	}
 
+	/**
+	 * Execute a command with the specified environment variables
+	 */
 	private function gitExecute($command, $env = array())
 	{
 		$path = $this->path;
@@ -28,6 +37,9 @@ class GitRepository
 		return trim(shell_exec($buildCommand));
 	}
 
+	/**
+	 * Creates a git repository on a specified path, fails if the path exists
+	 */
 	public static function createRepository($path)
 	{
 		if (!is_dir($path) && mkdir($path))
@@ -37,17 +49,26 @@ class GitRepository
 		return new GitRepository($path);
 	}
 
+	/**
+     * Gets the most recent revision hash
+	 */
 	public function getCurrentRevision()
 	{
 		return $this->gitExecute("describe --always");
 	}
 
+	/**
+	 * Gets the hash of the most recent revision
+	 */
 	public function getFirstRevision()
 	{
 		$revisions = explode("\n", $this->gitExecute("rev-list --all"));
 		return $revisions[count($revisions)-1];
 	}
 
+	/**
+	 * Gets the log between the arguments
+	 */
 	public function log($oldCommit, $newCommit)
 	{
 		$log = $this->gitExecute("log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
@@ -68,12 +89,18 @@ class GitRepository
 		return $results;
 	}
 
+	/**
+	 * Resets the repository back to HEAD
+	 */
 	public function reset()
 	{
 		$this->gitExecute("reset --hard");
 		$this->gitExecute("clean -f -d");
 	}
 
+	/**
+	 * performs a git commit
+	 */
 	public function commit($message, $name, $email)
 	{
 		$tmp = tempnam("/tmp", "ide-");
@@ -85,6 +112,9 @@ class GitRepository
 		unlink($tmp);
 	}
 
+	/**
+	 * Gets the file tree for the git repository
+	 */
 	public function fileTreeCompat()
 	{
 		$root = $this->path;
@@ -104,6 +134,9 @@ class GitRepository
 		}, $parts);
 	}
 
+	/**
+	 * Lists the files within the top level of the repository
+	 */
 	public function listFiles($path)
 	{
         $files = scandir($this->path . "/$path");
@@ -119,23 +152,35 @@ class GitRepository
         return $result;
 	}
 
+	/**
+	 * Creates a file on the repo that is empty
+	 */
 	public function createFile($path)
 	{
 		touch($this->path . "/$path");
 		$this->gitExecute("add $path");
 	}
 
+	/**
+	 * Removes a file on the repo
+     */
 	public function removeFile($path)
 	{
 		$this->gitExecute("rm -f $path");
 	}
 
+	/**
+	 * Moves a file within the repo
+	 */
 	public function moveFile($src, $dst)
 	{
 		$this->copyFile($src, $dst);
 		$this->removeFile($src);
 	}
 
+	/**
+	 * Copies a file between src and dst
+	 */
 	public function copyFile($src, $dst)
 	{
 		$this->createFile($dst);
@@ -143,6 +188,9 @@ class GitRepository
 		$this->putFile($dst, $content);
 	}
 
+	/**
+	 * Gets the contents of the file, optionally of a specific revision
+	 */
 	public function getFile($path, $commit = null) // pass $commit to get a particular revision
 	{
 		if ($commit === null)
@@ -155,17 +203,26 @@ class GitRepository
 		}
 	}
 
+	/**
+	 * Writes content to a file
+	 */
 	public function putFile($path, $content)
 	{
 		file_put_contents($this->path . "/$path", $content);
 		$this->gitExecute("add $path");
 	}
 
+	/**
+	 * Gets a diff between two commits
+	 */
 	public function diff($commitOld, $commitNew)
 	{
 		return $this->gitExecute("diff -C -M $commitOld..$commitNew");
 	}
 
+	/**
+	 * does a git clone on destination then deletes the .git directory
+	 */
 	public function cloneSource($dest, $commit = 'HEAD')
 	{
 		// TODO: fix to actually obey commit
@@ -173,8 +230,12 @@ class GitRepository
 		shell_exec("rm -rf $dest/.git");
 	}
 
+	/**
+	 * Reverts a specific commit
+	 */
 	public function revert($commit)
 	{
 		$this->gitExecute("revert $commit");
 	}
+
 }

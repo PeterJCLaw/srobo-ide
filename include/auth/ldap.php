@@ -1,5 +1,7 @@
 <?php
 
+require_once("include/auth/secure-token.php");
+require_once("include/ldap.php");
 /**
  * A class for doing LDAP authentication using the secure token system
  * implements SecureTokenAuth
@@ -25,7 +27,7 @@ class LDAPAuth extends SecureTokenAuth
 	{
 		$config = Configuration::getInstance();
 		$ldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
-		$groups = $this->ldapManager->getGroupsForUser($username);
+		$groups = $ldapManager->getGroupsForUser($username);
 		$teams = array();
 
 		foreach ($groups as $group)
