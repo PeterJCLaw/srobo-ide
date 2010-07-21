@@ -1,4 +1,5 @@
 TEST basic/sanity
+TEST basic/test-skip
 TEST basic/input
 TEST basic/output
 TEST basic/user
