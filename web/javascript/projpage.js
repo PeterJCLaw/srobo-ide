@@ -390,7 +390,7 @@ ProjFileList.prototype.refresh = function(auto) {
 		}, this );
 	else
 		err_handler = bind( this._prepare_auto_refresh, this );
-	IDE_backend_request("file/list", {team:    this._team,
+	IDE_backend_request("file/tree", {team:    this._team,
 	                                  project: this._project,
 	                                  path:    "."},
 	                                  bind(this._received, this), err_handler);
@@ -422,7 +422,7 @@ ProjFileList.prototype._received = function(nodes) {
 	swapDOM( "proj-filelist",
 		 UL( { "id" : "proj-filelist",
 		       "style" : "display:none" },
-		     map( bind(this._dir, this, 0), nodes.files.sort(flist_cmp) ) ) );
+		     map( bind(this._dir, this, 0), nodes.tree.sort(flist_cmp) ) ) );
 
 	this._show();
 }

@@ -125,7 +125,7 @@ Browser.prototype._getFileTree = function(tm) {
 	this._receiveTree({tree:[{autosave:0,children:[],kind:'FOLDER',name:'Loading...',path:'@',rev:-1}]});
 	$('save-new-file').disabled = true;
 
-	IDE_backend_request("file/list", {team: tm,
+	IDE_backend_request("file/tree", {team: tm,
 	                                  project: $("browser-project-select").value},
 	                                  bind(this._receiveTree, this),
 	                                  bind(this._errorReceiveTree, this,
