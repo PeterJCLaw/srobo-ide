@@ -38,11 +38,11 @@ class ProjModule extends Module
 		}
 
 		$input = Input::getInstance();
-		$this->team = $input->getInput("team");
+		$this->team = $input->getInput("team", true);
 
 		// check that the project exists and is a git repo otherwise construct
 		// the project directory and git init it
-		$project = $input->getInput("project");
+		$project = $input->getInput("project", true);
 
 		if ($this->team && $project)
 		{
