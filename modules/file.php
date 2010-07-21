@@ -44,6 +44,7 @@ class FileModule extends Module
 
 		$this->projectName = $project;
 
+		$this->installCommand('tree', array($this, 'getFileTree'));
 		$this->installCommand('list', array($this, 'listFiles'));
 		$this->installCommand('get', array($this, 'getFile'));
 		$this->installCommand('put', array($this, 'putFile'));
@@ -69,6 +70,12 @@ class FileModule extends Module
 		$this->verifyTeam();
 		$repo = $pm->getRepository($this->team, $this->projectName);
 		return $repo;
+	}
+
+	public function getFileTree()
+	{
+		$output = Output::getInstance();
+		$output->setOutput('tree', $this->repository()->fileTree());
 	}
 
 	public function listFiles()
