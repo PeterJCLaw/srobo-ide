@@ -61,7 +61,7 @@ test_false(file_exists("$repopath/huh"), 'old file still exists after move');
 $input->setInput('path', '.');
 $file->dispatchCommand('list');
 test_equal($output->getOutput('files'), array('wut'), 'incorrect file list');
-$file->dispatchCommand('tree');
+$file->dispatchCommand('compat-tree');
 test_equal($output->getOutput('files'), array('wut'), 'incorrect file tree');
 
 if (is_dir("/tmp/test-repos"))
