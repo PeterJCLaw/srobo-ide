@@ -46,7 +46,6 @@ class GitRepository
 	{
 		$revisions = explode("\n", $this->gitExecute("rev-list --all"));
 		return $revisions[count($revisions)-1];
-
 	}
 
 	public function log($oldCommit, $newCommit)
@@ -86,13 +85,23 @@ class GitRepository
 		unlink($tmp);
 	}
 
-	public function fileTree()
+	public function fileTreeCompat()
 	{
 		$root = $this->path;
 		$content = shell_exec("find $root/* -type f");
 		$parts = explode("\n", $content);
 		$parts = array_map(function($x) use($root) { return str_replace("$root/", '', $x); }, $parts);
-		return array_filter($parts, function($x) { return $x != ''; });
+		$parts = array_filter($parts, function($x) { return $x != ''; });
+		$hash = $this->getCurrentRevision();
+		return array_map(function($x) use($hash)
+		{
+			return array('kind' => 'FILE',
+			             'name' => $x,
+			             'rev'  => $hash,
+			             'path' => "/$x",
+			         'children' => array(),
+			         'autosave' => 0);
+		}, $parts);
 	}
 
 	public function listFiles($path)
