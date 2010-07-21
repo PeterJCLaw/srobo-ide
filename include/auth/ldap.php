@@ -4,10 +4,9 @@
  * A class for doing LDAP authentication using the secure token system
  * implements SecureTokenAuth
  * @author Sam Phippen <samphippen@googlemail.com>
- *
  */
-class LDAPAuth extends SecureTokenAuth {
-
+class LDAPAuth extends SecureTokenAuth
+{
 	private $ldapManager;
 
 	public function __construct()
@@ -33,9 +32,8 @@ class LDAPAuth extends SecureTokenAuth {
 		{
 			if (stripos($group["cn"], "team"))
 			{
-				$teams[] = substr($group["cn"],4,count($group["cn"])-4);
+				$teams[] = (int)substr($group["cn"], 4);
 			}
-
 		}
 
 		return $teams;
@@ -61,7 +59,8 @@ class LDAPAuth extends SecureTokenAuth {
 
 	public function displayNameForUser($user)
 	{
-		if ($this->ldapManager->getAuthed()) {
+		if ($this->ldapManager->getAuthed())
+		{
 			$info = $this->ldapManager->getUserInfo($user);
 			return $info["name.first"] . " " . $info["name.last"];
 		}
@@ -69,7 +68,6 @@ class LDAPAuth extends SecureTokenAuth {
 		{
 			throw new Exception("you aren't authed to ldap", E_LDAP_NOT_AUTHED);
 		}
-
 	}
 
 	public function emailForUser($user)
@@ -83,7 +81,5 @@ class LDAPAuth extends SecureTokenAuth {
 		{
 			throw new Exception("you aren't authed to ldap", E_LDAP_NOT_AUTHED);
 		}
-
 	}
-
 }
