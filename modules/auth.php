@@ -9,7 +9,7 @@ class AuthModule extends Module
 		$this->authModule = AuthBackend::getInstance();
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
-		if ($in = $input->getInput('auth-token'))
+		if ($in = $input->getInput('auth-token', true))
 		{
 			$tok = $this->authModule->validateAuthToken($in);
 			if (!$tok)
