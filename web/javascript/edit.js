@@ -288,30 +288,22 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	// Start load the file contents
 	this._load_contents = function() {
-		var d = loadJSONDoc("./filesrc", { team : this.team,
-						   file : this.path,
-						   revision : this.rev});
-
-		d.addCallback( bind(this._recv_contents, this));
-		d.addErrback( bind(this._recv_contents_err, this));
+		IDE_backend_request("file/get", { team : this.team,
+		                   project: this.project,
+						   file : this.path/*,
+						   revision : this.rev*/},
+						   bind(this._recv_contents, this),
+						   bind(this._recv_contents_err, this));
 	}
 
 	// Handler for the reception of file contents
 	this._recv_contents = function(nodes) {
-		if( this._stat_contents != null ) {
-			this._stat_contents.close();
-			this._stat_contents = null;
-		}
-
-		if(this._mode == 'AUTOSAVE')
-			this.contents = nodes.autosaved_code;
-		else
-			this.contents = nodes.code;
-		this._original = nodes.code;
-		this._autosaved = nodes.autosaved_code;
+		this.contents = nodes.data;
+		this._original = nodes.data;
+		this._autosaved = nodes.data;
 		this._isNew = false;
-		this.rev = nodes.revision;
-		this.file_rev = nodes.file_rev;
+		this.rev = "1";
+		this.file_rev = "1";
 
 		this._update_contents();
 	}
@@ -668,12 +660,13 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	this._get_revisions = function() {
 		logDebug("retrieving file history");
-		var d = loadJSONDoc("./gethistory", { team : team,
+		this._receive_revisions({history: []});
+		/*var d = loadJSONDoc("./gethistory", { team : team,
 						      file : this.path,
 						      user : null,
 						      offset : 0});
 		d.addCallback( bind(this._receive_revisions, this));
-		d.addErrback( bind(this._error_receive_revisions, this));
+		d.addErrback( bind(this._error_receive_revisions, this));*/
 	}
 
 	//initialisation

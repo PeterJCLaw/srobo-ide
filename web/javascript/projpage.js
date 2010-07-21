@@ -390,10 +390,10 @@ ProjFileList.prototype.refresh = function(auto) {
 		}, this );
 	else
 		err_handler = bind( this._prepare_auto_refresh, this );
-	IDE_backend_request("file/tree", {team:    this._team,
-	                                  project: this._project,
-	                                  path:    "."},
-	                                  bind(this._received, this), err_handler);
+	IDE_backend_request("file/compat-tree", {team:    this._team,
+	                                         project: this._project,
+	                                         path:    "."},
+	                                         bind(this._received, this), err_handler);
 }
 
 ProjFileList.prototype._hide = function() {
