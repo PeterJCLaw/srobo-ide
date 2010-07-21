@@ -86,6 +86,15 @@ class GitRepository
 		unlink($tmp);
 	}
 
+	public function fileTree()
+	{
+		$root = $this->path;
+		$content = shell_exec("find $root/* -type f");
+		$parts = explode("\n", $content);
+		$parts = array_map(function($x) use($root) { return str_replace("$root/", '', $x); }, $parts);
+		return array_filter($parts, function($x) { return $x != ''; });
+	}
+
 	public function listFiles($path)
 	{
         $files = scandir($this->path . "/$path");
