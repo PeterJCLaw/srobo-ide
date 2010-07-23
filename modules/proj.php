@@ -65,12 +65,18 @@ class ProjModule extends Module
 		}
 	}
 
+	/**
+	 * creates a project, requires team and project input keys to be present
+	 */
 	public function createProject()
 	{
 		$this->verifyTeam();
 		$this->openProject($this->team, $this->projectName);
 	}
 
+	/**
+	 * deletes a project, requires that the team and project input keys are present
+	 */
 	public function deleteProject()
 	{
 		$this->verifyTeam();
