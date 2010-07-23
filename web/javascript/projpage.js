@@ -186,9 +186,15 @@ ProjPage.prototype.clickNewProject = function() {
 ProjPage.prototype.CreateNewProject = function(newProjName) {
 	/* Postback to create a new project - then what? */
 
-	var d = loadJSONDoc("./createproj",{ name : newProjName, team : team });
-	d.addCallback(bind(this._createProjectSuccess, this, newProjName));
-	d.addErrback(bind(this._createProjectFailure, this));
+
+	IDE_backend_request("proj/new", {team: team, project: newProjName},
+		bind(this._createProjectSuccess, this, newProjName),
+		bind(function(){
+			this._err_prompt = status_button("Error creating project",
+                                             LEVEL_ERROR,
+                                             "retry",
+                                             bind(this._CreateNewProject));
+		}, this));
 }
 
 ProjPage.prototype._createProjectSuccess = function(newProjName) {
