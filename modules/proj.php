@@ -98,6 +98,13 @@ class ProjModule extends Module
 	public function projectLog()
 	{
 		$this->verifyTeam();
+
+		//bail if we aren't in a repo
+		if ($this->projectRepository == null)
+		{
+			return FALSE;
+		}
+
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 		$currRev = $input->getInput("start-commit", true);
