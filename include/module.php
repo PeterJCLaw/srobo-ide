@@ -18,10 +18,16 @@ abstract class Module
 	}
 }
 
+/**
+ * Manages all modules within the ide
+ */
 class ModuleManager
 {
 	private static $singleton = null;
 
+	/**
+	 * Gets the module manager instance
+	 */
 	public static function getInstance()
 	{
 		if (self::$singleton == null)
@@ -36,6 +42,9 @@ class ModuleManager
 		return transformCase($mod, CASE_SLASHES, CASE_CAMEL_UCFIRST) . 'Module';
 	}
 
+	/**
+	 * Imports all modules defined in the config file
+	 */
 	public function importModules()
 	{
 		$config = Configuration::getInstance();
@@ -48,11 +57,17 @@ class ModuleManager
 		}
 	}
 
+	/**
+	 * Determines if the module exists
+	 */
 	public function moduleExists($mod)
 	{
 		return isset($this->modules[$mod]);
 	}
 
+	/**
+	 * Gets the module for a module class
+	 */
 	public function getModule($mod)
 	{
 		return $this->modules[$mod];
