@@ -51,7 +51,11 @@ try
 		throw new Exception("module $modname not found", E_MALFORMED_REQUEST);
 	}
 	$mod = $mm->getModule($modname);
-	$mod->dispatchCommand($input->getRequestCommand());
+	$result = $mod->dispatchCommand($input->getRequestCommand());
+	if ($result === false)
+	{
+		throw new Exception("command dispatch failed", 1);
+	}
 }
 catch (Exception $e)
 {
