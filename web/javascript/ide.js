@@ -71,3 +71,14 @@ function IDE_backend_request(command, arguments, successCallback, errorCallback)
 	xhr.setRequestHeader("Content-type", "text/json");
 	xhr.send(rq);
 }
+
+function IDE_path_get_project(path) {
+	var split = path.split(/\//);
+	return split[1];
+}
+
+function IDE_path_get_file(path) {
+	var split = path.split(/\//);
+	split = split.slice(2);
+	return split.join('/');
+}
