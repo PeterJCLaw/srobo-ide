@@ -493,6 +493,14 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 		logDebug('EditTab: Autosaving '+this.path)
 
+		IDE_backend_request("file/put", {team: team,
+		                                 project: this.project,
+		                                 path: this.path,
+		                                 rev: this.rev,
+		                                 data: this.content},
+		                                 bind(this._receive_autosave, this),
+		                                 bind(this._on_keydown, this, 'auto'));
+		/*
 		var d = postJSONDoc("./autosave/savefile", {
 					queryString : { team : team,
 						path : this.path,
@@ -502,14 +510,15 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 		d.addCallback( bind(this._receive_autosave, this));
 		d.addErrback( bind(this._on_keydown, this, 'auto'));	//if it fails then set it up to try again
+		*/
 	}
 
 	//ajax event handler for autosaving to server, based on the one for commits
 	this._receive_autosave = function(reply){
-		if(typeof reply.date != 'undefined') {
+		/*if(typeof reply.date != 'undefined') {
 			this.autosaved = reply.code;
 			projpage.flist.refresh();
-		}
+		}*/
 	}
 
 	this.is_modified = function() {
