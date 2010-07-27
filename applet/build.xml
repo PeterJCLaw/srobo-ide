@@ -19,7 +19,7 @@
 	<target name="build">
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${build}"/>
-		<javac srcdir="${src}" destdir="${bin}" includeantruntime="false"/>
+		<javac srcdir="${src}" destdir="${bin}" includeantruntime="false" classpathref="classpath"/>
 
 		<jar destfile="${build}/checkout.jar"
 			 basedir="${bin}"
