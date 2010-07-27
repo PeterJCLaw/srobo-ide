@@ -1,0 +1,8 @@
+to set up a testing keystore do the following:
+
+keytool -genkey -keyalg rsa -alias test-only-applet-key
+(set the keystore password to testpass or change build.xml)
+
+then
+
+keytool -export -alias test-only-applet-key -file test-only-applet-key.crt
