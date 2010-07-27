@@ -1,0 +1,30 @@
+<project>
+	<property name="src" location="src"/>
+	<property name="bin" location="bin"/>
+	<property name="build" location="build"/>
+	<property name="deps" location="depends"/>
+
+	<path id="classpath">
+		<fileset dir="depends">
+			<include name=".jar"/>
+		</fileset>
+		<pathelement path="${bin}"/>
+	</path>
+
+	<target name="clean">
+		<delete dir="${bin}"/>
+		<delete dir="${build}"/>
+	</target>
+
+	<target name="build">
+		<mkdir dir="${bin}"/>
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${bin}" includeantruntime="false"/>
+
+		<jar destfile="${build}/checkout.jar"
+			 basedir="${bin}"
+			 includes="**/*.class"
+		/>
+		<signjar jar="${build}/checkout.jar" alias="test-only-applet-key" storepass="testpass"/>
+	</target>
+</project>
