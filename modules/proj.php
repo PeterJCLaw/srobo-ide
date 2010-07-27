@@ -108,7 +108,7 @@ class ProjModule extends Module
 		//bail if we aren't in a repo
 		if ($this->projectRepository == null)
 		{
-			return FALSE;
+			return false;
 		}
 
 		$output = Output::getInstance();

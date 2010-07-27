@@ -75,7 +75,8 @@ class FileModule extends Module
 	public function getFileTreeCompat()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('tree', $this->repository()->fileTreeCompat());
+		$output->setOutput('tree', $this->repository()->fileTreeCompat($this->projectName));
+		return true;
 	}
 
 	public function listFiles()
@@ -84,6 +85,7 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
 		$output->setOutput('files', $this->repository()->listFiles($path));
+		return true;
 	}
 
 	public function getFile()
@@ -92,6 +94,7 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
 		$output->setOutput('data', $this->repository()->getFile($path));
+		return true;
 	}
 
 	public function putFile()
@@ -101,6 +104,7 @@ class FileModule extends Module
 		$path   = $input->getInput('path');
 		$data   = $input->getInput('data');
 		$this->repository()->putFile($path, $data);
+		return true;
 	}
 
 	public function newFile()
@@ -109,6 +113,7 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
 		$this->repository()->createFile($path);
+		return true;
 	}
 
 	public function deleteFile()
@@ -117,6 +122,7 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
 		$this->repository()->removeFile($path);
+		return true;
 	}
 
 	public function copyFile()
@@ -126,6 +132,7 @@ class FileModule extends Module
 		$oldPath = $input->getInput('old-path');
 		$newPath = $input->getInput('new-path');
 		$this->repository()->copyFile($oldPath, $newPath);
+		return true;
 	}
 
 	public function moveFile()
@@ -135,6 +142,7 @@ class FileModule extends Module
 		$oldPath = $input->getInput('old-path');
 		$newPath = $input->getInput('new-path');
 		$this->repository()->moveFile($oldPath, $newPath);
+		return true;
 	}
 
 	public function lintFile()
@@ -144,5 +152,6 @@ class FileModule extends Module
 		$path   = $input->getInput('path');
 		$output->setOutput('errors', array());
 		$output->setOutput('warnings', array("lint not implemented"));
+		return true;
 	}
 }

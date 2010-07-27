@@ -129,7 +129,7 @@ class GitRepository
 	/**
 	 * Gets the file tree for the git repository
 	 */
-	public function fileTreeCompat()
+	public function fileTreeCompat($base)
 	{
 		$root = $this->path;
 		$content = shell_exec("find $root/* -type f");
@@ -137,12 +137,12 @@ class GitRepository
 		$parts = array_map(function($x) use($root) { return str_replace("$root/", '', $x); }, $parts);
 		$parts = array_filter($parts, function($x) { return $x != ''; });
 		$hash = $this->getCurrentRevision();
-		return array_map(function($x) use($hash)
+		return array_map(function($x) use($hash, $base)
 		{
 			return array('kind' => 'FILE',
 			             'name' => $x,
 			             'rev'  => $hash,
-			             'path' => "/$x",
+			             'path' => "/$base/$x",
 			         'children' => array(),
 			         'autosave' => 0);
 		}, $parts);
