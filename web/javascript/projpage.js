@@ -257,11 +257,9 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 }
 
 ProjPage.prototype._exportProject = function() {
-	if( this._iframe == null ) {
-		this._iframe = $('robot-zip');
-	}
-
-	this._iframe.src = "./checkout?team=" + team + "&project=" + this.project;
+	IDE_checkout(team, this.project, function() {}, function(errno, errcode) {
+		alert("checkout-induced death: " + errcode);
+	});
 }
 
 ProjPage.prototype.clickCheckCode = function() {
