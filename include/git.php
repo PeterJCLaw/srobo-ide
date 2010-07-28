@@ -237,10 +237,10 @@ class GitRepository
 	/**
 	 * does a git clone on destination then deletes the .git directory
 	 */
-	public function cloneSource($dest, $commit = 'HEAD')
+	public function archiveSourceZip($dest, $commit = 'HEAD')
 	{
 		// TODO: fix to actually obey commit
-		shell_exec("git clone " . $this->path . " $commit");
+		shell_exec("git clone " . $this->path . " $dest");
 		shell_exec("rm -rf $dest/.git");
 	}
 
