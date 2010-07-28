@@ -3,6 +3,7 @@ package org.studentrobotics.ide.checkout;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,7 +12,7 @@ public class ZipWriteRunner implements Runnable {
 
 	private ConcurrentHashMap<Integer, FutureValue<Boolean>> mJobSuccessMap = new ConcurrentHashMap<Integer, FutureValue<Boolean>>();
 
-	public FutureValue<Boolean> setZip(String zip) throws InterruptedException {
+	public FutureValue<Boolean> setZip(byte[] zip) throws InterruptedException {
 		FileWriteJob newJob = new FileWriteJob(zip);
 		FutureValue<Boolean> result = new FutureValue<Boolean>();
 		mJobSuccessMap.put(newJob.getCode(), result);
@@ -75,11 +76,12 @@ public class ZipWriteRunner implements Runnable {
 		try {
 			fw = new FileWriter(f);
 			System.err.println("tag7");
-			fw.write(job.getContents());
+			PrintStream ps = new PrintStream(f);
+			ps.write(job.getContents());
 			System.err.println("tag8");
-			fw.flush();
+			ps.flush();
 			System.err.println("tag9");
-			fw.close();
+			ps.close();
 			System.err.println("tag10");
 			System.err.println("setting job with code " + job.getCode() + "to true");
 			mJobSuccessMap.get(job.getCode()).set(true);

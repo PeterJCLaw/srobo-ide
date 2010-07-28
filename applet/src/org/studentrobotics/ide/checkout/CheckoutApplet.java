@@ -40,7 +40,7 @@ public class CheckoutApplet extends Applet {
 	 *            a zip to write
 	 * @return false on failure, true on success
 	 */
-	public int writeZip(String zip) {
+	public int writeZip(byte[] zip) {
 		// we can only write to files with a char[] not a byte[]
 		if (hasDied) {
 			return -1;
