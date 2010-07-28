@@ -14,12 +14,14 @@ var IDE_download_java = function(url, successCallback, errorCallback) {
 		var state = xhr.readyState;
 		if (state == 4) {
 			if (xhr.status == 200) {
-				if (document.getElementById("checkout-applet").writeZip(xhr.responseText)) {
+				var retcode = document.getElementById("checkout-applet").writeZip(xhr.responseText);
+				if (retcode == 0) {
 					successCallback();
 				} else {
-					// this could potentially mean a broken Java
-					// as a precaution, turn it off
-					IDE_use_java = false;
+					// negative codes mean some broken javas
+					if (retcode < 0) {
+						IDE_use_java = false;
+					}
 					// hand off to the basic handler
 					IDE_download_basic(url, successCallback, errorCallback);
 				}
