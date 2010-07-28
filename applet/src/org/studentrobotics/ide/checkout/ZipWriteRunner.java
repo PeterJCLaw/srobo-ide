@@ -13,9 +13,9 @@ public class ZipWriteRunner implements Runnable {
 
 	public FutureValue<Boolean> setZip(String zip) throws InterruptedException {
 		FileWriteJob newJob = new FileWriteJob(zip);
-		mWriteQueue.put(newJob);
 		FutureValue<Boolean> result = new FutureValue<Boolean>();
 		mJobSuccessMap.put(newJob.getCode(), result);
+		mWriteQueue.put(newJob);
 		return result;
 	}
 
