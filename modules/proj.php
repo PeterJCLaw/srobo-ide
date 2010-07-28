@@ -169,13 +169,15 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 
-		$tmpdir = '/tmp/' . sha1($this->team . chr(0x00) . $this->projectName . chr(0x00) . microtime(false));
-		$this->projectRepository->cloneSource($tmpdir);
-		$zpath = $config->getConfig("zippath") . "/$this->team/$this->projectName.zip";
-		shell_exec("mkdir -p " . $config->getConfig("zippath")."/$this->team");
-		shell_exec("zip -r \'$zpath\' $tmpdir");
+		$teamdir = $config->getConfig("zippath") . "/" . $this->team;
+		if (!is_dir($teamdir))
+			mkdir($teamdir);
+		$projdir = "$teamdir/$this->projectName";
+		if (!is_dir($projdir))
+			mkdir($projdir);
+		$this->projectRepository->archiveSourceZip("$projdir/robot.zip");
 
-		$output->setOutput('url', $config->getConfig("zipurl") . "/$this->team/$this->projectName.zip");
+		$output->setOutput('url', $config->getConfig("zipurl") . "/$this->team/$this->projectName/robot.zip");
 	}
 
 	private function getRootRepoPath()
