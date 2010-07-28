@@ -8,16 +8,20 @@ public class WindowsDrive {
 			'j', 'k', 'l', 'm', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z' };
 
 	public String findPath() {
-		for (char drive : ALPHABET) {
-			String drivePath = Character.toUpperCase(drive) + "\\";
+		try {
+			for (char drive : ALPHABET) {
+				String drivePath = Character.toUpperCase(drive) + "\\";
 
-			// identify an srobo drive
-			if (new File(drivePath).exists() && new File(drivePath + ".srobo").exists()) {
-				return drivePath;
+				// identify an srobo drive
+				if (new File(drivePath).exists() && new File(drivePath + ".srobo").exists()) {
+					return drivePath;
+				}
+
 			}
-
+		} catch (SecurityException se) {
+			CheckoutApplet.hasDied = true;
+			se.printStackTrace();
 		}
-		
 		return null;
 
 	}
