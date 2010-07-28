@@ -55,6 +55,7 @@ class ProjModule extends Module
 		$this->installCommand('log', array($this, 'projectLog'));
 		$this->installCommand('del', array($this, 'deleteProject'));
 		$this->installCommand('commit', array($this, 'commitProject'));
+		$this->installCommand('co', array($this, 'checkoutProject'));
 	}
 
 	private function verifyTeam()
@@ -152,6 +153,29 @@ class ProjModule extends Module
 
 		$output->setOutput("log", $this->projectRepository->log($firstRev, $currRev));
 		return TRUE;
+	}
+
+	public function checkoutProject()
+	{
+		$this->verifyTeam();
+		$config = Configuration::getInstance();
+		
+		//bail if we aren't in a repo
+		if ($this->projectRepository == null)
+		{
+			return false;
+		}
+		
+		$output = Output::getInstance();
+		$input = Input::getInstance();
+
+		$tmpdir = '/tmp/' . sha1($this->team . chr(0x00) . $this->projectName . chr(0x00) . microtime(false));
+		$this->projectRepository->cloneSource($tmpdir);
+		$zpath = $config->getConfig("zippath") . "/$this->team/$this->projectName.zip";
+		shell_exec("mkdir -p " . $config->getConfig("zippath")."/$this->team");
+		shell_exec("zip -r \'$zpath\' $tmpdir");
+
+		$output->setOutput('url', $config->getConfig("zipurl") . "/$this->team/$this->projectName.zip");
 	}
 
 	private function getRootRepoPath()
