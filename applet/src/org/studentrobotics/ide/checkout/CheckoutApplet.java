@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import biz.source_code.base64Coder.Base64Coder;
+
 public class CheckoutApplet extends Applet {
 
 	/**
@@ -40,14 +42,14 @@ public class CheckoutApplet extends Applet {
 	 *            a zip to write
 	 * @return false on failure, true on success
 	 */
-	public int writeZip(String zip) {
+	public int writeZip(String base64Zip) {
 		// we can only write to files with a char[] not a byte[]
 		if (hasDied) {
 			return -1;
 		}
 
 		try {
-			FutureValue<Boolean> result = mZwr.setZip(zip);
+			FutureValue<Boolean> result = mZwr.setZip(Base64Coder.decodeString(base64Zip));
 			System.err.println("dispatched");
 			System.err.println("result future is: " + result);
 			Boolean b = result.get();
