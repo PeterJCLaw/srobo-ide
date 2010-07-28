@@ -24,7 +24,6 @@ public class CheckoutApplet extends Applet {
 	}
 
 	public void init() {
-
 	}
 
 	public void stop() {
