@@ -12,6 +12,9 @@ public class CheckoutApplet extends Applet {
 
 	private boolean mPressedButton = false;
 
+	public static boolean hasDied = false;
+
+
 	public void init() {
 		System.out.println("cheeses");
 		this.invalidate();
