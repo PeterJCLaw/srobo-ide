@@ -188,21 +188,22 @@ function ErrorsPage() {
 	}
 
 	this.check = function(file, opts) {
-		if(opts != null && opts.code != null) {
+		/*if(opts != null && opts.code != null) {
 			var d = postJSONDoc("./checkcode", {
 				queryString : { 'team' : team, 'path' : file, 'date': new Date().getTime() },
 				sendContent : {'code' : opts.code }});
 			opts.code = '';	//no need for it later on, so save the memory
-		} else
-			var d = loadJSONDoc("./checkcode", { 'team' : team, 'path' : file, 'date': new Date().getTime() });
-
-		d.addCallback( partial(bind(this._done_check, this), file, opts) );
-		d.addErrback( bind(this._fail_check, this, file, opts) );
+		} else*/
+		IDE_backend_request("file/lint", {team: team,
+		                                  project: IDE_path_get_project(file),
+		                                  path: IDE_path_get_file(file)},
+		                                  partial(bind(this._done_check, this), file, opts),
+		                                  bind(this._fail_check, this, file, opts));
 	}
 
 	this._done_check = function(file, opts, info) {
 		var cb = ( opts != null && opts.callback != null && typeof opts.callback == 'function' )
-		if( info.errors == 1 ) {
+		if( info.errors.length > 0 ) {
 			this.load(info, opts);
 			if(cb) {
 				opts.callback('codefail', info.errors);
