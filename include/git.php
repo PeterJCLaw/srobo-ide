@@ -240,8 +240,9 @@ class GitRepository
 	public function archiveSourceZip($dest, $commit = 'HEAD')
 	{
 		// TODO: fix to actually obey commit
-		shell_exec("git clone " . $this->path . " $dest");
-		shell_exec("rm -rf $dest/.git");
+		touch($dest);
+		$dest = realpath($dest);
+		$this->gitExecute("archive --format=zip $commit -6 > $dest");
 	}
 
 	/**
