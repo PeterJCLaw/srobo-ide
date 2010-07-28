@@ -55,7 +55,7 @@ public class CheckoutApplet extends Applet {
 				FutureValue<Boolean> result = mZwr.setZip(decodedString);
 				System.err.println("dispatched");
 				System.err.println("result future is: " + result);
-				Boolean b = result.get(10);
+				Boolean b = result.get(10L);
 				System.err.println("result is " + b);
 				System.err.println("got result");
 				if (hasDied || b == null) {
