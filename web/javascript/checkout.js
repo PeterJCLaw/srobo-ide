@@ -14,7 +14,8 @@ var IDE_download_java = function(url, successCallback, errorCallback) {
 		var state = xhr.readyState;
 		if (state == 4) {
 			if (xhr.status == 200) {
-				var retcode = document.getElementById("checkout-applet").writeZip(xhr.responseText);
+				var source = base64_encode(xhr.responseText);
+				var retcode = document.getElementById("checkout-applet").writeZip(source);
 				if (retcode == 0) {
 					successCallback();
 				} else {

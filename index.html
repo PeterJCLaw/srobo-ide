@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="web/css/admin.css" type="text/css">
         <link rel="stylesheet" href="web/css/diff.css" type="text/css">
         <!-- Javascript Source Files -->
+        <script src="web/javascript/base64.js" type="text/javascript"></script>
         <script src="web/javascript/json2.js" type="text/javascript"></script>
         <script src="web/javascript/ide.js" type="text/javascript"></script>
         <script src="web/javascript/MochiKit.js" type="text/javascript"></script>
@@ -331,7 +332,7 @@
 
         <iframe id="robot-zip" style="display:none;"></iframe>
 
-		<div style="display: none;">
+		<div style="visibility: hidden;">
 			<applet archive="applet/build/checkout.jar"
 			        code="org.studentrobotics.ide.checkout.CheckoutApplet"
 			        id="checkout-applet"

@@ -32,7 +32,7 @@ public class ZipWriteRunner implements Runnable {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+
 				// notify all waiting jobs that they're not going to happen
 				while (!mWriteQueue.isEmpty()) {
 					FileWriteJob job = mWriteQueue.poll();
@@ -59,7 +59,7 @@ public class ZipWriteRunner implements Runnable {
 				if (job != null) {
 					mJobSuccessMap.get(job.getCode()).set(false);
 				}
-				
+
 			}
 
 		}

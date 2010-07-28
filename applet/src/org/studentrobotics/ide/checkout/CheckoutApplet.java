@@ -44,31 +44,38 @@ public class CheckoutApplet extends Applet {
 	 */
 	public int writeZip(String base64Zip) {
 		// we can only write to files with a char[] not a byte[]
-		if (hasDied) {
+		try {
+			if (hasDied) {
+				return -1;
+			}
+	
+			try {
+				String decodedString = Base64Coder.decodeString(base64Zip);
+				System.err.println(base64Zip + " => " + decodedString);
+				FutureValue<Boolean> result = mZwr.setZip(decodedString);
+				System.err.println("dispatched");
+				System.err.println("result future is: " + result);
+				Boolean b = result.get(10);
+				System.err.println("result is " + b);
+				System.err.println("got result");
+				if (hasDied || b == null) {
+					return -1;
+				}
+				if (b)
+					return 0;
+				else
+					return 1;
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				if (hasDied) {
+					return -1;
+				}
+				return 1;
+			}
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
 			return -1;
 		}
-
-		try {
-			FutureValue<Boolean> result = mZwr.setZip(Base64Coder.decodeString(base64Zip));
-			System.err.println("dispatched");
-			System.err.println("result future is: " + result);
-			Boolean b = result.get();
-			System.err.println("result is " + b);
-			System.err.println("got result");
-			if (hasDied) {
-				return -1;
-			}
-			if (b)
-				return 0;
-			else
-				return 1;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			if (hasDied) {
-				return -1;
-			}
-			return 1;
-		}
-
 	}
 }
