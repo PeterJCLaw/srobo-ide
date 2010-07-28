@@ -10,11 +10,14 @@ public class WindowsDrive {
 	public String findPath() {
 		try {
 			for (char drive : ALPHABET) {
-				String drivePath = Character.toUpperCase(drive) + "\\";
-
+				String drivePath = Character.toUpperCase(drive) + ":\\\\";
+				System.err.println("drivepath is " + drivePath);
 				// identify an srobo drive
-				if (new File(drivePath).exists() && new File(drivePath + ".srobo").exists()) {
+				if (new File(drivePath).isDirectory() && new File(drivePath + ".srobo").isFile()) {
+					System.err.println("found path");
 					return drivePath;
+				} else {
+					System.err.println("failed to find path");
 				}
 
 			}

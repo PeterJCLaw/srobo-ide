@@ -19,27 +19,32 @@ public class LinuxDrive {
 				return "/mnt/";
 			}
 
-			File media = new File("/media/");
-			if (media.isDirectory()) {
-				// only get mountpoints from the media directory
-				String[] directories = media.list(new FilenameFilter() {
+			String[] searchPaths = new String[] { "/media/", "/Volumes/" };
+			for (String searchPath : searchPaths) {
+				File media = new File(searchPath);
+				if (media.isDirectory()) {
+					// only get mountpoints from the media directory
+					String[] directories = media.list(new FilenameFilter() {
 
-					@Override
-					public boolean accept(File arg0, String arg1) {
-						return arg0.isDirectory();
-					}
-				});
-				System.err.println("c");
+						@Override
+						public boolean accept(File arg0, String arg1) {
+							return arg0.isDirectory();
+						}
+					});
+					System.err.println("c");
 
-				for (String s : directories) {
-					File srobo = new File("/media/" + s + "/.srobo");
+					for (String s : directories) {
+						File srobo = new File(searchPath + s + "/.srobo");
+						
+						
 
-					if (srobo.exists()) {
-						return "/media/" + s + "/";
+						if (srobo.exists()) {
+							return searchPath + s + "/";
+						}
+
 					}
 
 				}
-
 			}
 			System.err.println("b");
 			return null;
