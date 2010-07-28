@@ -24,7 +24,9 @@
 		<jar destfile="${build}/checkout.jar"
 			 basedir="${bin}"
 			 includes="**/*.class"
-		/>
+		>
+			<zipfileset src="depends/base64coder.jar" includes="**/*.class"/>
+		</jar>
 		<signjar jar="${build}/checkout.jar" alias="test-only-applet-key" storepass="testpass"/>
 	</target>
 </project>
