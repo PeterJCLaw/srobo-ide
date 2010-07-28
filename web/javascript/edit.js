@@ -289,8 +289,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 	// Start load the file contents
 	this._load_contents = function() {
 		IDE_backend_request("file/get", { team : this.team,
-		                   project: this.project,
-						   path : this.path.substr(1)/*,
+		                   project: IDE_path_get_project(this.path),
+						   path : IDE_path_get_file(this.path)/*,
 						   revision : this.rev*/},
 						   bind(this._recv_contents, this),
 						   bind(this._recv_contents_err, this));
@@ -384,44 +384,23 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._receive_repo_save = function(nodes){
 		projpage.flist.refresh();
 
-		switch(nodes.success){
-			case "True":
-				status_msg("File "+this.path+" Saved successfully (Now at r"+nodes.new_revision+")", LEVEL_OK);
-				this._original = this.contents;
-				this.tab.set_label(this.path);
-				this._autosaved = "";
-				this._isNew = false;
-				this.rev = nodes.new_revision;
-				this.file_rev = nodes.new_revision;
-				$("check-syntax").disabled = false;
- 				this._update_contents();
-				break;
-			case "AutoMerge":
-				status_msg("File "+this.path+" Automatically merged with latest revision (Now at r"+nodes.new_revision+")", LEVEL_OK);
-				this.contents = nodes.code;
-				this.tab.set_label(this.path);
-				this._original = this.contents;
-				this._autosaved = "";
-				this._isNew = false;
-				this.rev = nodes.new_revision;
-				this.file_rev = nodes.new_revision;
-				$("check-syntax").disabled = false;
- 				this._update_contents();
-				break;
-			case "Merge":
-				status_msg("File "+this.path+" Merge required, please check and try again (Now at r"+nodes.new_revision+")", LEVEL_ERROR);
-				this.contents = nodes.code;
-				this._isNew = false;
-				this.rev = nodes.new_revision;
-				$("check-syntax").disabled = false;
-				this._update_contents();
-				break;
-			case "Error creating new directory":
-				status_msg("Error creating new directory (New Revision: "+nodes.new_revision+")", LEVEL_ERROR);
-				break;
-			case "Invalid filename" :
-				status_msg("Save operation failed, Invalid filename (New Revision: "+nodes.new_revision+")", LEVEL_ERROR);
-				break;
+		if (nodes.merges.length == 0) {
+			status_msg("File "+this.path+" Saved successfully (Now at "+nodes.commit+")", LEVEL_OK);
+			this._original = this.contents;
+			this.tab.set_label(this.path);
+			this._autosaved = "";
+			this._isNew = false;
+			this.rev = nodes.commit;
+			this.file_rev = nodes.commit;
+			$("check-syntax").disabled = false;
+			this._update_contents();
+		} else {
+			status_msg("File "+this.path+" Merge required, please check and try again (Now at "+nodes.commit+")", LEVEL_ERROR);
+			this.contents = nodes.code;
+			this._isNew = false;
+			this.rev = nodes.commit;
+			$("check-syntax").disabled = false;
+			this._update_contents();
 		}
 	}
 
@@ -432,16 +411,19 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	//save file contents to server as new revision
 	this._repo_save = function() {
-		var d = postJSONDoc("./savefile", {
-					queryString : { team : team,
-						filepath : this.path,
-						rev : this.rev,
-						message : this._commitMsg },
-					sendContent : {code : this.contents}
-				});
-
-		d.addCallback( bind(this._receive_repo_save, this));
-		d.addErrback( bind(this._error_receive_repo_save, this));
+		IDE_backend_request("file/put", {team: team,
+		                                 project: IDE_path_get_project(this.path),
+		                                 path: IDE_path_get_file(this.path),
+		                                 data: this.contents},
+		                    bind(function() {
+		                    	IDE_backend_request("proj/commit", {team: team,
+		                    	                                 project: IDE_path_get_project(this.path),
+		                    	                                 message: this._commitMsg},
+		                    	                                 bind(this._receive_repo_save, this),
+		                    	                                 bind(this._error_receive_repo_save, this));
+		                    	
+		                    }, this),
+		                    bind(this._error_receive_repo_save, this));
 	}
 
 	this._on_keydown = function(ev) {
@@ -493,6 +475,14 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 		logDebug('EditTab: Autosaving '+this.path)
 
+		IDE_backend_request("file/put", {team: team,
+		                                 project: this.project,
+		                                 path: this.path,
+		                                 rev: this.rev,
+		                                 data: this.content},
+		                                 bind(this._receive_autosave, this),
+		                                 bind(this._on_keydown, this, 'auto'));
+		/*
 		var d = postJSONDoc("./autosave/savefile", {
 					queryString : { team : team,
 						path : this.path,
@@ -502,14 +492,15 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 		d.addCallback( bind(this._receive_autosave, this));
 		d.addErrback( bind(this._on_keydown, this, 'auto'));	//if it fails then set it up to try again
+		*/
 	}
 
 	//ajax event handler for autosaving to server, based on the one for commits
 	this._receive_autosave = function(reply){
-		if(typeof reply.date != 'undefined') {
+		/*if(typeof reply.date != 'undefined') {
 			this.autosaved = reply.code;
 			projpage.flist.refresh();
-		}
+		}*/
 	}
 
 	this.is_modified = function() {

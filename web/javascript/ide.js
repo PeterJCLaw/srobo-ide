@@ -47,7 +47,7 @@ function IDE_backend_request(command, arguments, successCallback, errorCallback)
 		if (xhr.status == 200) {
 			if (xhr.getResponseHeader("Content-type") == "text/html") {
 				// PHP fatal error
-				errorCallback(-1, "fatal PHP error");
+				errorCallback(-1, "fatal PHP error", args);
 				return;
 			}
 			var rt = xhr.responseText;
@@ -58,16 +58,27 @@ function IDE_backend_request(command, arguments, successCallback, errorCallback)
 				IDE_auth_token = null;
 			}
 			if (rp.error) {
-				errorCallback(rp.error[0], rp.error[1]);
+				errorCallback(rp.error[0], rp.error[1], args);
 			} else {
-				successCallback(rp);
+				successCallback(rp, args);
 			}
 		} else {
-			errorCallback(-xhr.status, xhr.statusText);
+			errorCallback(-xhr.status, xhr.statusText, args);
 		}
 	};
 	xhr.open("POST", IDE_base + "/" + command, true);
 	xhr.onreadystatechange = cb;
 	xhr.setRequestHeader("Content-type", "text/json");
 	xhr.send(rq);
+}
+
+function IDE_path_get_project(path) {
+	var split = path.split(/\//);
+	return split[1];
+}
+
+function IDE_path_get_file(path) {
+	var split = path.split(/\//);
+	split = split.slice(2);
+	return split.join('/');
 }

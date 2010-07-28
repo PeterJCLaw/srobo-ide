@@ -54,6 +54,7 @@ class ProjModule extends Module
 		$this->installCommand('info', array($this, 'projectInfo'));
 		$this->installCommand('log', array($this, 'projectLog'));
 		$this->installCommand('del', array($this, 'deleteProject'));
+		$this->installCommand('commit', array($this, 'commitProject'));
 	}
 
 	private function verifyTeam()
@@ -101,6 +102,29 @@ class ProjModule extends Module
 		$output->setOutput('project-info', array());
 	}
 
+	public function commitProject()
+	{
+		$this->verifyTeam();
+		
+		if ($this->projectRepository == null)
+		{
+			return false;
+		}
+
+		$output = Output::getInstance();
+		$input  = Input::getInstance();
+		$auth   = AuthBackend::getInstance();
+		$message = $input->getInput("message");
+
+		$currentUser = $auth->getCurrentUser();
+
+		$this->projectRepository->commit($message,
+		                                 $auth->displayNameForUser($currentUser),
+		                                 $auth->emailForUser($currentUser));
+		$output->setOutput('merges', array());
+		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
+	}
+
 	public function projectLog()
 	{
 		$this->verifyTeam();
@@ -108,7 +132,7 @@ class ProjModule extends Module
 		//bail if we aren't in a repo
 		if ($this->projectRepository == null)
 		{
-			return FALSE;
+			return false;
 		}
 
 		$output = Output::getInstance();
