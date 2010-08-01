@@ -54,7 +54,7 @@ try
 	$result = $mod->dispatchCommand($input->getRequestCommand());
 	if ($result === false)
 	{
-		throw new Exception("command dispatch failed", 1);
+		throw new Exception('command dispatch failed', 1);
 	}
 }
 catch (Exception $e)

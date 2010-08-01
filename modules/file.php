@@ -36,11 +36,11 @@ class FileModule extends Module
 		}
 
 		$input = Input::getInstance();
-		$this->team = $input->getInput("team", true);
+		$this->team = $input->getInput('team', true);
 
 		// check that the project exists and is a git repo otherwise construct
 		// the project directory and git init it
-		$project = $input->getInput("project", true);
+		$project = $input->getInput('project', true);
 
 		$this->projectName = $project;
 
@@ -60,7 +60,7 @@ class FileModule extends Module
 		$auth = AuthBackend::getInstance();
 		if (!in_array($this->team, $auth->getCurrentUserTeams()))
 		{
-			throw new Exception("proj attempted on team you aren't in", E_PERM_DENIED);
+			throw new Exception('proj attempted on team you aren\'t in', E_PERM_DENIED);
 		}
 	}
 
@@ -151,7 +151,7 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
 		$output->setOutput('errors', array());
-		$output->setOutput('warnings', array("lint not implemented"));
+		$output->setOutput('warnings', array('lint not implemented'));
 		return true;
 	}
 }
