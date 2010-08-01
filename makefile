@@ -18,4 +18,5 @@ docs:
 # Helpers
 $(_REPOS):
 	mkdir -p $@
+	chmod a+rwx $@
 
