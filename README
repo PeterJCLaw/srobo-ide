@@ -1,15 +1,23 @@
+This is Student Robotics CyanIDE.
 
-                                  ...vvvv)))))).
-       /~~\               ,,,c(((((((((((((((((/
-      /~~c \.         .vv)))))))))))))))))))\``
-          G_G__   ,,(((KKKK//////////////'
-        ,Z~__ '@,gW@@AKXX~MW,gmmmz==m_.
-       iP,dW@!,A@@@@@@@@@@@@@@@A` ,W@@A\c
-       ]b_.__zf !P~@@@@@*P~b.~+=m@@@*~ g@Ws.
-          ~`    ,2W2m. '\[ ['~~c'M7 _gW@@A`'s
-            v=XX)====Y-  [ [    \c/*@@@*~ g@@i
-           /v~           !.!.     '\c7+sg@@@@@s.
-          //              'c'c       '\c7*X7~~~~
-         ]/                 ~=Xm_       '~=(Gm_.
+It is a web-based IDE for developing code for Student Robotics robots.
 
-    i'm covered in beeeees and ldap
+A guide for getting it running will be found here (once we've got it working properly):
+https://www.studentrobotics.org/trac/wiki/CyanIDE
+
+In the mean time here's some basic info about the make targets:
+
+`dev`: Sets up the base folders you'll need for the repos etc.
+
+`docs`: Builds the docs according to the doxyfile.
+        Currently this means html docs in html/ and latex docs in latex/
+
+`clean`: Removes both of the above.
+
+You can run tests on CyanIDE by running `./run-tests`.
+
+Dependancies:
+ * PHP 5.3
+ * doxygen # for building the docs.
+ * PHP CLI # for running the tests.
+
