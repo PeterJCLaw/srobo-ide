@@ -20,7 +20,7 @@ class Configuration
 
 	private function __construct()
 	{
-		$this->config = parse_ini_file("config/config.ini");
+		$this->config = parse_ini_file('config/config.ini');
 	}
 
 	/**

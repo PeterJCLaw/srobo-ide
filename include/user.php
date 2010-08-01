@@ -11,7 +11,7 @@ class UserInfo
 	{
 		$auth = AuthBackend::getInstance();
 		$this->user = $auth->getCurrentUser();
-		$this->info["teams"] = $auth->getCurrentUserTeams();
+		$this->info['teams'] = $auth->getCurrentUserTeams();
 	}
 
 	public static function getInstance()
@@ -34,7 +34,7 @@ class UserInfo
 		}
 		else
 		{
-			throw new Exception("key in user info did not exist", E_INTERNAL_ERROR);
+			throw new Exception('key in user info did not exist', E_INTERNAL_ERROR);
 		}
 	}
 
