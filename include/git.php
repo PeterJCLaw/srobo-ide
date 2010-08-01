@@ -64,7 +64,7 @@ class GitRepository
 	}
 
 	/**
-     * Gets the most recent revision hash
+	 * Gets the most recent revision hash
 	 */
 	public function getCurrentRevision()
 	{
@@ -153,17 +153,17 @@ class GitRepository
 	 */
 	public function listFiles($path)
 	{
-        $files = scandir($this->path . "/$path");
-        $result = array();
-        foreach ($files as $file)
-        {
-            if ($file[0] != ".")
-            {
-                $result[] = $file;
-            }
-        }
+		$files = scandir($this->path . "/$path");
+		$result = array();
+		foreach ($files as $file)
+		{
+			if ($file[0] != ".")
+			{
+				$result[] = $file;
+			}
+		}
 
-        return $result;
+		return $result;
 	}
 
 	/**
@@ -177,7 +177,7 @@ class GitRepository
 
 	/**
 	 * Removes a file on the repo
-     */
+	 */
 	public function removeFile($path)
 	{
 		$this->gitExecute("rm -f $path");

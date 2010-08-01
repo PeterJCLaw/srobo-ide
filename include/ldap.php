@@ -43,14 +43,14 @@ class LDAPManager
 	{
 		if ($this->authed)
 		{
-			 $resultsID = ldap_search($this->connection, "uid=$user,ou=users,o=sr", "uid=*");
-             $results = ldap_get_entries($this->connection, $resultsID);
-             $saneResults = array();
-             $saneResults["email"] = $results[0]["mail"][0];
-             $saneResults["username"] = $results[0]["uid"][0];
-             $saneResults["name.first"] = $results[0]["cn"][0];
-             $saneResults["name.last"] = $results[0]["sn"][0];
-             return $saneResults;
+			$resultsID = ldap_search($this->connection, "uid=$user,ou=users,o=sr", "uid=*");
+			$results = ldap_get_entries($this->connection, $resultsID);
+			$saneResults = array();
+			$saneResults["email"]      = $results[0]["mail"][0];
+			$saneResults["username"]   = $results[0]["uid"][0];
+			$saneResults["name.first"] = $results[0]["cn"][0];
+			$saneResults["name.last"]  = $results[0]["sn"][0];
+			return $saneResults;
 		}
 		else
 		{
