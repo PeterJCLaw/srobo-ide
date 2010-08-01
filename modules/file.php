@@ -9,12 +9,12 @@ class FileModule extends Module
 	{
 		$auth = AuthBackend::getInstance();
 
-        // bail if we aren't authenticated
-        if ($auth->getCurrentUser() == null)
-        {
-        	// module does nothing if no authentication
-            return;
-        }
+		// bail if we aren't authenticated
+		if ($auth->getCurrentUser() == null)
+		{
+			// module does nothing if no authentication
+			return;
+		}
 
 		try
 		{

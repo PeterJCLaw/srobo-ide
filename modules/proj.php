@@ -11,12 +11,12 @@ class ProjModule extends Module
 	{
 		$auth = AuthBackend::getInstance();
 
-        // bail if we aren't authenticated
-        if ($auth->getCurrentUser() == null)
-        {
-        	// module does nothing if no authentication
-            return;
-        }
+		// bail if we aren't authenticated
+		if ($auth->getCurrentUser() == null)
+		{
+			// module does nothing if no authentication
+			return;
+		}
 
 		try
 		{
@@ -106,7 +106,7 @@ class ProjModule extends Module
 	public function commitProject()
 	{
 		$this->verifyTeam();
-		
+
 		if ($this->projectRepository == null)
 		{
 			return false;
@@ -159,13 +159,13 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$config = Configuration::getInstance();
-		
+
 		//bail if we aren't in a repo
 		if ($this->projectRepository == null)
 		{
 			return false;
 		}
-		
+
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 

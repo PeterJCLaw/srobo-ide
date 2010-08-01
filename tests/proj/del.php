@@ -2,7 +2,7 @@
 //delete any existing repos
 if (is_dir("/tmp/test-repos"))
 {
-    exec("rm -rf /tmp/test-repos");
+	exec("rm -rf /tmp/test-repos");
 }
 
 //create the tld and manufacture a git repo
@@ -40,5 +40,5 @@ test_equal(is_dir($repopath), FALSE, "deleted repo existed");
 
 if (is_dir("/tmp/test-repos"))
 {
-    exec("rm -rf /tmp/test-repos");
+	exec("rm -rf /tmp/test-repos");
 }

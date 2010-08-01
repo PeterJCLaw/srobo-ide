@@ -2,40 +2,40 @@
 
 class UserInfo
 {
-    private static $instance = null;
+	private static $instance = null;
 	private $info = array();
-    private $user = null;
+	private $user = null;
 
-    //TODO: things here
-    private function __construct()
-    {
-        $auth = AuthBackend::getInstance();
-        $this->user = $auth->getCurrentUser();
-        $this->info["teams"] = $auth->getCurrentUserTeams();
-    }
+	//TODO: things here
+	private function __construct()
+	{
+		$auth = AuthBackend::getInstance();
+		$this->user = $auth->getCurrentUser();
+		$this->info["teams"] = $auth->getCurrentUserTeams();
+	}
 
-    public static function getInstance()
-    {
-        if (self::$instance == null)
-        {
-            $input = Input::getInstance();
-            self::$instance = new UserInfo();
-        }
+	public static function getInstance()
+	{
+		if (self::$instance == null)
+		{
+			$input = Input::getInstance();
+			self::$instance = new UserInfo();
+		}
 
-        return self::$instance;
-    }
+		return self::$instance;
+	}
 
 
-    public function getInfo($info)
-    {
-        if (isset($this->info[$info]))
-        {
-            return $this->info[$info];
-        }
-        else
-        {
-            throw new Exception("key in user info did not exist", E_INTERNAL_ERROR);
-        }
-    }
+	public function getInfo($info)
+	{
+		if (isset($this->info[$info]))
+		{
+			return $this->info[$info];
+		}
+		else
+		{
+			throw new Exception("key in user info did not exist", E_INTERNAL_ERROR);
+		}
+	}
 
 }
