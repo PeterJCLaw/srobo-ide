@@ -36,7 +36,7 @@ abstract class SecureTokenAuth extends AuthBackend
 	{
 		return $this->teams;
 	}
-	
+
 	private function generateToken($username, $password, $teams)
 	{
 		$teams = implode('|', $teams);
@@ -68,31 +68,31 @@ abstract class SecureTokenAuth extends AuthBackend
 		$this->password = null;
 	}
 
-    public function getNextAuthToken()
-    {
-    	return $this->tok_next;
-    }
-    
-    public function validateAuthToken($token)
-    {
-    	$decrypted = openssl_decrypt($token, self::METHOD, $this->key);
-    	$parts = explode(chr(0), $decrypted);
-    	$time = (float)$parts[0];
-    	if ($time - microtime(true) > self::TIMEOUT*1000000.0)
-    	{
-    		return false;
-    	}
-    	$username = $parts[1];
-    	$password = $parts[2];
-    	if (!$this->checkAuthentication($username, $password))
-    	{
-    		return false;
-    	}
-    	$this->user = $username;
-    	$this->teams = explode('|', $parts[3]);
-    	$this->tok_next = $this->generateToken($username, $password, $this->teams);
-    	return true;
-    }
+	public function getNextAuthToken()
+	{
+		return $this->tok_next;
+	}
+
+	public function validateAuthToken($token)
+	{
+		$decrypted = openssl_decrypt($token, self::METHOD, $this->key);
+		$parts = explode(chr(0), $decrypted);
+		$time = (float)$parts[0];
+		if ($time - microtime(true) > self::TIMEOUT*1000000.0)
+		{
+			return false;
+		}
+		$username = $parts[1];
+		$password = $parts[2];
+		if (!$this->checkAuthentication($username, $password))
+		{
+			return false;
+		}
+		$this->user = $username;
+		$this->teams = explode('|', $parts[3]);
+		$this->tok_next = $this->generateToken($username, $password, $this->teams);
+		return true;
+	}
 
 	abstract public function checkAuthentication($username, $password);
 	abstract public function getTeams($username);

@@ -1,3 +1,30 @@
+This is Student Robotics CyanIDE.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!you have to build the applet to get things working and for gods sake READ    !
+!THE README in applet/                                                        !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+It is a web-based IDE for developing code for Student Robotics robots.
+
+A guide for getting it running will be found here (once we've got it working properly):
+https://www.studentrobotics.org/trac/wiki/CyanIDE
+
+In the mean time here's some basic info about the make targets:
+
+`dev`: Sets up the base folders you'll need for the repos etc.
+
+`docs`: Builds the docs according to the doxyfile.
+        Currently this means html docs in html/ and latex docs in latex/
+
+`clean`: Removes both of the above.
+
+You can run tests on CyanIDE by running `./run-tests`.
+
+Dependancies:
+ * PHP 5.3
+ * doxygen # for building the docs.
+ * PHP CLI # for running the tests.
 
                                   ...vvvv)))))).
        /~~\               ,,,c(((((((((((((((((/
@@ -14,5 +41,3 @@
 
     i'm covered in beeeees and ldap
 
-you have to build the applet to get things working and for gods sake READ
-THE README in applet/

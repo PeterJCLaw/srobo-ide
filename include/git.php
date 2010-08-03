@@ -22,7 +22,7 @@ class GitRepository
 	 */
 	private function gitExecute($command, $env = array())
 	{
-		$file = fopen("/tmp/git-log", "a");
+		$file = fopen('/tmp/git-log', 'a');
 		fwrite($file, "git $command [cwd = $this->path]\n");
 		fclose($file);
 		$buildCommand = "git $command";
@@ -37,7 +37,7 @@ class GitRepository
 		$status = proc_close($proc);
 		if ($status != 0)
 		{
-			$file = fopen("/tmp/git-log", "a");
+			$file = fopen('/tmp/git-log', 'a');
 			fwrite($file, "\tfailed miserably!\n");
 			fwrite($file, "-- LOG --\n");
 			fwrite($file, "$stderr\n");
@@ -64,11 +64,11 @@ class GitRepository
 	}
 
 	/**
-     * Gets the most recent revision hash
+	 * Gets the most recent revision hash
 	 */
 	public function getCurrentRevision()
 	{
-		return $this->gitExecute("describe --always");
+		return $this->gitExecute('describe --always');
 	}
 
 	/**
@@ -76,7 +76,7 @@ class GitRepository
 	 */
 	public function getFirstRevision()
 	{
-		$revisions = explode("\n", $this->gitExecute("rev-list --all"));
+		$revisions = explode("\n", $this->gitExecute('rev-list --all'));
 		return $revisions[count($revisions)-1];
 	}
 
@@ -108,8 +108,8 @@ class GitRepository
 	 */
 	public function reset()
 	{
-		$this->gitExecute("reset --hard");
-		$this->gitExecute("clean -f -d");
+		$this->gitExecute('reset --hard');
+		$this->gitExecute('clean -f -d');
 	}
 
 	/**
@@ -117,7 +117,7 @@ class GitRepository
 	 */
 	public function commit($message, $name, $email)
 	{
-		$tmp = tempnam("/tmp", "ide-");
+		$tmp = tempnam('/tmp', 'ide-');
 		file_put_contents($tmp, $message);
 		$this->gitExecute("commit -F $tmp", array('GIT_AUTHOR_NAME'    => $name,
 		                                          'GIT_AUTHOR_EMAIL'   => $email,
@@ -153,17 +153,17 @@ class GitRepository
 	 */
 	public function listFiles($path)
 	{
-        $files = scandir($this->path . "/$path");
-        $result = array();
-        foreach ($files as $file)
-        {
-            if ($file[0] != ".")
-            {
-                $result[] = $file;
-            }
-        }
+		$files = scandir($this->path . "/$path");
+		$result = array();
+		foreach ($files as $file)
+		{
+			if ($file[0] != '.')
+			{
+				$result[] = $file;
+			}
+		}
 
-        return $result;
+		return $result;
 	}
 
 	/**
@@ -177,7 +177,7 @@ class GitRepository
 
 	/**
 	 * Removes a file on the repo
-     */
+	 */
 	public function removeFile($path)
 	{
 		$this->gitExecute("rm -f $path");

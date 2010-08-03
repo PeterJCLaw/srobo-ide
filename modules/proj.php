@@ -11,12 +11,12 @@ class ProjModule extends Module
 	{
 		$auth = AuthBackend::getInstance();
 
-        // bail if we aren't authenticated
-        if ($auth->getCurrentUser() == null)
-        {
-        	// module does nothing if no authentication
-            return;
-        }
+		// bail if we aren't authenticated
+		if ($auth->getCurrentUser() == null)
+		{
+			// module does nothing if no authentication
+			return;
+		}
 
 		try
 		{
@@ -38,11 +38,11 @@ class ProjModule extends Module
 		}
 
 		$input = Input::getInstance();
-		$this->team = $input->getInput("team", true);
+		$this->team = $input->getInput('team', true);
 
 		// check that the project exists and is a git repo otherwise construct
 		// the project directory and git init it
-		$project = $input->getInput("project", true);
+		$project = $input->getInput('project', true);
 
 		if ($this->team && $project)
 		{
@@ -63,7 +63,7 @@ class ProjModule extends Module
 		$auth = AuthBackend::getInstance();
 		if (!in_array($this->team, $auth->getCurrentUserTeams()))
 		{
-			throw new Exception("proj attempted on team you aren't in", E_PERM_DENIED);
+			throw new Exception('proj attempted on team you aren\'t in', E_PERM_DENIED);
 		}
 	}
 
@@ -91,7 +91,7 @@ class ProjModule extends Module
 		}
 		else
 		{
-			throw new Exception("attempted to delete nonexistant project", E_PROJ_NONEXISTANT);
+			throw new Exception('attempted to delete nonexistant project', E_PROJ_NONEXISTANT);
 		}
 
 	}
@@ -106,7 +106,7 @@ class ProjModule extends Module
 	public function commitProject()
 	{
 		$this->verifyTeam();
-		
+
 		if ($this->projectRepository == null)
 		{
 			return false;
@@ -115,7 +115,7 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$input  = Input::getInstance();
 		$auth   = AuthBackend::getInstance();
-		$message = $input->getInput("message");
+		$message = $input->getInput('message');
 
 		$currentUser = $auth->getCurrentUser();
 
@@ -138,20 +138,20 @@ class ProjModule extends Module
 
 		$output = Output::getInstance();
 		$input = Input::getInstance();
-		$currRev = $input->getInput("start-commit", true);
+		$currRev = $input->getInput('start-commit', true);
 
 		if ($currRev == null)
 		{
 			$currRev = $this->projectRepository->getCurrentRevision();
 		}
 
-		$firstRev = $input->getInput("end-commit", true);
+		$firstRev = $input->getInput('end-commit', true);
 
 		if ($firstRev == null) {
 			$firstRev = $this->projectRepository->getFirstRevision();
 		}
 
-		$output->setOutput("log", $this->projectRepository->log($firstRev, $currRev));
+		$output->setOutput('log', $this->projectRepository->log($firstRev, $currRev));
 		return TRUE;
 	}
 
@@ -159,17 +159,17 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$config = Configuration::getInstance();
-		
+
 		//bail if we aren't in a repo
 		if ($this->projectRepository == null)
 		{
 			return false;
 		}
-		
+
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 
-		$teamdir = $config->getConfig("zippath") . "/" . $this->team;
+		$teamdir = $config->getConfig('zippath') . '/' . $this->team;
 		if (!is_dir($teamdir))
 			mkdir($teamdir);
 		$projdir = "$teamdir/$this->projectName";
@@ -177,13 +177,13 @@ class ProjModule extends Module
 			mkdir($projdir);
 		$this->projectRepository->archiveSourceZip("$projdir/robot.zip");
 
-		$output->setOutput('url', $config->getConfig("zipurl") . "/$this->team/$this->projectName/robot.zip");
+		$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
 	}
 
 	private function getRootRepoPath()
 	{
 		$config = Configuration::getInstance();
-		$repoPath = $config->getConfig("repopath");
+		$repoPath = $config->getConfig('repopath');
 		$repoPath = str_replace('ROOT', '.', $repoPath);
 		if (!file_exists($repoPath) || !is_dir($repoPath))
 		{
