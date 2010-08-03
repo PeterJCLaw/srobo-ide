@@ -12,6 +12,9 @@ https://www.studentrobotics.org/trac/wiki/CyanIDE
 
 In the mean time here's some basic info about the make targets:
 
+`applet`: Builds the java applet used for checkouts.
+          READ applet/README first!
+
 `dev`: Sets up the base folders you'll need for the repos etc.
 
 `docs`: Builds the docs according to the doxyfile.
@@ -23,6 +26,8 @@ You can run tests on CyanIDE by running `./run-tests`.
 
 Dependancies:
  * PHP 5.3
+ * ant     # for building the Java applet
+ * javac   # for building the Java applet
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
 
