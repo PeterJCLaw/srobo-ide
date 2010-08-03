@@ -63,6 +63,12 @@ catch (Exception $e)
 	file_put_contents('/tmp/exception', $e->getTraceAsString());
 }
 
+if ($config->getConfig('debug'))
+{
+	$output->setOutput('debug', ob_get_contents());
+}
+ob_end_clean();
+
 $data = $output->encodeOutput();
 
 header('Content-type: text/json');
