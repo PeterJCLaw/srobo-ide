@@ -4,7 +4,7 @@ _REPOS = repos/1 repos/2
 
 # Useful groupings
 default: dev
-all: dev docs
+all: dev docs applet
 
 applet: applet/build.xml
 	cd applet/ && ant clean && ant build
@@ -12,6 +12,7 @@ applet: applet/build.xml
 # Actual targets
 clean:
 	rm -rf repos html latex
+	cd applet/ && ant clean
 
 dev: $(_REPOS)
 
