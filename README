@@ -21,3 +21,4 @@ Dependancies:
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
 
+You have to build the applet to get things working and for God's sake read the README in applet/
