@@ -1,4 +1,6 @@
 _REPOS = repos/1 repos/2
+JAVA_FILES = applet/src/org/studentrobotics/ide/checkout/*.java \
+             applet/depends/*.jar applet/build.xml
 
 .PHONY: all default dev docs clean applet
 
@@ -6,7 +8,7 @@ _REPOS = repos/1 repos/2
 default: dev
 all: dev docs applet
 
-applet: applet/build.xml
+applet: $(JAVA_FILES)
 	cd applet/ && ant clean && ant build
 
 # Actual targets
