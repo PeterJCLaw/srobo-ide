@@ -6,12 +6,10 @@ _REPOS = repos/1 repos/2
 default: dev
 all: dev docs applet
 
-applet: applet/build/checkout.jar
-
-# Actual targets
-applet/build/checkout.jar: applet/build.xml
+applet: applet/build.xml
 	cd applet/ && ant clean && ant build
 
+# Actual targets
 clean:
 	rm -rf repos html latex
 	cd applet/ && ant clean
