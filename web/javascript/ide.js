@@ -82,3 +82,7 @@ function IDE_path_get_file(path) {
 	split = split.slice(2);
 	return split.join('/');
 }
+
+// Test if the user is logged in or not by doing a simple call.
+// If they're logged in then we'll get an auth token back.
+IDE_backend_request('user/info', {}, function(){ if(user != null) user.load(); }, {});
