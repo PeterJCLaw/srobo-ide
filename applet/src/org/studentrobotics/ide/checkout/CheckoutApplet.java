@@ -37,9 +37,9 @@ public class CheckoutApplet extends Applet {
 	/**
 	 * will attempt to write the passed zip to any found file system with a
 	 * .srobo file in its root
-	 *
-	 * @param zip
-	 *            a zip to write
+	 * 
+	 * @param base64Zip
+	 *            the contents of a zip file to write, encoded base64
 	 * @return false on failure, true on success
 	 */
 	public int writeZip(String base64Zip) {
