@@ -4,6 +4,10 @@
 	<property name="build" location="build"/>
 	<property name="deps" location="depends"/>
 
+	<!--
+		setup the claspath to include dependancy jars and the
+		bin folder where compiled classes go
+	-->
 	<path id="classpath">
 		<fileset dir="depends">
 			<include name="*.jar"/>
@@ -11,22 +15,38 @@
 		<pathelement path="${bin}"/>
 	</path>
 
+	<!--
+		clean rule deletes the bin and build folders, which is where
+		all compiled classes and jars go
+	-->
 	<target name="clean">
 		<delete dir="${bin}"/>
 		<delete dir="${build}"/>
 	</target>
 
+	<!--
+		build the applet, which compiles all java classes, makes a jar, zips in
+		any dependancies and signs the jar
+	-->
 	<target name="build">
+		<!-- setup the build directories -->
 		<mkdir dir="${bin}"/>
 		<mkdir dir="${build}"/>
+
+		<!-- compile the source -->
 		<javac srcdir="${src}" destdir="${bin}" includeantruntime="false" classpathref="classpath"/>
 
+		<!-- create a jar -->
 		<jar destfile="${build}/checkout.jar"
 			 basedir="${bin}"
 			 includes="**/*.class"
 		>
+			<!-- add depenancies -->
 			<zipfileset src="depends/base64coder.jar" includes="**/*.class"/>
 		</jar>
+
+		<!-- sign the jar -->
 		<signjar jar="${build}/checkout.jar" alias="test-only-applet-key" storepass="testpass"/>
 	</target>
+
 </project>
