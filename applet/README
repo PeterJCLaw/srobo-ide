@@ -1,3 +1,8 @@
+This is the CyanIDE file saving applet.
+
+It searches drives on the users machine for a drive with a .srobo file
+in the root, and puts the zip file there.
+
 To set up a testing keystore do the following:
 
 Using make (from the CyanIDE root):
