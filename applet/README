@@ -1,11 +1,10 @@
-to set up a testing keystore do the following:
+To set up a testing keystore do the following:
 
-Using make:
-	From the CyanIDE root make applet/.keystore
+Using make (from the CyanIDE root):
+	make applet/.keystore
 
 Manually:
-keytool -genkey -keyalg rsa -alias test-only-applet-key
-(set the keystore password to testpass or change build.xml)
-
+	keytool -genkeypair -keyalg rsa -alias test-only-applet-key
+ ** Set the keystore password to testpass or change build.xml **
 
 DONT USE A TESTING KEY IN PRODUCTION
