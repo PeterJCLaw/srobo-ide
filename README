@@ -1,10 +1,5 @@
 This is Student Robotics CyanIDE.
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!you have to build the applet to get things working and for gods sake READ    !
-!THE README in applet/                                                        !
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 It is a web-based IDE for developing code for Student Robotics robots.
 
 A guide for getting it running will be found here (once we've got it working properly):
@@ -13,7 +8,6 @@ https://www.studentrobotics.org/trac/wiki/CyanIDE
 In the mean time here's some basic info about the make targets:
 
 `applet`: Builds the java applet used for checkouts.
-          READ applet/README first!
 
 `dev`: Sets up the base folders you'll need for the repos etc.
 

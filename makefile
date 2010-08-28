@@ -9,7 +9,7 @@ _JAVA_KEYSTORE_PWD = testpass
 default: dev
 all: dev docs applet
 
-applet: applet/build.xml
+applet: applet/build.xml applet/.keystore
 	cd applet/ && ant build
 
 # Actual targets
@@ -18,7 +18,7 @@ clean:
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
-dev: $(_REPOS)
+dev: $(_REPOS) applet
 
 docs:
 	doxygen doxyfile
