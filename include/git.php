@@ -5,32 +5,59 @@
  */
 class GitRepository
 {
-	private $path;
+	private $working_path;
+	private $git_path;
 
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
 	public function __construct($path)
 	{
-		$this->path = $path;
 		if (!file_exists("$path/.git") || !is_dir("$path/.git"))
-			throw new Exception("git repository at $path is corrupt", E_INTERNAL_ERROR);
+		{
+			// this may be a bare repository, take a guess and see
+			if (file_exists("$path/config") &&
+			    file_exists("$path/objects") &&
+			    is_dir("$path/objects") &&
+			    file_exists("$path/branches") &&
+			    is_dir("$path/branches"))
+			{
+				// almost certainly is
+				$this->git_path = $path;
+				$this->working_path = null;
+			}
+			else
+			{
+				throw new Exception("git repository at $path is corrupt", E_INTERNAL_ERROR);
+			}
+		}
+		else
+		{
+			$this->working_path = $path;
+			$this->git_path = "$path/.git";
+		}
+	}
+
+	public function isBare()
+	{
+		return $this->working_path === null;
 	}
 
 	/**
 	 * Execute a command with the specified environment variables
 	 */
-	private function gitExecute($command, $env = array())
+	private function gitExecute($working, $command, $env = array())
 	{
+		$base = $working ? $this->working_path : $this->git_path;
 		$file = fopen('/tmp/git-log', 'a');
-		fwrite($file, "git $command [cwd = $this->path]\n");
+		fwrite($file, "git $command [cwd = $base]\n");
 		fclose($file);
 		$buildCommand = "git $command";
 		$proc = proc_open($buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
 		                                       2 => array('pipe', 'w')),
 		                                 $pipes,
-		                                 $this->path,
+		                                 $base,
 		                                 $env);
 		$stdout = stream_get_contents($pipes[1]);
 		$stderr = stream_get_contents($pipes[2]);
@@ -54,11 +81,11 @@ class GitRepository
 	/**
 	 * Creates a git repository on a specified path, fails if the path exists
 	 */
-	public static function createRepository($path)
+	public static function createRepository($path, $bare)
 	{
 		if (!is_dir($path) && mkdir($path))
 		{
-			shell_exec("cd $path ; git init");
+			shell_exec("cd $path ; git init" . ($bare ? " --bare" : ''));
 		}
 		return new GitRepository($path);
 	}
@@ -68,7 +95,7 @@ class GitRepository
 	 */
 	public function getCurrentRevision()
 	{
-		return $this->gitExecute('describe --always');
+		return $this->gitExecute(true, 'describe --always');
 	}
 
 	/**
@@ -76,7 +103,7 @@ class GitRepository
 	 */
 	public function getFirstRevision()
 	{
-		$revisions = explode("\n", $this->gitExecute('rev-list --all'));
+		$revisions = explode("\n", $this->gitExecute(false, 'rev-list --all'));
 		return $revisions[count($revisions)-1];
 	}
 
@@ -85,7 +112,7 @@ class GitRepository
 	 */
 	public function log($oldCommit, $newCommit)
 	{
-		$log = $this->gitExecute("log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
+		$log = $this->gitExecute(false, "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
 		$lines = explode("\n", $log);
 		$results = array();
 		foreach ($lines as $line)
@@ -108,8 +135,8 @@ class GitRepository
 	 */
 	public function reset()
 	{
-		$this->gitExecute('reset --hard');
-		$this->gitExecute('clean -f -d');
+		$this->gitExecute(true, 'reset --hard');
+		$this->gitExecute(true, 'clean -f -d');
 	}
 
 	/**
@@ -119,10 +146,10 @@ class GitRepository
 	{
 		$tmp = tempnam('/tmp', 'ide-');
 		file_put_contents($tmp, $message);
-		$this->gitExecute("commit -F $tmp", array('GIT_AUTHOR_NAME'    => $name,
-		                                          'GIT_AUTHOR_EMAIL'   => $email,
-		                                          'GIT_COMMITER_NAME'  => $name,
-		                                          'GIT_COMMITER_EMAIL' => $email));
+		$this->gitExecute(true, "commit -F $tmp", array('GIT_AUTHOR_NAME'    => $name,
+		                                                'GIT_AUTHOR_EMAIL'   => $email,
+		                                                'GIT_COMMITER_NAME'  => $name,
+		                                                'GIT_COMMITER_EMAIL' => $email));
 		unlink($tmp);
 	}
 
@@ -131,7 +158,7 @@ class GitRepository
 	 */
 	public function fileTreeCompat($base)
 	{
-		$root = $this->path;
+		$root = $this->working_path;
 		$content = shell_exec("find $root/* -type f");
 		$parts = explode("\n", $content);
 		$parts = array_map(function($x) use($root) { return str_replace("$root/", '', $x); }, $parts);
@@ -153,7 +180,7 @@ class GitRepository
 	 */
 	public function listFiles($path)
 	{
-		$files = scandir($this->path . "/$path");
+		$files = scandir($this->working_path . "/$path");
 		$result = array();
 		foreach ($files as $file)
 		{
@@ -171,8 +198,8 @@ class GitRepository
 	 */
 	public function createFile($path)
 	{
-		touch($this->path . "/$path");
-		$this->gitExecute("add $path");
+		touch($this->working_path . "/$path");
+		$this->gitExecute(true, "add $path");
 	}
 
 	/**
@@ -180,7 +207,7 @@ class GitRepository
 	 */
 	public function removeFile($path)
 	{
-		$this->gitExecute("rm -f $path");
+		$this->gitExecute(true, "rm -f $path");
 	}
 
 	/**
@@ -209,7 +236,7 @@ class GitRepository
 	{
 		if ($commit === null)
 		{
-			return file_get_contents($this->path . "/$path");
+			return file_get_contents($this->working_path . "/$path");
 		}
 		else
 		{
@@ -222,8 +249,8 @@ class GitRepository
 	 */
 	public function putFile($path, $content)
 	{
-		file_put_contents($this->path . "/$path", $content);
-		$this->gitExecute("add $path");
+		file_put_contents($this->working_path . "/$path", $content);
+		$this->gitExecute(true, "add $path");
 	}
 
 	/**
@@ -231,7 +258,7 @@ class GitRepository
 	 */
 	public function diff($commitOld, $commitNew)
 	{
-		return $this->gitExecute("diff -C -M $commitOld..$commitNew");
+		return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
 	}
 
 	/**
@@ -242,7 +269,7 @@ class GitRepository
 		// TODO: fix to actually obey commit
 		touch($dest);
 		$dest = realpath($dest);
-		$this->gitExecute("archive --format=zip $commit -6 > $dest");
+		$this->gitExecute(true, "archive --format=zip $commit -6 > $dest");
 	}
 
 	/**
@@ -250,7 +277,7 @@ class GitRepository
 	 */
 	public function revert($commit)
 	{
-		$this->gitExecute("revert $commit");
+		$this->gitExecute(false, "revert $commit");
 	}
 
 }
