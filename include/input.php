@@ -39,7 +39,7 @@ class Input
 		elseif ($optional)
 			return null;
 		else
-			throw new Exception('Input key failed to exist', E_MALFORMED_REQUEST);
+			throw new Exception("Input key '$key' failed to exist", E_MALFORMED_REQUEST);
 	}
 
 	public function setInput($key, $value)
