@@ -7,9 +7,9 @@ class AuthModule extends Module
 	public function __construct()
 	{
 		$this->authModule = AuthBackend::getInstance();
-		$input  = Input::getInstance();
-		$output = Output::getInstance();
-		if ($in = $input->getInput('auth-token', true))
+        $ts = getDefaultTokenStrategy();
+        $in = $ts->getAuthToken();
+		if ($in)
 		{
 			$tok = $this->authModule->validateAuthToken($in);
 			if (!$tok)
@@ -17,7 +17,7 @@ class AuthModule extends Module
 				throw new Exception('failed to validate auth token', E_BAD_AUTH_TOKEN);
 			}
 			$next = $this->authModule->getNextAuthToken();
-			$output->setOutput('auth-token', $next);
+            $ts->setNextAuthToken($next);
 		}
 		$this->installCommand('authenticate', array($this, 'authenticate'));
 		$this->installCommand('deauthenticate', array($this, 'deauthenticate'));
