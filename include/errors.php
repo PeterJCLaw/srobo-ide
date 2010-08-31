@@ -9,3 +9,4 @@ define('E_AUTH_DENIED',       6);
 define('E_NOT_IMPL',          7);
 define('E_PROJ_NONEXISTANT',  8);
 define('E_LDAP_NOT_AUTHED',   9);
+define('E_NO_EXPIRY_TIME',   10);

@@ -9,14 +9,6 @@ class CookieStrategy extends TokenStrategy
      */
     const COOKIENAME = "token";
 
-    /**
-     * Default validity is 30 days
-     *
-     * >>> 3600*24*30
-     * 2592000
-     */
-    const DEFAULT_COOKIE_VALIDITY = 2592000;
-
     public function getAuthToken()
     {
         return $_COOKIE[self::COOKIENAME];
@@ -24,6 +16,11 @@ class CookieStrategy extends TokenStrategy
 
     public function setNextAuthToken($token)
     {
+        $expiry = Configuration::getInstance()->getConfig("cookie_expiry_time");
+        if ($expiry == null)
+        {
+            throw new Exception("no cookie expiry time found in config file", E_NO_EXPIRY_TIME);
+        }
         setcookie(
                   self::COOKIENAME,
                   $token,
