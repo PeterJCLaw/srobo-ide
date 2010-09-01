@@ -4,8 +4,8 @@ import java.io.File;
 
 public class WindowsDrive {
 
-	private static final char[] DRIVES = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-			'j', 'k', 'l', 'm', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z' };
+	private static final char[] DRIVES = new char[] { 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+			'l', 'm', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z' };
 
 	public String findPath() {
 		try {
