@@ -38,6 +38,9 @@ class GitRepository
 		}
 	}
 
+    /**
+     * Determines if a repository is bare
+     */
 	public function isBare()
 	{
 		return $this->working_path === null;
