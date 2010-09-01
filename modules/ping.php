@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Module for pinging the server
+ *
+ * Installed commands are:
+ * ping ('data':Int) -> ('data':Int)
+ */
 class PingModule extends Module
 {
 	public function __construct()
