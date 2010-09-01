@@ -15,11 +15,17 @@ class Input
 	private $requestCommand = '';
 	private $inputs = array();
 
+    /**
+     * Gets the name of the requested module
+     */
 	public function getRequestModule()
 	{
 		return $this->requestModule;
 	}
 
+    /**
+     * Gets the name of the requested command
+     */
 	public function getRequestCommand()
 	{
 		return $this->requestCommand;
