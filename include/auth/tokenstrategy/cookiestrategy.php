@@ -9,6 +9,16 @@ class CookieStrategy extends TokenStrategy
 	 */
 	const COOKIENAME = "token";
 
+	/**
+	 * the path the cookie is valid for
+	 */
+	private $path;
+
+	public function __construct()
+	{
+		$this->path = $_SERVER['SCRIPT_NAME'];
+	}
+
 	public function getAuthToken()
 	{
 		return $_COOKIE[self::COOKIENAME];
@@ -25,13 +35,13 @@ class CookieStrategy extends TokenStrategy
 		          self::COOKIENAME,
 		          $token,
 		          time() + (int)$expiry,
-		          $_SERVER['SCRIPT_NAME']
+		          $this->path
 		         );
 	}
 
 	public function removeAuthToken()
 	{
-		setcookie(self::COOKIENAME, "", time() - 3600);
+		setcookie(self::COOKIENAME, "", time() - 3600, $this->path);
 	}
 
 }
