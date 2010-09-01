@@ -7,6 +7,9 @@ public class WindowsDrive {
 	private static final char[] DRIVES = new char[] { 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
 			'l', 'm', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z' };
 
+    /**
+     * Finds a file path to write zips to on a windows platform
+     */
 	public String findPath() {
 		try {
 			for (char drive : DRIVES) {

@@ -11,7 +11,10 @@ public class ZipWriteRunner implements Runnable {
 
 	private ConcurrentHashMap<Integer, FutureValue<Boolean>> mJobSuccessMap = new ConcurrentHashMap<Integer, FutureValue<Boolean>>();
 
-	public FutureValue<Boolean> setZip(String zip) throws InterruptedException {
+	/**
+     * Sets a new zip to be written to the file system
+     */
+    public FutureValue<Boolean> setZip(String zip) throws InterruptedException {
 		FileWriteJob newJob = new FileWriteJob(zip);
 		FutureValue<Boolean> result = new FutureValue<Boolean>();
 		mJobSuccessMap.put(newJob.getCode(), result);
