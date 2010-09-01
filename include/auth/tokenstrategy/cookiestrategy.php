@@ -24,7 +24,8 @@ class CookieStrategy extends TokenStrategy
         setcookie(
                   self::COOKIENAME,
                   $token,
-                  time() + (int)$expiry
+                  time() + (int)$expiry,
+                  $_SERVER['SCRIPT_NAME']
                  );
     }
 
