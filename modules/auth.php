@@ -35,7 +35,7 @@ class AuthModule extends Module
 			throw new Exception('username/password not provided', E_AUTH_FAILED);
 		if (!$this->authModule->authUser($username, $password))
 			throw new Exception('authentication failed', E_AUTH_DENIED);
-		$output->setOutput('auth-token', $this->authModule->getNextAuthToken());
+        getDefaultTokenStrategy()->setNextAuthToken($this->authModule->getNextAuthToken());
 		$output->setOutput('display-name', $this->authModule->displayNameForUser($username));
 		return true;
 	}
