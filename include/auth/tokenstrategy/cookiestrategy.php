@@ -24,7 +24,7 @@ class CookieStrategy extends TokenStrategy
         setcookie(
                   self::COOKIENAME,
                   $token,
-                  time() + self::DEFAULT_COOKIE_VALIDITIY
+                  time() + (int)$expiry
                  );
     }
 
