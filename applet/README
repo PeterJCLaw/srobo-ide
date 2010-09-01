@@ -1,11 +1,15 @@
-to set up a testing keystore do the following:
+This is the CyanIDE file saving applet.
 
-keytool -genkey -keyalg rsa -alias test-only-applet-key
-(set the keystore password to testpass or change build.xml)
+It searches drives on the users machine for a drive with a .srobo file
+in the root, and puts the zip file there.
 
-then
+To set up a testing keystore do the following:
 
-keytool -export -alias test-only-applet-key -file test-only-applet-key.crt
+Using make (from the CyanIDE root):
+	make applet/.keystore
 
+Manually:
+	keytool -genkeypair -keyalg rsa -alias test-only-applet-key
+ ** Set the keystore password to testpass or change build.xml **
 
 DONT USE A TESTING KEY IN PRODUCTION
