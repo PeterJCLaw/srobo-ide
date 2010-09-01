@@ -15,4 +15,10 @@ class IOTokenStrategy extends TokenStrategy
         $output = Output::getInstance();
         $output->setOutput("auth-token", $token);
     }
+
+    public function removeAuthToken()
+    {
+        $output = Output::getInstance();
+        $output->removeOutput("auth-token");
+    }
 }

@@ -20,6 +20,11 @@ abstract class TokenStrategy
      * Sets the auth token that should be passed on the next request
      */
     abstract public function setNextAuthToken($token);
+
+    /**
+     * Removes the auth token such that the client can't auth again
+     */
+    abstract public function removeAuthToken();
 }
 
 /**

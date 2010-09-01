@@ -28,4 +28,9 @@ class CookieStrategy extends TokenStrategy
                  );
     }
 
+    public function removeAuthToken()
+    {
+        setcookie (self::COOKIENAME, "", time() - 3600);
+    }
+
 }
