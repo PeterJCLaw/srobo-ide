@@ -81,7 +81,7 @@ class GitRepository
 	/**
 	 * Creates a git repository on a specified path, fails if the path exists
 	 */
-	public static function createRepository($path, $bare)
+	public static function createRepository($path, $bare = false)
 	{
 		if (!is_dir($path) && mkdir($path))
 		{
@@ -89,6 +89,8 @@ class GitRepository
 		}
 		return new GitRepository($path);
 	}
+
+	
 
 	/**
 	 * Gets the most recent revision hash
