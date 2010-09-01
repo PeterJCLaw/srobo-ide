@@ -27,7 +27,7 @@ if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))
 $auth = AuthBackend::getInstance();
 if ($username = $auth->getCurrentUser())
 {
-	echo file_get_contents('index.html');
+	echo file_get_contents('web/index.html');
 }
 else
 {
