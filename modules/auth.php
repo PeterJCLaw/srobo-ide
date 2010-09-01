@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Module for handling client side auth requests
+ *
+ * commands are:
+ * authenticate (username,password) -> (display_name)
+ * deauthenticate (void) -> (void)
+ */
 class AuthModule extends Module
 {
 	private $authModule;
@@ -23,6 +30,9 @@ class AuthModule extends Module
 		$this->installCommand('deauthenticate', array($this, 'deauthenticate'));
 	}
 
+    /**
+     * Authenticates a user
+     */
 	public function authenticate()
 	{
 		$input    = Input::getInstance();
@@ -40,6 +50,10 @@ class AuthModule extends Module
 		return true;
 	}
 
+
+    /**
+     * Deauthenticates a user
+     */
 	public function deauthenticate()
 	{
 		$input    = Input::getInstance();
