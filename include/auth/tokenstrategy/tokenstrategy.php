@@ -33,7 +33,7 @@ abstract class TokenStrategy
 function getDefaultTokenStrategy()
 {
     $name = Configuration::getInstance()->getConfig("default_token_strategy");
-    if (!class_exists($name) || !is_subclass_of($this, $name))
+    if (!class_exists($name) || !is_subclass_of(new $name(), 'TokenStrategy'))
     {
         throw new Exception("the default token strategy is not valid", E_TOKEN_STRAT_CONFIG);
     }
