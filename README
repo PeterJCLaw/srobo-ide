@@ -8,7 +8,6 @@ https://www.studentrobotics.org/trac/wiki/CyanIDE
 In the mean time here's some basic info about the make targets:
 
 `applet`: Builds the java applet used for checkouts.
-          READ applet/README first!
 
 `dev`: Sets up the base folders you'll need for the repos etc.
 
@@ -20,11 +19,20 @@ In the mean time here's some basic info about the make targets:
 You can run tests on CyanIDE by running `./run-tests`.
 
 Dependancies:
+ * A web server
  * PHP 5.3
  * ant     # for building the Java applet
  * javac   # for building the Java applet
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
+
+In Ubuntu these can be achieved by installing the following packages:
+ apache2 php5 ant1.8 openjdk-6-jdk doxygen php5-cli
+
+Note that by default Ubuntu Lucid will not execute PHP files in
+public_html folders. This can be resolved by following the instructions
+in /etc/apache2/mods-available/php5.conf
+
 
                                   ...vvvv)))))).
        /~~\               ,,,c(((((((((((((((((/
