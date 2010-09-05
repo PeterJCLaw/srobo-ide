@@ -32,9 +32,10 @@ class LDAPAuth extends SecureTokenAuth
 
 		foreach ($groups as $group)
 		{
-			if (stripos($group["cn"], "team"))
+            $groupNamePrefix = $config->getConfig("ldap.team.prefix");
+			if (stripos($group["cn"], "team") === 0)
 			{
-				$teams[] = (int)substr($group["cn"], 4);
+				$teams[] = (int)substr($group["cn"], strlen($groupNamePrefix));
 			}
 		}
 
