@@ -16,7 +16,7 @@ class CookieStrategy extends TokenStrategy
 
 	public function __construct()
 	{
-		$this->path = $_SERVER['SCRIPT_NAME'];
+		$this->path = dirname($_SERVER['SCRIPT_NAME']).'/';
 	}
 
 	public function getAuthToken()
