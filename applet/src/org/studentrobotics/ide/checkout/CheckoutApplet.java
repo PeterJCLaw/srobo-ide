@@ -40,7 +40,7 @@ public class CheckoutApplet extends Applet {
 	 * 
 	 * @param base64Zip
 	 *            the contents of a zip file to write, encoded base64
-	 * @return false on failure, true on success
+	 * @return 0 on success, 1 on recoverable failure, -1 on irrecoverable failure
 	 */
 	public int writeZip(String base64Zip) {
 		// we can only write to files with a char[] not a byte[]
