@@ -25,7 +25,8 @@ if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))
 // If the user is logged in give them the main index page
 // Else give them the login page
 $auth = AuthBackend::getInstance();
-if ($username = $auth->getCurrentUser())
+$token = getDefaultTokenStrategy()->getAuthToken();
+if ($auth->validateAuthToken($token))
 {
 	echo file_get_contents('web/index.html');
 }
