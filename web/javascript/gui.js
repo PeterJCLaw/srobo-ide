@@ -543,11 +543,14 @@ function User() {
 			ev.stopPropagation();
 		}
 
-		IDE_backend_request("auth/deauthenticate", {}, window.location.reload, bind(function() {
-			status_button( "Failed to log out", LEVEL_ERROR,
-				       "retry", partial( bind( this._logout_click, this ),
-							 null ) );
-		}, this));
+		IDE_backend_request("auth/deauthenticate", {},
+		                    bind(window.location.reload, window.location),
+		                    bind(function() {
+		                                     status_button( "Failed to log out", LEVEL_ERROR, "retry",
+		                                                    bind( this._logout_click, this, null )
+		                                                  );
+		                                    },
+                            this));
 	}
 
 	// do they have admin priviledges - this gets overwirtten by the info collecter if they do

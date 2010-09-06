@@ -9,6 +9,9 @@ abstract class Module
 		$this->commandHandlers[$name] = $fn;
 	}
 
+    /**
+     * Dispatches a command to the module
+     */
 	public function dispatchCommand($name)
 	{
 		if (isset($this->commandHandlers[$name]))

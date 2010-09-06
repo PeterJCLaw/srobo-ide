@@ -46,7 +46,7 @@
 		</jar>
 
 		<!-- sign the jar -->
-		<signjar jar="${build}/checkout.jar" alias="test-only-applet-key" storepass="testpass"/>
+		<signjar jar="${build}/checkout.jar" alias="test-only-applet-key" storepass="testpass" keystore=".keystore"/>
 	</target>
 
 </project>

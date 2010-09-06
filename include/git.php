@@ -38,6 +38,9 @@ class GitRepository
 		}
 	}
 
+    /**
+     * Determines if a repository is bare
+     */
 	public function isBare()
 	{
 		return $this->working_path === null;
@@ -81,14 +84,17 @@ class GitRepository
 	/**
 	 * Creates a git repository on a specified path, fails if the path exists
 	 */
-	public static function createRepository($path, $bare)
+	public static function createRepository($path, $bare = false)
 	{
 		if (!is_dir($path) && mkdir($path))
 		{
-			shell_exec("cd $path ; git init" . ($bare ? " --bare" : ''));
+            $cd_path = str_replace(" ", "\\ ", $path);
+			shell_exec("cd $cd_path ; git init" . ($bare ? " --bare" : ''));
 		}
 		return new GitRepository($path);
 	}
+
+	
 
 	/**
 	 * Gets the most recent revision hash
@@ -159,7 +165,8 @@ class GitRepository
 	public function fileTreeCompat($base)
 	{
 		$root = $this->working_path;
-		$content = shell_exec("find $root/* -type f");
+        $shell_root = str_replace(" ", "\\ ", $root);
+		$content = shell_exec("find $shell_root/* -type f");
 		$parts = explode("\n", $content);
 		$parts = array_map(function($x) use($root) { return str_replace("$root/", '', $x); }, $parts);
 		$parts = array_filter($parts, function($x) { return $x != ''; });
