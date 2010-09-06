@@ -310,7 +310,7 @@ function User() {
 		// Return a deferred that fires when the data's ready
 		var retd = new Deferred();
 
-		this._check_logged_in();
+		this._request_info();
 
 		this._info_deferred = retd;
 		return this._info_deferred;
@@ -351,68 +351,6 @@ function User() {
 
 	this.get_setting = function(sname) {
 		return this._settings[sname];
-	}
-
-	// Check if we're logged in
-	this._check_logged_in = function() {
-		if (IDE_authed()) {
-			this._request_info();
-		} else {
-			this._show_login();
-		}
-	}
-
-	// Show the login dialog
-	this._show_login = function() {
-		status_id = "login-feedback";
-
-		// Connect up the onclick event to the login button
-		disconnectAll( "login-button" );
-		connect( "login-button", "onclick", bind( this._do_login, this ) );
-
-		// Do stuff when the user presses enter
-		disconnectAll( "password" );
-		connect( "password", "onkeydown", bind( this._pwd_on_keypress, this ) );
-
-		// Show the dialog and hide the top bar, which IE6 has problems with
-		setStyle( "login-back", {"display":"block"} );
-		setStyle( "top", {"display":"none"} );
-
-		//clear box on focus, replace with 'username' on blur.
-		connect("username","onfocus",function(){if ($("username").value==$("username").defaultValue) $("username").value=''});
-		connect("username","onblur",function(){if (!$("username").value) $("username").value = $("username").defaultValue});
-		//and focus the username
-		$("username").focus();
-	}
-
-	// Hide the login dialog
-	this._hide_login = function() {
-		status_id = "status";
-		setStyle( "login-back", {"display" :"none"} );
-		setStyle( "top", {"display":""} );
-	}
-
-	this._login_complete = function() {
-		this._hide_login();
-		this._request_info();
-	}
-
-	// Grab the username and password from the login form and start the login
-	this._do_login = function(ev) {
-		if( ev != null ) {
-			ev.preventDefault();
-			ev.stopPropagation();
-		}
-
-		var user = $("username").value;
-		var pass = $("password").value;
-
-		IDE_backend_request("auth/authenticate", {username: user, password: pass}, bind(this._login_complete, this),
-		bind(function(errcode, errmsg) {
-			status_msg(errmsg, LEVEL_WARN);
-			$("password").value = '';
-			$("password").focus();
-		}, this));
 	}
 
 	this._logout_click = function(ev) {
