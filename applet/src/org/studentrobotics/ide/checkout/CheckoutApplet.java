@@ -37,7 +37,7 @@ public class CheckoutApplet extends Applet {
 	/**
 	 * will attempt to write the passed zip to any found file system with a
 	 * .srobo file in its root
-	 * 
+	 *
 	 * @param base64Zip
 	 *            the contents of a zip file to write, encoded base64
 	 * @return 0 on success, 1 on recoverable failure, -1 on irrecoverable failure
@@ -48,7 +48,7 @@ public class CheckoutApplet extends Applet {
 			if (hasDied) {
 				return -1;
 			}
-	
+
 			try {
 				String decodedString = Base64Coder.decodeString(base64Zip);
 				System.err.println(base64Zip + " => " + decodedString);
