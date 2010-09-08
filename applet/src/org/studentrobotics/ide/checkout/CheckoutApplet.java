@@ -2,6 +2,10 @@ package org.studentrobotics.ide.checkout;
 
 import java.applet.Applet;
 import java.awt.Graphics;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,11 +42,11 @@ public class CheckoutApplet extends Applet {
 	 * will attempt to write the passed zip to any found file system with a
 	 * .srobo file in its root
 	 *
-	 * @param base64Zip
-	 *            the contents of a zip file to write, encoded base64
+	 * @param zipUrl
+	 *            the url of the zip to download
 	 * @return 0 on success, 1 on recoverable failure, -1 on irrecoverable failure
 	 */
-	public int writeZip(String base64Zip) {
+	public int writeZip(String zipUrl) {
 		// we can only write to files with a char[] not a byte[]
 		try {
 			if (hasDied) {
@@ -50,9 +54,13 @@ public class CheckoutApplet extends Applet {
 			}
 
 			try {
-				String decodedString = Base64Coder.decodeString(base64Zip);
-				System.err.println(base64Zip + " => " + decodedString);
-				FutureValue<Boolean> result = mZwr.setZip(decodedString);
+				URL url = new URL(zipUrl);
+				URLConnection conn = url.openConnection();
+				byte[] zipBytes = new byte[conn.getContentLength()];
+				conn.getInputStream().read(zipBytes);
+				
+
+				FutureValue<Boolean> result = mZwr.setZip(zipBytes);
 				System.err.println("dispatched");
 				System.err.println("result future is: " + result);
 				Boolean b = result.get(10L);
@@ -72,6 +80,14 @@ public class CheckoutApplet extends Applet {
 				}
 				return 1;
 			}
+		}
+		catch (MalformedURLException mue) {
+		    mue.printStackTrace();
+		    return 1;
+		}
+		catch (IOException ioe) {
+		    ioe.printStackTrace();
+		    return 1;
 		}
 		catch (Throwable t) {
 			t.printStackTrace();
