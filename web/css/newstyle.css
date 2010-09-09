@@ -200,7 +200,7 @@ body {
 	width: 100%;
 }
 
-#projects-page, #edit-mode, #simulator-page {
+#page > div {
 	display: none;
 }
 
@@ -285,7 +285,6 @@ a.button:hover {
 }
 #edit-mode {
 	text-align: center;
-	display: none;
 }
 
 #teamname {
@@ -349,10 +348,6 @@ a.button:hover {
 	-moz-opacity: 0.75;
 	opacity: .75;
 	filter: alpha(opacity=75);
-}
-
-#robolog-page {
-	display: none;
 }
 
 
