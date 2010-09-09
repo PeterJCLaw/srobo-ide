@@ -35,7 +35,7 @@
 }
 
 #timeline-list li{
-	display: inline;	
+	display: inline;
 	width: 100px;
 	color: #ffffff;
 	padding:2px 5px 2px 5px;
@@ -44,7 +44,7 @@
 #timeline-bar-out {
 	width: 500px;
 	border: 1px solid gray;
-	padding:0px 5px 0px 0px; 
+	padding:0px 5px 0px 0px;
 	background: #dddddd;
 	overflow: hidden;
 }
