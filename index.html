@@ -35,6 +35,7 @@
 	<script type="text/javascript" src="web/javascript/log.js"></script>
 	<script type="text/javascript" src="web/javascript/projpage.js"></script>
 	<script type="text/javascript" src="web/javascript/robolog.js"></script>
+	<script type="text/javascript" src="web/javascript/settings.js"></script>
 	<script type="text/javascript" src="web/javascript/switchboard.js"></script>
 	<script type="text/javascript" src="web/javascript/tabs.js"></script>
 	<!-- editarea can die in ie6 if there is a leading ./ on the src line -->
@@ -262,7 +263,20 @@
 				<dt class="dummy"></dt>
 				<dd class="dummy"></dd>
 			</dl>
-		</div>
+		</div> <!-- end of "errors-page" -->
+
+		<div id="settings-page">
+			<div class="menu-bar">
+				<ul>
+					<li><em id="settings-title">View or edit user settings for the IDE.</em></li>
+					<li class="settings-save"><button id="settings-save">Save</button></li>
+				</ul>
+				<div class="ie6-prop-clear" style="clear:both;"></div>
+			</div>
+			<div id="settings-table">
+				User settings appear here!
+			</div>
+		</div> <!-- end of "settings-page" -->
 
 		<div id="switchboard-page">
 			<div id="message-window" class="switchboard-window">

@@ -44,7 +44,7 @@ SettingsPage.prototype.init = function() {
 
 /* ***** Tab events ***** */
 SettingsPage.prototype._onfocus = function() {
-	setStyle("SettingsPage-page", {'display':'block'});
+	showElement('settings-page');
 }
 
 SettingsPage.prototype._onblur = function() {
@@ -53,15 +53,13 @@ SettingsPage.prototype._onblur = function() {
 		this._prompt.close();
 		this._prompt = null;
 	}
-	showElement('settings-page');
+	hideElement('settings-page');
 }
 
 SettingsPage.prototype._close = function() {
-	/* Clear any prompts */
-	if( this._prompt != null ) {
-		this._prompt.close();
-		this._prompt = null;
-	}
+	/* Clear and hide things as if we were moved away from */
+	this._onblur();
+
 	/* Clear class variables */
 	this.milestone = null;
 	this.events = null;
@@ -81,9 +79,6 @@ SettingsPage.prototype._close = function() {
 	/* Close tab */
 	this.tab.close();
 	this._inited = false;
-
-	/* hide the settings page */
-	hideElement('settings-page');
 }
 /* ***** End Tab events ***** */
 

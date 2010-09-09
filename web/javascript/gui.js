@@ -39,6 +39,9 @@ var user;
 // The team selector
 var team_selector;
 
+// The user settings page
+var settingspage = null;
+
 // The switchboard page
 var switchboardpage = null;
 
@@ -102,6 +105,9 @@ function load_gui() {
 
 	//The switchboard page - this must happen before populate_shortcuts_box is called
 	switchboardpage = new Switchboard();
+
+	//The switchboard page - this must happen before populate_shortcuts_box is called
+	settingspage = new SettingsPage();
 
 	//The Admin page - this must happen before populate_shortcuts_box is called
 	adminpage = new Admin();
@@ -201,11 +207,10 @@ function populate_shortcuts_box() {
 	connect( short1_li, "onclick", bind(editpage.new_file, editpage) );
 	shortcuts.push(short1_li);
 
-/*
 	var short2_a = A( {"title": "Change user settings" }, "User settings" );
 	var short2_li = LI(null, short2_a);
+	connect( short2_li, "onclick", bind(settingspage.init, settingspage) );
 	shortcuts.push(short2_li);
-*/
 
 	var short3_a = A( {"title": "Messages, docs and helpful information"},  "View Switchboard" );
 	var short3_li = LI(null, short3_a);
