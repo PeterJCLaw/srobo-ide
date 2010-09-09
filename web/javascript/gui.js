@@ -106,10 +106,10 @@ function load_gui() {
 	//The Admin page - this must happen before populate_shortcuts_box is called
 	adminpage = new Admin();
 
-	populate_shortcuts_box();
+	var shortcutsList = populate_shortcuts_box();
 
 	// Shortcut button
-	var shortcuts = new dropDownBox("dropShortcuts");
+	var shortcuts = new dropDownBox("dropShortcuts", shortcutsList);
 	var sbutton = new Tab( "v", {can_close:false,title:'See more options'} ); // TODO: find something like this
 	sbutton.can_focus = false;
 	connect( sbutton, "onclick", function(){shortcuts.toggleBox();} ) ;
@@ -229,13 +229,14 @@ function populate_shortcuts_box() {
 		appendChildNodes(new_ul, shortcuts[i]);
 	}
 
-	appendChildNodes($("dropShortcuts"), new_ul);
+	return new_ul;
 }
 
 // Take id of existing hidden div to make into appearing box
-function dropDownBox (id) {
-	this._init = function() {
-		this.id = getElement(id);
+function dropDownBox (id, children) {
+	this._init = function(id, children) {
+		this.id = $(id);
+		appendChildNodes(this.id, children);
 		connect( this.id, "onmouseenter", bind( this._clearTimeout, this) );	// when mouse is inside the dropbox disable timeout
 		connect( this.id, "onmouseleave", bind( this.hideBox, this ) );		// when mouse leaves dropbox hide it
 		connect( this.id, "onclick", bind( this.hideBox, this ) );
@@ -255,7 +256,7 @@ function dropDownBox (id) {
 			this.showBox();
 		} else {
 			this.hideBox();
-			}
+		}
 	}
 
 	this._clearTimeout = function() {
@@ -265,7 +266,7 @@ function dropDownBox (id) {
 		}
 	}
 
-	this._init(id);
+	this._init(id, children);
 }
 
 // Show some info about the IDE, just the version number for now
