@@ -39,6 +39,9 @@ var user;
 // The team selector
 var team_selector;
 
+// The user settings page
+var settingspage = null;
+
 // The switchboard page
 var switchboardpage = null;
 
@@ -103,13 +106,16 @@ function load_gui() {
 	//The switchboard page - this must happen before populate_shortcuts_box is called
 	switchboardpage = new Switchboard();
 
+	//The switchboard page - this must happen before populate_shortcuts_box is called
+	settingspage = new SettingsPage();
+
 	//The Admin page - this must happen before populate_shortcuts_box is called
 	adminpage = new Admin();
 
-	populate_shortcuts_box();
+	var shortcutsList = populate_shortcuts_box();
 
 	// Shortcut button
-	var shortcuts = new dropDownBox("dropShortcuts");
+	var shortcuts = new dropDownBox("dropShortcuts", shortcutsList);
 	var sbutton = new Tab( "v", {can_close:false,title:'See more options'} ); // TODO: find something like this
 	sbutton.can_focus = false;
 	connect( sbutton, "onclick", function(){shortcuts.toggleBox();} ) ;
@@ -201,11 +207,10 @@ function populate_shortcuts_box() {
 	connect( short1_li, "onclick", bind(editpage.new_file, editpage) );
 	shortcuts.push(short1_li);
 
-/*
 	var short2_a = A( {"title": "Change user settings" }, "User settings" );
 	var short2_li = LI(null, short2_a);
+	connect( short2_li, "onclick", bind(settingspage.init, settingspage) );
 	shortcuts.push(short2_li);
-*/
 
 	var short3_a = A( {"title": "Messages, docs and helpful information"},  "View Switchboard" );
 	var short3_li = LI(null, short3_a);
@@ -229,13 +234,14 @@ function populate_shortcuts_box() {
 		appendChildNodes(new_ul, shortcuts[i]);
 	}
 
-	appendChildNodes($("dropShortcuts"), new_ul);
+	return new_ul;
 }
 
 // Take id of existing hidden div to make into appearing box
-function dropDownBox (id) {
-	this._init = function() {
-		this.id = getElement(id);
+function dropDownBox (id, children) {
+	this._init = function(id, children) {
+		this.id = $(id);
+		appendChildNodes(this.id, children);
 		connect( this.id, "onmouseenter", bind( this._clearTimeout, this) );	// when mouse is inside the dropbox disable timeout
 		connect( this.id, "onmouseleave", bind( this.hideBox, this ) );		// when mouse leaves dropbox hide it
 		connect( this.id, "onclick", bind( this.hideBox, this ) );
@@ -255,7 +261,7 @@ function dropDownBox (id) {
 			this.showBox();
 		} else {
 			this.hideBox();
-			}
+		}
 	}
 
 	this._clearTimeout = function() {
@@ -265,7 +271,7 @@ function dropDownBox (id) {
 		}
 	}
 
-	this._init(id);
+	this._init(id, children);
 }
 
 // Show some info about the IDE, just the version number for now

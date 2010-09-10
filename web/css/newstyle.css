@@ -200,7 +200,7 @@ body {
 	width: 100%;
 }
 
-#projects-page, #edit-mode, #simulator-page {
+#page > div {
 	display: none;
 }
 
@@ -283,10 +283,6 @@ a.button:hover {
 	color: #253571;
 	background-color: #ffffff;
 }
-#edit-mode {
-	text-align: center;
-	display: none;
-}
 
 #teamname {
 	font-weight: bold;
@@ -351,10 +347,15 @@ a.button:hover {
 	filter: alpha(opacity=75);
 }
 
-#robolog-page {
-	display: none;
+#settings-page #settings-title {
+	display: block;
+	padding: 0.4em 1em;
 }
 
+#settings-page .settings-save {
+	float: right;
+	margin: 0 1em;
+}
 
 #robolog-pre {
 	height: 30em;
