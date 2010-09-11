@@ -270,7 +270,7 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 
 
 	/* Add the events */
-	for(m in nodes.events)
+	for(var m in nodes.events)
 	{	/* create and position a new <div> for each timeline event */
 		var e = DIV({"class":"timeline-bar-event",
 				"id":"timeline-ev-"+m,

@@ -232,7 +232,7 @@ function ErrorsPage() {
 		if(!this._inited)
 			return;
 
-		for( i in this.eflist ) {
+		for( var i in this.eflist ) {
 			if(this.eflist[i] != null)
 				this.eflist[i].remove();
 		}
@@ -259,7 +259,7 @@ function ErrorsPage() {
 	}
 
 	this.hide_all_files = function() {
-		for( i in this.eflist ) {
+		for( var i in this.eflist ) {
 			this.eflist[i].hide_errs();
 		}
 	}

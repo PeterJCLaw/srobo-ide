@@ -633,7 +633,7 @@ function TeamSelector() {
 	this._build_options = function() {
 		var olist = [];
 
-		for( t in user.teams ) {
+		for( var t in user.teams ) {
 			var props = { "value" : user.teams[t]};
 
 			if( user.teams[t] == team )
@@ -650,7 +650,7 @@ function TeamSelector() {
 		if( team == 0 )
 			return false;
 
-		for( i in user.teams )
+		for( var i in user.teams )
 			if( user.teams[i] == team )
 				return true;
 		return false;

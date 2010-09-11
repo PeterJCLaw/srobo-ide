@@ -20,7 +20,7 @@ if (typeof XMLHttpRequest == "undefined")
 
 var IDE_clone = function(object) {
   var newObj = (object instanceof Array) ? [] : {};
-  for (i in object) {
+  for (var i in object) {
     if (i == 'clone') continue;
     if (object[i] && typeof object[i] == "object") {
       newObj[i] = object[i].clone();

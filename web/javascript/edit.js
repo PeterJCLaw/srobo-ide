@@ -106,7 +106,7 @@ function EditPage() {
 
 	this.close_all_tabs = function(override) {
 		mod_count	= 0;
-		for ( i in this._open_files ) {	//find which are modified and close the others
+		for ( var i in this._open_files ) {	//find which are modified and close the others
 			if(this._open_files[i] !== null) {
 				logDebug('checking '+i);
 				if(this._open_files[i].is_modified() && override != true) {
@@ -421,7 +421,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		                    	                                 message: this._commitMsg},
 		                    	                                 bind(this._receive_repo_save, this),
 		                    	                                 bind(this._error_receive_repo_save, this));
-		                    	
+
 		                    }, this),
 		                    bind(this._error_receive_repo_save, this));
 	}

@@ -273,7 +273,7 @@ function inArray(val, arr) {
 /* ***** Enum-like things ***** */
 
 function Enum(arr) {
-	e = {};
+	var e = {};
 	for(var i=0; i < arr.length; i++) {
 		e[arr[i]] = i+arr[i]+i;
 	}
