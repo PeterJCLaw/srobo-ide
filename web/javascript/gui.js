@@ -202,32 +202,39 @@ function beforeunload(e) {
 function populate_shortcuts_box() {
 	var shortcuts = new Array();
 
-	var short1_a = A( {"title": "Create a new file"}, "Create new file" );
-	var short1_li = LI(null, short1_a);
-	connect( short1_li, "onclick", bind(editpage.new_file, editpage) );
-	shortcuts.push(short1_li);
-
-	var short2_a = A( {"title": "Change user settings" }, "User settings" );
-	var short2_li = LI(null, short2_a);
-	connect( short2_li, "onclick", bind(settingspage.init, settingspage) );
-	shortcuts.push(short2_li);
-
-	var short3_a = A( {"title": "Messages, docs and helpful information"},  "View Switchboard" );
-	var short3_li = LI(null, short3_a);
-	connect( short3_li, "onclick", bind(switchboardpage.init, switchboardpage) );
-	shortcuts.push(short3_li);
-
-	if(user.can_admin()) {
-		var admin_a = A( {"title": "IDE Admin"},  "Administration" );
-		var admin_li = LI(null, admin_a);
-		connect( admin_li, "onclick", bind(adminpage.init, adminpage) );
-		shortcuts.push(admin_li);
+	function newShortcut(name, description, callback) {
+		var a = A( {"title": description}, name );
+		var li = LI(null, a);
+		connect( li, "onclick", callback );
+		return li;
 	}
 
-	var about_a = A( {"title": "View information about the RoboIDE"},  "About" );
-	var about_li = LI(null, about_a);
-	connect( about_li, "onclick", bind(about.showBox, about) );
-	shortcuts.push(about_li);
+	shortcuts.push(newShortcut( "Create new file",
+		"Create a new file",
+		bind(editpage.new_file, editpage)
+	));
+
+	shortcuts.push(newShortcut( "User settings",
+		"Change user settings",
+		bind(settingspage.init, settingspage)
+	));
+
+	shortcuts.push(newShortcut( "View Switchboard",
+		"Messages, docs and helpful information",
+		bind(switchboardpage.init, switchboardpage)
+	));
+
+	shortcuts.push(newShortcut( "About",
+		"View information about the RoboIDE",
+		bind(about.showBox, about)
+	));
+
+	if(user.can_admin()) {
+		shortcuts.push(newShortcut( "Administration",
+			"IDE Admin",
+			bind(adminpage.init, adminpage)
+		));
+	}
 
 	var new_ul = UL(null);
 	for( var i=0; i<shortcuts.length; i++) {
