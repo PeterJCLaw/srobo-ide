@@ -16,6 +16,16 @@ function SettingsPage() {
 
 	// connect up the submit event for the 'submit-your-blogs-rss' form
 	this._signals.push(connect( 'settings-save', 'onclick', bind(this.saveSettings, this)));
+
+	// store a copy of our instance!
+	SettingsPage.Instance = this;
+}
+
+SettingsPage.GetInstance = function() {
+	if(SettingsPage.Instance == null) {
+		SettingsPage.Instance = new SettingsPage();
+	}
+	return SettingsPage.Instance;
 }
 
 /* ***** Initialization code ***** */

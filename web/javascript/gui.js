@@ -107,7 +107,7 @@ function load_gui() {
 	switchboardpage = new Switchboard();
 
 	//The settings page - this must happen before populate_shortcuts_box is called
-	settingspage = new SettingsPage();
+	settingspage = SettingsPage.GetInstance();
 
 	//The Admin page - this must happen before populate_shortcuts_box is called
 	adminpage = new Admin();
