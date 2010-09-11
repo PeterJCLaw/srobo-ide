@@ -347,16 +347,6 @@ a.button:hover {
 	filter: alpha(opacity=75);
 }
 
-#settings-page #settings-title {
-	display: block;
-	padding: 0.4em 1em;
-}
-
-#settings-page .settings-save {
-	float: right;
-	margin: 0 1em;
-}
-
 #robolog-pre {
 	height: 30em;
 	overflow: scroll;

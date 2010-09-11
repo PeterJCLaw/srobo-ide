@@ -1,0 +1,33 @@
+#settings-page #settings-title {
+	display: block;
+	padding: 0.4em 1em;
+}
+
+#settings-page .settings-save {
+	float: right;
+	margin: 0 1em;
+}
+
+#settings-table {
+	margin: 0 auto;
+	width: 80%;
+}
+
+#settings-table .setting {
+	width: 80%;
+}
+
+#settings-table .setting span {
+	display: block;
+	margin-right: 170px;
+}
+
+#settings-table .setting div {
+	float: right;
+}
+
+#settings-table .disabled {
+	background-color: #F4F4F4;
+	color: #808080;
+}
+

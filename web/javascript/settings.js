@@ -190,13 +190,13 @@ Setting.prototype.setValue = function(value) {
 Setting.prototype._construct = function() {
 	log("constructing setting '"+this._name+"'.");
 
-	var nameHeading = createDOM('h5', {}, this._name);
+	var nameHeading = createDOM('h4', {}, this._name);
 
 	var descriptionSpan = SPAN({}, this._description);
 
 	var selectorDiv = this._createSelector();
 
-	appendChildNodes(this._container, nameHeading, descriptionSpan, selectorDiv);
+	appendChildNodes(this._container, nameHeading, selectorDiv, descriptionSpan);
 }
 
 Setting.prototype._createSelector = function() {
