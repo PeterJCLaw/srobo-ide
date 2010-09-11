@@ -106,7 +106,7 @@ function load_gui() {
 	//The switchboard page - this must happen before populate_shortcuts_box is called
 	switchboardpage = new Switchboard();
 
-	//The switchboard page - this must happen before populate_shortcuts_box is called
+	//The settings page - this must happen before populate_shortcuts_box is called
 	settingspage = new SettingsPage();
 
 	//The Admin page - this must happen before populate_shortcuts_box is called
