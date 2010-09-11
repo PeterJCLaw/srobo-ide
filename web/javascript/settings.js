@@ -303,8 +303,8 @@ SettingsPage.Settings = {
 		}
 	},
 	'project.load' : {
-		name: 'Team to load',
-		description: 'Which team to load when you login to the IDE.',
+		name: 'Project to load',
+		description: 'Which project to load when you login to the IDE.',
 		options: {
 			type: Setting.Type.single,
 			// TODO: Fix the below not to use a private property!
