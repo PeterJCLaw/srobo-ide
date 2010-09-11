@@ -1,3 +1,5 @@
+/* ***** Actual available user settings are at the bottom of this file ***** */
+
 function SettingsPage() {
 	// hold the tab object
 	this.tab = null;
@@ -9,7 +11,7 @@ function SettingsPage() {
 	this._prompt = null;
 
 	// hold list of available Setting objects
-	this._settings = null;
+	this._settings = {};
 
 	// keep track of whether object is initialised
 	this._inited = false;
@@ -41,7 +43,16 @@ SettingsPage.prototype.init = function() {
 		this._signals.push(connect( this.tab, "onclickclose", bind( this._close, this ) ));
 		tabbar.add_tab( this.tab );
 
-		// Init each of the SettingsPage
+		// Init each of the Settings
+		replaceChildNodes('settings-table');
+		for( var id in SettingsPage.Settings ) {
+			this._settings[id] = new Setting(
+				'settings-table',
+				SettingsPage.Settings[id].name,
+				SettingsPage.Settings[id].description,
+				SettingsPage.Settings[id].options
+			);
+		}
 
 		/* remember that we are initialised */
 		this._inited = true;
@@ -84,7 +95,7 @@ SettingsPage.prototype._close = function() {
 	for(var i = 0; i < this._settings; i++) {
 		this._settings[i].remove();
 	}
-	this._settings = new Array();
+	this._settings = {};
 
 	/* Close tab */
 	this.tab.close();
@@ -271,3 +282,50 @@ Setting.Type = Enum([
 	'multiple', // multiple select field
 	'single' // single select field
 ]);
+
+
+/* ***** Actual available user settings ***** */
+SettingsPage.Settings = {
+	'export.usejava' : {
+		name: 'File export mechanism',
+		description: 'Whether or not to use the SR file exporter to automatically save exports onto the SR memory stick.',
+		options: {
+			type: Setting.Type.single,
+			options: { true: 'Use Java', false: "Don't use Java" }
+		}
+	},
+	'project.autoload' : {
+		name: 'Project Autoload',
+		description: 'Whether or not to automatically select a project when you login to the IDE.',
+		options: {
+			type: Setting.Type.single,
+			options: ['Last selected', 'None', 'Specfy manually']
+		}
+	},
+	'project.load' : {
+		name: 'Team to load',
+		description: 'Which team to load when you login to the IDE.',
+		options: {
+			type: Setting.Type.single,
+			// TODO: Fix the below not to use a private property!
+			optionsCallback: function(){ return projpage._list.projects }
+		}
+	},
+	'team.autoload' : {
+		name: 'Team Autoload',
+		description: 'Whether or not to automatically select a team when you login to the IDE.',
+		options: {
+			type: Setting.Type.single,
+			options: ['Last selected', 'None', 'Specfy manually']
+		}
+	},
+	'team.load' : {
+		name: 'Team to load',
+		description: 'Which team to load when you login to the IDE.',
+		options: {
+			type: Setting.Type.single,
+			optionsCallback: function(){ return user.team_names }
+		}
+	}
+}
+/* ***** End Actual available user settings ***** */
