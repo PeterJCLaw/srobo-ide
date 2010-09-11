@@ -248,6 +248,10 @@ Setting.prototype._createSelector = function() {
 			break;
 	}
 
+	if(opts.default != null) {
+		this.setValue(opts.default);
+	}
+
 	return DIV({}, this._field);
 
 }
@@ -290,6 +294,7 @@ SettingsPage.Settings = {
 		name: 'File export mechanism',
 		description: 'Whether or not to use the SR file exporter to automatically save exports onto the SR memory stick.',
 		options: {
+			default: false,
 			type: Setting.Type.single,
 			options: { true: 'Use Java', false: "Don't use Java" }
 		}
@@ -298,6 +303,7 @@ SettingsPage.Settings = {
 		name: 'Project Autoload',
 		description: 'Whether or not to automatically select a project when you login to the IDE.',
 		options: {
+			default: 'Last selected',
 			type: Setting.Type.single,
 			options: ['Last selected', 'None', 'Specfy manually']
 		}
@@ -315,6 +321,7 @@ SettingsPage.Settings = {
 		name: 'Team Autoload',
 		description: 'Whether or not to automatically select a team when you login to the IDE.',
 		options: {
+			default: 'Last selected',
 			type: Setting.Type.single,
 			options: ['Last selected', 'None', 'Specfy manually']
 		}
