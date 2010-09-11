@@ -216,7 +216,12 @@ Setting.prototype._createSelector = function() {
 		case Setting.Type.multiple:
 			this._field = SELECT();
 			this._field.multiple = (opts.type == Setting.Type.multiple)
-			if(opts.options == null) {
+			// Check the callback first -- dynamic values
+			if(opts.optionsCallback != null) {
+				options = opts.optionsCallback();
+			} else if(opts.options != null) {
+				options = opts.options;
+			} else {
 				break;
 			}
 			for(i=0; i < opts.options.length; i++) {
