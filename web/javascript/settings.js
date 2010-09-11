@@ -224,8 +224,15 @@ Setting.prototype._createSelector = function() {
 			} else {
 				break;
 			}
-			for(i=0; i < opts.options.length; i++) {
-				appendChildNodes(this._field, OPTION({}, opts.options[i]));
+			// It's a plain Array
+			if(options.length != null) {
+				for(var i=0; i < options.length; i++) {
+					appendChildNodes(this._field, OPTION({}, options[i]));
+				}
+			} else {	// It's a hash-table
+				for(var k in options) {
+					appendChildNodes(this._field, OPTION({value:k}, options[k]));
+				}
 			}
 			break;
 	}
