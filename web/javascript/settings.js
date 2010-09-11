@@ -127,11 +127,13 @@ function Setting(container, name, description, options) {
 
 /* ***** Disable, Enable, Remove the setting ***** */
 Setting.prototype.disable = function() {
-	// do something useful here
+	addElementClass(this._container, 'disabled');
+	this._field.disabled = true;
 }
 
 Setting.prototype.enable = function() {
-	// do something useful here
+	removeElementClass(this._container, 'disabled');
+	this._field.disabled = false;
 }
 
 Setting.prototype.remove = function() {
