@@ -97,7 +97,7 @@ Log.prototype._populateList = function() {
 	//print summary information
 	var entries = this.history.length;
 	if(entries <= 0) {
-		$("log-summary").innerHTML = "There are no revisions availble for file(s): "+this.path;
+		$("log-summary").innerHTML = "There are no revisions available for file(s): "+this.file;
 	} else {
 		$("log-summary").innerHTML = "Displaying "+entries+ " revision(s) between "+this.history[this.history.length-1].date+" & "+this.history[0].date+" Page "+(this.offset+1)+" of "+(this.overflow);
 	}
