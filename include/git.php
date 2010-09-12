@@ -115,17 +115,18 @@ class GitRepository
 	/**
 	 * Gets the log between the arguments
 	 */
-	public function log($oldCommit, $newCommit,$file=null)
+	public function log($oldCommit, $newCommit, $file=null)
 	{
-        $log = null;
-        if ($file == null)
-        {
-    		$log = $this->gitExecute(false, "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
-        }
-        else
-        {
-            $log = $this->gitExecute(false, "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s' $file");
-        }
+		$log = null;
+		$logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
+		if ($file == null)
+		{
+			$log = $this->gitExecute(false, $logCommand);
+		}
+		else
+		{
+			$log = $this->gitExecute(false, $logCommand.' '.escapeshellarg($file));
+		}
 		$lines = explode("\n", $log);
 		$results = array();
 		foreach ($lines as $line)
