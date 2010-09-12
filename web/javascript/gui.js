@@ -490,6 +490,7 @@ function User() {
 
 	// Set user settings.
 	this.set_settings = function(settings, opts) {
+		log('Setting user settings');
 		for( var s in settings ) {
 			this._settings[s] = settings[s];
 		}
@@ -498,14 +499,15 @@ function User() {
 
 	// Save user settings. Called right after they're set.
 	this._save_settings = function(opts) {
+		log('Saving user settings');
 		if(opts == 'loud') {
 			var cb = partial( status_msg, 'User settings saved', LEVEL_OK );
-			var eb = partial( status_button, 'Could not save user settings', LEVEL_ERROR, 'retry', bind(this.saveSettings, this) );
+			var eb = partial( status_button, 'Could not save user settings', LEVEL_ERROR, 'retry', bind(this._save_settings, this, opts) );
 		} else {
 			var cb = eb = function(){};
 		}
 
-		IDE_backend_request('user/settings-put', {settings: values}, cb, eb);
+		IDE_backend_request('user/settings-put', {settings: this._settings}, cb, eb);
 	}
 
 	// Check if we're logged in
