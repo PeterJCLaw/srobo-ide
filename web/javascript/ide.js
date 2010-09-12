@@ -23,7 +23,7 @@ var IDE_clone = function(object) {
   for (var i in object) {
     if (i == 'clone') continue;
     if (object[i] && typeof object[i] == "object") {
-      newObj[i] = object[i].clone();
+      newObj[i] = IDE_clone(object[i]);
     } else newObj[i] = object[i]
   } return newObj;
 };
