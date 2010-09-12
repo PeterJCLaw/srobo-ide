@@ -112,7 +112,11 @@ SettingsPage.prototype.getSetting = function(which) {
 }
 
 SettingsPage.prototype.saveSettings = function() {
-	// do something to save the settings in here!
+	var values = new Object();
+	for(var s in this._settings) {
+		values[s] = this._settings[s].getValue();
+	}
+	user.set_settings(values, 'loud');
 }
 /* ***** End Save and Get Settings ***** */
 
