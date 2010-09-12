@@ -468,7 +468,7 @@ function User() {
 			this.teams.push(parseInt(num, 10));
 		}
 
-		this._settings = info["settings"];
+		this._settings = (info.settings instanceof Array) ? {} : info.settings;
 		for( var k in this._settings ) {
 			logDebug( k + " = " + this._settings[k] );
 		}
