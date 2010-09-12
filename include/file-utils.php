@@ -26,7 +26,8 @@ function path_walk($callback, $path, $reverse = false)
 
 function delete_recursive($path)
 {
-	system("rm -rf $path");
+	$shell_path = escapeshellarg($path);
+	system("rm -rf $shell_path");
 }
 
 function mkdir_full($path, $mode = 0755)
