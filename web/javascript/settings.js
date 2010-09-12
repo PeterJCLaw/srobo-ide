@@ -52,6 +52,9 @@ SettingsPage.prototype.init = function() {
 				SettingsPage.Settings[id].description,
 				SettingsPage.Settings[id].options
 			);
+			if(user.get_setting(id) != null) {
+				this._settings[id].setValue(user.get_setting(id));
+			}
 		}
 
 		/* remember that we are initialised */
