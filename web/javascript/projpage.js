@@ -692,6 +692,7 @@ function ProjSelect(plist, elem) {
 ProjSelect.prototype._init = function() {
 	connect( this._elem, "onchange", bind( this._onchange, this ) );
 	connect( this._plist, "onchange", bind( this._plist_onchange, this ) );
+	connect( this, "onchange", function(p) { user.set_settings({'project.last':p}); } );
 
 	// If the list is already loaded when we're called, force update
 	if( this._plist.loaded )
@@ -774,7 +775,8 @@ ProjSelect.prototype._get_default = function() {
 	if( this._plist.projects.length == 1 )
 		return this._plist.projects[0];
 
-	var dp = user.get_setting( "project.last" );
+	var p_autoload = user.get_setting( 'project.autoload' );
+	var dp = user.get_setting( p_autoload );
 
 	if( dp != undefined
 	    && this._plist.project_exists( dp ) )
