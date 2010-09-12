@@ -615,10 +615,11 @@ function TeamSelector() {
 
 			if( !this._team_exists(team) ) {
 				// Work out what team we should be in
-				var team_last = user.get_setting("team.last");
-				if( team_last != undefined
-				    && this._team_exists( team_last ) ) {
-					team = team_last;
+				var team_load = user.get_setting('team.autoload');
+				var team_to_load = user.get_setting(team_load);
+				if( team_to_load != undefined
+				    && this._team_exists( team_to_load ) ) {
+					team = team_to_load;
 					logDebug( "Defaulting to team " + team );
 				}
 			}
@@ -637,6 +638,7 @@ function TeamSelector() {
 			var tsel = SELECT( null, olist );
 
 			connect( tsel, "onchange", bind( this._selected, this ) );
+			connect( this, "onchange", function(t) { user.set_settings({'team.last':t}); } );
 			teambox.push( "Team: " );
 			teambox.push( tsel );
 		}
