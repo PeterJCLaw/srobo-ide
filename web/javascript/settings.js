@@ -257,6 +257,24 @@ Setting.prototype._createSelector = function() {
 }
 /* ***** End Setting interface constructor ***** */
 
+/* ***** Setting interface signals ***** */
+Setting.prototype.__connect__ = function(ident, signal, objOrFunc, funcOrStr) {
+	this._signals.push(ident);
+	this._signals.push(connect(this._field, signal, objOrFunc, funcOrStr));
+}
+
+Setting.prototype.__disconnect__ = function(ident, signal, objOrFunc, funcOrStr) {
+	disconnect(ident);
+	disconnect(this._field, signal, objOrFunc, funcOrStr);
+	for(var i=0; i < this._signals.length; i++) {
+		if(this._signals[i] == ident) {
+			disconnectAll(this._signals.splice(i,2));
+			break;
+		}
+	}
+}
+/* ***** End Setting interface signals ***** */
+
 /* ***** End Setting Object ***** */
 
 
