@@ -59,7 +59,7 @@ Log.prototype._init = function() {
 Log.prototype._receiveHistory = function(opt, revisions) {
 	logDebug("Log history received ok");
 	//extract data from query response
-	update(this.history, revisions.history);
+	update(this.history, revisions.log);
 	update(this.userList, revisions.authors);
 	this.overflow = revisions.overflow;
 	if(opt == null || opt != 'quiet')
@@ -76,13 +76,18 @@ Log.prototype._errorReceiveHistory = function() {
 }
 
 Log.prototype._retrieveHistory = function(opt) {
-	var d = loadJSONDoc("./gethistory", { team : team,
-						  file : this.file,
-						  user : this.user,
-						  offset : this.offset});
+	IDE_backend_request('file/log',
+		{ team : team,
+		  project: this.project,
+		  path : IDE_path_get_file(this.file),
+		  user : this.user,
+		  offset : this.offset,
+		  number : 10
+		},
+		bind(this._receiveHistory, this, opt),
+		bind(this._errorReceiveHistory, this)
+	);
 
-	d.addCallback( bind(this._receiveHistory, this, opt));
-	d.addErrback( bind(this._errorReceiveHistory, this));
 }
 //processess log data and formats into list. connects up related event handlers,
 //deals with multile results pages
