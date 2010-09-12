@@ -183,6 +183,9 @@ Setting.prototype.getValue = function() {
 	}
 }
 Setting.prototype.setValue = function(value) {
+	if(this.getValue() == value) {
+		return;
+	}
 	if(this._options.type == Setting.Type.checkbox) {
 		this._field.checked = (value == true);
 	} else if(this._options.type == Setting.Type.multiple) {
@@ -194,6 +197,7 @@ Setting.prototype.setValue = function(value) {
 	} else {
 		this._field.value = value;
 	}
+	signal(this, 'onchange');
 }
 /* ***** End Get/Set the value on the form ***** */
 
