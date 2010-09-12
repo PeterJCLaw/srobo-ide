@@ -327,7 +327,7 @@ SettingsPage.Settings = {
 		options: {
 			default: 'Last selected',
 			type: Setting.Type.single,
-			options: ['Last selected', 'None', 'Specfy manually']
+			options: ['Last selected', 'None', 'Specify manually']
 		}
 	},
 	'project.load' : {
@@ -345,7 +345,7 @@ SettingsPage.Settings = {
 		options: {
 			default: 'Last selected',
 			type: Setting.Type.single,
-			options: ['Last selected', 'None', 'Specfy manually']
+			options: ['Last selected', 'None', 'Specify manually']
 		}
 	},
 	'team.load' : {
