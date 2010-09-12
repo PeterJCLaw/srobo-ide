@@ -103,11 +103,15 @@ SettingsPage.prototype._close = function() {
 }
 /* ***** End Tab events ***** */
 
-/* ***** Save Settings ***** */
+/* ***** Save and Get Settings ***** */
+SettingsPage.prototype.getSetting = function(which) {
+	return this._settings[which];
+}
+
 SettingsPage.prototype.saveSettings = function() {
 	// do something to save the settings in here!
 }
-/* ***** End Save Settings ***** */
+/* ***** End Save and Get Settings ***** */
 
 /* ***** Setting Object ***** */
 function Setting(container, name, description, options) {
@@ -256,8 +260,30 @@ Setting.prototype._createSelector = function() {
 		this.setValue(opts.default);
 	}
 
+	if(opts.dependsUpon != null) {
+		this._setupDepends();
+		this._checkDepends();
+	}
+
 	return DIV({}, this._field);
 
+}
+
+Setting.prototype._setupDepends = function() {
+	connect(SettingsPage.GetInstance().getSetting(this._options.dependsUpon.setting), 'onchange', bind(this._checkDepends, this));
+}
+
+Setting.prototype._checkDepends = function() {
+	var depends = this._options.dependsUpon;
+	var actualValue = SettingsPage.GetInstance().getSetting(depends.setting).getValue();
+	if( (depends.valueEq != null && depends.valueEq == actualValue)
+	 || (depends.valueNeq != null && depends.valueNeq != actualValue)
+	 )
+	{
+		this.enable();
+	} else {
+		this.disable();
+	}
 }
 /* ***** End Setting interface constructor ***** */
 
@@ -334,6 +360,7 @@ SettingsPage.Settings = {
 		name: 'Project to load',
 		description: 'Which project to load when you login to the IDE.',
 		options: {
+			dependsUpon: {setting: 'project.autoload', valueEq:'project.load'},
 			type: Setting.Type.single,
 			// TODO: Fix the below not to use a private property!
 			optionsCallback: function(){ return projpage._list.projects }
@@ -352,6 +379,7 @@ SettingsPage.Settings = {
 		name: 'Team to load',
 		description: 'Which team to load when you login to the IDE.',
 		options: {
+			dependsUpon: {setting: 'team.autoload', valueEq:'team.load'},
 			type: Setting.Type.single,
 			optionsCallback: function(){ return user.team_names }
 		}
