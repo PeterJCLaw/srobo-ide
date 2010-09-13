@@ -49,7 +49,7 @@ Checkout.prototype.init = function() {
 
 // If Java works and the user wants it
 Checkout.prototype._use_java = function() {
-	return this._java_works && this._applet != null && user.get_setting('export.usejava');
+	return this._java_works && user.get_setting('export.usejava');
 }
 
 Checkout.prototype._basic = function(url, successCallback, errorCallback) {
@@ -89,7 +89,7 @@ Checkout.prototype._java = function(url, successCallback, errorCallback) {
 
 Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
 	var url = nodes.url;
-	if (this._use_java()) {
+	if (this._use_java() && this._applet != null) {
 		this._java(url, successCallback, errorCallback);
 	} else {
 		this._basic(url, successCallback, errorCallback);
