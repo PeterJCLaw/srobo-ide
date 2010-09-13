@@ -94,4 +94,4 @@ function IDE_path_get_file(path) {
 
 // Test if the user is logged in or not by doing a simple call.
 // If they're logged in then we'll get an auth token back.
-IDE_backend_request('user/info', {}, function(){ if(user != null) user.load(); }, function(){});
+IDE_backend_request('user/info', {}, function(){ if(typeof(user) != undefined && user != null) user.load(); }, function(){});
