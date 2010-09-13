@@ -179,10 +179,16 @@ Setting.prototype.remove = function() {
 
 /* ***** Get/Set the value on the form ***** */
 Setting.prototype.getValue = function() {
+	var value = this._getValue();
+	if (this._options.result == Setting.Type.bool) {
+		return (value == 'true');
+	}
+	return value;
+}
+
+Setting.prototype._getValue = function() {
 	if(this._options.type == Setting.Type.checkbox) {
 		return this._field.checked;
-	} else if(this._options.result == Setting.Type.bool) {
-		this._field.checked = (value == 'true');
 	} else if(this._options.type == Setting.Type.multiple) {
 		var sel = new Array();
 		for(var i=0; i < this._field.options.length; i++) {
@@ -195,12 +201,12 @@ Setting.prototype.getValue = function() {
 		return this._field.value;
 	}
 }
+
 Setting.prototype.setValue = function(value) {
 	if(this.getValue() == value) {
 		return;
 	}
-	if(this._options.type == Setting.Type.checkbox
-	|| this._options.result == Setting.Type.bool) {
+	if(this._options.type == Setting.Type.checkbox) {
 		this._field.checked = (value == true);
 	} else if(this._options.type == Setting.Type.multiple) {
 		for(var i=0; i < this._field.options.length; i++) {
