@@ -29,10 +29,27 @@ Checkout.prototype.init = function() {
 	}
 
 	logDebug("Checkout: Initializing");
-	this._applet = $('checkout-applet');
+
+	// If Java works, and the user wants it then load the applet
+	if (this._use_java()) {
+		this._applet = createDOM('applet',
+			{ archive: 'applet/build/checkout.jar',
+				 code: 'org.studentrobotics.ide.checkout.CheckoutApplet',
+				   id: 'checkout-applet',
+				 name: 'checkout-applet',
+				width: '128',
+			   height: '128'
+			});
+		appendChildNodes('applet', this._applet);
+	}
 
 	/* remember that we are initialised */
 	this._inited = true;
+}
+
+// If Java works and the user wants it
+Checkout.prototype._use_java = function() {
+	return this._java_works && this._applet != null && user.get_setting('export.usejava');
 }
 
 Checkout.prototype._basic = function(url, successCallback, errorCallback) {
@@ -72,7 +89,7 @@ Checkout.prototype._java = function(url, successCallback, errorCallback) {
 
 Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
 	var url = nodes.url;
-	if (this._java_works) {
+	if (this._use_java()) {
 		this._java(url, successCallback, errorCallback);
 	} else {
 		this._basic(url, successCallback, errorCallback);
