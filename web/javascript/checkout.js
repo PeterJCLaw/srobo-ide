@@ -44,22 +44,26 @@ Checkout.prototype._basic = function(url, successCallback, errorCallback) {
 }
 
 Checkout.prototype._getLocation = function() {
-	protocolhost = location.protocol + "//" + location.hostname
+	var protocolhost = location.protocol + "//" + location.hostname;
+
 	if (location.port != 80) {
-		protocolhost += ":" + location.port
+		protocolhost += ":" + location.port;
 	}
 
-	return protocolhost
+	return protocolhost;
 }
 
 Checkout.prototype._java = function(url, successCallback, errorCallback) {
 	var xhr = new XMLHttpRequest();
 	var retcode = this._applet.writeZip(this._getLocation() + "/" + url);
 	//if downloading worked
-	if (retcode == 0) successCallBack();
-	else {
+	if (retcode == 0) {
+		successCallBack();
+	} else {
 		// negative response code means that java is not going to work ever
-		if (retcode < 0) this._java_works = false;
+		if (retcode < 0) {
+			this._java_works = false;
+		}
 
 		//use the file dialogue download method
 		this._basic(url, successCallback, errorCallback);
