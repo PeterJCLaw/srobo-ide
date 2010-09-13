@@ -37,6 +37,7 @@ Checkout.prototype.init = function() {
 			     code: 'org.studentrobotics.ide.checkout.CheckoutApplet',
 			       id: 'checkout-applet',
 			     name: 'checkout-applet',
+			MAYSCRIPT: true,
 			    width: '128',
 			   height: '128'
 			});
