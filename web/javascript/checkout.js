@@ -34,10 +34,10 @@ Checkout.prototype.init = function() {
 	if (this._use_java()) {
 		this._applet = createDOM('applet',
 			{ archive: 'applet/build/checkout.jar',
-				 code: 'org.studentrobotics.ide.checkout.CheckoutApplet',
-				   id: 'checkout-applet',
-				 name: 'checkout-applet',
-				width: '128',
+			     code: 'org.studentrobotics.ide.checkout.CheckoutApplet',
+			       id: 'checkout-applet',
+			     name: 'checkout-applet',
+			    width: '128',
 			   height: '128'
 			});
 		appendChildNodes('applet', this._applet);
