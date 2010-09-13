@@ -181,6 +181,8 @@ Setting.prototype.remove = function() {
 Setting.prototype.getValue = function() {
 	if(this._options.type == Setting.Type.checkbox) {
 		return this._field.checked;
+	} else if(this._options.result == Setting.Type.bool) {
+		this._field.checked = (value == 'true');
 	} else if(this._options.type == Setting.Type.multiple) {
 		var sel = new Array();
 		for(var i=0; i < this._field.options.length; i++) {
@@ -197,7 +199,8 @@ Setting.prototype.setValue = function(value) {
 	if(this.getValue() == value) {
 		return;
 	}
-	if(this._options.type == Setting.Type.checkbox) {
+	if(this._options.type == Setting.Type.checkbox
+	|| this._options.result == Setting.Type.bool) {
 		this._field.checked = (value == true);
 	} else if(this._options.type == Setting.Type.multiple) {
 		for(var i=0; i < this._field.options.length; i++) {
@@ -336,7 +339,8 @@ function Enum(arr) {
 }
 
 Setting.Type = Enum([
-	'bool', // checkbox
+	'bool', // force the result to approximate a boolean by checking against 'true'
+	'checkbox', // checkbox
 	'input', // free input field
 	'multiple', // multiple select field
 	'single' // single select field
@@ -351,6 +355,7 @@ SettingsPage.Settings = {
 		options: {
 			default: false,
 			type: Setting.Type.single,
+			result: Setting.Type.bool,
 			options: { true: 'Use Java', false: "Don't use Java" }
 		}
 	},
