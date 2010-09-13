@@ -9,27 +9,26 @@ var IDE_download_basic = function(url, successCallback, errorCallback) {
 }
 
 function getLocation() {
-    protocolhost = location.protocol + "//" + location.hostname
-    if (location.port != 80) {
-        protocolhost += ":" + location.port
-    }
+	protocolhost = location.protocol + "//" + location.hostname
+	if (location.port != 80) {
+		protocolhost += ":" + location.port
+	}
 
-    return protocolhost
+	return protocolhost
 }
 
 var IDE_download_java = function(url, successCallback, errorCallback) {
 	var xhr = new XMLHttpRequest();
-    var retcode = document.getElementById("checkout-applet").writeZip(getLocation() + "/" + url);
-    //if downloading worked
-    if (retcode == 0) successCallBack();
-    else {
-        // negative response code means that java is not going to work ever
-        if (retcode < 0) IDE_use_java = false;
+	var retcode = $("checkout-applet").writeZip(getLocation() + "/" + url);
+	//if downloading worked
+	if (retcode == 0) successCallBack();
+	else {
+		// negative response code means that java is not going to work ever
+		if (retcode < 0) IDE_use_java = false;
 
-        //use the file dialogue download method
-        IDE_download_basic(url, successCallback, errorCallback);
-    }
-
+		//use the file dialogue download method
+		IDE_download_basic(url, successCallback, errorCallback);
+	}
 }
 
 var IDE_download = function(url, successCallback, errorCallback) {
