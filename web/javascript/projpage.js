@@ -257,7 +257,7 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 }
 
 ProjPage.prototype._exportProject = function() {
-	IDE_checkout(team, this.project, function() {}, function(errno, errcode) {
+	Checkout.GetInstance().checkout(team, this.project, function() {}, function(errno, errcode) {
 		alert("checkout-induced death: " + errcode);
 	});
 }
