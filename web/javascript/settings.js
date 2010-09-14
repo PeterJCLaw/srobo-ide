@@ -180,7 +180,7 @@ Setting.prototype.remove = function() {
 /* ***** Get/Set the value on the form ***** */
 Setting.prototype.getValue = function() {
 	var value = this._getValue();
-	if (this._options.result == Setting.Type.bool) {
+	if (this._options.result == Setting.Options.bool) {
 		return (value == 'true');
 	}
 	return value;
@@ -336,16 +336,19 @@ function inArray(val, arr) {
 
 /* ***** Enum-like things ***** */
 
-function Enum(arr) {
+function Enum(id, arr) {
 	var e = {};
 	for(var i=0; i < arr.length; i++) {
-		e[arr[i]] = i+arr[i]+i;
+		e[arr[i]] = id+i+arr[i];
 	}
 	return e;
 }
 
-Setting.Type = Enum([
-	'bool', // force the result to approximate a boolean by checking against 'true'
+Setting.Options = Enum('Setting.Options', [
+	'bool', // Force the result to approximate a boolean by checking against 'true'
+]);
+
+Setting.Type = Enum('Setting.Type', [
 	'checkbox', // checkbox
 	'input', // free input field
 	'multiple', // multiple select field
@@ -361,7 +364,7 @@ SettingsPage.Settings = {
 		options: {
 			'default': false,
 			type: Setting.Type.single,
-			result: Setting.Type.bool,
+			result: Setting.Options.bool,
 			options: { 'true': 'Use Java', 'false': "Don't use Java" }
 		}
 	},
