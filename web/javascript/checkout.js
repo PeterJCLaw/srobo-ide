@@ -97,9 +97,24 @@ Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
 	}
 }
 
+/* Initiates a checkout.
+ * We also munge the successCallback to record the number of checkouts the user has done.
+ */
 Checkout.prototype.checkout = function(team, project, successCallback, errorCallback) {
+	var setting = 'export.number';
+
+	var record_export = function() {
+		var exports = user.get_setting(setting);
+		if(exports == null) {
+			exports = 0;
+		}
+		var s = new Object();
+		s[setting] = exports+1;
+		user.set_settings(s);
+		successCallback();
+	}
 	// get URL
 	IDE_backend_request("proj/co", {team: team, project: project},
-	                    bind(this._download, this, successCallback, errorCallback),
+	                    bind(this._download, this, record_export, errorCallback),
 	                    errorCallback);
 }
