@@ -57,10 +57,7 @@ Checkout.prototype._use_java = function() {
 }
 
 Checkout.prototype._basic = function(url, successCallback, errorCallback) {
-	var handle = window.open(url, "Source Checkout");
-	if (handle == null) {
-		window.location = url;
-	}
+	$('robot-zip').src = url;
 	successCallback();
 }
 
