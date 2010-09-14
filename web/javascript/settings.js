@@ -294,10 +294,11 @@ Setting.prototype._setupDepends = function() {
 	if (depends.callBack != null) {
 		return;
 	} else if (depends.setting != null) {
-		connect( SettingsPage.GetInstance().getSetting(depends.setting),
-		         'onchange',
-		         bind(this._checkDepends, this)
-		       );
+		this._signals.push(connect(
+			SettingsPage.GetInstance().getSetting(depends.setting),
+			'onchange',
+			bind(this._checkDepends, this)
+		));
 	}
 }
 
