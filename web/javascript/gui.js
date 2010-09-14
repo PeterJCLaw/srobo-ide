@@ -493,11 +493,19 @@ function User() {
 
 	// Set user settings.
 	this.set_settings = function(settings, opts) {
+		var changed = false;
 		log('Setting user settings');
 		for( var s in settings ) {
+			if (this._settings[s] !== settings[s] || changed) {
+				changed = true;
+			}
 			this._settings[s] = settings[s];
 		}
-		this._save_settings(opts);
+		if (changed) {
+			this._save_settings(opts);
+		} else if(opts == 'loud') {
+			status_msg( 'User settings unchanged', LEVEL_INFO );
+		}
 	}
 
 	// Save user settings. Called right after they're set.
