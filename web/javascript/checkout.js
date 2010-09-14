@@ -12,6 +12,9 @@ function Checkout() {
 	// default to whether the browser claims to support java
 	this._java_works = navigator.javaEnabled();
 
+	// The user setting key we use
+	this._setting_key = 'export.usejava';
+
 	// store a copy of our instance!
 	Checkout.Instance = this;
 }
@@ -50,7 +53,7 @@ Checkout.prototype.init = function() {
 
 // If Java works and the user wants it
 Checkout.prototype._use_java = function() {
-	return this._java_works && user.get_setting('export.usejava');
+	return this._java_works && user.get_setting(this._setting_key);
 }
 
 Checkout.prototype._basic = function(url, successCallback, errorCallback) {
