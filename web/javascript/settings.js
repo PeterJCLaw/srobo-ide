@@ -123,6 +123,7 @@ SettingsPage.prototype.saveSettings = function() {
 		values[s] = this._settings[s].getValue();
 	}
 	user.set_settings(values, 'loud');
+	signal(this, 'save');
 }
 /* ***** End Save and Get Settings ***** */
 
