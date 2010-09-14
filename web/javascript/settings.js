@@ -147,7 +147,7 @@ function Setting(container, name, description, options) {
 	appendChildNodes($(container), this._container);
 }
 
-/* ***** Disable, Enable, Remove the setting ***** */
+/* ***** Disable, Enable, Flash, Remove the setting ***** */
 Setting.prototype.disable = function() {
 	addElementClass(this._container, 'disabled');
 	this._field.disabled = true;
@@ -156,6 +156,10 @@ Setting.prototype.disable = function() {
 Setting.prototype.enable = function() {
 	removeElementClass(this._container, 'disabled');
 	this._field.disabled = false;
+}
+
+Setting.prototype.flash = function() {
+	Highlight(this._container, {transition: MochiKit.Visual.Transitions.wobble, duration: 4});
 }
 
 Setting.prototype.remove = function() {
@@ -175,7 +179,7 @@ Setting.prototype.remove = function() {
 	this._container = null;
 	this._field = null;
 }
-/* ***** End Disable, Enable, Remove the setting ***** */
+/* ***** End Disable, Enable, Flash, Remove the setting ***** */
 
 /* ***** Get/Set the value on the form ***** */
 Setting.prototype.getValue = function() {
