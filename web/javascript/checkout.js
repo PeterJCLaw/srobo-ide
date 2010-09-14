@@ -101,10 +101,20 @@ Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
 }
 
 /* Initiates a checkout.
+ * From the fourth time onwards the user may be offered to use the Java applet, if:
+ *  they've not already made a choice about using it, and
+ *  their browser supports it.
  * We also munge the successCallback to record the number of checkouts the user has done.
  */
 Checkout.prototype.checkout = function(team, project, successCallback, errorCallback) {
 	var setting = 'export.number';
+	if (user.get_setting(setting) >= 4
+	 && user.get_setting(this._setting_key) == null
+	 && this._java_works
+	) {
+		this._offer_java();
+		return;
+	}
 
 	var record_export = function() {
 		var exports = user.get_setting(setting);
@@ -120,4 +130,12 @@ Checkout.prototype.checkout = function(team, project, successCallback, errorCall
 	IDE_backend_request("proj/co", {team: team, project: project},
 	                    bind(this._download, this, record_export, errorCallback),
 	                    errorCallback);
+}
+
+Checkout.prototype._offer_java = function() {
+	var sp = SettingsPage.GetInstance();
+	sp.init();
+	status_msg('Would you like to make exporting simpler?', LEVEL_INFO);
+	var s = sp.getSetting(this._setting_key);
+	s.flash();
 }

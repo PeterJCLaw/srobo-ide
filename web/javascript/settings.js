@@ -417,7 +417,7 @@ SettingsPage.Settings = {
 		name: 'File export mechanism',
 		description: 'Whether or not to use the SR file exporter to automatically save exports onto the SR memory stick.',
 		options: {
-			'default': false,
+			'default': Setting.Options.select,
 			dependsUpon: {callBack: bind(navigator.javaEnabled, navigator)},
 			type: Setting.Type.single,
 			result: Setting.Options.bool,
