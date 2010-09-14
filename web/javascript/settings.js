@@ -114,6 +114,12 @@ SettingsPage.prototype.getSetting = function(which) {
 SettingsPage.prototype.saveSettings = function() {
 	var values = new Object();
 	for(var s in this._settings) {
+		var val = this._settings[s].getValue();
+		// fake option that we can't let past!
+		if(val == Setting.Options.select) {
+			status_msg('Please select a value for "'+SettingsPage.Settings[s].name+'"', LEVEL_WARN);
+			return;
+		}
 		values[s] = this._settings[s].getValue();
 	}
 	user.set_settings(values, 'loud');
@@ -184,9 +190,15 @@ Setting.prototype.remove = function() {
 /* ***** Get/Set the value on the form ***** */
 Setting.prototype.getValue = function() {
 	var value = this._getValue();
+	// Cannot coerce the artificial option
+	if (value == Setting.Options.select) {
+		return Setting.Options.select;
+	}
+	// Coerce to boolean
 	if (this._options.result == Setting.Options.bool) {
 		return (value == 'true');
 	}
+	// No coercion
 	return value;
 }
 
@@ -263,6 +275,10 @@ Setting.prototype._createSelector = function() {
 			} else {
 				break;
 			}
+			// Optionally add a 'Please select' option that may not be selected
+			if(opts['default'] == Setting.Options.select) {
+				this._addSelectOption();
+			}
 			// It's a plain Array
 			if(options.length != null) {
 				for(var i=0; i < options.length; i++) {
@@ -287,6 +303,25 @@ Setting.prototype._createSelector = function() {
 
 	return DIV({}, this._field);
 
+}
+
+/* Adds a dummy "Please select" option that gets removed once it's changed */
+Setting.prototype._addSelectOption = function() {
+	appendChildNodes(this._field, OPTION({value:Setting.Options.select}, 'Please select'));
+	this.setValue(Setting.Options.select);
+	this._signals.push(connect( this, 'onchange', bind(this._removeSelectOption, this) ));
+}
+
+/* Removes the dummy "Please select" option once it's changed */
+Setting.prototype._removeSelectOption = function() {
+	if (this.getValue() == Setting.Options.select) {
+		return;
+	}
+	for(var i=0; i < this._field.options.length; i++) {
+		if(this._field.options[i].value == Setting.Options.select) {
+			removeElement(this._field.options[i]);
+		}
+	}
 }
 
 Setting.prototype._setupDepends = function() {
@@ -364,6 +399,8 @@ function Enum(id, arr) {
 
 Setting.Options = Enum('Setting.Options', [
 	'bool', // Force the result to approximate a boolean by checking against 'true'
+	'select' // Provide as the default a `Please select` option that forces a user choice.
+	         // Only valid for single or multiple type settings.
 ]);
 
 Setting.Type = Enum('Setting.Type', [
