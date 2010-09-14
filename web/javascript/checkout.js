@@ -15,6 +15,9 @@ function Checkout() {
 	// The user setting key we use
 	this._setting_key = 'export.usejava';
 
+	// Handle on the connection to the settings page, only used when offering java
+	this._offer_java_signal = null;
+
 	// store a copy of our instance!
 	Checkout.Instance = this;
 }
@@ -104,12 +107,24 @@ Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
  * We also munge the successCallback to record the number of checkouts the user has done.
  */
 Checkout.prototype.checkout = function(team, project, successCallback, errorCallback) {
+	// Just offered java
+	if (this._offer_java_signal != null) {
+		// disconnect the signal and null the ident
+		disconnect(this._offer_java_signal);
+		this._offer_java_signal = null;
+		// Switch back to the project tab and close the settings page
+		tabbar.switch_to(projtab);
+		signal( SettingsPage.GetInstance().tab, 'onclickclose');
+		// Re-initialise with the new user setting
+		this._inited = false;
+		this.init();
+	}
 	var setting = 'export.number';
 	if (user.get_setting(setting) >= 4
 	 && user.get_setting(this._setting_key) == null
 	 && this._java_works
 	) {
-		this._offer_java();
+		this._offer_java(team, project, successCallback, errorCallback);
 		return;
 	}
 
@@ -129,10 +144,11 @@ Checkout.prototype.checkout = function(team, project, successCallback, errorCall
 	                    errorCallback);
 }
 
-Checkout.prototype._offer_java = function() {
+Checkout.prototype._offer_java = function(team, project, successCallback, errorCallback) {
 	var sp = SettingsPage.GetInstance();
 	sp.init();
 	status_msg('Would you like to make exporting simpler?', LEVEL_INFO);
 	var s = sp.getSetting(this._setting_key);
 	s.flash();
+	this._offer_java_signal = connect(sp, 'save', bind(this.checkout, this, team, project, successCallback, errorCallback));
 }
