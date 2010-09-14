@@ -286,16 +286,29 @@ Setting.prototype._createSelector = function() {
 }
 
 Setting.prototype._setupDepends = function() {
-	connect(SettingsPage.GetInstance().getSetting(this._options.dependsUpon.setting), 'onchange', bind(this._checkDepends, this));
+	var depends = this._options.dependsUpon;
+	if (depends.callBack != null) {
+		return;
+	} else if (depends.setting != null) {
+		connect( SettingsPage.GetInstance().getSetting(depends.setting),
+		         'onchange',
+		         bind(this._checkDepends, this)
+		       );
+	}
 }
 
 Setting.prototype._checkDepends = function() {
 	var depends = this._options.dependsUpon;
-	var actualValue = SettingsPage.GetInstance().getSetting(depends.setting).getValue();
-	if( (depends.valueEq != null && depends.valueEq == actualValue)
-	 || (depends.valueNeq != null && depends.valueNeq != actualValue)
-	 )
-	{
+	var active = false;
+	if (depends.callBack != null) {
+		active = depends.callBack();
+	} else if (this._options.dependsUpon.setting != null) {
+		var actualValue = SettingsPage.GetInstance().getSetting(depends.setting).getValue();
+		active = ( (depends.valueEq != null && depends.valueEq == actualValue)
+		        || (depends.valueNeq != null && depends.valueNeq != actualValue)
+		         )
+	}
+	if (active) {
 		this.enable();
 	} else {
 		this.disable();
@@ -363,6 +376,7 @@ SettingsPage.Settings = {
 		description: 'Whether or not to use the SR file exporter to automatically save exports onto the SR memory stick.',
 		options: {
 			'default': false,
+			dependsUpon: {callBack: bind(navigator.javaEnabled, navigator)},
 			type: Setting.Type.single,
 			result: Setting.Options.bool,
 			options: { 'true': 'Use Java', 'false': "Don't use Java" }
