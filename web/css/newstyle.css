@@ -202,7 +202,7 @@ iframe { display: none; }
 	width: 100%;
 }
 
-#projects-page, #edit-mode, #simulator-page {
+#page div.page {
 	display: none;
 }
 
@@ -280,10 +280,6 @@ a.button:hover {
 	color: #253571;
 	background-color: #ffffff;
 }
-#edit-mode {
-	text-align: center;
-	display: none;
-}
 
 #teamname {
 	font-weight: bold;
@@ -347,11 +343,6 @@ a.button:hover {
 	opacity: .75;
 	filter: alpha(opacity=75);
 }
-
-#robolog-page {
-	display: none;
-}
-
 
 #robolog-pre {
 	height: 30em;

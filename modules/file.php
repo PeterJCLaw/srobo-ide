@@ -52,6 +52,7 @@ class FileModule extends Module
 		$this->installCommand('del', array($this, 'deleteFile'));
 		$this->installCommand('cp', array($this, 'copyFile'));
 		$this->installCommand('mv', array($this, 'moveFile'));
+		$this->installCommand('log', array($this, 'fileLog'));
 		$this->installCommand('lint', array($this, 'lintFile'));
 	}
 
@@ -142,6 +143,44 @@ class FileModule extends Module
 		$oldPath = $input->getInput('old-path');
 		$newPath = $input->getInput('new-path');
 		$this->repository()->moveFile($oldPath, $newPath);
+		return true;
+	}
+
+	/*
+	 * Get the log for a file.
+	 * It expects a file to restrict the log to, and, optionally, an offset to start from and the number of entries wanted.
+	 * It returns the requested entries and a list of authors that have committed to the file.
+	 */
+	public function fileLog()
+	{
+		$output = Output::getInstance();
+		$input = Input::getInstance();
+		$path = $input->getInput('path');
+
+		$repo = $this->repository();
+
+		$currRev = $repo->getCurrentRevision();
+		$firstRev = $repo->getFirstRevision();
+
+		$number = $input->getInput('number', true);
+		$offset = $input->getInput('offset', true);
+
+		$number = ($number != null ? $number : 10);
+		$offset = ($offset != null ? $offset : 0);
+
+		$log = $repo->log($firstRev, $currRev);
+
+		var_dump($log);
+
+		$output->setOutput('log', array_slice($log, $offset, $number));
+
+		$authors = array();
+		foreach($log as $rev) {
+			$authors[] = $rev['author'];
+		}
+
+		$output->setOutput('authors', array_unique($authors));
+
 		return true;
 	}
 

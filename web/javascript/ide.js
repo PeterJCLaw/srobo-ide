@@ -20,21 +20,27 @@ if (typeof XMLHttpRequest == "undefined")
 
 var IDE_clone = function(object) {
   var newObj = (object instanceof Array) ? [] : {};
-  for (i in object) {
+  for (var i in object) {
     if (i == 'clone') continue;
     if (object[i] && typeof object[i] == "object") {
-      newObj[i] = object[i].clone();
+      newObj[i] = IDE_clone(object[i]);
     } else newObj[i] = object[i]
   } return newObj;
 };
 
-IDE_base = "control.php"
+var IDE_base = "control.php";
+var IDE_async_count = 0;
+showElement = hideElement = function(){};
 
 function IDE_backend_request(command, args, successCallback, errorCallback) {
 	var rq = JSON.stringify(args);
 	var xhr = new XMLHttpRequest();
 	var cb = function() {
 		if (xhr.readyState != 4) return;
+		IDE_async_count--;
+		if( IDE_async_count == 0 ) {
+			hideElement('rotating-box');
+		}
 		if (xhr.status == 200) {
 			if (xhr.getResponseHeader("Content-type") == "text/html") {
 				// PHP fatal error
@@ -55,6 +61,8 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 	xhr.open("POST", IDE_base + "/" + command, true);
 	xhr.onreadystatechange = cb;
 	xhr.setRequestHeader("Content-type", "text/json");
+	showElement('rotating-box');
+	IDE_async_count++;
 	xhr.send(rq);
 }
 
@@ -68,4 +76,3 @@ function IDE_path_get_file(path) {
 	split = split.slice(2);
 	return split.join('/');
 }
-

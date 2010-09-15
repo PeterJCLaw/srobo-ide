@@ -1,12 +1,12 @@
 package org.studentrobotics.ide.checkout;
 
 public class FileWriteJob {
-	private String mFileContents;
+	private byte[] mFileContents;
 	private int mCode;
 	
 	private static int jobs = 0;
 	
-	public FileWriteJob(String contents) {
+	public FileWriteJob(byte[] contents) {
 		mFileContents = contents;
 		mCode = jobs++;
 	}
@@ -15,7 +15,7 @@ public class FileWriteJob {
 		return this.mCode;
 	}
 	
-	public String getContents(){
+	public byte[] getContents(){
 		return mFileContents;
 	}
 }

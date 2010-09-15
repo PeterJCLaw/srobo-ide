@@ -88,13 +88,12 @@ class GitRepository
 	{
 		if (!is_dir($path) && mkdir($path))
 		{
-            $cd_path = str_replace(" ", "\\ ", $path);
-			shell_exec("cd $cd_path ; git init" . ($bare ? " --bare" : ''));
+			$shell_path = escapeshellarg($path);
+			shell_exec("cd $shell_path ; git init" . ($bare ? " --bare" : ''));
 		}
 		return new GitRepository($path);
 	}
 
-	
 
 	/**
 	 * Gets the most recent revision hash
@@ -116,9 +115,18 @@ class GitRepository
 	/**
 	 * Gets the log between the arguments
 	 */
-	public function log($oldCommit, $newCommit)
+	public function log($oldCommit, $newCommit, $file=null)
 	{
-		$log = $this->gitExecute(false, "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
+		$log = null;
+		$logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
+		if ($file == null)
+		{
+			$log = $this->gitExecute(false, $logCommand);
+		}
+		else
+		{
+			$log = $this->gitExecute(false, $logCommand.' '.escapeshellarg($file));
+		}
 		$lines = explode("\n", $log);
 		$results = array();
 		foreach ($lines as $line)
@@ -165,7 +173,7 @@ class GitRepository
 	public function fileTreeCompat($base)
 	{
 		$root = $this->working_path;
-        $shell_root = str_replace(" ", "\\ ", $root);
+		$shell_root = escapeshellarg($root);
 		$content = shell_exec("find $shell_root/* -type f");
 		$parts = explode("\n", $content);
 		$parts = array_map(function($x) use($root) { return str_replace("$root/", '', $x); }, $parts);
@@ -206,7 +214,8 @@ class GitRepository
 	public function createFile($path)
 	{
 		touch($this->working_path . "/$path");
-		$this->gitExecute(true, "add $path");
+		$shell_path = escapeshellarg($path);
+		$this->gitExecute(true, "add $shell_path");
 	}
 
 	/**
@@ -214,7 +223,8 @@ class GitRepository
 	 */
 	public function removeFile($path)
 	{
-		$this->gitExecute(true, "rm -f $path");
+		$shell_path = escapeshellarg($path);
+		$this->gitExecute(true, "rm -f $shell_path");
 	}
 
 	/**
@@ -257,7 +267,8 @@ class GitRepository
 	public function putFile($path, $content)
 	{
 		file_put_contents($this->working_path . "/$path", $content);
-		$this->gitExecute(true, "add $path");
+		$shell_path = escapeshellarg($path);
+		$this->gitExecute(true, "add $shell_path");
 	}
 
 	/**
@@ -276,7 +287,8 @@ class GitRepository
 		// TODO: fix to actually obey commit
 		touch($dest);
 		$dest = realpath($dest);
-		$this->gitExecute(true, "archive --format=zip $commit -6 > $dest");
+		$shell_dest = escapeshellarg($dest);
+		$this->gitExecute(true, "archive --format=zip $commit -6 > $shell_dest");
 	}
 
 	/**
