@@ -21,7 +21,14 @@ class CookieStrategy extends TokenStrategy
 
 	public function getAuthToken()
 	{
-		return $_COOKIE[self::COOKIENAME];
+		if (isset($_COOKIE[self::COOKIENAME]))
+		{
+			return $_COOKIE[self::COOKIENAME];
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public function setNextAuthToken($token)
