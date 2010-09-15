@@ -82,14 +82,14 @@ abstract class SecureTokenAuth extends AuthBackend
 		{
 			return false;
 		}
-		$username = $parts[1];
-		$password = $parts[2];
+		$username = empty($parts[1]) ? '' : $parts[1];
+		$password = empty($parts[2]) ? '' : $parts[2];
 		if (!$this->checkAuthentication($username, $password))
 		{
 			return false;
 		}
 		$this->user = $username;
-		$this->teams = explode('|', $parts[3]);
+		$this->teams = empty($parts[3]) ? array() : explode('|', $parts[3]);
 		$this->tok_next = $this->generateToken($username, $password, $this->teams);
 		return true;
 	}

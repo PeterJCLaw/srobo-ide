@@ -9,6 +9,8 @@ body {
 	font-weight: normal;
 }
 
+iframe { display: none; }
+
 #top {
 	background-color: #253571;
 	color: #FFFFFF;
@@ -209,12 +211,7 @@ body {
 /* CSS for file-mode should be place in css/filemode.css */
 
 #login-back {
-	width: 100%;
-	height: 100%;
 	background-color: #DFDBD8;
-	position: fixed;
-	top: 0;
-	display: none;
 }
 
 #login-back .status-info,

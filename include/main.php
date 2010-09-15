@@ -11,5 +11,4 @@ require_once('include/auth/auth.php');
 require_once('include/project-manager.php');
 require_once('include/errors.php');
 require_once('include/auth/tokenstrategy/cookiestrategy.php');
-require_once('include/auth/tokenstrategy/iostrategy.php');
 require_once('include/auth/tokenstrategy/tokenstrategy.php');
