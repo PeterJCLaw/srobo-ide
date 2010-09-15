@@ -76,7 +76,7 @@ Checkout.prototype._getLocation = function() {
 
 Checkout.prototype._java = function(url, successCallback, errorCallback) {
 	var xhr = new XMLHttpRequest();
-	var retcode = this._applet.writeZip(this._getLocation() + "/" + url);
+	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + "/" + url));
 	//if downloading worked
 	if (retcode == 0) {
 		successCallBack();
