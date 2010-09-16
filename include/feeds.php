@@ -1,5 +1,7 @@
 <?php
 
+require_once('simplepie/simplepie.inc');
+
 class Feeds
 {
 	private static $singleton = null;
@@ -84,7 +86,19 @@ class Feeds
 	 */
 	public static function getRecentPosts($url, $howMany)
 	{
-		return array();
+		$rss = self::getRSS($url);
+		$items = $rss->get_items();
+		$posts = array();
+		for($i=0; $i < $howMany && ($item = $items[$i]); $i++)
+		{
+			$posts[] = array(
+				'author' => $item->get_author(),
+				  'body' => $item->get_description(),
+				  'link' => $item->get_permalink(),
+				 'title' => $item->get_title()
+				);
+		}
+		return $posts;
 	}
 
 	/**
@@ -92,8 +106,15 @@ class Feeds
 	 */
 	public static function getRSS($url)
 	{
-		return new StdClass();
+		$config = Configuration::getInstance();
+		$feed = new SimplePie();
+		$feed->set_feed_url($url);
+		$feed->enable_cache();
+		$feed->enable_order_by_date();
+		$feed->set_cache_duration($config->getConfig('feed_cache_life'));
+		$feed->set_cache_location($config->getConfig('feed_cache_path'));
+		$feed->init();
+		return $feed;
 	}
-
 
 }
