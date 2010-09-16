@@ -43,6 +43,22 @@ class Feeds
 		return $this->feedsList;
 	}
 
+	/**
+	 * returns an array of all valid URLs
+	 */
+	public function getValidURLs()
+	{
+		$urls = array();
+		foreach($this->feedsList as $feed)
+		{
+			if($feed->checked && $feed->valid)
+			{
+				$urls[] = $feed->url;
+			}
+		}
+		return array_unique($urls);
+	}
+
 	/* Save the feeds array to the feeds json file
 	 */
 	public function putFeeds($feeds)
