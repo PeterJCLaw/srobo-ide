@@ -285,8 +285,7 @@ function AboutBox() {
 	this.get_info = function() {
 		if(this.got_info)
 			return;
-		var d = loadJSONDoc("./info");
-		d.addCallback( bind( this._got_info, this ) );
+		IDE_backend_request('info/about', {}, bind(this._got_info, this), function() {});
 	}
 	this._got_info = function(nodes) {
 		var dl = createDOM('dl', {id:'about-list'});
