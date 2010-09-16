@@ -79,4 +79,21 @@ class Feeds
 		return null;
 	}
 
+	/**
+	 * Gets the most recent three post from an RSS feed
+	 */
+	public static function getRecentPosts($url, $howMany)
+	{
+		return array();
+	}
+
+	/**
+	 * Gets an object representing the requested RSS
+	 */
+	public static function getRSS($url)
+	{
+		return new StdClass();
+	}
+
+
 }
