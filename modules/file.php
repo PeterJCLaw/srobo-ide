@@ -54,6 +54,7 @@ class FileModule extends Module
 		$this->installCommand('mv', array($this, 'moveFile'));
 		$this->installCommand('log', array($this, 'fileLog'));
 		$this->installCommand('lint', array($this, 'lintFile'));
+        $this->installCommand("diff", array($this, 'diff'));
 	}
 
 	private function verifyTeam()
