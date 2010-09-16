@@ -126,11 +126,12 @@ Switchboard.prototype.SubmitFeed = function()
 {
 	logDebug("Switchboard: Setting blog feed");
 	setStyle("user-feed-url", {'background-color': '#FFFFFF'});
-	var d = loadJSONDoc("./switchboard/setblogfeed",
-		{'feedurl':document.user_feed_form.user_feed_input.value});
-
-	d.addCallback( bind( this._receiveSubmitFeed, this) );
-	d.addErrback( bind( this._errorSubmitFeed, this) );
+	IDE_backend_request(
+		'user/blog-feed-put',
+		{'feedurl':document.user_feed_form.user_feed_input.value},
+		bind( this._receiveSubmitFeed, this),
+		bind( this._errorSubmitFeed, this)
+	);
 	return false;
 }
 /* *****   End RSS feed url submit code ***** */

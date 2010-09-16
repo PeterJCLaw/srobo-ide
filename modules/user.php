@@ -3,14 +3,18 @@
 class UserModule extends Module
 {
 	private $settingsPath;
+	private $feedsPath;
 
 	public function __construct()
 	{
 		$config = Configuration::getInstance();
 		$this->settingsPath = $config->getConfig('settingspath');
+		$this->feedsPath    = $this->settingsPath.'/blog-feeds.json';
+
 		$this->installCommand('info', array($this, 'getInfo'));
 		$this->installCommand('settings-put', array($this, 'saveSettings'));
-		$this->installCommand('blog-feed', array($this, 'blogFeed'));
+		$this->installCommand('blog-feed', array($this, 'getBlogFeed'));
+		$this->installCommand('blog-feed-put', array($this, 'setBlogFeed'));
 		$this->installCommand('blog-posts', array($this, 'blogPosts'));
 
 		$auth = AuthBackend::getInstance();
@@ -49,12 +53,59 @@ class UserModule extends Module
 		file_put_contents("$this->settingsPath/$this->username.json", $data);
 	}
 
-	public function blogFeed()
+	/* Gets the user's blog feed, set on the switchboard page
+	 */
+	public function getBlogFeed()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('url', 'file:///dev/null');
-		$output->setOutput('checked', false);
-		$output->setOutput('valid', false);
+
+		$feeds = $this->getFeeds();
+		$userfeed = findFeed($feeds, 'user', $this->username);
+		if ($userfeed == null)
+		{
+			return;
+		}
+
+		foreach ($userfeed as $k => $v)
+		{
+			$output->setOutput($k, $v);
+		}
+	}
+
+	/* Sets the user's blog feed, for the switchboard page
+	 */
+	public function setBlogFeed()
+	{
+		$input  = Input::getInstance();
+		$output = Output::getInstance();
+
+		$feedurl = $input->getInput('feedurl');
+
+		$feeds = $this->getFeeds();
+		$userfeed = findFeed($feeds, 'user', $this->username);
+
+		if ($userfeed == null)
+		{
+			$userfeed = new StdClass();
+		}
+
+		$userfeed->url     = $feedurl;
+		$userfeed->user    = $this->username;
+		$userfeed->valid   = false;
+		$userfeed->checked = false;
+
+		$newfeeds[] = $userfeed;
+		foreach ($feeds as $feed)
+		{
+			if ($feed->user != $this->username)
+			{
+				$newfeeds[] = $feed;
+			}
+		}
+
+		$error = intval(!$this->putFeeds($newfeeds));
+		$output->setOutput('feedurl', $feedurl);
+		$output->setOutput('error', $error);
 	}
 
 	public function blogPosts()
@@ -69,4 +120,35 @@ class UserModule extends Module
 			)
 		));
 	}
+
+	public function getFeeds()
+	{
+		if (file_exists($this->feedsPath))
+		{
+			$data = file_get_contents($this->feedsPath);
+			return empty($data) ? array() : json_decode($data);
+		}
+		else
+		{
+			return array();
+		}
+	}
+
+	public function putFeeds($feeds)
+	{
+		return file_put_contents($this->feedsPath, json_encode($feeds));
+	}
+
+}
+
+function findFeed($feeds, $key, $value)
+{
+	foreach ($feeds as $feed)
+	{
+		if ($feed->$key == $value)
+		{
+			return $feed;
+		}
+	}
+	return null;
 }
