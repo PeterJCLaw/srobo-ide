@@ -3,13 +3,11 @@
 class UserModule extends Module
 {
 	private $settingsPath;
-	private $feedsPath;
 
 	public function __construct()
 	{
 		$config = Configuration::getInstance();
 		$this->settingsPath = $config->getConfig('settingspath');
-		$this->feedsPath    = $this->settingsPath.'/blog-feeds.json';
 
 		$this->installCommand('info', array($this, 'getInfo'));
 		$this->installCommand('settings-put', array($this, 'saveSettings'));
@@ -62,9 +60,9 @@ class UserModule extends Module
 	public function getBlogFeed()
 	{
 		$output = Output::getInstance();
+		$feeds  = Feeds::getInstance();
 
-		$feeds = $this->getFeeds();
-		$userfeed = findFeed($feeds, 'user', $this->username);
+		$userfeed  = $feeds->findFeed('user', $this->username);
 		if ($userfeed == null)
 		{
 			return;
@@ -82,11 +80,11 @@ class UserModule extends Module
 	{
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
+		$feeds  = Feeds::getInstance();
 
 		$feedurl = $input->getInput('feedurl');
 
-		$feeds = $this->getFeeds();
-		$userfeed = findFeed($feeds, 'user', $this->username);
+		$userfeed  = $feeds->findFeed('user', $this->username);
 
 		if ($userfeed == null)
 		{
@@ -99,7 +97,8 @@ class UserModule extends Module
 		$userfeed->checked = false;
 
 		$newfeeds[] = $userfeed;
-		foreach ($feeds as $feed)
+		$feedsList = $feeds->getFeeds();
+		foreach ($feedsList as $feed)
 		{
 			if ($feed->user != $this->username)
 			{
@@ -107,7 +106,7 @@ class UserModule extends Module
 			}
 		}
 
-		$error = intval(!$this->putFeeds($newfeeds));
+		$error = intval(!$feeds->putFeeds($newfeeds));
 		$output->setOutput('feedurl', $feedurl);
 		$output->setOutput('error', $error);
 	}
@@ -127,38 +126,4 @@ class UserModule extends Module
 		));
 	}
 
-	/* Load the feeds array from the feeds json file
-	 */
-	public function getFeeds()
-	{
-		if (file_exists($this->feedsPath))
-		{
-			$data = file_get_contents($this->feedsPath);
-			return empty($data) ? array() : json_decode($data);
-		}
-		else
-		{
-			return array();
-		}
-	}
-
-	/* Save the feeds array to the feeds json file
-	 */
-	public function putFeeds($feeds)
-	{
-		return file_put_contents($this->feedsPath, json_encode($feeds));
-	}
-
-}
-
-function findFeed($feeds, $key, $value)
-{
-	foreach ($feeds as $feed)
-	{
-		if ($feed->$key == $value)
-		{
-			return $feed;
-		}
-	}
-	return null;
 }
