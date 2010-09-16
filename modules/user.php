@@ -24,6 +24,8 @@ class UserModule extends Module
 		}
 	}
 
+	/* Get information about the user
+	 */
 	public function getInfo()
 	{
 		$output = Output::getInstance();
@@ -45,6 +47,8 @@ class UserModule extends Module
 		$output->setOutput('settings', $settings);
 	}
 
+	/* Save the user's settings
+	 */
 	public function saveSettings()
 	{
 		$input = Input::getInstance();
@@ -108,6 +112,8 @@ class UserModule extends Module
 		$output->setOutput('error', $error);
 	}
 
+	/* Get all the recent blog posts from the validated user blog feeds
+	 */
 	public function blogPosts()
 	{
 		$output = Output::getInstance();
@@ -121,6 +127,8 @@ class UserModule extends Module
 		));
 	}
 
+	/* Load the feeds array from the feeds json file
+	 */
 	public function getFeeds()
 	{
 		if (file_exists($this->feedsPath))
@@ -134,6 +142,8 @@ class UserModule extends Module
 		}
 	}
 
+	/* Save the feeds array to the feeds json file
+	 */
 	public function putFeeds($feeds)
 	{
 		return file_put_contents($this->feedsPath, json_encode($feeds));
