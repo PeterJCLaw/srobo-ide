@@ -12,23 +12,26 @@ class UserModule extends Module
 		$this->installCommand('settings-put', array($this, 'saveSettings'));
 		$this->installCommand('blog-feed', array($this, 'blogFeed'));
 		$this->installCommand('blog-posts', array($this, 'blogPosts'));
+
+		$auth = AuthBackend::getInstance();
+		if (!($this->username = $auth->getCurrentUser()))
+		{
+			throw new Exception('you are not logged in', E_PERM_DENIED);
+		}
 	}
 
 	public function getInfo()
 	{
 		$output = Output::getInstance();
-		$auth   = AuthBackend::getInstance();
-		if (!($username = $auth->getCurrentUser()))
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
-		$output->setOutput('display-name', $auth->displayNameForUser($username));
-		$output->setOutput('email', $auth->emailForUser($username));
+		$auth = AuthBackend::getInstance();
+
+		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
+		$output->setOutput('email', $auth->emailForUser($this->username));
 		$output->setOutput('teams', $auth->getCurrentUserTeams());
 		$output->setOutput('is-admin', false);
-		if (file_exists("$this->settingsPath/$username.json"))
+		if (file_exists("$this->settingsPath/$this->username.json"))
 		{
-			$data = file_get_contents("$this->settingsPath/$username.json");
+			$data = file_get_contents("$this->settingsPath/$this->username.json");
 			$settings = json_decode($data);
 		}
 		else
@@ -41,14 +44,9 @@ class UserModule extends Module
 	public function saveSettings()
 	{
 		$input = Input::getInstance();
-		$auth  = AuthBackend::getInstance();
-		if (!($username = $auth->getCurrentUser()))
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
 		$settings = $input->getInput('settings');
 		$data = json_encode($settings);
-		file_put_contents("$this->settingsPath/$username.json", $data);
+		file_put_contents("$this->settingsPath/$this->username.json", $data);
 	}
 
 	public function blogFeed()
