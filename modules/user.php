@@ -116,14 +116,17 @@ class UserModule extends Module
 	public function blogPosts()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('posts', array(
-			array(
-				'link'   => 'http://example.com',
-				'title'  => 'The Blog Post',
-				'body'   => 'of doom',
-				'author' => 'pony man\'s youngest son'
-			)
-		));
+		$feeds  = Feeds::getInstance();
+
+		$urls = $feeds->getValidURLs();
+
+		$posts = array();
+		foreach ($urls as $url)
+		{
+			$msgs = Feeds::getRecentPosts($url, 3);
+			$posts = array_merge($posts, $msgs);
+		}
+		$output->setOutput('posts', $posts);
 	}
 
 }
