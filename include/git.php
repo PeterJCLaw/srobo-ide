@@ -274,9 +274,16 @@ class GitRepository
 	/**
 	 * Gets a diff between two commits
 	 */
-	public function diff($commitOld, $commitNew)
+	public function diff($commitOld, $commitNew,$file=null)
 	{
-		return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+        if ($file === null)
+        {
+		    return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+        }
+        else
+        {
+            return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+        }
 	}
 
 	/**

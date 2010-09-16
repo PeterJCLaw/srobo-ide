@@ -184,6 +184,17 @@ class FileModule extends Module
 		return true;
 	}
 
+    public function diff()
+    {
+        $output = Output::getInstance();
+        $input = Input::getInstance();
+        $path = $input->getInput("path");
+        $r_start = $input->getInput("start");
+        $r_end = $input->getInput("end");
+        $diff = $project->diff($r_start,$r_end,$path);
+        $output->setOutput("diff", $diff);
+    }
+
 	public function lintFile()
 	{
 		$input  = Input::getInstance();
