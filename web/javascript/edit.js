@@ -632,14 +632,29 @@ function EditTab(iea, team, project, path, rev, mode) {
 	}
 
 	this._receive_revisions = function(nodes) {
-		if(nodes.history.length == 0) {
+		var histDate = function(which) {
+			var stamp = nodes.log[which].time;
+			var d = new Date(stamp*1000);
+			return d.toDateString();
+		}
+
+		if(nodes.log.length == 0) {
 			replaceChildNodes("history", OPTION({'value' : -1}, "No File History!"));
 		} else {
 			replaceChildNodes("history", OPTION({'value' : -1}, "Select File Revision"));
-			for(var i=0; i < nodes.history.length; i++)
-				appendChildNodes("history", OPTION( {'value' : nodes.history[i].rev,
-								     'title' : nodes.history[i].message },
-								    "r" + nodes.history[i].rev + " " + nodes.history[i].date + " [" +nodes.history[i].author + "]"));
+			for(var i=0; i < nodes.log.length; i++) {
+				var author = nodes.log[i].author;
+				var pos = author.lastIndexOf('<');
+				if (pos >= 0) {
+					author = author.substring(0, pos-1);
+				}
+				appendChildNodes("history",
+					OPTION( { value: nodes.log[i].rev, title: nodes.log[i].message },
+						"r" + nodes.log[i].hash.substring(0, 9) +
+						" " + histDate(i) + " [" + author + "]"
+					)
+				);
+			}
 
 			appendChildNodes("history", OPTION({'value' : -2}, "--View Full History--"));
 		}
@@ -651,13 +666,17 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	this._get_revisions = function() {
 		logDebug("retrieving file history");
-		this._receive_revisions({history: []});
-		/*var d = loadJSONDoc("./gethistory", { team : team,
-						      file : this.path,
-						      user : null,
-						      offset : 0});
-		d.addCallback( bind(this._receive_revisions, this));
-		d.addErrback( bind(this._error_receive_revisions, this));*/
+		this._receive_revisions({log: []});
+		IDE_backend_request('file/log', {
+			    team: team,
+			 project: IDE_path_get_project(this.path),
+			    path: IDE_path_get_file(this.path),
+			    user: null,
+			  offset: 0
+			},
+			bind(this._receive_revisions, this),
+			bind(this._error_receive_revisions, this)
+		);
 	}
 
 	//initialisation
