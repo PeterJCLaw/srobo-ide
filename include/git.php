@@ -46,6 +46,14 @@ class GitRepository
 		return $this->working_path === null;
 	}
 
+    /**
+     * Get the path of the git repository
+     */
+    public function getPath()
+    {
+        return $this->working_path;
+    }
+
 	/**
 	 * Execute a command with the specified environment variables
 	 */
@@ -274,9 +282,16 @@ class GitRepository
 	/**
 	 * Gets a diff between two commits
 	 */
-	public function diff($commitOld, $commitNew)
+	public function diff($commitOld, $commitNew,$file=null)
 	{
-		return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+        if ($file === null)
+        {
+		    return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+        }
+        else
+        {
+            return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+        }
 	}
 
 	/**
