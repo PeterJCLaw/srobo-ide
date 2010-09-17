@@ -540,14 +540,15 @@ function EditTab(iea, team, project, path, rev, mode) {
 					     "onclick",
 					     bind( this.close, this, false ) ) );
 		// Check syntax handler
-		if(this._isNew) {
+            // tag: fix for demo
+/*		if(this._isNew) {
 			$("check-syntax").disabled = true;
-		} else {
+		} else*/
 			$("check-syntax").disabled = false;
 			this._signals.push( connect( $("check-syntax"),
 					     "onclick",
 					     bind( this._check_syntax, this ) ) );
-		}
+
 		// Diff view handler
 		this._signals.push( connect( $("edit-diff"),
 					     "onclick",
