@@ -46,6 +46,14 @@ class GitRepository
 		return $this->working_path === null;
 	}
 
+    /**
+     * Get the path of the git repository
+     */
+    public function getPath()
+    {
+        return $this->working_path;
+    }
+
 	/**
 	 * Execute a command with the specified environment variables
 	 */
