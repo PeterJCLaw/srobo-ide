@@ -200,9 +200,78 @@ class FileModule extends Module
 	{
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
+        $config = Configuration::getInstance();
+        $auth = AuthBackend :: getInstance();
 		$path   = $input->getInput('path');
-		$output->setOutput('errors', array());
-		$output->setOutput('warnings', array('lint not implemented'));
+
+        //base dir might need changing with alistair's new git situation
+        $base = $this->repository()->getPath();
+
+        //this occurs because someone decided it would be a good idea to split
+        //these up here instead of javascript, makes this function hideous
+        $splitPath = pathinfo($path);
+        $dirName = $splitPath["dirname"];
+        $fileName = $splitPath["filename"] . "." . $splitPath["extension"];
+
+        //if the file exists, lint it otherwise return a dictionary explaining
+        //that the file doesn't exist, shouldn't happen when users interface
+        //with software because check syntax button always points at an existing file
+        if (file_exists("$base/$path")) {
+            //setup linting process
+            $proc = proc_open("pylint -e -f parseable --reports=n $path",
+                array(0 => array("file", "/dev/null", "r"),
+                      1 => array("pipe", "w"),
+                      2 => array("pipe", "w")),
+                $pipes,
+                $base
+            );
+
+            //get stdout and stderr, then we're done with the process, so close it
+            $stdout = stream_get_contents($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+            $status = proc_close($proc);
+
+            //status code zero indicates success, so return empty errors
+            if ($status == 0) {
+                $output->setOutput("errors", array());
+                $output->setOutput("messages", array());
+                $output->setOutput("path", $dirName);
+                $output->setOutput("file", $fileName);
+                //$output->setOutput("errors", 0);
+                return true;
+
+            //otherwise, process stderr and stdout, then forward to the user
+            } else {
+                $lines = explode("\n", $stderr);
+                $errors = array();
+                foreach ($lines as $line) {
+                    if (array_search($line, array("","\n","Warnings...")) === False) {
+                        $errors[] = $line;
+                    }
+                }
+
+                $lines = explode("\n", $stdout);
+                $warnings = array();
+                foreach ($lines as $line) {
+                    if (array_search($line, array("","\n","Warnings...")) === False) {
+                        $warnings[] = $line;
+                    }
+                }
+
+                $output->setOutput("errors", $errors);
+                $output->setOutput("messages", $warnings);
+                $output->setOutput("path", $dirName);
+                $output->setOutput("file", $fileName);
+                //$output->setOutput("errors", 1);
+                return true;
+            }
+        } else {
+	    	$output->setOutput('errors', array("file does not exist"));
+            $output->setOutput("warnings", array());
+            $output->setOutput("path", $dirName);
+            $output->setOutput("file", $fileName);
+            //$output->setOutput("errors", 1);
+        }
 		return true;
 	}
 }
