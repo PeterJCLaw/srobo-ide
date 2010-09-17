@@ -192,7 +192,7 @@ class FileModule extends Module
         $path = $input->getInput("path");
         $r_start = $input->getInput("start");
         $r_end = $input->getInput("end");
-        $diff = $project->diff($r_start,$r_end,$path);
+        $diff = $this->repository()->diff($r_start,$r_end,$path);
         $output->setOutput("diff", $diff);
     }
 
