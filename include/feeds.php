@@ -1,6 +1,8 @@
 <?php
 
+$display_errors = ini_set('display_errors', 'Off');
 require_once('simplepie/simplepie.inc');
+ini_set('display_errors', $display_errors);
 
 class Feeds
 {
