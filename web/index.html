@@ -37,6 +37,7 @@
 	<script type="text/javascript" src="web/javascript/projpage.js"></script>
 	<script type="text/javascript" src="web/javascript/robolog.js"></script>
 	<script type="text/javascript" src="web/javascript/settings.js"></script>
+	<script type="text/javascript" src="web/javascript/status.js"></script>
 	<script type="text/javascript" src="web/javascript/switchboard.js"></script>
 	<script type="text/javascript" src="web/javascript/tabs.js"></script>
 	<!-- editarea can die in ie6 if there is a leading ./ on the src line -->
@@ -44,18 +45,6 @@
 	<title>Robotics IDE</title>
 </head>
 <body>
-
-	<div id="login-back">
-		<!-- This will produce the greyed out background for login/filename prompts -->
-		<div id="login-box">
-			<strong>Student Robotics IDE Login:</strong>
-			<em id="login-feedback">You must be logged in to use the IDE</em>
-			<input type="text" name="username" value="username" id="username">
-			<input type="password" name="password" id="password">
-			<a href="Login" id="login-button" class="button" >Log In</a>
-			<br><a href="http://www.srobo.org/user/password">&raquo; Forgotten password</a>
-		</div>
-	</div>
 
 	<!-- File Browser	-->
 	<div id="file-browser">
@@ -296,9 +285,9 @@
 			<div id="links-window" class="switchboard-window">
 			<strong> Sources of Information </strong>
 				<div>
-				<span class="switch-link"><a href="http://www.studentrobotics.org/forum/"><img src="web/images/Forums.png" alt="Forum">Forum</a></span>
-				<span class="switch-link"><a href="http://www.studentrobotics.org/rulebook.pdf"><img src="web/images/Game.png" alt="Rules">Rules</a></span>
-				<span class="switch-link"><a href="http://www.studentrobotics.org/docs/"><img src="web/images/Docs.png" alt="Docs">Docs</a></span>
+				<span class="switch-link"><a href="https://www.studentrobotics.org/forum/"><img src="web/images/Forums.png" alt="Forum">Forum</a></span>
+				<span class="switch-link"><a href="https://www.studentrobotics.org/rulebook.pdf"><img src="web/images/Game.png" alt="Rules">Rules</a></span>
+				<span class="switch-link"><a href="https://www.studentrobotics.org/docs/"><img src="web/images/Docs.png" alt="Docs">Docs</a></span>
 				</div>
 			</div>
 			<div id="user-feed-box" class="switchboard-window">
@@ -306,7 +295,10 @@
 				<p>
 					<strong>Your Student Robotics Blog feed</strong>
 					<input type="text" name="user_feed_input" id="user-feed-url">
-					If you enter the URL of your blog's RSS/Atom feed here, then other teams can read about your progress. You can enter a maximum of 1 blog feed but can change it using the box above. If you do not have a blog you can set one up for free at <a href="http://www.blogger.com" target="_blank">Blogger</a> or <a href="http://wordpress.com/" target="_blank">Wordpress</a> amongst many other sites. All feeds are verified by an SR mentor before appearing on the site, if your feed url has been verified, it will have a green background.<br>
+					If you enter the URL of your blog's RSS/Atom feed here, then other teams can read about your progress.
+					You can enter a maximum of 1 blog feed but can change it using the box above.
+					If you do not have a blog you can set one up for free at <a href="http://www.blogger.com" target="_blank">Blogger</a> or <a href="http://wordpress.com/" target="_blank">Wordpress</a> amongst many other sites.
+					All feeds are verified by an SR mentor before appearing on the site, if your feed url has been verified, it will have a green background.<br />
 					If your feed has been checked and rejected it will have a red background.
 				</p>
 			</form>
