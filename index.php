@@ -28,7 +28,7 @@ $auth = AuthBackend::getInstance();
 $token = getDefaultTokenStrategy()->getAuthToken();
 if ($auth->validateAuthToken($token))
 {
-	echo file_get_contents('index.html');
+	echo file_get_contents('web/index.html');
 }
 else
 {
