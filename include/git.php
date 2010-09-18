@@ -304,6 +304,22 @@ class GitRepository
 	}
 
 	/**
+	 * Gets the currently cached diff, optionally for just one file
+	 */
+	public function cachedDiff($file=null)
+	{
+		$command = 'diff --cached';
+		if ($file === null)
+		{
+			return $this->gitExecute(true, $command);
+		}
+		else
+		{
+			return $this->gitExecute(true, $command.' '.escapeshellarg($file));
+		}
+	}
+
+	/**
 	 * does a git clone on destination then deletes the .git directory
 	 */
 	public function archiveSourceZip($dest, $commit = 'HEAD')
