@@ -5,12 +5,14 @@ TEST basic/output
 TEST basic/user
 TEST basic/case-transform
 
+TEST utils/mkdir
+
 TEST auth/single
 TEST auth/ldap
 
 TEST proj/create
 TEST proj/log
-TEST proj/del
+XFAIL proj/del
 
 TEST file/basic
 TEST file/simulate/unimplemented

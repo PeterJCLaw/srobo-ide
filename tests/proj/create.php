@@ -24,12 +24,11 @@ $input = Input::getInstance();
 $input->setInput("team", 1);
 $input->setInput("project", "monkies");
 
-
 $mm = ModuleManager::getInstance();
 $mm->importModules();
 test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
 
-$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
+$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
 $proj = $mm->getModule("proj");
 $proj->dispatchCommand("new");
 

@@ -31,7 +31,7 @@ test_equal($mm->moduleExists("file"), true, "file module does not exist");
 
 $file = $mm->getModule('file');
 
-$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
+$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . '.git';
 
 $projectManager = ProjectManager::getInstance();
 $projectManager->createRepository($input->getInput("team"), $input->getInput("project"));

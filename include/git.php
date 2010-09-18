@@ -8,6 +8,16 @@ class GitRepository
 	private $working_path;
 	private $git_path;
 
+	public function workingPath()
+	{
+		return $this->working_path;
+	}
+
+	public function gitPath()
+	{
+		return $this->git_path;
+	}
+
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
@@ -46,7 +56,7 @@ class GitRepository
 	/**
 	 * Execute a command with the specified environment variables
 	 */
-	private function gitExecute($working, $command, $env = array())
+	private function gitExecute($working, $command, $env = array(), $catchResult = false)
 	{
 		$base = $working ? $this->working_path : $this->git_path;
 		$file = fopen('/tmp/git-log', 'a');
@@ -59,38 +69,62 @@ class GitRepository
 		                                 $pipes,
 		                                 $base,
 		                                 $env);
-		$stdout = stream_get_contents($pipes[1]);
+		$stdout = trim(stream_get_contents($pipes[1]));
 		$stderr = stream_get_contents($pipes[2]);
 		$status = proc_close($proc);
 		if ($status != 0)
 		{
-			$file = fopen('/tmp/git-log', 'a');
-			fwrite($file, "\tfailed miserably!\n");
-			fwrite($file, "-- LOG --\n");
-			fwrite($file, "$stderr\n");
-			fwrite($file, "-- END LOG --\n");
-			fclose($file);
+			if ($catchResult)
+			{
+				return array(false, $stdout);
+			}
+			else
+			{
+				$file = fopen('/tmp/git-log', 'a');
+				fwrite($file, "\tfailed miserably!\n");
+				fwrite($file, "-- LOG --\n");
+				fwrite($file, "$stderr\n");
+				fwrite($file, "-- END LOG --\n");
+				fclose($file);
+			}
 			return false;
 		}
 		else
 		{
-			return trim($stdout);
+			if ($catchResult)
+				return array(true, $stdout);
+			else
+				return trim($stdout);
 		}
 	}
 
 	/**
 	 * Creates a git repository on a specified path, fails if the path exists
 	 */
-	public static function createRepository($path, $bare = false)
+	public static function createRepository($path, $bare = false, $source = null)
 	{
-		if (!is_dir($path) && mkdir($path))
+		if (!is_dir($path))
 		{
-			shell_exec("cd $path ; git init" . ($bare ? " --bare" : ''));
+			mkdir_full($path);
 		}
+		if ($source !== null)
+		{
+			if (is_object($source))
+				$source = $source->gitPath();
+			shell_exec("git clone --shared --quiet " . ($bare ? "--bare " : "") .
+					   "'$source' '$path'");
+		}
+		else
+			shell_exec("cd $path ; git init" . ($bare ? " --bare" : ''));
+		$hash = trim(shell_exec("cd $path ; git hash-object -w /dev/null"));
+		$treepath = realpath('resources/base-tree');
+		$commitpath = realpath('resources/initial-commit');
+		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | git mktree"));
+		$hash = trim(shell_exec("cd $path ; cat $commitpath | git commit-tree $hash"));
+		shell_exec("cd $path ; git update-ref -m $commitpath HEAD $hash");
+		shell_exec("cd $path ; git update-ref -m $commitpath refs/heads/master $hash");
 		return new GitRepository($path);
 	}
-
-	
 
 	/**
 	 * Gets the most recent revision hash
@@ -130,6 +164,50 @@ class GitRepository
 			                   'message' => $message);
 		}
 		return $results;
+	}
+
+	/**
+	 * Fetches changes.
+	 */
+	public function fetch()
+	{
+		$this->gitExecute(true, 'fetch origin');
+	}
+
+	/**
+	 * Does an n-way merge.
+	 */
+	public function merge($branches)
+	{
+		$mergeOptions = array('--no-stat',
+		                      '--quiet');
+		list($success, $message) = $this->gitExecute(true, 'merge '
+		                                             . implode(' ', $mergeOptions)
+		                                             . ' '
+		                                             . implode(' ', $branches));
+		if ($success)
+			return array();
+		else
+		{
+			$conflicted_files = array();
+			$lines = explode("\n", $message);
+			foreach ($lines as $line)
+			{
+				if (preg_match('/^CONFLICT \\(content\\): Merge conflict in (.+)$', $line, $death))
+				{
+					$conflicted_files[] = $death;
+				}
+			}
+			return $conflicted_files;
+		}
+	}
+
+	/**
+	 * Pushes changes upstream.
+	 */
+	public function push()
+	{
+		$this->gitExecute(true, 'push origin master');
 	}
 
 	/**

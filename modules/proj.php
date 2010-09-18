@@ -82,18 +82,8 @@ class ProjModule extends Module
 	public function deleteProject()
 	{
 		$this->verifyTeam();
-		$projPath = $this->projectManager->teamDirectory($this->team);
-		$projPath .= "/$this->projectName";
-		if (is_dir($projPath))
-		{
-			$this->projectManager->deleteRepository($this->team, $this->projectName);
-			return TRUE;
-		}
-		else
-		{
-			throw new Exception('attempted to delete nonexistant project', E_PROJ_NONEXISTANT);
-		}
-
+		$this->projectManager->deleteRepository($this->team, $this->projectName);
+		return true;
 	}
 
 	public function projectInfo()
@@ -147,7 +137,8 @@ class ProjModule extends Module
 
 		$firstRev = $input->getInput('end-commit', true);
 
-		if ($firstRev == null) {
+		if ($firstRev == null)
+		{
 			$firstRev = $this->projectRepository->getFirstRevision();
 		}
 
@@ -194,13 +185,9 @@ class ProjModule extends Module
 
 	private function openProject($team, $project)
 	{
-		if (in_array($team, $this->projectManager->listRepositories($team)))
-		{
-			$this->projectRepository = $this->projectManager->getRepository($team, $project);
-		}
-		else
-		{
-			$this->projectRepository = $this->projectManager->createRepository($team, $project);
-		}
+		if (!in_array($team, $this->projectManager->listRepositories($team)))
+			$this->projectManager->createRepository($team, $project);
+		$this->projectRepository =
+		    $this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
 	}
 }
