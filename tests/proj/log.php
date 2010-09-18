@@ -24,7 +24,7 @@ $input = Input::getInstance();
 $input->setInput("team", 1);
 $input->setInput("project", "monkies");
 
-$repoPath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
+$repoPath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
 //beat git into oblivion
 $repo = GitRepository::createRepository($repoPath);
 $repo->putFile("ponies.py", "print 'cows'\n");

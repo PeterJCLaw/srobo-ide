@@ -40,50 +40,54 @@ class ProjectManager
 
 	public function listTeams()
 	{
-		$contents = array_filter(scandir($this->rootProjectPath),
-		                         function ($x) { return $x[0] != '.'; });
-		sort($contents);
-		return $contents;
+		$scan = scandir($this->rootProjectPath);
+		$scan = array_filter($scan, function($item) {
+			return $item != '' && $item[0] != '.';
+		});
+		return $scan;
 	}
 
 	public function listRepositories($team)
 	{
-		$this->verifyName($team);
-		$contents = array_filter(scandir($this->teamDirectory($team)),
-		                         function ($x) { return $x[0] != '.'; });
-		sort($contents);
-		return $contents;
+		$root = $this->rootProjectPath . '/' . $team . '/master/';
+		$scan = scandir($root);
+		$projects = array();
+		foreach ($scan as $item)
+		{
+			if (preg_match('/([a-zA-Z0-9_- ])+\\.git$/', $item, $matches))
+				$projects[] = $matches[1];
+		}
+		return $projects;
 	}
 
-	public function teamDirectory($team)
+	public function getMasterRepository($team, $project)
 	{
-		$this->verifyName($team);
-		$dir = $this->rootProjectPath . '/' . $team;
-		if (!is_dir($dir))
-			mkdir($dir);
-		return $dir;
+		$path = $this->rootProjectPath . "/$team/master/$project.git";
+		return new GitRepository($path);
 	}
 
-	public function getRepository($team, $path)
+	public function getUserRepository($team, $project, $user)
 	{
-		$this->verifyName($team);
-		$this->verifyName($path);
-		return new GitRepository($this->teamDirectory($team) . '/' . $path);
+		$path = $this->rootProjectPath . "/$team/users/$user/$project";
+		if (file_exists($path))
+		{
+			return new GitRepository($path);
+		}
+		else
+		{
+			return GitRepository::createRepository($path, false,
+			                                       $this->getMasterRepository($team, $project));
+		}
 	}
 
-	public function createRepository($team, $name)
+	public function createRepository($team, $project)
 	{
-		$this->verifyName($team);
-		$this->verifyName($name);
-		return GitRepository::createRepository($this->teamDirectory($team) . '/' . $name);
+		$path = $this->rootProjectPath . "/$team/master/$project.git";
+		GitRepository::createRepository($path, true);
 	}
 
-	public function deleteRepository($team, $path)
+	public function deleteRepository($team, $name)
 	{
-		$this->verifyName($team);
-		$this->verifyName($path);
-		// DELETE EVERYTHING RAAAAARGH
-		$path = $this->teamDirectory($team) . '/' . $path;
-		shell_exec("rm -rf $path");
+		// TODO: implement me
 	}
 }
