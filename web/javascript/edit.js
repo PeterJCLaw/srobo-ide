@@ -545,7 +545,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		} else {
 			$("check-syntax").disabled = false;
 		}
-			this._signals.push( connect( $("check-syntax"),
+		this._signals.push( connect( $("check-syntax"),
 					     "onclick",
 					     bind( this._check_syntax, this ) ) );
 
