@@ -207,7 +207,8 @@ class FileModule extends Module
 		// diff against changed file
 		else
 		{
-			throw new Exception('TODO', E_NOT_IMPL);
+			$this->repository()->putFile($path, $newCode);
+			$diff = $this->repository()->cachedDiff($path);
 		}
 
 		$output->setOutput("diff", $diff);
