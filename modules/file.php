@@ -202,7 +202,7 @@ class FileModule extends Module
 		// patch from log
 		if ($newCode == null)
 		{
-			$diff = $this->repository()->diff($hash);
+			$diff = $this->repository()->historyDiff($hash);
 		}
 		// diff against changed file
 		else

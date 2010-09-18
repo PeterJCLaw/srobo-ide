@@ -285,7 +285,7 @@ class GitRepository
 	 *  between two commits,
 	 *  between two commits for a specified file
 	 */
-	public function diff($commitOld, $commitNew=null, $file=null)
+	public function historyDiff($commitOld, $commitNew=null, $file=null)
 	{
 		if ($commitNew === null)
 		{
