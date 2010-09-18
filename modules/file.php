@@ -185,14 +185,31 @@ class FileModule extends Module
 		return true;
 	}
 
+	/**
+	 * Gets the diff of:
+	 *  A log change
+	 *  The current state of a file against the tree
+	 */
 	public function diff()
 	{
 		$output = Output::getInstance();
 		$input = Input::getInstance();
-		$path = $input->getInput("path");
-		$r_start = $input->getInput("start");
-		$r_end = $input->getInput("end");
-		$diff = $this->repository()->diff($r_start,$r_end,$path);
+
+		$hash = $input->getInput('hash');
+		$path = $input->getInput('path');
+		$newCode = $input->getInput('code', true);
+
+		// patch from log
+		if ($newCode == null)
+		{
+			$diff = $this->repository()->diff($hash);
+		}
+		// diff against changed file
+		else
+		{
+			throw new Exception('TODO', E_NOT_IMPL);
+		}
+
 		$output->setOutput("diff", $diff);
 	}
 
