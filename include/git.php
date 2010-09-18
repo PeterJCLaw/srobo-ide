@@ -284,14 +284,14 @@ class GitRepository
 	 */
 	public function diff($commitOld, $commitNew,$file=null)
 	{
-        if ($file === null)
-        {
-		    return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
-        }
-        else
-        {
-            return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
-        }
+		if ($file === null)
+		{
+			return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+		}
+		else
+		{
+			return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+		}
 	}
 
 	/**
