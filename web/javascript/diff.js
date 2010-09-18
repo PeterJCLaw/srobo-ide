@@ -74,7 +74,7 @@ DiffPage.prototype._close = function() {
 /* *****	Team editing Code	***** */
 DiffPage.prototype._recieveDiff = function(nodes) {
 	replaceChildNodes('diff-page-diff');
-	var difflines = nodes.diff.replace('\r','').split('\n');
+	var difflines = (nodes.diff.replace('\r','')+'\n').split('\n');
 	var modeclasses = {
 		' ' : '',
 		'+' : 'add',
