@@ -18,6 +18,14 @@ class GitRepository
 		return $this->git_path;
 	}
 
+	private function gitBinaryPath()
+	{
+		$path = Configuration::getInstance()->getConfig('git_path');
+		if (!$path)
+			$path = 'git';
+		return $path;
+	}
+
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
