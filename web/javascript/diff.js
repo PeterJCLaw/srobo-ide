@@ -104,26 +104,25 @@ DiffPage.prototype._errDiff = function(rev, code, nodes) {
 
 DiffPage.prototype.diff = function(file, rev, code) {
 	this.file = file;
+	var recieve = bind( this._recieveDiff, this );
+	var err = bind( this._errDiff, this, rev, code );
+
+	var args = {
+		   team: team,
+		project: IDE_path_get_project(file),
+		   path: IDE_path_get_file(file),
+		   hash: rev
+	};
+
 	if( code == undefined ) {
-		var d = loadJSONDoc("./diff", {
-					team: team,
-					file: file,
-					rev: rev
-				});
 		this.newrev = rev;
 	} else {
-		var d = postJSONDoc("./diff", {
-			queryString: {
-					team: team,
-					file: file,
-					rev: rev
-				},
-			sendContent: { code: code }
-		});
+		args.code = code;
 		this.newrev = -2;
 	}
 
-	d.addCallback( bind( this._recieveDiff, this) );
-	d.addErrback( bind( this._errDiff, this, rev, code) );
+	IDE_backend_request("file/diff", args, recieve, err);
+
+
 }
 /* *****	End Diff loading Code 	***** */
