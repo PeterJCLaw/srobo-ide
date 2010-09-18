@@ -299,7 +299,7 @@ class GitRepository
 		}
 		else
 		{
-			return $this->getExecute(false, $command.' -- '.escapeshellarg($file));
+			return $this->gitExecute(false, $command.' -- '.escapeshellarg($file));
 		}
 	}
 
