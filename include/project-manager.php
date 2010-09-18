@@ -60,13 +60,13 @@ class ProjectManager
 		return $projects;
 	}
 
-	public function getMasterRepository($team, $name)
+	public function getMasterRepository($team, $project)
 	{
-		$path = $this->rootProjectPath . "/$team/master/$name.git";
+		$path = $this->rootProjectPath . "/$team/master/$project.git";
 		return new GitRepository($path);
 	}
 
-	public function getUserRepository($team, $name, $user)
+	public function getUserRepository($team, $project, $user)
 	{
 		$path = $this->rootProjectPath . "/$team/users/$user/$project";
 		if (file_exists($path))
@@ -76,13 +76,13 @@ class ProjectManager
 		else
 		{
 			return GitRepository::createRepository($path, false,
-			                                       $this->getMasterRepository($team, $name));
+			                                       $this->getMasterRepository($team, $project));
 		}
 	}
 
-	public function createRepository($team, $name)
+	public function createRepository($team, $project)
 	{
-		$path = $this->rootProjectPath . "/$team/master/$name.git";
+		$path = $this->rootProjectPath . "/$team/master/$project.git";
 		GitRepository::createRepository($path, true);
 	}
 
