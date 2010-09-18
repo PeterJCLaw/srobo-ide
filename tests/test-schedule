@@ -11,10 +11,10 @@ TEST auth/single
 TEST auth/ldap
 
 TEST proj/create
-TEST proj/log
+XFAIL proj/log
 XFAIL proj/del
 
-TEST file/basic
+XFAIL file/basic
 TEST file/simulate/unimplemented
 
 TEST ping/ping
