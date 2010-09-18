@@ -39,6 +39,9 @@ var user;
 // The team selector
 var team_selector;
 
+// The user settings page
+var settingspage = null;
+
 // The switchboard page
 var switchboardpage = null;
 
@@ -103,13 +106,16 @@ function load_gui() {
 	//The switchboard page - this must happen before populate_shortcuts_box is called
 	switchboardpage = new Switchboard();
 
+	//The settings page - this must happen before populate_shortcuts_box is called
+	settingspage = SettingsPage.GetInstance();
+
 	//The Admin page - this must happen before populate_shortcuts_box is called
 	adminpage = new Admin();
 
-	populate_shortcuts_box();
+	var shortcutsList = populate_shortcuts_box();
 
 	// Shortcut button
-	var shortcuts = new dropDownBox("dropShortcuts");
+	var shortcuts = new dropDownBox("dropShortcuts", shortcutsList);
 	var sbutton = new Tab( "v", {can_close:false,title:'See more options'} ); // TODO: find something like this
 	sbutton.can_focus = false;
 	connect( sbutton, "onclick", function(){shortcuts.toggleBox();} ) ;
@@ -125,6 +131,9 @@ function load_gui() {
 
 	// Simulator tab
 	//simpage = new SimPage();
+
+	// Checkout handler
+	Checkout.GetInstance().init();
 
 	// Diff Page
 	diffpage = new DiffPage();
@@ -196,46 +205,53 @@ function beforeunload(e) {
 function populate_shortcuts_box() {
 	var shortcuts = new Array();
 
-	var short1_a = A( {"title": "Create a new file"}, "Create new file" );
-	var short1_li = LI(null, short1_a);
-	connect( short1_li, "onclick", bind(editpage.new_file, editpage) );
-	shortcuts.push(short1_li);
-
-/*
-	var short2_a = A( {"title": "Change user settings" }, "User settings" );
-	var short2_li = LI(null, short2_a);
-	shortcuts.push(short2_li);
-*/
-
-	var short3_a = A( {"title": "Messages, docs and helpful information"},  "View Switchboard" );
-	var short3_li = LI(null, short3_a);
-	connect( short3_li, "onclick", bind(switchboardpage.init, switchboardpage) );
-	shortcuts.push(short3_li);
-
-	if(user.can_admin()) {
-		var admin_a = A( {"title": "IDE Admin"},  "Administration" );
-		var admin_li = LI(null, admin_a);
-		connect( admin_li, "onclick", bind(adminpage.init, adminpage) );
-		shortcuts.push(admin_li);
+	function newShortcut(name, description, callback) {
+		var a = A( {"title": description}, name );
+		var li = LI(null, a);
+		connect( li, "onclick", callback );
+		return li;
 	}
 
-	var about_a = A( {"title": "View information about the RoboIDE"},  "About" );
-	var about_li = LI(null, about_a);
-	connect( about_li, "onclick", bind(about.showBox, about) );
-	shortcuts.push(about_li);
+	shortcuts.push(newShortcut( "Create new file",
+		"Create a new file",
+		bind(editpage.new_file, editpage)
+	));
+
+	shortcuts.push(newShortcut( "User settings",
+		"Change user settings",
+		bind(settingspage.init, settingspage)
+	));
+
+	shortcuts.push(newShortcut( "View Switchboard",
+		"Messages, docs and helpful information",
+		bind(switchboardpage.init, switchboardpage)
+	));
+
+	shortcuts.push(newShortcut( "About",
+		"View information about the RoboIDE",
+		bind(about.showBox, about)
+	));
+
+	if(user.can_admin()) {
+		shortcuts.push(newShortcut( "Administration",
+			"IDE Admin",
+			bind(adminpage.init, adminpage)
+		));
+	}
 
 	var new_ul = UL(null);
 	for( var i=0; i<shortcuts.length; i++) {
 		appendChildNodes(new_ul, shortcuts[i]);
 	}
 
-	appendChildNodes($("dropShortcuts"), new_ul);
+	return new_ul;
 }
 
 // Take id of existing hidden div to make into appearing box
-function dropDownBox (id) {
-	this._init = function() {
-		this.id = getElement(id);
+function dropDownBox (id, children) {
+	this._init = function(id, children) {
+		this.id = $(id);
+		appendChildNodes(this.id, children);
 		connect( this.id, "onmouseenter", bind( this._clearTimeout, this) );	// when mouse is inside the dropbox disable timeout
 		connect( this.id, "onmouseleave", bind( this.hideBox, this ) );		// when mouse leaves dropbox hide it
 		connect( this.id, "onclick", bind( this.hideBox, this ) );
@@ -255,7 +271,7 @@ function dropDownBox (id) {
 			this.showBox();
 		} else {
 			this.hideBox();
-			}
+		}
 	}
 
 	this._clearTimeout = function() {
@@ -265,7 +281,7 @@ function dropDownBox (id) {
 		}
 	}
 
-	this._init(id);
+	this._init(id, children);
 }
 
 // Show some info about the IDE, just the version number for now
@@ -455,7 +471,7 @@ function User() {
 			this.teams.push(parseInt(num, 10));
 		}
 
-		this._settings = info["settings"];
+		this._settings = (info.settings instanceof Array) ? {} : info.settings;
 		for( var k in this._settings ) {
 			logDebug( k + " = " + this._settings[k] );
 		}
@@ -473,6 +489,36 @@ function User() {
 
 	this.get_setting = function(sname) {
 		return this._settings[sname];
+	}
+
+	// Set user settings.
+	this.set_settings = function(settings, opts) {
+		var changed = false;
+		log('Setting user settings');
+		for( var s in settings ) {
+			if (this._settings[s] !== settings[s] || changed) {
+				changed = true;
+			}
+			this._settings[s] = settings[s];
+		}
+		if (changed) {
+			this._save_settings(opts);
+		} else if(opts == 'loud') {
+			status_msg( 'User settings unchanged', LEVEL_INFO );
+		}
+	}
+
+	// Save user settings. Called right after they're set.
+	this._save_settings = function(opts) {
+		log('Saving user settings');
+		if(opts == 'loud') {
+			var cb = partial( status_msg, 'User settings saved', LEVEL_OK );
+			var eb = partial( status_button, 'Could not save user settings', LEVEL_ERROR, 'retry', bind(this._save_settings, this, opts) );
+		} else {
+			var cb = eb = function(){};
+		}
+
+		IDE_backend_request('user/settings-put', {settings: this._settings}, cb, eb);
 	}
 
 	// Check if we're logged in
@@ -543,11 +589,14 @@ function User() {
 			ev.stopPropagation();
 		}
 
-		IDE_backend_request("auth/deauthenticate", {}, window.location.reload, bind(function() {
-			status_button( "Failed to log out", LEVEL_ERROR,
-				       "retry", partial( bind( this._logout_click, this ),
-							 null ) );
-		}, this));
+		IDE_backend_request("auth/deauthenticate", {},
+		                    bind(window.location.reload, window.location),
+		                    bind(function() {
+		                                     status_button( "Failed to log out", LEVEL_ERROR, "retry",
+		                                                    bind( this._logout_click, this, null )
+		                                                  );
+		                                    },
+                            this));
 	}
 
 	// do they have admin priviledges - this gets overwirtten by the info collecter if they do
@@ -577,10 +626,11 @@ function TeamSelector() {
 
 			if( !this._team_exists(team) ) {
 				// Work out what team we should be in
-				var team_last = user.get_setting("team.last");
-				if( team_last != undefined
-				    && this._team_exists( team_last ) ) {
-					team = team_last;
+				var team_load = user.get_setting('team.autoload');
+				var team_to_load = user.get_setting(team_load);
+				if( team_to_load != undefined
+				    && this._team_exists( team_to_load ) ) {
+					team = team_to_load;
 					logDebug( "Defaulting to team " + team );
 				}
 			}
@@ -599,6 +649,7 @@ function TeamSelector() {
 			var tsel = SELECT( null, olist );
 
 			connect( tsel, "onchange", bind( this._selected, this ) );
+			connect( this, "onchange", function(t) { user.set_settings({'team.last':t}); } );
 			teambox.push( "Team: " );
 			teambox.push( tsel );
 		}
@@ -617,7 +668,7 @@ function TeamSelector() {
 	this._build_options = function() {
 		var olist = [];
 
-		for( t in user.teams ) {
+		for( var t in user.teams ) {
 			var props = { "value" : user.teams[t]};
 
 			if( user.teams[t] == team )
@@ -634,7 +685,7 @@ function TeamSelector() {
 		if( team == 0 )
 			return false;
 
-		for( i in user.teams )
+		for( var i in user.teams )
 			if( user.teams[i] == team )
 				return true;
 		return false;

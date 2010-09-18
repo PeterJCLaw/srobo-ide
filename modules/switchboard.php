@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Module for handling the switchboard
+ *
+ * installed commands are:
+ * messages (void) -> ('messages' : [{'link' : Url, 'title' : String, 'body' : String, 'author': String}])
+ * milestones (void) -> ('events' : [{'title' : String, 'desc' : String, 'date' : String}])
+ */
 class SwitchboardModule extends Module
 {
 	public function __construct()
@@ -8,6 +15,9 @@ class SwitchboardModule extends Module
 		$this->installCommand('milestones', array($this, 'getMilestones'));
 	}
 
+    /**
+     * Gets switchboard messages
+     */
 	public function getMessages()
 	{
 		$output = Output::getInstance();
@@ -21,6 +31,9 @@ class SwitchboardModule extends Module
 		));
 	}
 
+    /**
+     * Gets switchboard milestones
+     */
 	public function getMilestones()
 	{
 		$output = Output::getInstance();

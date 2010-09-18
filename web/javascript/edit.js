@@ -106,7 +106,7 @@ function EditPage() {
 
 	this.close_all_tabs = function(override) {
 		mod_count	= 0;
-		for ( i in this._open_files ) {	//find which are modified and close the others
+		for ( var i in this._open_files ) {	//find which are modified and close the others
 			if(this._open_files[i] !== null) {
 				logDebug('checking '+i);
 				if(this._open_files[i].is_modified() && override != true) {
@@ -421,7 +421,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		                    	                                 message: this._commitMsg},
 		                    	                                 bind(this._receive_repo_save, this),
 		                    	                                 bind(this._error_receive_repo_save, this));
-		                    	
+
 		                    }, this),
 		                    bind(this._error_receive_repo_save, this));
 	}
@@ -540,14 +540,15 @@ function EditTab(iea, team, project, path, rev, mode) {
 					     "onclick",
 					     bind( this.close, this, false ) ) );
 		// Check syntax handler
-		if(this._isNew) {
+            // tag: fix for demo
+/*		if(this._isNew) {
 			$("check-syntax").disabled = true;
-		} else {
+		} else*/
 			$("check-syntax").disabled = false;
 			this._signals.push( connect( $("check-syntax"),
 					     "onclick",
 					     bind( this._check_syntax, this ) ) );
-		}
+
 		// Diff view handler
 		this._signals.push( connect( $("edit-diff"),
 					     "onclick",

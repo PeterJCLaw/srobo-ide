@@ -4,33 +4,44 @@ require_once("tokenstrategy.php");
 
 class CookieStrategy extends TokenStrategy
 {
-    /**
-     * the name for the cookie
-     */
-    const COOKIENAME = "token";
+	/**
+	 * the name for the cookie
+	 */
+	const COOKIENAME = "token";
 
-    public function getAuthToken()
-    {
-        return $_COOKIE[self::COOKIENAME];
-    }
+	/**
+	 * the path the cookie is valid for
+	 */
+	private $path;
 
-    public function setNextAuthToken($token)
-    {
-        $expiry = Configuration::getInstance()->getConfig("cookie_expiry_time");
-        if ($expiry == null)
-        {
-            throw new Exception("no cookie expiry time found in config file", E_NO_EXPIRY_TIME);
-        }
-        setcookie(
-                  self::COOKIENAME,
-                  $token,
-                  time() + (int)$expiry
-                 );
-    }
+	public function __construct()
+	{
+		$this->path = $_SERVER['SCRIPT_NAME'];
+	}
 
-    public function removeAuthToken()
-    {
-        setcookie (self::COOKIENAME, "", time() - 3600);
-    }
+	public function getAuthToken()
+	{
+		return $_COOKIE[self::COOKIENAME];
+	}
+
+	public function setNextAuthToken($token)
+	{
+		$expiry = Configuration::getInstance()->getConfig("cookie_expiry_time");
+		if ($expiry == null)
+		{
+			throw new Exception("no cookie expiry time found in config file", E_NO_EXPIRY_TIME);
+		}
+		setcookie(
+		          self::COOKIENAME,
+		          $token,
+		          time() + (int)$expiry,
+		          $this->path
+		         );
+	}
+
+	public function removeAuthToken()
+	{
+		setcookie(self::COOKIENAME, "", time() - 3600, $this->path);
+	}
 
 }

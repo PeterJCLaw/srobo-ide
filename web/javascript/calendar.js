@@ -102,7 +102,7 @@ Calendar.prototype.dinm = function() {
 //ajax handler for receiving logs from server
 Calendar.prototype._receiveDates = function(nodes) {
 
-	if(nodes.entries.length > 0) {
+	if(nodes.log.length > 0) {
 		//convert string representation of date to javascript date object
 		this.logs = map(function(x) {
 			var jsdate = new Date(x.time * 1000);
@@ -110,7 +110,7 @@ Calendar.prototype._receiveDates = function(nodes) {
 				 "message" : x.message,
 				 "rev" : x.hash,
 				 "author" : x.author};
-		}, nodes.history);
+		}, nodes.log);
 
 
 		this.processDates();
