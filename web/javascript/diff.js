@@ -96,9 +96,9 @@ DiffPage.prototype._recieveDiff = function(nodes) {
 	}
 	var description;
 	if (this.logpatch) {
-		description = 'applied by log revision'
+		description = 'applied by log revision';
 	} else {
-		description = 'from your modifications, based on'
+		description = 'from your modifications, based on';
 	}
 	description += ' r' + this.revhash;
 	$('diff-page-summary').innerHTML = 'Displaying differences on '
