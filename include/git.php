@@ -18,6 +18,14 @@ class GitRepository
 		return $this->git_path;
 	}
 
+	private static function gitBinaryPath()
+	{
+		$path = Configuration::getInstance()->getConfig('git_path');
+		if (!$path)
+			$path = 'git';
+		return $path;
+	}
+
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
@@ -58,11 +66,12 @@ class GitRepository
 	 */
 	private function gitExecute($working, $command, $env = array(), $catchResult = false)
 	{
+		$bin = self::gitBinaryPath();
 		$base = $working ? $this->working_path : $this->git_path;
 		$file = fopen('/tmp/git-log', 'a');
-		fwrite($file, "git $command [cwd = $base]\n");
+		fwrite($file, "$bin $command [cwd = $base]\n");
 		fclose($file);
-		$buildCommand = "git $command";
+		$buildCommand = "$bin $command";
 		$proc = proc_open($buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
 		                                       2 => array('pipe', 'w')),
@@ -103,6 +112,7 @@ class GitRepository
 	 */
 	public static function createRepository($path, $bare = false, $source = null)
 	{
+		$bin = self::gitBinaryPath();
 		if (!is_dir($path))
 		{
 			mkdir_full($path);
@@ -111,18 +121,18 @@ class GitRepository
 		{
 			if (is_object($source))
 				$source = $source->gitPath();
-			shell_exec("git clone --shared --quiet " . ($bare ? "--bare " : "") .
+			shell_exec("$bin clone --shared --quiet " . ($bare ? "--bare " : "") .
 					   "'$source' '$path'");
 		}
 		else
-			shell_exec("cd $path ; git init" . ($bare ? " --bare" : ''));
-		$hash = trim(shell_exec("cd $path ; git hash-object -w /dev/null"));
+			shell_exec("cd $path ; $bin init" . ($bare ? " --bare" : ''));
+		$hash = trim(shell_exec("cd $path ; $bin hash-object -w /dev/null"));
 		$treepath = realpath('resources/base-tree');
 		$commitpath = realpath('resources/initial-commit');
-		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | git mktree"));
-		$hash = trim(shell_exec("cd $path ; cat $commitpath | git commit-tree $hash"));
-		shell_exec("cd $path ; git update-ref -m $commitpath HEAD $hash");
-		shell_exec("cd $path ; git update-ref -m $commitpath refs/heads/master $hash");
+		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
+		$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
+		shell_exec("cd $path ; $bin update-ref -m $commitpath HEAD $hash");
+		shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		return new GitRepository($path);
 	}
 
