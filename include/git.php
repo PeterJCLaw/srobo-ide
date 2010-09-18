@@ -291,13 +291,15 @@ class GitRepository
 		{
 			return $this->gitExecute(false, "log -p -1 $commitOld");
 		}
-		elseif ($file === null)
+
+		$command = 'diff -C -M '.$commitOld.'..'.$commitNew;
+		if ($file === null)
 		{
-			return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+			return $this->gitExecute(false, $command);
 		}
 		else
 		{
-			return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+			return $this->getExecute(false, $command.' -- '.escapeshellarg($file));
 		}
 	}
 
