@@ -15,7 +15,10 @@ function DiffPage() {
 	this.file = '';
 
 	//store newer file revision
-	this.newrev = -1;
+	this.revhash = -1;
+
+	// whether or not this is a patch from the log
+	this.revhash = null;
 }
 
 /* *****	Initialization code	***** */
@@ -91,9 +94,15 @@ DiffPage.prototype._recieveDiff = function(nodes) {
 			group = line+'\n';
 		}
 	}
-	var newrev = this.newrev == -2 ? 'your modifications' : 'r'+this.newrev;
+	var description;
+	if (this.logpatch) {
+		description = 'applied by log revision'
+	} else {
+		description = 'from your modifications, based on'
+	}
+	description += ' r' + this.revhash;
 	$('diff-page-summary').innerHTML = 'Displaying differences on '
-			+this.file+' between r'+nodes.oldrev+' and '+newrev+'.';
+			+this.file+' '+description;
 	this.init();
 }
 
@@ -104,6 +113,7 @@ DiffPage.prototype._errDiff = function(rev, code, nodes) {
 
 DiffPage.prototype.diff = function(file, rev, code) {
 	this.file = file;
+	this.revhash = rev;
 	var recieve = bind( this._recieveDiff, this );
 	var err = bind( this._errDiff, this, rev, code );
 
@@ -115,14 +125,12 @@ DiffPage.prototype.diff = function(file, rev, code) {
 	};
 
 	if( code == undefined ) {
-		this.newrev = rev;
+		this.logpatch = true;
 	} else {
 		args.code = code;
-		this.newrev = -2;
+		this.logpatch = false;
 	}
 
 	IDE_backend_request("file/diff", args, recieve, err);
-
-
 }
 /* *****	End Diff loading Code 	***** */
