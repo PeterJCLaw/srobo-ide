@@ -27,6 +27,7 @@ Dependancies:
  * javac   # for building the Java applet
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
+ * pylint  # syntax checker
 
 In Ubuntu these can be achieved by installing the following packages:
  apache2 php5 libphp-simplepie php5-intl ant1.8 openjdk-6-jdk doxygen php5-cli
