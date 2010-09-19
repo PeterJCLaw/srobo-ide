@@ -142,7 +142,6 @@ class GitRepository
 		$commitpath = realpath('resources/initial-commit');
 		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
 		$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
-		shell_exec("cd $path ; $bin update-ref -m $commitpath HEAD $hash");
 		shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		return new GitRepository($path);
 	}
