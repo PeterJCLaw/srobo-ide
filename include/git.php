@@ -373,19 +373,37 @@ class GitRepository
 	 *  between two commits,
 	 *  between two commits for a specified file
 	 */
-	public function diff($commitOld, $commitNew=null, $file=null)
+	public function historyDiff($commitOld, $commitNew=null, $file=null)
 	{
 		if ($commitNew === null)
 		{
 			return $this->gitExecute(false, "log -p -1 $commitOld");
 		}
-		elseif ($file === null)
+
+		$command = 'diff -C -M '.$commitOld.'..'.$commitNew;
+		if ($file === null)
 		{
-			return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+			return $this->gitExecute(false, $command);
 		}
 		else
 		{
-			return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+			return $this->gitExecute(false, $command.' -- '.escapeshellarg($file));
+		}
+	}
+
+	/**
+	 * Gets the currently cached diff, optionally for just one file
+	 */
+	public function cachedDiff($file=null)
+	{
+		$command = 'diff --cached';
+		if ($file === null)
+		{
+			return $this->gitExecute(true, $command);
+		}
+		else
+		{
+			return $this->gitExecute(true, $command.' '.escapeshellarg($file));
 		}
 	}
 
