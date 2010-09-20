@@ -72,6 +72,15 @@ class GitRepository
         return $this->working_path;
     }
 
+	private function debugLog($message)
+	{
+		static $file = null;
+		if ($file === null)
+			$file = fopen('/tmp/git-log', 'a');
+		fwrite($file, ($this->isBare() ? "[BARE]" : "[WKNG]") . " $message\n");
+		fflush($file);
+	}
+
 	/**
 	 * Execute a command with the specified environment variables
 	 */
@@ -79,9 +88,7 @@ class GitRepository
 	{
 		$bin = self::gitBinaryPath();
 		$base = $working ? $this->working_path : $this->git_path;
-		$file = fopen('/tmp/git-log', 'a');
-		fwrite($file, "$bin $command [cwd = $base]\n");
-		fclose($file);
+		$this->debugLog("$bin $command [cwd = $base]");
 		$buildCommand = "$bin $command";
 		$proc = proc_open($buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
@@ -100,12 +107,10 @@ class GitRepository
 			}
 			else
 			{
-				$file = fopen('/tmp/git-log', 'a');
-				fwrite($file, "\tfailed miserably!\n");
-				fwrite($file, "-- LOG --\n");
-				fwrite($file, "$stderr\n");
-				fwrite($file, "-- END LOG --\n");
-				fclose($file);
+				$this->debugLog("\tfailed miserably!");
+				$this->debugLog("-- LOG --");
+				$this->debugLog("$stderr");
+				$this->debugLog("-- END LOG --");
 			}
 			return false;
 		}
