@@ -8,7 +8,7 @@ TEST basic/case-transform
 TEST utils/mkdir
 
 TEST auth/single
-TEST auth/ldap
+SKIP auth/ldap
 
 TEST proj/create
 XFAIL proj/log

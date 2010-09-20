@@ -368,18 +368,25 @@ class GitRepository
 	}
 
 	/**
-	 * Gets a diff between two commits
+	 * Gets a diff:
+	 *  that a log entry provides,
+	 *  between two commits,
+	 *  between two commits for a specified file
 	 */
-	public function diff($commitOld, $commitNew,$file=null)
+	public function diff($commitOld, $commitNew=null, $file=null)
 	{
-        if ($file === null)
-        {
-		    return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
-        }
-        else
-        {
-            return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
-        }
+		if ($commitNew === null)
+		{
+			return $this->gitExecute(false, "log -p -1 $commitOld");
+		}
+		elseif ($file === null)
+		{
+			return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+		}
+		else
+		{
+			return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+		}
 	}
 
 	/**
