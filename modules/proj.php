@@ -112,7 +112,10 @@ class ProjModule extends Module
 		$this->projectRepository->commit($message,
 		                                 $auth->displayNameForUser($currentUser),
 		                                 $auth->emailForUser($currentUser));
-		$output->setOutput('merges', array());
+		$conflicts = $this->projectManager->updateRepository($this->team,
+		                                                     $this->projectName,
+		                                                     $currentUser);
+		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
 	}
 
