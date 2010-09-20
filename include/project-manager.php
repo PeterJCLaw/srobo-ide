@@ -80,6 +80,22 @@ class ProjectManager
 		}
 	}
 
+	public function updateRepository($team, $project, $user)
+	{
+		$userRepo = $this->getUserRepository($team, $project, $user);
+		$userRepo->fetch();
+		$conflicts = $userRepo->merge(array('origin/master'));
+		if (empty($conflicts))
+		{
+			$userRepo->push();
+			return array();
+		}
+		else
+		{
+			return $conflicts;
+		}
+	}
+
 	public function createRepository($team, $project)
 	{
 		$path = $this->rootProjectPath . "/$team/master/$project.git";
