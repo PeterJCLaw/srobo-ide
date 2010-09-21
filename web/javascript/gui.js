@@ -1,16 +1,7 @@
 // Initialise to an invalid team number
 team = 0; /*The current team number*/
 
-LEVEL_INFO = 0;
-LEVEL_OK = 1;
-LEVEL_WARN = 2;
-LEVEL_ERROR = 3;
 MAX_TAB_NAME_LENGTH = 8;
-
-// Number that's incremented every time a new status message is displayed
-status_num = 0;
-// The ID of the status bar
-status_id = "status";
 
 // The tab bar
 var tabbar = null;
@@ -294,8 +285,7 @@ function AboutBox() {
 	this.get_info = function() {
 		if(this.got_info)
 			return;
-		var d = loadJSONDoc("./info");
-		d.addCallback( bind( this._got_info, this ) );
+		IDE_backend_request('info/about', {}, bind(this._got_info, this), function() {});
 	}
 	this._got_info = function(nodes) {
 		var dl = createDOM('dl', {id:'about-list'});
@@ -320,119 +310,6 @@ function AboutBox() {
 	this._init();
 }
 
-// **** Status Bar ****
-
-function status_clearclass() {
-	var classes = ["status-info", "status-ok", "status-warn", "status-error"];
-	var s = $(status_id);
-
-	map( partial( removeElementClass, s ), classes );
-}
-
-// Hide the status bar
-function status_hide() {
-	setStyle( "status-span", {"display":"none"} );
-
-	var s = getElement(status_id);
-	status_clearclass();
-}
-
-// Show the status bar with the given message, and prepend "warning" or "error"
-function status_msg( message, level ) {
-	switch(level) {
-	case LEVEL_WARN:
-		message = [ createDOM( "STRONG", null, "Warning: " ),
-			    message ];
-		break;
-	case LEVEL_ERROR:
-		message = [ createDOM( "STRONG", null, "Error: " ),
-			    message ];
-		break;
-	}
-
-	return status_rich_show( message, level );
-}
-
-// Replace the status bar's content with the given DOM object
-function status_rich_show( obj, level ) {
-	var s = getElement(status_id);
-
-	var o = createDOM( "SPAN", { "id" : "status-span",
-				     "display" : "" }, obj );
-	replaceChildNodes( status_id, o );
-
-	status_clearclass();
-	switch(level) {
-	case LEVEL_INFO:
-		addElementClass( s, "status-info" );
-		break;
-	case LEVEL_OK:
-		addElementClass( s, "status-ok" );
-		break;
-	case LEVEL_WARN:
-		addElementClass( s, "status-warn" );
-		break;
-	default:
-	case LEVEL_ERROR:
-		addElementClass( s, "status-error ");
-		break;
-	}
-
-	// Give it a shake if it's not OK
-	if( level > LEVEL_OK )
-		shake(s);
-
-	status_num ++;
-	var close_f = partial( status_close, status_num );
-
-	return { "close": close_f };
-}
-
-// Hide the status if message id is still displayed
-function status_close(id) {
-	if( status_num == id )
-		status_hide();
-}
-
-function status_click() {
-	status_hide();
-}
-
-// Display a status message with some options
-// Args:
-//    message: The message to display
-//      level: The log level of the message (LOG_OK etc)
-//   opt_list: An array of buttons, each of which must be an object with the following properties
-//             text: The button text
-//         callback: The function to call when the button is clicked.
-function status_options( message, level, opt_list ) {
-	var m = [ message, " -- " ]
-	for( var i=0; i < opt_list.length; i++) {
-		var b = A({ "href" : "#" }, opt_list[i].text );
-		connect( b, "onclick", partial(function(cb) { status_click(); cb(); }, opt_list[i].callback) );
-		m.push(b);
-		if(i+1 < opt_list.length)
-			m.push(' | ');
-	}
-
-	return status_msg( m, level );
-}
-
-// Display a status message with a button
-// Args:
-//    message: The message to display
-//      level: The log level of the message (LOG_OK etc)
-//      btext: The button text
-//      bfunc: The function to call when the button is clicked.
-function status_button( message, level, btext, bfunc ) {
-	var b = createDOM( "A", { "href" : "#" }, btext );
-	connect( b, "onclick", function() { status_click(); bfunc(); } );
-
-	var m = [ message, " -- ", b ]
-
-	return status_msg( m, level );
-}
-
 // The user
 function User() {
 	// List of team numbers
@@ -448,7 +325,7 @@ function User() {
 		// Return a deferred that fires when the data's ready
 		var retd = new Deferred();
 
-		this._check_logged_in();
+		this._request_info();
 
 		this._info_deferred = retd;
 		return this._info_deferred;
@@ -519,68 +396,6 @@ function User() {
 		}
 
 		IDE_backend_request('user/settings-put', {settings: this._settings}, cb, eb);
-	}
-
-	// Check if we're logged in
-	this._check_logged_in = function() {
-		if (IDE_authed()) {
-			this._request_info();
-		} else {
-			this._show_login();
-		}
-	}
-
-	// Show the login dialog
-	this._show_login = function() {
-		status_id = "login-feedback";
-
-		// Connect up the onclick event to the login button
-		disconnectAll( "login-button" );
-		connect( "login-button", "onclick", bind( this._do_login, this ) );
-
-		// Do stuff when the user presses enter
-		disconnectAll( "password" );
-		connect( "password", "onkeydown", bind( this._pwd_on_keypress, this ) );
-
-		// Show the dialog and hide the top bar, which IE6 has problems with
-		setStyle( "login-back", {"display":"block"} );
-		setStyle( "top", {"display":"none"} );
-
-		//clear box on focus, replace with 'username' on blur.
-		connect("username","onfocus",function(){if ($("username").value==$("username").defaultValue) $("username").value=''});
-		connect("username","onblur",function(){if (!$("username").value) $("username").value = $("username").defaultValue});
-		//and focus the username
-		$("username").focus();
-	}
-
-	// Hide the login dialog
-	this._hide_login = function() {
-		status_id = "status";
-		setStyle( "login-back", {"display" :"none"} );
-		setStyle( "top", {"display":""} );
-	}
-
-	this._login_complete = function() {
-		this._hide_login();
-		this._request_info();
-	}
-
-	// Grab the username and password from the login form and start the login
-	this._do_login = function(ev) {
-		if( ev != null ) {
-			ev.preventDefault();
-			ev.stopPropagation();
-		}
-
-		var user = $("username").value;
-		var pass = $("password").value;
-
-		IDE_backend_request("auth/authenticate", {username: user, password: pass}, bind(this._login_complete, this),
-		bind(function(errcode, errmsg) {
-			status_msg(errmsg, LEVEL_WARN);
-			$("password").value = '';
-			$("password").focus();
-		}, this));
 	}
 
 	this._logout_click = function(ev) {

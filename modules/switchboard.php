@@ -21,14 +21,13 @@ class SwitchboardModule extends Module
 	public function getMessages()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('messages', array(
-			array(
-				'link'   => 'http://www.example.com',
-				'title'  => 'An Example Title',
-				'body'   => 'Message body.',
-				'author' => 'pony man'
-			)
-		));
+		$config = Configuration::getInstance();
+
+		$messagesURL = $config->getConfig('messages_url');
+		$messagesLimit = $config->getConfig('messages_limit');
+
+		$messages = Feeds::getRecentPosts($messagesURL, $messagesLimit);
+		$output->setOutput('messages', $messages);
 	}
 
     /**

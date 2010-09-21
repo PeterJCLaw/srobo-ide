@@ -64,19 +64,14 @@ Checkout.prototype._basic = function(url, successCallback, errorCallback) {
 	successCallback();
 }
 
+// Gets the current location without the hash or search parts
 Checkout.prototype._getLocation = function() {
-	var protocolhost = location.protocol + "//" + location.hostname;
-
-	if (location.port != 80) {
-		protocolhost += ":" + location.port;
-	}
-
-	return protocolhost;
+	return location.protocol + '//' + location.host + location.pathname;
 }
 
 Checkout.prototype._java = function(url, successCallback, errorCallback) {
 	var xhr = new XMLHttpRequest();
-	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + "/" + url));
+	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + url));
 	//if downloading worked
 	if (retcode == 0) {
 		successCallBack();

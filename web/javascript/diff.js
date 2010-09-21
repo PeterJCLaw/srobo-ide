@@ -15,7 +15,10 @@ function DiffPage() {
 	this.file = '';
 
 	//store newer file revision
-	this.newrev = -1;
+	this.revhash = -1;
+
+	// whether or not this is a patch from the log
+	this.revhash = null;
 }
 
 /* *****	Initialization code	***** */
@@ -71,7 +74,7 @@ DiffPage.prototype._close = function() {
 /* *****	Team editing Code	***** */
 DiffPage.prototype._recieveDiff = function(nodes) {
 	replaceChildNodes('diff-page-diff');
-	var difflines = nodes.diff.replace('\r','').split('\n');
+	var difflines = (nodes.diff.replace('\r','')+'\n').split('\n');
 	var modeclasses = {
 		' ' : '',
 		'+' : 'add',
@@ -91,9 +94,15 @@ DiffPage.prototype._recieveDiff = function(nodes) {
 			group = line+'\n';
 		}
 	}
-	var newrev = this.newrev == -2 ? 'your modifications' : 'r'+this.newrev;
+	var description;
+	if (this.logpatch) {
+		description = 'applied by log revision';
+	} else {
+		description = 'from your modifications, based on';
+	}
+	description += ' r' + this.revhash;
 	$('diff-page-summary').innerHTML = 'Displaying differences on '
-			+this.file+' between r'+nodes.oldrev+' and '+newrev+'.';
+			+this.file+' '+description;
 	this.init();
 }
 
@@ -104,26 +113,24 @@ DiffPage.prototype._errDiff = function(rev, code, nodes) {
 
 DiffPage.prototype.diff = function(file, rev, code) {
 	this.file = file;
+	this.revhash = rev;
+	var recieve = bind( this._recieveDiff, this );
+	var err = bind( this._errDiff, this, rev, code );
+
+	var args = {
+		   team: team,
+		project: IDE_path_get_project(file),
+		   path: IDE_path_get_file(file),
+		   hash: rev
+	};
+
 	if( code == undefined ) {
-		var d = loadJSONDoc("./diff", {
-					team: team,
-					file: file,
-					rev: rev
-				});
-		this.newrev = rev;
+		this.logpatch = true;
 	} else {
-		var d = postJSONDoc("./diff", {
-			queryString: {
-					team: team,
-					file: file,
-					rev: rev
-				},
-			sendContent: { code: code }
-		});
-		this.newrev = -2;
+		args.code = code;
+		this.logpatch = false;
 	}
 
-	d.addCallback( bind( this._recieveDiff, this) );
-	d.addErrback( bind( this._errDiff, this, rev, code) );
+	IDE_backend_request("file/diff", args, recieve, err);
 }
 /* *****	End Diff loading Code 	***** */

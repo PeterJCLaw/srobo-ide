@@ -28,21 +28,11 @@ var IDE_clone = function(object) {
   } return newObj;
 };
 
-var IDE_auth_token = null
-IDE_base = "control.php"
-
+var IDE_base = "control.php";
 var IDE_async_count = 0;
 showElement = hideElement = function(){};
 
-function IDE_authed() {
-	return IDE_auth_token != null;
-}
-
-function IDE_backend_request(command, arguments, successCallback, errorCallback) {
-	var args = IDE_clone(arguments);
-	if (IDE_auth_token != null) {
-		args["auth-token"] = IDE_auth_token
-	}
+function IDE_backend_request(command, args, successCallback, errorCallback) {
 	var rq = JSON.stringify(args);
 	var xhr = new XMLHttpRequest();
 	var cb = function() {
@@ -59,11 +49,6 @@ function IDE_backend_request(command, arguments, successCallback, errorCallback)
 			}
 			var rt = xhr.responseText;
 			var rp = JSON.parse(rt);
-			if (rp["auth-token"]) {
-				IDE_auth_token = rp["auth-token"];
-			} else {
-				IDE_auth_token = null;
-			}
 			if (rp.error) {
 				errorCallback(rp.error[0], rp.error[1], args);
 			} else {
@@ -91,7 +76,3 @@ function IDE_path_get_file(path) {
 	split = split.slice(2);
 	return split.join('/');
 }
-
-// Test if the user is logged in or not by doing a simple call.
-// If they're logged in then we'll get an auth token back.
-IDE_backend_request('user/info', {}, function(){ if(typeof(user) != undefined && user != null) user.load(); }, function(){});

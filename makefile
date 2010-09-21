@@ -16,7 +16,7 @@ applet: applet/build.xml applet/.keystore
 
 # Actual targets
 clean:
-	rm -rf repos html latex zips
+	rm -rf $(_FOLDERS) repos html latex zips
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
