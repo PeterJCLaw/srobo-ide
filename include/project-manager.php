@@ -40,6 +40,8 @@ class ProjectManager
 
 	public function listTeams()
 	{
+		if (!file_exists($this->rootProjectPath))
+			return array();
 		$scan = scandir($this->rootProjectPath);
 		$scan = array_filter($scan, function($item) {
 			return $item != '' && $item[0] != '.';
@@ -50,6 +52,8 @@ class ProjectManager
 	public function listRepositories($team)
 	{
 		$root = $this->rootProjectPath . '/' . $team . '/master/';
+		if (!file_exists($root))
+			return array();
 		$scan = scandir($root);
 		$projects = array();
 		foreach ($scan as $item)
