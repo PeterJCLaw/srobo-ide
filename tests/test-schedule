@@ -6,7 +6,7 @@ TEST basic/user
 TEST basic/case-transform
 
 TEST auth/single
-TEST auth/ldap
+SKIP auth/ldap
 
 TEST proj/create
 TEST proj/log

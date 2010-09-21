@@ -59,7 +59,7 @@ Log.prototype._init = function() {
 Log.prototype._receiveHistory = function(opt, revisions) {
 	logDebug("Log history received ok");
 	//extract data from query response
-	update(this.history, revisions.history);
+	update(this.history, revisions.log);
 	update(this.userList, revisions.authors);
 	this.overflow = revisions.overflow;
 	if(opt == null || opt != 'quiet')
@@ -76,14 +76,25 @@ Log.prototype._errorReceiveHistory = function() {
 }
 
 Log.prototype._retrieveHistory = function(opt) {
-	var d = loadJSONDoc("./gethistory", { team : team,
-						  file : this.file,
-						  user : this.user,
-						  offset : this.offset});
-
-	d.addCallback( bind(this._receiveHistory, this, opt));
-	d.addErrback( bind(this._errorReceiveHistory, this));
+	IDE_backend_request('file/log',
+		{ team : team,
+		  project: this.project,
+		  path : IDE_path_get_file(this.file),
+		  user : this.user,
+		  offset : this.offset,
+		  number : 10
+		},
+		bind(this._receiveHistory, this, opt),
+		bind(this._errorReceiveHistory, this)
+	);
 }
+
+Log.prototype._histDate = function(which) {
+	var stamp = this.history[which].time;
+	var d = new Date(stamp*1000);
+	return d.toDateString();
+}
+
 //processess log data and formats into list. connects up related event handlers,
 //deals with multile results pages
 Log.prototype._populateList = function() {
@@ -92,9 +103,9 @@ Log.prototype._populateList = function() {
 	//print summary information
 	var entries = this.history.length;
 	if(entries <= 0) {
-		$("log-summary").innerHTML = "There are no revisions availble for file(s): "+this.path;
+		$("log-summary").innerHTML = "There are no revisions available for file(s): "+this.file;
 	} else {
-		$("log-summary").innerHTML = "Displaying "+entries+ " revision(s) between "+this.history[this.history.length-1].date+" & "+this.history[0].date+" Page "+(this.offset+1)+" of "+(this.overflow);
+		$("log-summary").innerHTML = "Displaying "+entries+" revision(s) between "+this._histDate(this.history.length-1)+" & "+this._histDate(0)+" Page "+(this.offset+1)+" of "+(this.overflow);
 	}
 
 	//fill drop down box with authors attributed to file(s)
@@ -122,8 +133,8 @@ Log.prototype._populateList = function() {
 	replaceChildNodes($("log-list"), null);
 	//now populate log list
 	for(var x=0; x <this.history.length; x++) {
-		var logtxt = SPAN("r"+this.history[x].rev+" | "+this.history[x].author+" | "+this.history[x].date);
-		var radio = INPUT({'type' : 'radio', 'id' : 'log', 'name' : 'log', 'class' : 'log-radio', 'value' : this.history[x].rev });
+		var logtxt = SPAN("r"+this.history[x].hash+" | "+this.history[x].author+" | "+this._histDate(x));
+		var radio = INPUT({'type' : 'radio', 'name' : 'log', 'class' : 'log-radio', 'value' : this.history[x].hash });
 		var label = LABEL( null, radio, logtxt );
 		var commitMsg = DIV({'class' : 'commit-msg'}, this.history[x].message);
 		appendChildNodes($("log-list"), LI(null, label, commitMsg));

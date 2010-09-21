@@ -1,6 +1,7 @@
 package org.studentrobotics.ide.checkout;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -84,6 +85,7 @@ public class ZipWriteRunner implements Runnable {
 			fos.flush();
 			System.err.println("tag9");
 			fos.close();
+			fos.getFD().sync();
 			System.err.println("tag10");
 			System.err.println("setting job with code " + job.getCode() + "to true");
 			mJobSuccessMap.get(job.getCode()).set(true);

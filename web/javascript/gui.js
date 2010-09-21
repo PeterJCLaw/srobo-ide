@@ -1,16 +1,7 @@
 // Initialise to an invalid team number
 team = 0; /*The current team number*/
 
-LEVEL_INFO = 0;
-LEVEL_OK = 1;
-LEVEL_WARN = 2;
-LEVEL_ERROR = 3;
 MAX_TAB_NAME_LENGTH = 8;
-
-// Number that's incremented every time a new status message is displayed
-status_num = 0;
-// The ID of the status bar
-status_id = "status";
 
 // The tab bar
 var tabbar = null;
@@ -38,6 +29,9 @@ var user;
 
 // The team selector
 var team_selector;
+
+// The user settings page
+var settingspage = null;
 
 // The switchboard page
 var switchboardpage = null;
@@ -103,13 +97,16 @@ function load_gui() {
 	//The switchboard page - this must happen before populate_shortcuts_box is called
 	switchboardpage = new Switchboard();
 
+	//The settings page - this must happen before populate_shortcuts_box is called
+	settingspage = SettingsPage.GetInstance();
+
 	//The Admin page - this must happen before populate_shortcuts_box is called
 	adminpage = new Admin();
 
-	populate_shortcuts_box();
+	var shortcutsList = populate_shortcuts_box();
 
 	// Shortcut button
-	var shortcuts = new dropDownBox("dropShortcuts");
+	var shortcuts = new dropDownBox("dropShortcuts", shortcutsList);
 	var sbutton = new Tab( "v", {can_close:false,title:'See more options'} ); // TODO: find something like this
 	sbutton.can_focus = false;
 	connect( sbutton, "onclick", function(){shortcuts.toggleBox();} ) ;
@@ -125,6 +122,9 @@ function load_gui() {
 
 	// Simulator tab
 	//simpage = new SimPage();
+
+	// Checkout handler
+	Checkout.GetInstance().init();
 
 	// Diff Page
 	diffpage = new DiffPage();
@@ -196,46 +196,53 @@ function beforeunload(e) {
 function populate_shortcuts_box() {
 	var shortcuts = new Array();
 
-	var short1_a = A( {"title": "Create a new file"}, "Create new file" );
-	var short1_li = LI(null, short1_a);
-	connect( short1_li, "onclick", bind(editpage.new_file, editpage) );
-	shortcuts.push(short1_li);
-
-/*
-	var short2_a = A( {"title": "Change user settings" }, "User settings" );
-	var short2_li = LI(null, short2_a);
-	shortcuts.push(short2_li);
-*/
-
-	var short3_a = A( {"title": "Messages, docs and helpful information"},  "View Switchboard" );
-	var short3_li = LI(null, short3_a);
-	connect( short3_li, "onclick", bind(switchboardpage.init, switchboardpage) );
-	shortcuts.push(short3_li);
-
-	if(user.can_admin()) {
-		var admin_a = A( {"title": "IDE Admin"},  "Administration" );
-		var admin_li = LI(null, admin_a);
-		connect( admin_li, "onclick", bind(adminpage.init, adminpage) );
-		shortcuts.push(admin_li);
+	function newShortcut(name, description, callback) {
+		var a = A( {"title": description}, name );
+		var li = LI(null, a);
+		connect( li, "onclick", callback );
+		return li;
 	}
 
-	var about_a = A( {"title": "View information about the RoboIDE"},  "About" );
-	var about_li = LI(null, about_a);
-	connect( about_li, "onclick", bind(about.showBox, about) );
-	shortcuts.push(about_li);
+	shortcuts.push(newShortcut( "Create new file",
+		"Create a new file",
+		bind(editpage.new_file, editpage)
+	));
+
+	shortcuts.push(newShortcut( "User settings",
+		"Change user settings",
+		bind(settingspage.init, settingspage)
+	));
+
+	shortcuts.push(newShortcut( "View Switchboard",
+		"Messages, docs and helpful information",
+		bind(switchboardpage.init, switchboardpage)
+	));
+
+	shortcuts.push(newShortcut( "About",
+		"View information about the RoboIDE",
+		bind(about.showBox, about)
+	));
+
+	if(user.can_admin()) {
+		shortcuts.push(newShortcut( "Administration",
+			"IDE Admin",
+			bind(adminpage.init, adminpage)
+		));
+	}
 
 	var new_ul = UL(null);
 	for( var i=0; i<shortcuts.length; i++) {
 		appendChildNodes(new_ul, shortcuts[i]);
 	}
 
-	appendChildNodes($("dropShortcuts"), new_ul);
+	return new_ul;
 }
 
 // Take id of existing hidden div to make into appearing box
-function dropDownBox (id) {
-	this._init = function() {
-		this.id = getElement(id);
+function dropDownBox (id, children) {
+	this._init = function(id, children) {
+		this.id = $(id);
+		appendChildNodes(this.id, children);
 		connect( this.id, "onmouseenter", bind( this._clearTimeout, this) );	// when mouse is inside the dropbox disable timeout
 		connect( this.id, "onmouseleave", bind( this.hideBox, this ) );		// when mouse leaves dropbox hide it
 		connect( this.id, "onclick", bind( this.hideBox, this ) );
@@ -255,7 +262,7 @@ function dropDownBox (id) {
 			this.showBox();
 		} else {
 			this.hideBox();
-			}
+		}
 	}
 
 	this._clearTimeout = function() {
@@ -265,7 +272,7 @@ function dropDownBox (id) {
 		}
 	}
 
-	this._init(id);
+	this._init(id, children);
 }
 
 // Show some info about the IDE, just the version number for now
@@ -278,8 +285,7 @@ function AboutBox() {
 	this.get_info = function() {
 		if(this.got_info)
 			return;
-		var d = loadJSONDoc("./info");
-		d.addCallback( bind( this._got_info, this ) );
+		IDE_backend_request('info/about', {}, bind(this._got_info, this), function() {});
 	}
 	this._got_info = function(nodes) {
 		var dl = createDOM('dl', {id:'about-list'});
@@ -304,119 +310,6 @@ function AboutBox() {
 	this._init();
 }
 
-// **** Status Bar ****
-
-function status_clearclass() {
-	var classes = ["status-info", "status-ok", "status-warn", "status-error"];
-	var s = $(status_id);
-
-	map( partial( removeElementClass, s ), classes );
-}
-
-// Hide the status bar
-function status_hide() {
-	setStyle( "status-span", {"display":"none"} );
-
-	var s = getElement(status_id);
-	status_clearclass();
-}
-
-// Show the status bar with the given message, and prepend "warning" or "error"
-function status_msg( message, level ) {
-	switch(level) {
-	case LEVEL_WARN:
-		message = [ createDOM( "STRONG", null, "Warning: " ),
-			    message ];
-		break;
-	case LEVEL_ERROR:
-		message = [ createDOM( "STRONG", null, "Error: " ),
-			    message ];
-		break;
-	}
-
-	return status_rich_show( message, level );
-}
-
-// Replace the status bar's content with the given DOM object
-function status_rich_show( obj, level ) {
-	var s = getElement(status_id);
-
-	var o = createDOM( "SPAN", { "id" : "status-span",
-				     "display" : "" }, obj );
-	replaceChildNodes( status_id, o );
-
-	status_clearclass();
-	switch(level) {
-	case LEVEL_INFO:
-		addElementClass( s, "status-info" );
-		break;
-	case LEVEL_OK:
-		addElementClass( s, "status-ok" );
-		break;
-	case LEVEL_WARN:
-		addElementClass( s, "status-warn" );
-		break;
-	default:
-	case LEVEL_ERROR:
-		addElementClass( s, "status-error ");
-		break;
-	}
-
-	// Give it a shake if it's not OK
-	if( level > LEVEL_OK )
-		shake(s);
-
-	status_num ++;
-	var close_f = partial( status_close, status_num );
-
-	return { "close": close_f };
-}
-
-// Hide the status if message id is still displayed
-function status_close(id) {
-	if( status_num == id )
-		status_hide();
-}
-
-function status_click() {
-	status_hide();
-}
-
-// Display a status message with some options
-// Args:
-//    message: The message to display
-//      level: The log level of the message (LOG_OK etc)
-//   opt_list: An array of buttons, each of which must be an object with the following properties
-//             text: The button text
-//         callback: The function to call when the button is clicked.
-function status_options( message, level, opt_list ) {
-	var m = [ message, " -- " ]
-	for( var i=0; i < opt_list.length; i++) {
-		var b = A({ "href" : "#" }, opt_list[i].text );
-		connect( b, "onclick", partial(function(cb) { status_click(); cb(); }, opt_list[i].callback) );
-		m.push(b);
-		if(i+1 < opt_list.length)
-			m.push(' | ');
-	}
-
-	return status_msg( m, level );
-}
-
-// Display a status message with a button
-// Args:
-//    message: The message to display
-//      level: The log level of the message (LOG_OK etc)
-//      btext: The button text
-//      bfunc: The function to call when the button is clicked.
-function status_button( message, level, btext, bfunc ) {
-	var b = createDOM( "A", { "href" : "#" }, btext );
-	connect( b, "onclick", function() { status_click(); bfunc(); } );
-
-	var m = [ message, " -- ", b ]
-
-	return status_msg( m, level );
-}
-
 // The user
 function User() {
 	// List of team numbers
@@ -432,7 +325,7 @@ function User() {
 		// Return a deferred that fires when the data's ready
 		var retd = new Deferred();
 
-		this._check_logged_in();
+		this._request_info();
 
 		this._info_deferred = retd;
 		return this._info_deferred;
@@ -455,7 +348,7 @@ function User() {
 			this.teams.push(parseInt(num, 10));
 		}
 
-		this._settings = info["settings"];
+		this._settings = (info.settings instanceof Array) ? {} : info.settings;
 		for( var k in this._settings ) {
 			logDebug( k + " = " + this._settings[k] );
 		}
@@ -475,66 +368,34 @@ function User() {
 		return this._settings[sname];
 	}
 
-	// Check if we're logged in
-	this._check_logged_in = function() {
-		if (IDE_authed()) {
-			this._request_info();
+	// Set user settings.
+	this.set_settings = function(settings, opts) {
+		var changed = false;
+		log('Setting user settings');
+		for( var s in settings ) {
+			if (this._settings[s] !== settings[s] || changed) {
+				changed = true;
+			}
+			this._settings[s] = settings[s];
+		}
+		if (changed) {
+			this._save_settings(opts);
+		} else if(opts == 'loud') {
+			status_msg( 'User settings unchanged', LEVEL_INFO );
+		}
+	}
+
+	// Save user settings. Called right after they're set.
+	this._save_settings = function(opts) {
+		log('Saving user settings');
+		if(opts == 'loud') {
+			var cb = partial( status_msg, 'User settings saved', LEVEL_OK );
+			var eb = partial( status_button, 'Could not save user settings', LEVEL_ERROR, 'retry', bind(this._save_settings, this, opts) );
 		} else {
-			this._show_login();
-		}
-	}
-
-	// Show the login dialog
-	this._show_login = function() {
-		status_id = "login-feedback";
-
-		// Connect up the onclick event to the login button
-		disconnectAll( "login-button" );
-		connect( "login-button", "onclick", bind( this._do_login, this ) );
-
-		// Do stuff when the user presses enter
-		disconnectAll( "password" );
-		connect( "password", "onkeydown", bind( this._pwd_on_keypress, this ) );
-
-		// Show the dialog and hide the top bar, which IE6 has problems with
-		setStyle( "login-back", {"display":"block"} );
-		setStyle( "top", {"display":"none"} );
-
-		//clear box on focus, replace with 'username' on blur.
-		connect("username","onfocus",function(){if ($("username").value==$("username").defaultValue) $("username").value=''});
-		connect("username","onblur",function(){if (!$("username").value) $("username").value = $("username").defaultValue});
-		//and focus the username
-		$("username").focus();
-	}
-
-	// Hide the login dialog
-	this._hide_login = function() {
-		status_id = "status";
-		setStyle( "login-back", {"display" :"none"} );
-		setStyle( "top", {"display":""} );
-	}
-
-	this._login_complete = function() {
-		this._hide_login();
-		this._request_info();
-	}
-
-	// Grab the username and password from the login form and start the login
-	this._do_login = function(ev) {
-		if( ev != null ) {
-			ev.preventDefault();
-			ev.stopPropagation();
+			var cb = eb = function(){};
 		}
 
-		var user = $("username").value;
-		var pass = $("password").value;
-
-		IDE_backend_request("auth/authenticate", {username: user, password: pass}, bind(this._login_complete, this),
-		bind(function(errcode, errmsg) {
-			status_msg(errmsg, LEVEL_WARN);
-			$("password").value = '';
-			$("password").focus();
-		}, this));
+		IDE_backend_request('user/settings-put', {settings: this._settings}, cb, eb);
 	}
 
 	this._logout_click = function(ev) {
@@ -580,10 +441,11 @@ function TeamSelector() {
 
 			if( !this._team_exists(team) ) {
 				// Work out what team we should be in
-				var team_last = user.get_setting("team.last");
-				if( team_last != undefined
-				    && this._team_exists( team_last ) ) {
-					team = team_last;
+				var team_load = user.get_setting('team.autoload');
+				var team_to_load = user.get_setting(team_load);
+				if( team_to_load != undefined
+				    && this._team_exists( team_to_load ) ) {
+					team = team_to_load;
 					logDebug( "Defaulting to team " + team );
 				}
 			}
@@ -602,6 +464,7 @@ function TeamSelector() {
 			var tsel = SELECT( null, olist );
 
 			connect( tsel, "onchange", bind( this._selected, this ) );
+			connect( this, "onchange", function(t) { user.set_settings({'team.last':t}); } );
 			teambox.push( "Team: " );
 			teambox.push( tsel );
 		}
@@ -620,7 +483,7 @@ function TeamSelector() {
 	this._build_options = function() {
 		var olist = [];
 
-		for( t in user.teams ) {
+		for( var t in user.teams ) {
 			var props = { "value" : user.teams[t]};
 
 			if( user.teams[t] == team )
@@ -637,7 +500,7 @@ function TeamSelector() {
 		if( team == 0 )
 			return false;
 
-		for( i in user.teams )
+		for( var i in user.teams )
 			if( user.teams[i] == team )
 				return true;
 		return false;

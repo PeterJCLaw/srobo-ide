@@ -46,6 +46,14 @@ class GitRepository
 		return $this->working_path === null;
 	}
 
+    /**
+     * Get the path of the git repository
+     */
+    public function getPath()
+    {
+        return $this->working_path;
+    }
+
 	/**
 	 * Execute a command with the specified environment variables
 	 */
@@ -115,9 +123,18 @@ class GitRepository
 	/**
 	 * Gets the log between the arguments
 	 */
-	public function log($oldCommit, $newCommit)
+	public function log($oldCommit, $newCommit, $file=null)
 	{
-		$log = $this->gitExecute(false, "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'");
+		$log = null;
+		$logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
+		if ($file == null)
+		{
+			$log = $this->gitExecute(false, $logCommand);
+		}
+		else
+		{
+			$log = $this->gitExecute(false, $logCommand.' '.escapeshellarg($file));
+		}
 		$lines = explode("\n", $log);
 		$results = array();
 		foreach ($lines as $line)
@@ -263,11 +280,25 @@ class GitRepository
 	}
 
 	/**
-	 * Gets a diff between two commits
+	 * Gets a diff:
+	 *  that a log entry provides,
+	 *  between two commits,
+	 *  between two commits for a specified file
 	 */
-	public function diff($commitOld, $commitNew)
+	public function diff($commitOld, $commitNew=null, $file=null)
 	{
-		return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+		if ($commitNew === null)
+		{
+			return $this->gitExecute(false, "log -p -1 $commitOld");
+		}
+		elseif ($file === null)
+		{
+			return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+		}
+		else
+		{
+			return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+		}
 	}
 
 	/**
