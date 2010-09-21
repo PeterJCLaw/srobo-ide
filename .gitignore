@@ -3,3 +3,6 @@ latex/
 repos/
 zips/
 settings/*
+/applet/.classpath
+/applet/.project
+/applet/test-only-applet-key.crt
