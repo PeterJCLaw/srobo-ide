@@ -3,3 +3,5 @@ latex/
 repos/
 zips/
 settings/*
+config/local.ini
+
