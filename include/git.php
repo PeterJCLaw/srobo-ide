@@ -72,15 +72,6 @@ class GitRepository
         return $this->working_path;
     }
 
-	private static function debugLog($message)
-	{
-		static $file = null;
-		if ($file === null)
-			$file = fopen('/tmp/git-log', 'a');
-		fwrite($file, "$message\n");
-		fflush($file);
-	}
-
 	/**
 	 * Execute a command with the specified environment variables
 	 */
@@ -88,7 +79,7 @@ class GitRepository
 	{
 		$bin = self::gitBinaryPath();
 		$base = $working ? $this->working_path : $this->git_path;
-		self::debugLog("$bin $command [cwd = $base]");
+		ide_log("$bin $command [cwd = $base]");
 		$buildCommand = "$bin $command";
 		$proc = proc_open($buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
@@ -107,10 +98,10 @@ class GitRepository
 			}
 			else
 			{
-				self::debugLog("\tfailed miserably!");
-				self::debugLog("-- LOG --");
-				self::debugLog("$stderr");
-				self::debugLog("-- END LOG --");
+				ide_log("\tfailed miserably!");
+				ide_log("-- LOG --");
+				ide_log("$stderr");
+				ide_log("-- END LOG --");
 			}
 			return false;
 		}
@@ -129,7 +120,7 @@ class GitRepository
 	public static function createRepository($path, $bare = false, $source = null)
 	{
 		$bin = self::gitBinaryPath();
-		self::debugLog("Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
+		ide_log("Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
 		if (!is_dir($path))
 		{
 			mkdir_full($path);
