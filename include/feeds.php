@@ -1,8 +1,22 @@
 <?php
 
+// Grab the include of SimplePie, looking for it in both where Ubuntu and Fedora put it.
 $display_errors = ini_set('display_errors', 'Off');
-require_once('simplepie/simplepie.inc');
+$gotSimplePie = include_once('simplepie/simplepie.inc');
+if (!$gotSimplePie)
+{
+	$gotSimplePie = include_once('php-simplepie/simplepie.inc');
+}
 ini_set('display_errors', $display_errors);
+
+// Bail if it's not there.
+if (!$gotSimplePie)
+{
+	throw new Exception('Could not locate SimplePie', E_NOT_IMPL);
+}
+
+// Clean up.
+unset($display_errors, $gotSimplePie);
 
 class Feeds
 {
