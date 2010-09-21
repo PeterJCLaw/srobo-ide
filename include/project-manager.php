@@ -106,6 +106,7 @@ class ProjectManager
 	{
 		$path = $this->rootProjectPath . "/$team/master/$project.git";
 		GitRepository::createRepository($path, true);
+		ide_log("Created a project $project for team $team");
 	}
 
 	public function deleteRepository($team, $name)
