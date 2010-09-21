@@ -239,9 +239,6 @@ iframe { display: none; }
 	font-size: 0.7em;
 }
 
-#login-box #login-button {
-}
-
 #login-box a {
 	color: #ffffff;
 	text-decoration: none;
@@ -261,7 +258,7 @@ iframe { display: none; }
 	margin: 10px 0;
 	width: 100%;
 }
-a.button {
+a.button, #login-box #login-button {
 	margin: 10px 25%;
 	border: 2px solid #ffffff;
 	padding: 2px 0;
@@ -272,11 +269,12 @@ a.button {
 	color: #ffffff;
 	white-space: nowrap;
 }
-* html #login-box a.button {
+#login-box #login-button {
+	background-color: inherit;
 	width: 50%;
 	margin: 10px auto;
 }
-a.button:hover {
+a.button:hover, #login-box #login-button:hover {
 	color: #253571;
 	background-color: #ffffff;
 }
