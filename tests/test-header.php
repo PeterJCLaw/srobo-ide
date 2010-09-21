@@ -1,5 +1,6 @@
 <?php
 
+define('IN_TESTS', 1);
 require_once('include/main.php');
 
 function __test_value($stuff)
