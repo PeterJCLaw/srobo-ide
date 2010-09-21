@@ -58,7 +58,7 @@ class ProjectManager
 		$projects = array();
 		foreach ($scan as $item)
 		{
-			if (preg_match('/([a-zA-Z0-9_- ])+\\.git$/', $item, $matches))
+			if (preg_match('/^([a-zA-Z0-9_ -])+\\.git$/', $item, $matches))
 				$projects[] = $matches[1];
 		}
 		return $projects;
