@@ -15,7 +15,17 @@ class UserModule extends Module
 		$this->installCommand('blog-feed', array($this, 'getBlogFeed'));
 		$this->installCommand('blog-feed-put', array($this, 'setBlogFeed'));
 		$this->installCommand('blog-posts', array($this, 'blogPosts'));
+	}
 
+	/**
+	 * Ensures that we have a valid user.
+	 * You can't do anything user related without being authed, but putting
+	 * this in the constructor causes issues, since construction occurs
+	 * before the auth cycle does.
+	 * Returns the AuthBackend instance for convenience.
+	 */
+	private function ensureAuthed()
+	{
 		$auth = AuthBackend::getInstance();
 		$this->username = $auth->getCurrentUser();
 	}
@@ -25,7 +35,7 @@ class UserModule extends Module
 	public function getInfo()
 	{
 		$output = Output::getInstance();
-		$auth = AuthBackend::getInstance();
+		$auth = $this->ensureAuthed();
 
 		if (!$this->username)
 		{
@@ -52,10 +62,14 @@ class UserModule extends Module
 	 */
 	public function saveSettings()
 	{
+<<<<<<< .merge_file_4Fbxdg
 		if (!$this->username)
 		{
 			throw new Exception('you are not logged in', E_PERM_DENIED);
 		}
+=======
+		$this->ensureAuthed();
+>>>>>>> .merge_file_clLbgd
 		$input = Input::getInstance();
 		$settings = $input->getInput('settings');
 		$data = json_encode($settings);
@@ -66,6 +80,7 @@ class UserModule extends Module
 	 */
 	public function getBlogFeed()
 	{
+		$this->ensureAuthed();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 
@@ -90,6 +105,7 @@ class UserModule extends Module
 	 */
 	public function setBlogFeed()
 	{
+		$this->ensureAuthed();
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
@@ -132,11 +148,15 @@ class UserModule extends Module
 	 */
 	public function blogPosts()
 	{
+<<<<<<< .merge_file_4Fbxdg
 		if (!$this->username)
 		{
 			throw new Exception('you are not logged in', E_PERM_DENIED);
 		}
 
+=======
+		$this->ensureAuthed();
+>>>>>>> .merge_file_clLbgd
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 

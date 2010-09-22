@@ -22,7 +22,7 @@ Dependancies:
  * A web server
  * PHP 5.3
  * SimplePie
-  * PHP5 Internationalisation # SimplePie needs this, but fails to install it in Ubuntu
+ * PHP5 Internationalisation # SimplePie needs this, but fails to install it in Ubuntu
  * ant     # for building the Java applet
  * javac   # for building the Java applet
  * doxygen # for building the docs.
