@@ -77,7 +77,14 @@ class FileModule extends Module
 	public function getFileTreeCompat()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('tree', $this->repository()->fileTreeCompat($this->projectName));
+        $uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
+        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
+        $results = array();
+        foreach ($cleanOut as $item) {
+            $results[] = $item;
+        }
+		$output->setOutput('tree', $results);
+        $output->setOutput("ponies", $uncleanOut);
 		return true;
 	}
 
@@ -86,7 +93,13 @@ class FileModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-		$output->setOutput('files', $this->repository()->listFiles($path));
+        $uncleanOut = $this->repository()->listFiles($path);
+        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
+        $results = array();
+        foreach ($cleanOut as $item) {
+            $results[] = $item;
+        }
+		$output->setOutput('files', $results);
 		return true;
 	}
 
@@ -231,13 +244,24 @@ class FileModule extends Module
 		$dirName = $splitPath["dirname"];
 		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
 
+		//get the pylint binary
+		$binary = $config->getConfig('pylint_path');
+		if (!$binary)
+		{
+			$output->setOutput("errors", array());
+			$output->setOutput("messages", array('pylint is not installed'));
+			$output->setOutput('path', $dirName);
+			$output->setOutput('file', $fileName);
+			return true;
+		}
+
 		//if the file exists, lint it otherwise return a dictionary explaining
 		//that the file doesn't exist, shouldn't happen when users interface
 		//with software because check syntax button always points at an existing file
 		if (file_exists("$base/$path"))
 		{
 			//setup linting process
-			$proc = proc_open("pylint -e -f parseable --reports=n $path",
+			$proc = proc_open("$binary -e -f parseable --reports=n $path",
 				array(0 => array("file", "/dev/null", "r"),
 				      1 => array("pipe", "w"),
 				      2 => array("pipe", "w")),

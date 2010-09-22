@@ -9,14 +9,8 @@ if (!$gotSimplePie)
 }
 ini_set('display_errors', $display_errors);
 
-// Bail if it's not there.
-if (!$gotSimplePie)
-{
-    throw new Exception('Could not locate SimplePie', E_NOT_IMPL);
-}
-
 // Clean up.
-unset($display_errors, $gotSimplePie);
+unset($display_errors);
 
 class Feeds
 {
@@ -102,6 +96,9 @@ class Feeds
 	 */
 	public static function getRecentPosts($url, $howMany)
 	{
+		global $gotSimplePie;
+		if (!$gotSimplePie)
+			return array();
 		$rss = self::getRSS($url);
 		$items = $rss->get_items();
 		$posts = array();
@@ -120,7 +117,7 @@ class Feeds
 	/**
 	 * Gets an object representing the requested RSS
 	 */
-	public static function getRSS($url)
+	private static function getRSS($url)
 	{
 		$config = Configuration::getInstance();
 		$feed = new SimplePie();
