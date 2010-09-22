@@ -202,12 +202,13 @@ class FileModule extends Module
 		// patch from log
 		if ($newCode == null)
 		{
-			$diff = $this->repository()->diff($hash);
+			$diff = $this->repository()->historyDiff($hash);
 		}
 		// diff against changed file
 		else
 		{
-			throw new Exception('TODO', E_NOT_IMPL);
+			$this->repository()->putFile($path, $newCode);
+			$diff = $this->repository()->cachedDiff($path);
 		}
 
 		$output->setOutput("diff", $diff);

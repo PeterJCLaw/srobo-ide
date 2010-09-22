@@ -22,7 +22,8 @@ Dependancies:
  * A web server
  * PHP 5.3
  * SimplePie
-  * PHP5 Internationalisation # SimplePie needs this, but fails to install it in Ubuntu
+ * PHP5 Internationalisation # SimplePie needs this, but fails to install it in Ubuntu
+ * Git
  * ant     # for building the Java applet
  * javac   # for building the Java applet
  * doxygen # for building the docs.
@@ -30,7 +31,7 @@ Dependancies:
  * pylint  # syntax checker
 
 In Ubuntu these can be achieved by installing the following packages:
- apache2 php5 libphp-simplepie php5-intl ant1.8 openjdk-6-jdk doxygen php5-cli
+ apache2 php5 libphp-simplepie php5-intl ant1.8 openjdk-6-jdk doxygen php5-cli git-core
 
 
 Note that by default Ubuntu Lucid will not execute PHP files in

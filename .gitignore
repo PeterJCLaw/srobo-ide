@@ -4,4 +4,6 @@ repos/
 zips/
 settings/*
 config/local.ini
-
+/applet/.classpath
+/applet/.project
+/applet/test-only-applet-key.crt

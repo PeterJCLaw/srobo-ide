@@ -142,6 +142,13 @@ class GitRepository
 			$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
 			shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		}
+		$hash = trim(shell_exec("cd $path ; $bin hash-object -w /dev/null"));
+		$treepath = realpath('resources/base-tree');
+		$commitpath = realpath('resources/initial-commit');
+		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
+		$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
+		shell_exec("cd $path ; $bin update-ref -m $commitpath HEAD $hash");
+		shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		return new GitRepository($path);
 	}
 
@@ -371,19 +378,37 @@ class GitRepository
 	 *  between two commits,
 	 *  between two commits for a specified file
 	 */
-	public function diff($commitOld, $commitNew=null, $file=null)
+	public function historyDiff($commitOld, $commitNew=null, $file=null)
 	{
 		if ($commitNew === null)
 		{
 			return $this->gitExecute(false, "log -p -1 $commitOld");
 		}
-		elseif ($file === null)
+
+		$command = 'diff -C -M '.$commitOld.'..'.$commitNew;
+		if ($file === null)
 		{
-			return $this->gitExecute(false, "diff -C -M $commitOld..$commitNew");
+			return $this->gitExecute(false, $command);
 		}
 		else
 		{
-			return $this->getExecute(false, "diff -C -M $commitOld..$commitNew -- $file");
+			return $this->gitExecute(false, $command.' -- '.escapeshellarg($file));
+		}
+	}
+
+	/**
+	 * Gets the currently cached diff, optionally for just one file
+	 */
+	public function cachedDiff($file=null)
+	{
+		$command = 'diff --cached';
+		if ($file === null)
+		{
+			return $this->gitExecute(true, $command);
+		}
+		else
+		{
+			return $this->gitExecute(true, $command.' '.escapeshellarg($file));
 		}
 	}
 
