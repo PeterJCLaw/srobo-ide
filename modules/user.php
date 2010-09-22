@@ -27,8 +27,11 @@ class UserModule extends Module
 	private function ensureAuthed()
 	{
 		$auth = AuthBackend::getInstance();
-		$this->username = $auth->getCurrentUser();
-        return $auth;
+		if (!($this->username = $auth->getCurrentUser()))
+		{
+			throw new Exception('you are not logged in', E_PERM_DENIED);
+		}
+		return $auth;
 	}
 
 	/* Get information about the user
@@ -37,11 +40,6 @@ class UserModule extends Module
 	{
 		$output = Output::getInstance();
 		$auth = $this->ensureAuthed();
-
-		if (!$this->username)
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
 
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
 		$output->setOutput('email', $auth->emailForUser($this->username));
@@ -63,12 +61,6 @@ class UserModule extends Module
 	 */
 	public function saveSettings()
 	{
-
-        if (!$this->username)
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
-
 		$this->ensureAuthed();
 		$input = Input::getInstance();
 		$settings = $input->getInput('settings');
@@ -83,11 +75,6 @@ class UserModule extends Module
 		$this->ensureAuthed();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
-
-		if (!$this->username)
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
 
 		$userfeed  = $feeds->findFeed('user', $this->username);
 		if ($userfeed == null)
@@ -109,11 +96,6 @@ class UserModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
-
-		if (!$this->username)
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
 
 		$feedurl = $input->getInput('feedurl');
 
@@ -148,14 +130,7 @@ class UserModule extends Module
 	 */
 	public function blogPosts()
 	{
-
 		$this->ensureAuthed();
-
-        if (!$this->username)
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
-
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 
