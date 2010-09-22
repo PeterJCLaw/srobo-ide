@@ -34,7 +34,8 @@ class UserModule extends Module
 		return $auth;
 	}
 
-	/* Get information about the user
+	/**
+	 * Get information about the user
 	 */
 	public function getInfo()
 	{
@@ -57,7 +58,8 @@ class UserModule extends Module
 		$output->setOutput('settings', $settings);
 	}
 
-	/* Save the user's settings
+	/**
+	 * Save the user's settings
 	 */
 	public function saveSettings()
 	{
@@ -68,7 +70,8 @@ class UserModule extends Module
 		file_put_contents("$this->settingsPath/$this->username.json", $data);
 	}
 
-	/* Gets the user's blog feed, set on the switchboard page
+	/**
+	 * Gets the user's blog feed, set on the switchboard page
 	 */
 	public function getBlogFeed()
 	{
@@ -88,7 +91,8 @@ class UserModule extends Module
 		}
 	}
 
-	/* Sets the user's blog feed, for the switchboard page
+	/**
+	 * Sets the user's blog feed, for the switchboard page
 	 */
 	public function setBlogFeed()
 	{
@@ -126,7 +130,8 @@ class UserModule extends Module
 		$output->setOutput('error', $error);
 	}
 
-	/* Get all the recent blog posts from the validated user blog feeds
+	/**
+	 * Get all the recent blog posts from the validated user blog feeds
 	 */
 	public function blogPosts()
 	{
