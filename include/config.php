@@ -18,9 +18,19 @@ class Configuration
 
 	private $config = array();
 
+	private function add_config_file($path)
+	{
+		if (file_exists($path))
+		{
+			$config = parse_ini_file($path);
+			$this->config = $config + $this->config;
+		}
+	}
+
 	private function __construct()
 	{
-		$this->config = parse_ini_file('config/config.ini');
+		$this->add_config_file('config/config.ini');
+		$this->add_config_file('config/local.ini');
 	}
 
 	/**

@@ -9,7 +9,7 @@ exec("mkdir -p /tmp/test-repos");
 
 $config = Configuration::getInstance();
 $config->override("repopath", "/tmp/test-repos");
-$config->override("user.default", "death");
+$config->override("user.default", "bees");
 $config->override("user.default.teams", array(1, 2));
 $config->override("auth_module", "single");
 $config->override("modules", array("file"));
@@ -31,10 +31,11 @@ test_equal($mm->moduleExists("file"), true, "file module does not exist");
 
 $file = $mm->getModule('file');
 
-$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . '.git';
+$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/users/bees/" . $input->getInput("project");
 
 $projectManager = ProjectManager::getInstance();
 $projectManager->createRepository($input->getInput("team"), $input->getInput("project"));
+$projectManager->getUserRepository(1, 'monkies', 'bees');
 test_true(is_dir($repopath), "created repo did not exist");
 
 $input->setInput('path', 'wut');
@@ -60,9 +61,9 @@ test_true(file_exists("$repopath/wut"), 'target did not exist after move');
 test_false(file_exists("$repopath/huh"), 'old file still exists after move');
 $input->setInput('path', '.');
 $file->dispatchCommand('list');
-test_equal($output->getOutput('files'), array('wut'), 'incorrect file list');
+test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'), 'incorrect file list');
 $file->dispatchCommand('compat-tree');
-test_equal($output->getOutput('files'), array('wut'), 'incorrect file tree');
+test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'), 'incorrect file tree');
 
 if (is_dir("/tmp/test-repos"))
 {

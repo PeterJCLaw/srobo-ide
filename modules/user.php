@@ -3,6 +3,7 @@
 class UserModule extends Module
 {
 	private $settingsPath;
+	private $username;
 
 	public function __construct()
 	{
@@ -16,10 +17,7 @@ class UserModule extends Module
 		$this->installCommand('blog-posts', array($this, 'blogPosts'));
 
 		$auth = AuthBackend::getInstance();
-		if (!($this->username = $auth->getCurrentUser()))
-		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
-		}
+		$this->username = $auth->getCurrentUser();
 	}
 
 	/* Get information about the user
@@ -28,6 +26,11 @@ class UserModule extends Module
 	{
 		$output = Output::getInstance();
 		$auth = AuthBackend::getInstance();
+
+		if (!$this->username)
+		{
+			throw new Exception('you are not logged in', E_PERM_DENIED);
+		}
 
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
 		$output->setOutput('email', $auth->emailForUser($this->username));
@@ -49,6 +52,10 @@ class UserModule extends Module
 	 */
 	public function saveSettings()
 	{
+		if (!$this->username)
+		{
+			throw new Exception('you are not logged in', E_PERM_DENIED);
+		}
 		$input = Input::getInstance();
 		$settings = $input->getInput('settings');
 		$data = json_encode($settings);
@@ -61,6 +68,11 @@ class UserModule extends Module
 	{
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
+
+		if (!$this->username)
+		{
+			throw new Exception('you are not logged in', E_PERM_DENIED);
+		}
 
 		$userfeed  = $feeds->findFeed('user', $this->username);
 		if ($userfeed == null)
@@ -81,6 +93,11 @@ class UserModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
+
+		if (!$this->username)
+		{
+			throw new Exception('you are not logged in', E_PERM_DENIED);
+		}
 
 		$feedurl = $input->getInput('feedurl');
 
@@ -115,6 +132,11 @@ class UserModule extends Module
 	 */
 	public function blogPosts()
 	{
+		if (!$this->username)
+		{
+			throw new Exception('you are not logged in', E_PERM_DENIED);
+		}
+
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 

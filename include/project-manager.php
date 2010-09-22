@@ -40,6 +40,8 @@ class ProjectManager
 
 	public function listTeams()
 	{
+		if (!file_exists($this->rootProjectPath))
+			return array();
 		$scan = scandir($this->rootProjectPath);
 		$scan = array_filter($scan, function($item) {
 			return $item != '' && $item[0] != '.';
@@ -50,12 +52,16 @@ class ProjectManager
 	public function listRepositories($team)
 	{
 		$root = $this->rootProjectPath . '/' . $team . '/master/';
+		if (!file_exists($root))
+			return array();
 		$scan = scandir($root);
 		$projects = array();
 		foreach ($scan as $item)
 		{
-			if (preg_match('/([a-zA-Z0-9_- ])+\\.git$/', $item, $matches))
+			if (preg_match('/^([a-zA-Z0-9_ -]+)\\.git$/', $item, $matches))
+			{
 				$projects[] = $matches[1];
+			}
 		}
 		return $projects;
 	}
@@ -80,10 +86,27 @@ class ProjectManager
 		}
 	}
 
+	public function updateRepository($team, $project, $user)
+	{
+		$userRepo = $this->getUserRepository($team, $project, $user);
+		$userRepo->fetch();
+		$conflicts = $userRepo->merge(array('origin/master'));
+		if (empty($conflicts))
+		{
+			$userRepo->push();
+			return array();
+		}
+		else
+		{
+			return $conflicts;
+		}
+	}
+
 	public function createRepository($team, $project)
 	{
 		$path = $this->rootProjectPath . "/$team/master/$project.git";
 		GitRepository::createRepository($path, true);
+		ide_log("Created a project $project for team $team");
 	}
 
 	public function deleteRepository($team, $name)

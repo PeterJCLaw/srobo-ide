@@ -112,7 +112,10 @@ class ProjModule extends Module
 		$this->projectRepository->commit($message,
 		                                 $auth->displayNameForUser($currentUser),
 		                                 $auth->emailForUser($currentUser));
-		$output->setOutput('merges', array());
+		$conflicts = $this->projectManager->updateRepository($this->team,
+		                                                     $this->projectName,
+		                                                     $currentUser);
+		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
 	}
 
@@ -185,8 +188,11 @@ class ProjModule extends Module
 
 	private function openProject($team, $project)
 	{
-		if (!in_array($team, $this->projectManager->listRepositories($team)))
+		if (!in_array($project, $this->projectManager->listRepositories($team)))
+		{
+			ide_log("On-demand creation of project $project for team $team");
 			$this->projectManager->createRepository($team, $project);
+		}
 		$this->projectRepository =
 		    $this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
 	}
