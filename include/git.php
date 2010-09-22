@@ -135,21 +135,27 @@ class GitRepository
 		else
 		{
 			shell_exec("cd $path ; $bin init" . ($bare ? " --bare" : ''));
-			$hash = trim(shell_exec("cd $path ; $bin hash-object -w /dev/null"));
-			$treepath = realpath('resources/base-tree');
-			$commitpath = realpath('resources/initial-commit');
-			$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
-			$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
+			list($commitpath, $hash) = self::populateRepoObejects($path);
 			shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		}
+		list($commitpath, $hash) = self::populateRepoObejects($path);
+		shell_exec("cd $path ; $bin update-ref -m $commitpath HEAD $hash");
+		shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
+		return new GitRepository($path);
+	}
+
+	/**
+	 * Construct some of the internals of the git repo we're going to use.
+	 */
+	private static function populateRepoObejects($path)
+	{
+		$bin = self::gitBinaryPath();
 		$hash = trim(shell_exec("cd $path ; $bin hash-object -w /dev/null"));
 		$treepath = realpath('resources/base-tree');
 		$commitpath = realpath('resources/initial-commit');
 		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
 		$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
-		shell_exec("cd $path ; $bin update-ref -m $commitpath HEAD $hash");
-		shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
-		return new GitRepository($path);
+		return array($commitpath, $hash);
 	}
 
 	/**
