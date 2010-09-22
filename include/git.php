@@ -125,22 +125,27 @@ class GitRepository
 		{
 			mkdir_full($path);
 		}
+
+		$shell_path   = escapeshellarg($path);
+
 		if ($source !== null)
 		{
 			if (is_object($source))
 				$source = $source->gitPath();
+
+			$shell_source = escapeshellarg($source);
 			shell_exec("$bin clone --shared --quiet " . ($bare ? "--bare " : "") .
-					   "'$source' '$path'");
+					   "$shell_source $shell_path");
 		}
 		else
 		{
-			shell_exec("cd $path ; $bin init" . ($bare ? " --bare" : ''));
-			list($commitpath, $hash) = self::populateRepoObejects($path);
-			shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
+			shell_exec("cd $shell_path ; $bin init" . ($bare ? " --bare" : ''));
+			list($commitpath, $hash) = self::populateRepoObejects($shell_path);
+			shell_exec("cd $shell_path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		}
-		list($commitpath, $hash) = self::populateRepoObejects($path);
-		shell_exec("cd $path ; $bin update-ref -m $commitpath HEAD $hash");
-		shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
+		list($commitpath, $hash) = self::populateRepoObejects($shell_path);
+		shell_exec("cd $shell_path ; $bin update-ref -m $commitpath HEAD $hash");
+		shell_exec("cd $shell_path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		return new GitRepository($path);
 	}
 
