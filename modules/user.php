@@ -62,6 +62,7 @@ class UserModule extends Module
 	 */
 	public function saveSettings()
 	{
+<<<<<<< HEAD
 <<<<<<< .merge_file_4Fbxdg
 		if (!$this->username)
 		{
@@ -70,6 +71,9 @@ class UserModule extends Module
 =======
 		$this->ensureAuthed();
 >>>>>>> .merge_file_clLbgd
+=======
+		$this->ensureAuthed();
+>>>>>>> pete
 		$input = Input::getInstance();
 		$settings = $input->getInput('settings');
 		$data = json_encode($settings);
@@ -148,6 +152,7 @@ class UserModule extends Module
 	 */
 	public function blogPosts()
 	{
+<<<<<<< HEAD
 <<<<<<< .merge_file_4Fbxdg
 		if (!$this->username)
 		{
@@ -157,6 +162,9 @@ class UserModule extends Module
 =======
 		$this->ensureAuthed();
 >>>>>>> .merge_file_clLbgd
+=======
+		$this->ensureAuthed();
+>>>>>>> pete
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 
