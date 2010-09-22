@@ -149,12 +149,13 @@ class UserModule extends Module
 	public function blogPosts()
 	{
 
+		$this->ensureAuthed();
+
         if (!$this->username)
 		{
 			throw new Exception('you are not logged in', E_PERM_DENIED);
 		}
 
-		$this->ensureAuthed();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 
