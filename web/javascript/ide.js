@@ -30,6 +30,7 @@ var IDE_clone = function(object) {
 
 var IDE_base = "control.php";
 var IDE_async_count = 0;
+var IDE_backend_debug = null;
 showElement = hideElement = function(){};
 
 function IDE_backend_request(command, args, successCallback, errorCallback) {
@@ -49,6 +50,9 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 			}
 			var rt = xhr.responseText;
 			var rp = JSON.parse(rt);
+			if (rp.debug) {
+				IDE_backend_debug = rp.debug;
+			}
 			if (rp.error) {
 				errorCallback(rp.error[0], rp.error[1], args);
 			} else {
