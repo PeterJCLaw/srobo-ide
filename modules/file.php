@@ -77,7 +77,14 @@ class FileModule extends Module
 	public function getFileTreeCompat()
 	{
 		$output = Output::getInstance();
-		$output->setOutput('tree', $this->repository()->fileTreeCompat($this->projectName));
+        $uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
+        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
+        $results = array();
+        foreach ($cleanOut as $item) {
+            $results[] = $item;
+        }
+		$output->setOutput('tree', $results);
+        $output->setOutput("ponies", $uncleanOut);
 		return true;
 	}
 
@@ -86,7 +93,13 @@ class FileModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-		$output->setOutput('files', $this->repository()->listFiles($path));
+        $uncleanOut = $this->repository()->listFiles($path);
+        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
+        $results = array();
+        foreach ($cleanOut as $item) {
+            $results[] = $item;
+        }
+		$output->setOutput('files', $results);
 		return true;
 	}
 
