@@ -28,6 +28,7 @@ class UserModule extends Module
 	{
 		$auth = AuthBackend::getInstance();
 		$this->username = $auth->getCurrentUser();
+        return $auth;
 	}
 
 	/* Get information about the user
