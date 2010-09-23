@@ -911,15 +911,19 @@ function ProjOps() {
 
 		status_msg("About to do move..."+src+" to "+dest, LEVEL_OK);
 
-		var d = loadJSONDoc("./move", {team : team,
-				   src : src, dest : dest, msg : cmsg});
-
-		d.addCallback( bind( this._mv_success, this) );
-
-		d.addErrback( bind( function (){
-			status_button( "Error moving files/folders", LEVEL_ERROR,
-				       "retry", bind( this._mv_cback, this, dest, cmsg ) );
-		}, this ) );
+		IDE_backend_request("file/mv", {
+				 "project": IDE_path_get_project(src),
+				    "team": team,
+				 "message": cmsg,
+				"old-path": IDE_path_get_file(src),
+				"new-path": IDE_path_get_file(dest)
+			},
+			bind( this._mv_success, this ),
+			bind( function () {
+					status_button( "Error moving files/folders", LEVEL_ERROR, "retry",
+						bind( this._mv_cback, this, dest, cmsg ) );
+			}, this )
+		);
 	}
 
 	this.mv = function() {
