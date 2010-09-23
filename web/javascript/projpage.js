@@ -962,6 +962,7 @@ function ProjOps() {
 		IDE_backend_request("file/cp", {
 				 "project": IDE_path_get_project(projpage.flist.selection[0]),
 				    "team": team,
+				 "message": cmsg,
 				"old-path": IDE_path_get_file(projpage.flist.selection[0]),
 				"new-path": IDE_path_get_file(fname)
 			},
