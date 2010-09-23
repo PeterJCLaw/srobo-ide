@@ -21,6 +21,7 @@ class AuthModule extends Module
 			$tok = $this->authModule->validateAuthToken($in);
 			if (!$tok)
 			{
+				$ts->setNextAuthToken();
 				throw new Exception('failed to validate auth token', E_BAD_AUTH_TOKEN);
 			}
 			$next = $this->authModule->getNextAuthToken();
