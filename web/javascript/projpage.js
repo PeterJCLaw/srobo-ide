@@ -950,20 +950,24 @@ function ProjOps() {
 	}
 	this._cp_callback2 = function(fname, cmsg) {
 		logDebug("copying "+projpage.flist.selection[0]+" to "+fname);
+		//logDebug("team is" + team + " project is " + project);
 
 		if(fname == null || fname=="")
 			return;
 
-		var d = loadJSONDoc("./copy", {team : team,
-				   src : projpage.flist.selection[0],
-				   dest : fname,
-				   msg : cmsg,
-				   rev : 0  });
-		d.addCallback( bind(this._cp_callback1, this));
-		d.addErrback( bind( function() {
-			status_button("Error contacting server", LEVEL_ERROR, "retry",
-				bind(this._cp_callback2, this, fname, cmsg));
-		} ), this );
+		var d = IDE_backend_request("file/cp", {
+				 "project": IDE_path_get_project(fname),
+				    "team": team,
+				"old-path": IDE_path_get_file(projpage.flist.selection[0]),
+				"new-path": IDE_path_get_file(fname)
+			},
+			bind(this._cp_callback1, this),
+			bind( function() {
+					status_button("Error contacting server", LEVEL_ERROR, "retry",
+					bind(this._cp_callback2, this, fname, cmsg));
+				}, this
+			)
+		)
 	}
 	this.cp = function() {
 		if(projpage.flist.selection.length == 0) {

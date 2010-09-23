@@ -147,6 +147,8 @@ class FileModule extends Module
 		$oldPath = $input->getInput('old-path');
 		$newPath = $input->getInput('new-path');
 		$this->repository()->copyFile($oldPath, $newPath);
+		$output->setOutput('status', 0);
+		$output->setOutput('message', $oldPath.' to '.$newPath);
 		return true;
 	}
 
