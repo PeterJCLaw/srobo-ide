@@ -955,8 +955,8 @@ function ProjOps() {
 		if(fname == null || fname=="")
 			return;
 
-		var d = IDE_backend_request("file/cp", {
-				 "project": IDE_path_get_project(fname),
+		IDE_backend_request("file/cp", {
+				 "project": IDE_path_get_project(projpage.flist.selection[0]),
 				    "team": team,
 				"old-path": IDE_path_get_file(projpage.flist.selection[0]),
 				"new-path": IDE_path_get_file(fname)
@@ -965,9 +965,8 @@ function ProjOps() {
 			bind( function() {
 					status_button("Error contacting server", LEVEL_ERROR, "retry",
 					bind(this._cp_callback2, this, fname, cmsg));
-				}, this
-			)
-		)
+				}, this )
+		);
 	}
 	this.cp = function() {
 		if(projpage.flist.selection.length == 0) {
