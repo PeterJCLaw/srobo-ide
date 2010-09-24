@@ -56,6 +56,7 @@ class ProjModule extends Module
 		$this->installCommand('del', array($this, 'deleteProject'));
 		$this->installCommand('commit', array($this, 'commitProject'));
 		$this->installCommand('co', array($this, 'checkoutProject'));
+        $this->installCommand("copy", array($this, "copyProject"));
 	}
 
 	private function verifyTeam()
@@ -75,6 +76,12 @@ class ProjModule extends Module
 		$this->verifyTeam();
 		$this->openProject($this->team, $this->projectName);
 	}
+
+    public function copyProject()
+    {
+        $input = Input::getInstance();
+        $this->projectManager->copyRepository($this->team, $this->projectName, $input->getInput("new-name"));
+    }
 
 	/**
 	 * deletes a project, requires that the team and project input keys are present
@@ -108,6 +115,13 @@ class ProjModule extends Module
 		$message = $input->getInput('message');
 
 		$currentUser = $auth->getCurrentUser();
+
+        $files = $input->getInput("paths");
+        //stage the files
+        foreach ($files as $file) {
+            $output->setOutput("loop","loop");
+            $this->projectRepository->stage($file);
+        }
 
 		$this->projectRepository->commit($message,
 		                                 $auth->displayNameForUser($currentUser),

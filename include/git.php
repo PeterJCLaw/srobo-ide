@@ -125,31 +125,42 @@ class GitRepository
 		{
 			mkdir_full($path);
 		}
+
+		$shell_path   = escapeshellarg($path);
+
 		if ($source !== null)
 		{
 			if (is_object($source))
 				$source = $source->gitPath();
+
+			$shell_source = escapeshellarg($source);
 			shell_exec("$bin clone --shared --quiet " . ($bare ? "--bare " : "") .
-					   "'$source' '$path'");
+					   "$shell_source $shell_path");
 		}
 		else
 		{
-			shell_exec("cd $path ; $bin init" . ($bare ? " --bare" : ''));
-			$hash = trim(shell_exec("cd $path ; $bin hash-object -w /dev/null"));
-			$treepath = realpath('resources/base-tree');
-			$commitpath = realpath('resources/initial-commit');
-			$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
-			$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
-			shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
+			shell_exec("cd $shell_path ; $bin init" . ($bare ? " --bare" : ''));
+			list($commitpath, $hash) = self::populateRepoObejects($shell_path);
+			shell_exec("cd $shell_path ; $bin update-ref -m $commitpath refs/heads/master $hash");
 		}
+		list($commitpath, $hash) = self::populateRepoObejects($shell_path);
+		shell_exec("cd $shell_path ; $bin update-ref -m $commitpath HEAD $hash");
+		shell_exec("cd $shell_path ; $bin update-ref -m $commitpath refs/heads/master $hash");
+		return new GitRepository($path);
+	}
+
+	/**
+	 * Construct some of the internals of the git repo we're going to use.
+	 */
+	private static function populateRepoObejects($path)
+	{
+		$bin = self::gitBinaryPath();
 		$hash = trim(shell_exec("cd $path ; $bin hash-object -w /dev/null"));
 		$treepath = realpath('resources/base-tree');
 		$commitpath = realpath('resources/initial-commit');
 		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
 		$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
-		shell_exec("cd $path ; $bin update-ref -m $commitpath HEAD $hash");
-		shell_exec("cd $path ; $bin update-ref -m $commitpath refs/heads/master $hash");
-		return new GitRepository($path);
+		return array($commitpath, $hash);
 	}
 
 	/**
@@ -168,6 +179,11 @@ class GitRepository
 		$revisions = explode("\n", $this->gitExecute(false, 'rev-list --all'));
 		return $revisions[count($revisions)-1];
 	}
+
+    public function gitMKDir($path) {
+        $dir = $this->working_path . "/" . $path;
+        mkdir_full($dir);
+    }
 
 	/**
 	 * Gets the log between the arguments
@@ -236,6 +252,15 @@ class GitRepository
 			return $conflicted_files;
 		}
 	}
+
+    public function checkoutFile($file,$revision=null) {
+        $shellPath = escapeshellarg($file);
+        if ($revision == null) {
+            $this->gitExecute(true, "checkout $shellPath");
+        } else {
+            $this->gitExecute(true, "checkout $revision -- $shellPath");
+        }
+    }
 
 	/**
 	 * Pushes changes upstream.
@@ -316,7 +341,6 @@ class GitRepository
 	{
 		touch($this->working_path . "/$path");
 		$shell_path = escapeshellarg($path);
-		$this->gitExecute(true, "add $shell_path");
 	}
 
 	/**
@@ -325,7 +349,7 @@ class GitRepository
 	public function removeFile($path)
 	{
 		$shell_path = escapeshellarg($path);
-		$this->gitExecute(true, "rm -f $shell_path");
+		$this->gitExecute(true, "rm -rf $shell_path");
 	}
 
 	/**
@@ -368,9 +392,15 @@ class GitRepository
 	public function putFile($path, $content)
 	{
 		file_put_contents($this->working_path . "/$path", $content);
+	}
+
+    /**
+     * Stages a file
+     */
+    public function stage($path) {
 		$shell_path = escapeshellarg($path);
 		$this->gitExecute(true, "add $shell_path");
-	}
+    }
 
 	/**
 	 * Gets a diff:

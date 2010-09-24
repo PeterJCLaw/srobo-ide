@@ -78,7 +78,7 @@ Log.prototype._errorReceiveHistory = function() {
 Log.prototype._retrieveHistory = function(opt) {
 	IDE_backend_request('file/log',
 		{ team : team,
-		  project: this.project,
+		  project: IDE_path_get_project(this.file),
 		  path : IDE_path_get_file(this.file),
 		  user : this.user,
 		  offset : this.offset,
@@ -199,9 +199,10 @@ Log.prototype._update = function() {
 	this._init();
 }
 
-Log.prototype._receiveRevert = function(nodes) {
-	if(nodes.new_revision > 0)
-		status_msg("Successfully reverted to version "+this.selectedRevision+" (New Revision: "+nodes.new_revision+")", LEVEL_OK);
+Log.prototype._receiveRevert = function(nodes,args) {
+    nodes = args["nodes"]
+	if(nodes.commit != "")
+		status_msg("Successfully reverted to version "+this.selectedRevision+" (New Revision: "+nodes.commit+")", LEVEL_OK);
 	else
 		status_msg("Failed to revert: "+nodes.success, LEVEL_ERROR);
 	//in either case update the history
@@ -212,14 +213,32 @@ Log.prototype._errorReceiveRevision = function(commitMsg) {
 	status_button("Unable to contact server to revert file", LEVEL_ERROR, "retry", bind(this._do_revert, this, commitMsg));
 }
 Log.prototype._do_revert = function(commitMsg) {
-	var d = loadJSONDoc("./revert", {
-					team : team,
-					files : this.file,
-					torev : this.selectedRevision,
-					message : commitMsg});
-
-	d.addCallback( bind(this._receiveRevert, this));
-	d.addErrback( bind(this._errorReceiveRevision, this, commitMsg));
+    IDE_backend_request("file/co",
+                        {
+                            team:team,
+                            project:IDE_path_get_project(this.file),
+                            files:[IDE_path_get_file(this.file)],
+                            revision:this.selectedRevision
+                        },
+                        bind(
+                            function(nodes) {
+                                IDE_backend_request("proj/commit",
+                                                    {
+                                                        team:team,
+                                                        project:IDE_path_get_project(this.file),
+                                                        paths:[IDE_path_get_file(this.file)],
+                                                        message:commitMsg,
+                                                        nodes:nodes
+                                                    },
+                                                    bind(this._receiveRevert,this),
+                                                    bind(this._errorReceiveRevision,this,commitMsg)
+                                                   )
+                            }, this
+                        ),
+                        bind(
+                            this._errorReceiveRevision,this,commitMsg
+                        )
+                       )
 }
 
 //revert to selected revision. override = true to skip user confirmation

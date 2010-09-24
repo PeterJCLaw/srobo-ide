@@ -55,6 +55,8 @@ class FileModule extends Module
 		$this->installCommand('log', array($this, 'fileLog'));
 		$this->installCommand('lint', array($this, 'lintFile'));
 		$this->installCommand('diff', array($this, 'diff'));
+		$this->installCommand('mkdir', array($this, 'makeDirectory'));
+        $this->installCommand("co", array($this, "checkoutFile"));
 	}
 
 	private function verifyTeam()
@@ -74,6 +76,16 @@ class FileModule extends Module
 		return $repo;
 	}
 
+    public function makeDirectory() {
+        $input = Input::getInstance();
+        $output = Output::getInstance();
+        $path = $input->getInput("path");
+        $this->repository()->gitMKDir($path);
+        $output->setOutput("success",1);
+        $output->setOutput("feedback", "successfully created folder $path");
+        return true;
+    }
+
 	public function getFileTreeCompat()
 	{
 		$output = Output::getInstance();
@@ -87,6 +99,31 @@ class FileModule extends Module
         $output->setOutput("ponies", $uncleanOut);
 		return true;
 	}
+
+    public function checkoutFile() {
+        $input = Input::getInstance();
+        $output = Output::getInstance();
+        $paths = $input->getInput("files");
+        $revision = $input->getInput("revision");
+        //latest
+        $output->setOutput("rev", $revision);
+        if ($revision === 0 || $revision === "HEAD") {
+            foreach ($paths as $file) {
+                $this->repository()->checkoutFile($file);
+            }
+
+        } else {
+            $output->setOutput("revision reverting","");
+            foreach ($paths as $file) {
+                $output->setOutput("ponies","ponies");
+                $this->repository()->checkoutFile($file,$revision);
+            }
+        }
+
+        $output->setOutput("success",true);
+        return true;
+    }
+
 
 	public function listFiles()
 	{
@@ -135,8 +172,12 @@ class FileModule extends Module
 	{
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
-		$path   = $input->getInput('path');
-		$this->repository()->removeFile($path);
+        $files = $input->getInput("files");
+
+        foreach ($files as $file) {
+            $output->setOutput("loop","loop");
+    		$this->repository()->removeFile($file);
+        }
 		return true;
 	}
 
@@ -147,6 +188,8 @@ class FileModule extends Module
 		$oldPath = $input->getInput('old-path');
 		$newPath = $input->getInput('new-path');
 		$this->repository()->copyFile($oldPath, $newPath);
+		$output->setOutput('status', 0);
+		$output->setOutput('message', $oldPath.' to '.$newPath);
 		return true;
 	}
 
@@ -157,6 +200,8 @@ class FileModule extends Module
 		$oldPath = $input->getInput('old-path');
 		$newPath = $input->getInput('new-path');
 		$this->repository()->moveFile($oldPath, $newPath);
+		$output->setOutput('status', 0);
+		$output->setOutput('message', $oldPath.' to '.$newPath);
 		return true;
 	}
 

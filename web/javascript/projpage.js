@@ -154,15 +154,19 @@ ProjPage.prototype.CreateCopyProject = function(newProjName) {
 	cMsg = 'Copying project '+this.project+' to '+newProjName;
 	log(cMsg);
 
-	var d = loadJSONDoc("./copyproj", { 'team' : team,
-				'src' : '/'+this.project,
-				'dest' : '/'+newProjName
-			});
-	d.addCallback( bind( partial(this._CopyProjectSuccess, newProjName), this));
-	d.addErrback( bind( function() {
-		status_button( "Copy Project: Error contacting server", LEVEL_ERROR, "retry",
-			bind(this.CreateCopyProject, this, newProjName) );
-	}, this ) );
+    IDE_backend_request("proj/copy",
+                        {
+                            "team":team,
+                            "project":this.project,
+                            "new-name":newProjName,
+                        },
+                        bind( partial(this._CopyProjectSuccess, newProjName), this),
+	                    bind( function() {
+                		    status_button( "Copy Project: Error contacting server", LEVEL_ERROR, "retry",
+                			bind(this.CreateCopyProject, this, newProjName) );
+                    	}, this ) );
+
+
 }
 
 ProjPage.prototype._CopyProjectSuccess = function(newProjName, nodes) {
@@ -854,12 +858,15 @@ function ProjOps() {
 		if(new_name == null || new_name == undefined) {
 			var browser = new Browser(bind(this.new_folder, this), {'type' : 'isDir'});
 		} else {
-			var d = loadJSONDoc("./newdir", { team : team,
-						  path : new_name,
-						  msg : new_msg});
+			IDE_backend_request("file/mkdir",
+                                { team : team,
+						          path : IDE_path_get_file(new_name),
+                                  project:IDE_path_get_project(new_name)
+						        },
+                                    bind(this.receive_newfolder,this),
+                                    bind(this.error_receive_newfolder, new_name, new_msg,this)
+                                );
 
-			d.addCallback( this.receive_newfolder);
-			d.addErrback( this.error_receive_newfolder, new_name, new_msg);
 		}
 	}
 
@@ -911,15 +918,40 @@ function ProjOps() {
 
 		status_msg("About to do move..."+src+" to "+dest, LEVEL_OK);
 
-		var d = loadJSONDoc("./move", {team : team,
-				   src : src, dest : dest, msg : cmsg});
-
-		d.addCallback( bind( this._mv_success, this) );
-
-		d.addErrback( bind( function (){
-			status_button( "Error moving files/folders", LEVEL_ERROR,
-				       "retry", bind( this._mv_cback, this, dest, cmsg ) );
-		}, this ) );
+		IDE_backend_request("file/mv", {
+				 "project": IDE_path_get_project(src),
+				    "team": team,
+				 "message": cmsg,
+				"old-path": IDE_path_get_file(src),
+				"new-path": IDE_path_get_file(dest)
+			},
+            //on move success, do a commit
+			bind( function() {IDE_backend_request("proj/commit",{
+                    team:team,
+                    project:IDE_path_get_project(src),
+                    paths:[IDE_path_get_file(src),IDE_path_get_file(dest)],
+                    message:cmsg
+                  },
+                  //bind commit success to _mv_success
+                  bind(this._mv_success,this),
+                  //begin binding commit failure to move failure callback
+			      bind( function () {
+				            status_button( "Error moving files/folders", LEVEL_ERROR, "retry",
+			                bind( this._mv_cback, this, dest, cmsg ) );
+			            }, this
+                  )
+                  //end binding commit failure to move failure callback
+                 )},
+               this),
+            //end move success bind
+            //on move failure, show an error
+			bind( function () {
+					status_button( "Error moving files/folders", LEVEL_ERROR, "retry",
+					                bind( this._mv_cback, this, dest, cmsg )
+                                 );
+                  }, this
+                )
+		);
 	}
 
 	this.mv = function() {
@@ -940,30 +972,54 @@ function ProjOps() {
 
 	}
 
-	this._cp_callback1 = function(nodes) {
-		if(nodes.status > 0) {
-			status_msg("ERROR COPYING: "+nodes.message, LEVEL_ERROR);
-		} else {
-			status_msg("Successful Copy: "+nodes.message, LEVEL_OK);
+	this._cp_callback1 = function() {
+            logDebug("ponies");
+			status_msg("Successful Copy", LEVEL_OK);
+            logDebug("ponies2");
 			projpage.flist.refresh();
-		}
+            logDebug("ponies3");
 	}
 	this._cp_callback2 = function(fname, cmsg) {
 		logDebug("copying "+projpage.flist.selection[0]+" to "+fname);
+		//logDebug("team is" + team + " project is " + project);
 
 		if(fname == null || fname=="")
 			return;
 
-		var d = loadJSONDoc("./copy", {team : team,
-				   src : projpage.flist.selection[0],
-				   dest : fname,
-				   msg : cmsg,
-				   rev : 0  });
-		d.addCallback( bind(this._cp_callback1, this));
-		d.addErrback( bind( function() {
-			status_button("Error contacting server", LEVEL_ERROR, "retry",
-				bind(this._cp_callback2, this, fname, cmsg));
-		} ), this );
+		IDE_backend_request("file/cp", {
+				 "project": IDE_path_get_project(projpage.flist.selection[0]),
+				    "team": team,
+				 "message": cmsg,
+				"old-path": IDE_path_get_file(projpage.flist.selection[0]),
+				"new-path": IDE_path_get_file(fname)
+			},
+			bind(function() {
+                    logDebug("in ide backend proj commit");
+                    IDE_backend_request("proj/commit", {
+                                                        team:team,
+                                                        project:IDE_path_get_project(projpage.flist.selection[0]),
+                                                        message:cmsg,
+                                                        paths:[IDE_path_get_file(fname)]
+                                                      },
+                                            bind(
+                                                this._cp_callback1
+                                                ,this
+                                            ),
+
+                                            bind( function() {
+                                                status_button("Error contacting server", LEVEL_ERROR, "retry",
+                                                bind(this._cp_callback2, this, fname, cmsg));
+                                                }, this
+                                            )
+
+                 )}, this
+                ),
+			bind( function() {
+					status_button("Error contacting server", LEVEL_ERROR, "retry",
+					bind(this._cp_callback2, this, fname, cmsg));
+				  }, this
+                )
+		);
 	}
 	this.cp = function() {
 		if(projpage.flist.selection.length == 0) {
@@ -991,21 +1047,38 @@ function ProjOps() {
 		for( var i in projpage.flist.selection ) {
 			death_list.push(projpage.flist.selection[i].substr(projpage.project.length+2))
 		};
-		death_list = death_list.join(',');
 
 		logDebug("will delete: "+death_list);
 
-		var d = loadJSONDoc("./delete", { "team" : team,
-						  "project" : projpage.project,
-						  "files" : death_list,
-						  "kind" : 'ALL' });
-		d.addCallback( function(nodes) {
-			status_msg(nodes.Message, LEVEL_OK)
-			projpage.flist.refresh();
-		});
-
-		d.addErrback(function() { status_button("Error contacting server",
-				LEVEL_ERROR, "retry", bind(this.rm, this, true));});
+        IDE_backend_request("file/del",
+                            { "team" : team,
+        				      "project" : projpage.project,
+		        			  "files" : death_list,
+                            },
+                            bind(function() {
+                                                IDE_backend_request("proj/commit",
+                                                                    {
+                                                                        team:team,
+                                                                        project:projpage.project,
+                                                                        paths:death_list,
+                                                                        message:"File deletion"
+                                                                    },
+                                                                    bind(function(){
+                                                                        status_msg("files deleted succesfully", LEVEL_OK);
+			                                                            projpage.flist.refresh();
+                                                                    },this),
+                                                                    bind(function() {
+                                                                        status_button("Error contacting server",
+                                                        				LEVEL_ERROR, "retry", bind(this.rm, this, true));
+                                                                                    }
+                                                                    ,this)
+                                                                   )
+                                            },this),
+                                bind(function() {
+                                                  status_button("Error contacting server",
+                                                  LEVEL_ERROR, "retry", bind(this.rm, this, true));
+                                                },this)
+                           );
 	}
 
 	this.rm_autosaves = function(override) {
@@ -1023,32 +1096,30 @@ function ProjOps() {
 		for( var i in projpage.flist.selection ) {
 			death_list.push(projpage.flist.selection[i].substr(projpage.project.length+2))
 		};
-		death_list = death_list.join(',');
 
 		log("Will delete autosaves: "+death_list);
 
-		var d = loadJSONDoc("./delete", { "team" : team,
-				    "project" : projpage.project,
-				    "files" : death_list,
-				    "kind" : 'AUTOSAVES' });
+        IDE_backend_request("file/co",
+                    { "team" : team,
+				      "project" : projpage.project,
+				      "files" : death_list,
+                      "revision":0
+                    },
 
-		d.addCallback( function(nodes) {
-			status_msg(nodes.Message, LEVEL_OK);
-			projpage.flist.refresh();
-		});
-
-		d.addErrback( function() { status_button("Error contacting server",
-			    LEVEL_ERROR, "retry", bind(this.rm_autosaves, this, true));});
-	}
+		            bind(function(nodes) {
+            			status_msg("Deleted Autosaves", LEVEL_OK);
+	    	      	    projpage.flist.refresh();
+            		}),
+                    bind(function() {
+                        status_button("Error contacting server",
+			            LEVEL_ERROR, "retry", bind(this.rm_autosaves, this, true));
+                    })
+        );
+    }
 
 	this._undel_callback = function(nodes) {
-		num_success = nodes.success.split(',').length
-		if(nodes.status > 0) {
-			status_msg(' '+nodes.status+' files could not be undeleted, '+num_success+' succeeded', LEVEL_ERROR);
-		} else {
-			status_button("Successfully undeleted "+num_success+' file(s)',
-			LEVEL_OK, 'goto HEAD', bind(projpage.flist.change_rev, projpage.flist, 'HEAD'));
-		}
+		status_button("Successfully undeleted file(s)",
+		LEVEL_OK, 'goto HEAD', bind(projpage.flist.change_rev, projpage.flist, 'HEAD'));
 	}
 	this.undel = function() {
 		if(projpage.flist.selection.length == 0) {
@@ -1056,15 +1127,41 @@ function ProjOps() {
 			return;
 		}
 
-		var files = projpage.flist.selection.join(',');
-		var d = loadJSONDoc("./revert", {
-					team : team,
-					files : files,
-					torev : projpage.flist.rev,
-					message : 'Undelete '+files+'to r'+projpage.flist.rev
-				});
-		d.addCallback( bind(this._undel_callback, this));
-		d.addErrback(function() { status_button("Error contacting server", LEVEL_ERROR, "retry", bind(this.undel, this, true));});
+		var files = projpage.flist.selection
+        var project = projpage.project
+
+        for (var i = 0; i < files.length; i++) {
+            files[i] = IDE_path_get_file(files[i])
+        }
+
+        IDE_backend_request("file/co",
+                            {
+                                team:team,
+                                project:project,
+                                files:files,
+                                revision:projpage.flist.rev
+                            },
+                            bind(
+                                function() {
+                                    IDE_backend_request("proj/commit",
+                                                        {
+                                                            team:team,
+                                                            project:project,
+					                                        message : 'Undelete '+files+'to r'+projpage.flist.rev,
+                                                            paths:files
+                                                        },
+                                                        bind(this._undel_callback,this),
+                                                        bind(function() {
+                                                                status_button("Error contacting server", LEVEL_ERROR, "retry", bind(this.undel, this, true)
+                                                                             );
+                                                                        }
+                                                            ,this)
+                                                       )
+                                }
+                            ,this),
+                            bind(function() { status_button("Error contacting server", LEVEL_ERROR, "retry", bind(this.undel, this, true));},this)
+        )
+
 	}
 
 	this.check_code = function() {

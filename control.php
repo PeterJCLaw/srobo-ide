@@ -65,7 +65,7 @@ catch (Exception $e)
 
 if ($config->getConfig('debug'))
 {
-	$output->setOutput('debug', ob_get_contents());
+	$output->setOutput('debug', explode("\n", ob_get_contents()));
 }
 ob_end_clean();
 

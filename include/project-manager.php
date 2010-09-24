@@ -58,7 +58,7 @@ class ProjectManager
 		$projects = array();
 		foreach ($scan as $item)
 		{
-			if (preg_match('/^([a-zA-Z0-9_ -]+)\\.git$/', $item, $matches))
+			if (preg_match('/^([^\"]+)\\.git$/', $item, $matches))
 			{
 				$projects[] = $matches[1];
 			}
@@ -66,9 +66,24 @@ class ProjectManager
 		return $projects;
 	}
 
+    public function copyRepository($team, $project, $new)
+    {
+        //copy the master repository
+        $masterPathOld = $this->getMasterRepoPath($team, $project);
+        $masterPathNew = $this->getMasterRepoPath($team, $new);
+        $shellOld = escapeshellarg($masterPathOld);
+        $shellNew = escapeshellarg($masterPathNew);
+        shell_exec("cp -r $shellOld $shellNew");
+
+    }
+
+    public function getMasterRepoPath($team, $project) {
+		return $this->rootProjectPath . "/$team/master/$project.git";
+    }
+
 	public function getMasterRepository($team, $project)
 	{
-		$path = $this->rootProjectPath . "/$team/master/$project.git";
+        $path = $this->getMasterRepoPath($team, $project);
 		return new GitRepository($path);
 	}
 
