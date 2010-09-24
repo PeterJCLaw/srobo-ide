@@ -154,15 +154,19 @@ ProjPage.prototype.CreateCopyProject = function(newProjName) {
 	cMsg = 'Copying project '+this.project+' to '+newProjName;
 	log(cMsg);
 
-	var d = loadJSONDoc("./copyproj", { 'team' : team,
-				'src' : '/'+this.project,
-				'dest' : '/'+newProjName
-			});
-	d.addCallback( bind( partial(this._CopyProjectSuccess, newProjName), this));
-	d.addErrback( bind( function() {
-		status_button( "Copy Project: Error contacting server", LEVEL_ERROR, "retry",
-			bind(this.CreateCopyProject, this, newProjName) );
-	}, this ) );
+    IDE_backend_request("proj/copy",
+                        {
+                            "team":team,
+                            "project":this.project,
+                            "new-name":newProjName,
+                        },
+                        bind( partial(this._CopyProjectSuccess, newProjName), this),
+	                    bind( function() {
+                		    status_button( "Copy Project: Error contacting server", LEVEL_ERROR, "retry",
+                			bind(this.CreateCopyProject, this, newProjName) );
+                    	}, this ) );
+
+
 }
 
 ProjPage.prototype._CopyProjectSuccess = function(newProjName, nodes) {
