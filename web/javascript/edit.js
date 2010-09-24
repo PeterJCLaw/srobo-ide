@@ -418,6 +418,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		                    bind(function() {
 		                    	IDE_backend_request("proj/commit", {team: team,
 		                    	                                 project: IDE_path_get_project(this.path),
+                                                                 paths: [IDE_path_get_file(this.path)],
 		                    	                                 message: this._commitMsg},
 		                    	                                 bind(this._receive_repo_save, this),
 		                    	                                 bind(this._error_receive_repo_save, this));
