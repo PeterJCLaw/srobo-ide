@@ -1107,7 +1107,7 @@ function ProjOps() {
                     },
 
 		            bind(function(nodes) {
-            			status_msg(nodes.message, LEVEL_OK);
+            			status_msg("Deleted Autosaves", LEVEL_OK);
 	    	      	    projpage.flist.refresh();
             		}),
                     bind(function() {
