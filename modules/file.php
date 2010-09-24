@@ -109,7 +109,6 @@ class FileModule extends Module
         if ($revision == 0) {
             foreach ($paths as $file) {
                 $this->repository()->checkoutFile($file);
-                $output->setOutput("nuked","nuked");
             }
 
             $output->setOutput("message", "deleted autosaves");
