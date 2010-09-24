@@ -106,15 +106,18 @@ class FileModule extends Module
         $paths = $input->getInput("files");
         $revision = $input->getInput("revision");
         //latest
-        if ($revision == 0) {
+        $output->setOutput("rev", $revision);
+        if ($revision === 0) {
             foreach ($paths as $file) {
                 $this->repository()->checkoutFile($file);
             }
 
-            $output->setOutput("message", "deleted autosaves");
-        //undelete, one file only
         } else {
-            throw new Exception("not implemented");
+            $output->setOutput("revision reverting","");
+            foreach ($paths as $file) {
+                $output->setOutput("ponies","ponies");
+                $this->repository()->checkoutFile($file,$revision);
+            }
         }
 
         return true;

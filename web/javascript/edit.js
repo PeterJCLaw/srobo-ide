@@ -289,7 +289,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	// Start load the file contents
 	this._load_contents = function() {
 		IDE_backend_request("file/get", { team : this.team,
-		                   project: IDE_path_get_project(this.path),
+		                   project: this.project,
 						   path : IDE_path_get_file(this.path)/*,
 						   revision : this.rev*/},
 						   bind(this._recv_contents, this),
@@ -669,19 +669,16 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._get_revisions = function() {
 		logDebug("retrieving file history");
 		this._receive_revisions({log: []});
-        if (projct != "" && project != null) {
-            IDE_backend_request('file/log', {
-                    team: team,
-                 project: IDE_path_get_project(this.path),
-                    path: IDE_path_get_file(this.path),
-                    user: null,
-                  offset: 0
-                },
-                bind(this._receive_revisions, this),
-                bind(this._error_receive_revisions, this)
-            );
-        }
-	}
+        IDE_backend_request('file/log', {
+                team: team,
+             project: IDE_path_get_project(this.path),
+                path: IDE_path_get_file(this.path),
+              offset: 0
+            },
+            bind(this._receive_revisions, this),
+            bind(this._error_receive_revisions, this)
+        );
+    }
 
 	//initialisation
 	this._init();
