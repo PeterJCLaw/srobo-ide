@@ -1118,13 +1118,8 @@ function ProjOps() {
     }
 
 	this._undel_callback = function(nodes) {
-		num_success = nodes.success.split(',').length
-		if(nodes.status > 0) {
-			status_msg(' '+nodes.status+' files could not be undeleted, '+num_success+' succeeded', LEVEL_ERROR);
-		} else {
-			status_button("Successfully undeleted "+num_success+' file(s)',
-			LEVEL_OK, 'goto HEAD', bind(projpage.flist.change_rev, projpage.flist, 'HEAD'));
-		}
+		status_button("Successfully undeleted file(s)",
+		LEVEL_OK, 'goto HEAD', bind(projpage.flist.change_rev, projpage.flist, 'HEAD'));
 	}
 	this.undel = function() {
 		if(projpage.flist.selection.length == 0) {
@@ -1132,15 +1127,41 @@ function ProjOps() {
 			return;
 		}
 
-		var files = projpage.flist.selection.join(',');
-		var d = loadJSONDoc("./revert", {
-					team : team,
-					files : files,
-					torev : projpage.flist.rev,
-					message : 'Undelete '+files+'to r'+projpage.flist.rev
-				});
-		d.addCallback( bind(this._undel_callback, this));
-		d.addErrback(function() { status_button("Error contacting server", LEVEL_ERROR, "retry", bind(this.undel, this, true));});
+		var files = projpage.flist.selection
+        var project = projpage.project
+
+        for (var i = 0; i < files.length; i++) {
+            files[i] = IDE_path_get_file(files[i])
+        }
+
+        IDE_backend_request("file/co",
+                            {
+                                team:team,
+                                project:project,
+                                files:files,
+                                revision:projpage.flist.rev
+                            },
+                            bind(
+                                function() {
+                                    IDE_backend_request("proj/commit",
+                                                        {
+                                                            team:team,
+                                                            project:project,
+					                                        message : 'Undelete '+files+'to r'+projpage.flist.rev,
+                                                            paths:files
+                                                        },
+                                                        bind(this._undel_callback,this),
+                                                        bind(function() {
+                                                                status_button("Error contacting server", LEVEL_ERROR, "retry", bind(this.undel, this, true)
+                                                                             );
+                                                                        }
+                                                            ,this)
+                                                       )
+                                }
+                            ,this),
+                            bind(function() { status_button("Error contacting server", LEVEL_ERROR, "retry", bind(this.undel, this, true));},this)
+        )
+
 	}
 
 	this.check_code = function() {

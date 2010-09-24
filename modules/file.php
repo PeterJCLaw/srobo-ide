@@ -107,7 +107,7 @@ class FileModule extends Module
         $revision = $input->getInput("revision");
         //latest
         $output->setOutput("rev", $revision);
-        if ($revision === 0) {
+        if ($revision === 0 || $revision === "HEAD") {
             foreach ($paths as $file) {
                 $this->repository()->checkoutFile($file);
             }
@@ -120,6 +120,7 @@ class FileModule extends Module
             }
         }
 
+        $output->setOutput("success",true);
         return true;
     }
 
