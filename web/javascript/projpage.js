@@ -918,11 +918,32 @@ function ProjOps() {
 				"old-path": IDE_path_get_file(src),
 				"new-path": IDE_path_get_file(dest)
 			},
-			bind( this._mv_success, this ),
+            //on move success, do a commit
+			bind( function() {IDE_backend_request("proj/commit",{
+                    team:team,
+                    project:IDE_path_get_project(src),
+                    paths:[IDE_path_get_file(src),IDE_path_get_file(dest)],
+                    message:cmsg
+                  },
+                  //bind commit success to _mv_success
+                  bind(this._mv_success,this),
+                  //begin binding commit failure to move failure callback
+			      bind( function () {
+				            status_button( "Error moving files/folders", LEVEL_ERROR, "retry",
+			                bind( this._mv_cback, this, dest, cmsg ) );
+			            }, this
+                  )
+                  //end binding commit failure to move failure callback
+                 )},
+               this),
+            //end move success bind
+            //on move failure, show an error
 			bind( function () {
 					status_button( "Error moving files/folders", LEVEL_ERROR, "retry",
-						bind( this._mv_cback, this, dest, cmsg ) );
-			}, this )
+					                bind( this._mv_cback, this, dest, cmsg )
+                                 );
+                  }, this
+                )
 		);
 	}
 
@@ -944,13 +965,12 @@ function ProjOps() {
 
 	}
 
-	this._cp_callback1 = function(nodes) {
-		if(nodes.status > 0) {
-			status_msg("ERROR COPYING: "+nodes.message, LEVEL_ERROR);
-		} else {
-			status_msg("Successful Copy: "+nodes.message, LEVEL_OK);
+	this._cp_callback1 = function() {
+            logDebug("ponies");
+			status_msg("Successful Copy", LEVEL_OK);
+            logDebug("ponies2");
 			projpage.flist.refresh();
-		}
+            logDebug("ponies3");
 	}
 	this._cp_callback2 = function(fname, cmsg) {
 		logDebug("copying "+projpage.flist.selection[0]+" to "+fname);
@@ -966,11 +986,32 @@ function ProjOps() {
 				"old-path": IDE_path_get_file(projpage.flist.selection[0]),
 				"new-path": IDE_path_get_file(fname)
 			},
-			bind(this._cp_callback1, this),
+			bind(function() {
+                    logDebug("in ide backend proj commit");
+                    IDE_backend_request("proj/commit", {
+                                                        team:team,
+                                                        project:IDE_path_get_project(projpage.flist.selection[0]),
+                                                        message:cmsg,
+                                                        paths:[IDE_path_get_file(fname)]
+                                                      },
+                                            bind(
+                                                this._cp_callback1
+                                                ,this
+                                            ),
+
+                                            bind( function() {
+                                                status_button("Error contacting server", LEVEL_ERROR, "retry",
+                                                bind(this._cp_callback2, this, fname, cmsg));
+                                                }, this
+                                            )
+
+                 )}, this
+                ),
 			bind( function() {
 					status_button("Error contacting server", LEVEL_ERROR, "retry",
 					bind(this._cp_callback2, this, fname, cmsg));
-				}, this )
+				  }, this
+                )
 		);
 	}
 	this.cp = function() {
