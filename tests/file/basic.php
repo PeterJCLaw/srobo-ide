@@ -35,7 +35,7 @@ $repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/
 
 $projectManager = ProjectManager::getInstance();
 $projectManager->createRepository($input->getInput("team"), $input->getInput("project"));
-$projectManager->getUserRepository(1, 'monkies', 'bees');
+$repo = $projectManager->getUserRepository(1, 'monkies', 'bees');
 test_true(is_dir($repopath), "created repo did not exist");
 
 $input->setInput('path', 'wut');
@@ -52,11 +52,16 @@ $file->dispatchCommand('cp');
 test_true(file_exists("$repopath/wut"), 'old file was deleted during cp');
 test_true(file_exists("$repopath/huh"), 'new file not created during cp');
 test_equal(file_get_contents("$repopath/huh"), 'deathcakes', 'new file had wrong content after cp');
+$input->setInput("files", array("wut"));
+$repo->stage("wut");
 $file->dispatchCommand('del');
 test_false(file_exists("$repopath/wut"), 'file not deleted during del');
 $input->setInput('old-path', 'huh');
 $input->setInput('new-path', 'wut');
+$repo->stage("huh");
 $file->dispatchCommand('mv');
+
+$repo->commit("bees","bees","bees@example.com");
 test_true(file_exists("$repopath/wut"), 'target did not exist after move');
 test_false(file_exists("$repopath/huh"), 'old file still exists after move');
 $input->setInput('path', '.');
