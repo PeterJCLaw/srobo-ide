@@ -335,7 +335,7 @@ class GitRepository
 	public function removeFile($path)
 	{
 		$shell_path = escapeshellarg($path);
-		$this->gitExecute(true, "rm -f $shell_path");
+		$this->gitExecute(true, "rm -rf $shell_path");
 	}
 
 	/**
