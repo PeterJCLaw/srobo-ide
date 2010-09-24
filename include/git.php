@@ -327,7 +327,6 @@ class GitRepository
 	{
 		touch($this->working_path . "/$path");
 		$shell_path = escapeshellarg($path);
-		$this->gitExecute(true, "add $shell_path");
 	}
 
 	/**
@@ -379,9 +378,15 @@ class GitRepository
 	public function putFile($path, $content)
 	{
 		file_put_contents($this->working_path . "/$path", $content);
+	}
+
+    /**
+     * Stages a file
+     */
+    public function stage($path) {
 		$shell_path = escapeshellarg($path);
 		$this->gitExecute(true, "add $shell_path");
-	}
+    }
 
 	/**
 	 * Gets a diff:

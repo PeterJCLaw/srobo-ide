@@ -109,6 +109,13 @@ class ProjModule extends Module
 
 		$currentUser = $auth->getCurrentUser();
 
+        $files = $input->getInput("paths");
+        //stage the files
+        foreach ($files as $file) {
+            $output->setOutput("loop","loop");
+            $this->projectRepository->stage($file);
+        }
+
 		$this->projectRepository->commit($message,
 		                                 $auth->displayNameForUser($currentUser),
 		                                 $auth->emailForUser($currentUser));
