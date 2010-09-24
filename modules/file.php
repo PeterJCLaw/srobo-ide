@@ -56,6 +56,7 @@ class FileModule extends Module
 		$this->installCommand('lint', array($this, 'lintFile'));
 		$this->installCommand('diff', array($this, 'diff'));
 		$this->installCommand('mkdir', array($this, 'makeDirectory'));
+        $this->installCommand("co", array($this, "checkoutFile"));
 	}
 
 	private function verifyTeam()
@@ -98,6 +99,28 @@ class FileModule extends Module
         $output->setOutput("ponies", $uncleanOut);
 		return true;
 	}
+
+    public function checkoutFile() {
+        $input = Input::getInstance();
+        $output = Output::getInstance();
+        $paths = $input->getInput("files");
+        $revision = $input->getInput("revision");
+        //latest
+        if ($revision == 0) {
+            foreach ($paths as $file) {
+                $this->repository()->checkoutFile($file);
+                $output->setOutput("nuked","nuked");
+            }
+
+            $output->setOutput("message", "deleted autosaves");
+        //undelete, one file only
+        } else {
+            throw new Exception("not implemented");
+        }
+
+        return true;
+    }
+
 
 	public function listFiles()
 	{

@@ -254,6 +254,12 @@ class GitRepository
 		}
 	}
 
+    public function checkoutFile($file) {
+        $shellPath = escapeshellarg($file);
+        Output::getInstance()->setOutput("file-path",$shellPath);
+        $this->gitExecute(true, "checkout $shellPath");
+    }
+
 	/**
 	 * Pushes changes upstream.
 	 */

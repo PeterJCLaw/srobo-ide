@@ -1096,23 +1096,26 @@ function ProjOps() {
 		for( var i in projpage.flist.selection ) {
 			death_list.push(projpage.flist.selection[i].substr(projpage.project.length+2))
 		};
-		death_list = death_list.join(',');
 
 		log("Will delete autosaves: "+death_list);
 
-		var d = loadJSONDoc("./delete", { "team" : team,
-				    "project" : projpage.project,
-				    "files" : death_list,
-				    "kind" : 'AUTOSAVES' });
+        IDE_backend_request("file/co",
+                    { "team" : team,
+				      "project" : projpage.project,
+				      "files" : death_list,
+                      "revision":0
+                    },
 
-		d.addCallback( function(nodes) {
-			status_msg(nodes.Message, LEVEL_OK);
-			projpage.flist.refresh();
-		});
-
-		d.addErrback( function() { status_button("Error contacting server",
-			    LEVEL_ERROR, "retry", bind(this.rm_autosaves, this, true));});
-	}
+		            bind(function(nodes) {
+            			status_msg(nodes.message, LEVEL_OK);
+	    	      	    projpage.flist.refresh();
+            		}),
+                    bind(function() {
+                        status_button("Error contacting server",
+			            LEVEL_ERROR, "retry", bind(this.rm_autosaves, this, true));
+                    })
+        );
+    }
 
 	this._undel_callback = function(nodes) {
 		num_success = nodes.success.split(',').length
