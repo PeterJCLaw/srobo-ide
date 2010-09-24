@@ -182,7 +182,6 @@ class GitRepository
 
     public function gitMKDir($path) {
         $dir = $this->working_path . "/" . $path;
-        Output::getInstance()->setOutput("dir",$dir);
         mkdir_full($dir);
     }
 
@@ -256,7 +255,6 @@ class GitRepository
 
     public function checkoutFile($file) {
         $shellPath = escapeshellarg($file);
-        Output::getInstance()->setOutput("file-path",$shellPath);
         $this->gitExecute(true, "checkout $shellPath");
     }
 
