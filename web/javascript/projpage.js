@@ -1040,21 +1040,38 @@ function ProjOps() {
 		for( var i in projpage.flist.selection ) {
 			death_list.push(projpage.flist.selection[i].substr(projpage.project.length+2))
 		};
-		death_list = death_list.join(',');
 
 		logDebug("will delete: "+death_list);
 
-		var d = loadJSONDoc("./delete", { "team" : team,
-						  "project" : projpage.project,
-						  "files" : death_list,
-						  "kind" : 'ALL' });
-		d.addCallback( function(nodes) {
-			status_msg(nodes.Message, LEVEL_OK)
-			projpage.flist.refresh();
-		});
-
-		d.addErrback(function() { status_button("Error contacting server",
-				LEVEL_ERROR, "retry", bind(this.rm, this, true));});
+        IDE_backend_request("file/del",
+                            { "team" : team,
+        				      "project" : projpage.project,
+		        			  "files" : death_list,
+                            },
+                            bind(function() {
+                                                IDE_backend_request("proj/commit",
+                                                                    {
+                                                                        team:team,
+                                                                        project:projpage.project,
+                                                                        paths:death_list,
+                                                                        message:"File deletion"
+                                                                    },
+                                                                    bind(function(){
+                                                                        status_msg("files deleted succesfully", LEVEL_OK);
+			                                                            projpage.flist.refresh();
+                                                                    },this),
+                                                                    bind(function() {
+                                                                        status_button("Error contacting server",
+                                                        				LEVEL_ERROR, "retry", bind(this.rm, this, true));
+                                                                                    }
+                                                                    ,this)
+                                                                   )
+                                            },this),
+                                bind(function() {
+                                                  status_button("Error contacting server",
+                                                  LEVEL_ERROR, "retry", bind(this.rm, this, true));
+                                                },this)
+                           );
 	}
 
 	this.rm_autosaves = function(override) {

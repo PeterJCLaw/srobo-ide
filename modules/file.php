@@ -135,8 +135,12 @@ class FileModule extends Module
 	{
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
-		$path   = $input->getInput('path');
-		$this->repository()->removeFile($path);
+        $files = $input->getInput("files");
+
+        foreach ($files as $file) {
+            $output->setOutput("loop","loop");
+    		$this->repository()->removeFile($file);
+        }
 		return true;
 	}
 
