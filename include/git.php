@@ -253,9 +253,13 @@ class GitRepository
 		}
 	}
 
-    public function checkoutFile($file) {
+    public function checkoutFile($file,$revision=null) {
         $shellPath = escapeshellarg($file);
-        $this->gitExecute(true, "checkout $shellPath");
+        if ($revision == null) {
+            $this->gitExecute(true, "checkout $shellPath");
+        } else {
+            $this->gitExecute(true, "checkout $revision -- $shellPath");
+        }
     }
 
 	/**
