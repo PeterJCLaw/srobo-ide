@@ -180,6 +180,12 @@ class GitRepository
 		return $revisions[count($revisions)-1];
 	}
 
+    public function gitMKDir($path) {
+        $dir = $this->working_path . "/" . $path;
+        Output::getInstance()->setOutput("dir",$dir);
+        mkdir_full($dir);
+    }
+
 	/**
 	 * Gets the log between the arguments
 	 */

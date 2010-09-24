@@ -55,6 +55,7 @@ class FileModule extends Module
 		$this->installCommand('log', array($this, 'fileLog'));
 		$this->installCommand('lint', array($this, 'lintFile'));
 		$this->installCommand('diff', array($this, 'diff'));
+		$this->installCommand('mkdir', array($this, 'makeDirectory'));
 	}
 
 	private function verifyTeam()
@@ -73,6 +74,16 @@ class FileModule extends Module
 		$repo = $pm->getUserRepository($this->team, $this->projectName, AuthBackend::getInstance()->getCurrentUser());
 		return $repo;
 	}
+
+    public function makeDirectory() {
+        $input = Input::getInstance();
+        $output = Output::getInstance();
+        $path = $input->getInput("path");
+        $this->repository()->gitMKDir($path);
+        $output->setOutput("success",1);
+        $output->setOutput("feedback", "successfully created folder $path");
+        return true;
+    }
 
 	public function getFileTreeCompat()
 	{

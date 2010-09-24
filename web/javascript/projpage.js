@@ -858,12 +858,15 @@ function ProjOps() {
 		if(new_name == null || new_name == undefined) {
 			var browser = new Browser(bind(this.new_folder, this), {'type' : 'isDir'});
 		} else {
-			var d = loadJSONDoc("./newdir", { team : team,
-						  path : new_name,
-						  msg : new_msg});
+			IDE_backend_request("file/mkdir",
+                                { team : team,
+						          path : IDE_path_get_file(new_name),
+                                  project:IDE_path_get_project(new_name)
+						        },
+                                    bind(this.receive_newfolder,this),
+                                    bind(this.error_receive_newfolder, new_name, new_msg,this)
+                                );
 
-			d.addCallback( this.receive_newfolder);
-			d.addErrback( this.error_receive_newfolder, new_name, new_msg);
 		}
 	}
 
