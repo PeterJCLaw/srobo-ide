@@ -50,3 +50,4 @@ require_once('include/auth/tokenstrategy/cookiestrategy.php');
 require_once('include/auth/tokenstrategy/iostrategy.php');
 require_once('include/auth/tokenstrategy/tokenstrategy.php');
 require_once('include/file-utils.php');
+require_once('include/notifications.php');
