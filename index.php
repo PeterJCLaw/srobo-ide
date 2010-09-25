@@ -28,10 +28,10 @@ $auth = AuthBackend::getInstance();
 $token = getDefaultTokenStrategy()->getAuthToken();
 if ($auth->validateAuthToken($token))
 {
-	echo file_get_contents('web/index.html');
+	readfile('web/index.html');
 }
 else
 {
-	echo file_get_contents('web/login.html');
+	readfile('web/login.html');
 }
 
