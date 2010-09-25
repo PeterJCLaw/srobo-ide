@@ -4,7 +4,7 @@ TEST basic/input
 TEST basic/output
 TEST basic/user
 TEST basic/case-transform
-
+XFAIL basic/notifications
 TEST basic/compat-tree
 
 TEST utils/mkdir
