@@ -33,6 +33,13 @@ var IDE_async_count = 0;
 var IDE_backend_debug = null;
 showElement = hideElement = function(){};
 
+IDE_notification_callback = function(note) {
+	var object = createDOM('span');
+	object.innerHTML = note + ' [<a href="javascript:status_click();">dismiss</a>]';
+	var message = status_rich_show(object, LEVEL_WARN);
+	setTimeout(message.close, 10000);
+};
+
 function IDE_backend_request(command, args, successCallback, errorCallback) {
 	var rq = JSON.stringify(args);
 	var xhr = new XMLHttpRequest();
@@ -52,6 +59,9 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 			var rp = JSON.parse(rt);
 			if (rp.debug) {
 				IDE_backend_debug = rp.debug;
+			}
+			if (rp.notifications) {
+				rp.notifications.forEach(IDE_notification_callback);
 			}
 			if (rp.error) {
 				errorCallback(rp.error[0], rp.error[1], args);
