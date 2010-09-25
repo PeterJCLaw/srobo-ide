@@ -5,6 +5,8 @@ TEST basic/output
 TEST basic/user
 TEST basic/case-transform
 
+XFAIL basic/compat-tree
+
 TEST utils/mkdir
 
 TEST auth/single
