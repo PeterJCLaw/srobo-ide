@@ -26,8 +26,19 @@ function path_walk($callback, $path, $reverse = false)
 
 function delete_recursive($path)
 {
-	$shell_path = escapeshellarg($path);
-	system("rm -rf $shell_path");
+	if (is_dir($path))
+	{
+		$contents = scandir($path);
+		$contents = array_filter($contents, function($x) { return $x != '.' &&
+		                                                          $x != '..'; });
+		$contents = array_map(function($x) use ($path) { return "$path/$x"; }, $contents);
+		array_map('delete_recursive', $contents);
+		rmdir($path);
+	}
+	else
+	{
+		unlink($path);
+	}
 }
 
 function mkdir_full($path, $mode = 0755)
