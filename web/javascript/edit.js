@@ -483,17 +483,6 @@ function EditTab(iea, team, project, path, rev, mode) {
 		                                 data: this.content},
 		                                 bind(this._receive_autosave, this),
 		                                 bind(this._on_keydown, this, 'auto'));
-		/*
-		var d = postJSONDoc("./autosave/savefile", {
-					queryString : { team : team,
-						path : this.path,
-						rev : this.rev },
-					sendContent : {content : this.contents}
-				});
-
-		d.addCallback( bind(this._receive_autosave, this));
-		d.addErrback( bind(this._on_keydown, this, 'auto'));	//if it fails then set it up to try again
-		*/
 	}
 
 	//ajax event handler for autosaving to server, based on the one for commits
