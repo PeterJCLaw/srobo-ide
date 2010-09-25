@@ -1,6 +1,6 @@
 _REPOS = repos/1 repos/2
 _ZIPS = zips/1 zips/2
-_FOLDERS = settings $(_REPOS) $(_ZIPS) /tmp/ide-feed-cache
+_FOLDERS = settings $(_REPOS) $(_ZIPS) /tmp/ide-feed-cache notifications
 
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
