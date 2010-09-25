@@ -28,8 +28,10 @@ $projectManager = ProjectManager::getInstance();
 $projectManager->createRepository(1, 'monkies');
 $repo = $projectManager->getUserRepository(1, 'monkies', 'bees');
 $repo->putFile("ponies.py", "print 'cows'\n");
+$repo->stage("ponies.py");
 $repo->commit("message", "test-name", "test@email.tld");
 $repo->putFile("ponies.py", "print 'spoons'\n");
+$repo->stage("ponies.py");
 $repo->commit("message2", "test-name", "test@email.tld");
 $projectManager->updateRepository(1, 'monkies', 'bees');
 

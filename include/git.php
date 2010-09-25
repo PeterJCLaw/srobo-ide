@@ -72,6 +72,10 @@ class GitRepository
         return $this->working_path;
     }
 
+    public function unstageAll() {
+        $this->gitExecute("reset");
+    }
+
 	/**
 	 * Execute a command with the specified environment variables
 	 */

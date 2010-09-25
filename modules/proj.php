@@ -117,6 +117,9 @@ class ProjModule extends Module
 		$currentUser = $auth->getCurrentUser();
 
         $files = $input->getInput("paths");
+        //gaurd project state by doing a reset
+        $this->projectRepository->unstageAll();
+
         //stage the files
         foreach ($files as $file) {
             $output->setOutput("loop","loop");
