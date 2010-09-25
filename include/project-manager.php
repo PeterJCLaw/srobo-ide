@@ -124,8 +124,16 @@ class ProjectManager
 		ide_log("Created a project $project for team $team");
 	}
 
-	public function deleteRepository($team, $name)
+	public function deleteRepository($team, $project)
 	{
-		// TODO: implement me
+		delete_recursive($this->rootProjectPath . "/$team/master/$project.git");
+		$users = scandir($this->rootProjectPath . "/$team/users");
+		foreach ($users as $user)
+		{
+			if ($user[0] != '.')
+			{
+				delete_recursive($this->rootProjectPath . "/$team/users/$user/$project.git");
+			}
+		}
 	}
 }

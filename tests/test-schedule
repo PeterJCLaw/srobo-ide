@@ -14,7 +14,7 @@ SKIP auth/ldap
 
 TEST proj/create
 TEST proj/log
-XFAIL proj/del
+TEST proj/del
 
 TEST file/basic
 TEST file/simulate/unimplemented

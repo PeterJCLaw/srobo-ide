@@ -29,14 +29,12 @@ $mm = ModuleManager::getInstance();
 $mm->importModules();
 test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
 
-$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/" . $input->getInput("project");
-//create a git repo
-GitRepository::createRepository($repopath);
+$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
 
 $proj = $mm->getModule("proj");
 $proj->dispatchCommand("del");
 
-test_equal(is_dir($repopath), FALSE, "deleted repo existed");
+test_false(is_dir($repopath), "deleted repo existed");
 
 if (is_dir("/tmp/test-repos"))
 {
