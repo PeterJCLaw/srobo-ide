@@ -184,7 +184,8 @@ class GitRepository
 		return $revisions[count($revisions)-1];
 	}
 
-    public function gitMKDir($path) {
+    public function gitMKDir($path)
+    {
         $dir = $this->working_path . "/" . $path;
         mkdir_full($dir);
     }
@@ -300,24 +301,43 @@ class GitRepository
 	/**
 	 * Gets the file tree for the git repository
 	 */
-	public function fileTreeCompat($base)
+	public function fileTreeCompat($base, $subpath = '.')
 	{
-		$root = $this->working_path;
-		$shell_root = escapeshellarg($root);
-		$content = shell_exec("find $shell_root/* -type f");
-		$parts = explode("\n", $content);
-		$parts = array_map(function($x) use($root) { return str_replace("$root/", '', $x); }, $parts);
-		$parts = array_filter($parts, function($x) { return $x != ''; });
 		$hash = $this->getCurrentRevision();
-		return array_map(function($x) use($hash, $base)
+		$result = array();
+		for ($iterator = new FilesystemIterator($this->working_path . "/$subpath");
+		     $iterator->valid();
+		     $iterator->next())
 		{
-			return array('kind' => 'FILE',
-			             'name' => $x,
-			             'rev'  => $hash,
-			             'path' => "/$base/$x",
-			         'children' => array(),
-			         'autosave' => 0);
-		}, $parts);
+			$raw_path = $iterator->key();
+			$realpath = substr($raw_path, strlen($this->working_path . '/'));
+			$realpath = str_replace('./', '', $realpath);
+			$filename = basename($realpath);
+			$fileinfo = $iterator->current();
+			if ($filename    == '' ||
+			    $filename[0] == '.' ||
+			    $filename    == '__init__.py')
+				continue;
+			if ($fileinfo->isFile())
+			{
+				$result[] = array('kind'     => 'FILE',
+				                  'name'     => $filename,
+				                  'rev'      => $hash,
+				                  'path'     => "/$base/$realpath",
+				                  'children' => array(),
+				                  'autosave' => 0);
+			}
+			elseif ($fileinfo->isDir())
+			{
+				$result[] = array('kind'     => 'FOLDER',
+				                  'name'     => $filename,
+				                  'rev'      => $hash,
+				                  'path'     => "/$base/$realpath",
+				                  'children' => $this->fileTreeCompat($base, "$subpath/$realpath"),
+				                  'autosave' => 0);
+			}
+		}
+		return $result;
 	}
 
 	/**
