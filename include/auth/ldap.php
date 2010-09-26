@@ -93,10 +93,10 @@ class LDAPAuth extends SecureTokenAuth
 	public function setTeamDesc($team, $name)
 	{
 		$userTeams = $this->getTeams($this->getCurrentUser());
-		$prefix = Configuration::getInstance()->getConfig('ide.team.prefix');
+		$prefix = Configuration::getInstance()->getConfig('ldap.team.prefix');
 		if(!in_array($team, $userTeams))
 		{
-			throw new Exception('You cannot change the name of a team that you are not in!', E_AUTH_DENIED);
+			throw new Exception('You cannot change the name of a team that you are not in!', E_PERM_DENIED);
 		}
 		else
 		{
