@@ -160,6 +160,9 @@ Admin.prototype._receiveGetBlogFeeds = function(nodes) {
 	var options = {unchecked:'Unchecked',valid:'Valid',invalid:'Invalid'};
 	//iterate over all feeds and append them to the table
 	for( var i=0; i<nodes.feeds.length; i++ ) {
+		// Add an id to each field to ensure that they're unique.
+		// These used to be the DB ids, but there's no DB any more...
+		nodes.feeds[i].id = i;
 		var feed = nodes.feeds[i];
 		td_user = TD({'class':'user'}, feed.user);
 		td_url = TD({'class':'url'}, A({href:feed.url},feed.url));
