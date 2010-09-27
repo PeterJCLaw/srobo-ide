@@ -9,6 +9,9 @@ var tabbar = null;
 // The project page
 var projpage = null;
 
+// Centralised poll handling
+var pollhandler = null;
+
 // The simulator page
 var simpage = null;
 
@@ -87,6 +90,9 @@ function load_gui() {
 	disconnect( tabchange_ident );
 
 	tabbar = new TabBar();
+
+	// Centralised poll handling
+	pollhandler = new PollHandler();
 
 	// Edit page
 	editpage = new EditPage();
