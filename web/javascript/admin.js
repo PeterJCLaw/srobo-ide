@@ -99,16 +99,16 @@ Admin.prototype._editTeam = function(ref) {
 		replaceChildNodes(cell, input);
 		button.innerHTML = 'Save';
 	} else {	//save it
-		var d = loadJSONDoc("./admin/teamname", {
-				'id':ref.id,
-				'name':cell.firstChild.value
-			});
-
+		IDE_backend_request("admin/team-name-put",
+			{
+			   'id': ref.id,
+			 'name': cell.firstChild.value
+			},
+			bind( this._receiveEditTeam, this, ref ),
+			bind( this._errorEditTeam, this, ref )
+		);
 		cell.firstChild.disabled = true;
 		button.disabled = true;
-
-		d.addCallback( bind( this._receiveEditTeam, this, ref) );
-		d.addErrback( bind( this._errorEditTeam, this, ref) );
 	}
 }
 Admin.prototype._receiveEditTeam = function(ref, nodes) {

@@ -45,6 +45,8 @@ class AdminModule extends Module
 		$auth->setTeamDesc($team, $name);
 
 		$output->setOutput('id', $team);
+		// TODO: return false on failure
+		$output->setOutput('success', true);
 		// TODO: detect failure, and return the old value in that case.
 		$output->setOutput('name', $name);
 	}
