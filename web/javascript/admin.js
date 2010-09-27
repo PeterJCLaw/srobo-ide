@@ -182,10 +182,10 @@ Admin.prototype._errorGetBlogFeeds = function() {
 }
 Admin.prototype.GetBlogFeeds = function() {
 	log("Admin: Retrieving blog feeds");
-	var d = loadJSONDoc("./admin/listblogfeeds", {});
-
-	d.addCallback( bind(this._receiveGetBlogFeeds, this) );
-	d.addErrback( bind(this._errorGetBlogFeeds, this) );
+	IDE_backend_request("admin/feed-status-get", {},
+		bind(this._receiveGetBlogFeeds, this),
+		bind(this._errorGetBlogFeeds, this)
+	);
 }
 /* *****    End Student blog feed listing code	***** */
 

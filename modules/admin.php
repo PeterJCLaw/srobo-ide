@@ -7,6 +7,7 @@ class AdminModule extends Module
 	public function __construct()
 	{
 		$this->installCommand('team-name-put', array($this, 'saveTeamName'));
+		$this->installCommand('feed-status-get', array($this, 'getBlogFeeds'));
 	}
 
 	/**
@@ -49,5 +50,16 @@ class AdminModule extends Module
 		$output->setOutput('success', true);
 		// TODO: detect failure, and return the old value in that case.
 		$output->setOutput('name', $name);
+	}
+
+	/**
+	 * Gets the user's blog feed, set on the switchboard page
+	 */
+	public function getBlogFeeds()
+	{
+		$this->ensureAuthed();
+		$output = Output::getInstance();
+		$feeds  = Feeds::getInstance()->getFeeds();
+		$output->setOutput('feeds', $feeds);
 	}
 }
