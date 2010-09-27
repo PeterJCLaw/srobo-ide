@@ -194,7 +194,7 @@ Admin.prototype.GetBlogFeeds = function() {
 
 /* *****	RSS feed validation code	***** */
 Admin.prototype._receiveBlogStatus = function(ref, nodes) {
-	if(nodes.success > 0 ) {
+	if(nodes.success) {
 		this._prompt = status_msg("Blog feed updated", LEVEL_OK);
 	} else {
 		this._errorBlogStatus(ref, nodes);
@@ -208,13 +208,14 @@ Admin.prototype._errorBlogStatus = function(ref, nodes) {
 Admin.prototype.setBlogStatus = function(ref) {
 	log("Admin: Setting blog feed status");
 	var status = $('admin-feeds-'+ref.id).value;
-	var d = loadJSONDoc("./admin/setfeedstatus", {
-			id:ref.id,
-			url:ref.url,
-			status:status
-		});
-	d.addCallback( bind( this._receiveBlogStatus, this, ref) );
-	d.addErrback( bind( this._errorBlogStatus, this, ref) );
+	IDE_backend_request("admin/feed-status-put",
+		{
+		    url: ref.url,
+		 status: status
+		},
+		bind( this._receiveBlogStatus, this, ref ),
+		bind( this._errorBlogStatus, this, ref )
+	);
 
 	ref.status = status;
 	this.showBlogStatus(ref);
