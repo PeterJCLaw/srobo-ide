@@ -36,5 +36,21 @@ class PollModule extends Module
 	public function poll()
 	{
 		$this->ensureAuthed();
+		$input  = Input::getInstance();
+		$output = Output::getInstance();
+
+		$team = $input->getInput('team');
+
+		$manager = ProjectManager::getInstance();
+		$projects = $manager->listRepositories($team);
+
+		$projectRevs = array();
+		foreach ($projects as $project)
+		{
+			$repo = $manager->getMasterRepository($team, $project);
+			$projectRevs[$project] = $repo->getCurrentRevision();
+		}
+
+		$output->setOutput('projects', $projectRevs);
 	}
 }
