@@ -172,7 +172,7 @@ class GitRepository
 	 */
 	public function getCurrentRevision()
 	{
-		return $this->gitExecute(true, 'describe --always');
+		return $this->gitExecute(false, 'describe --always');
 	}
 
 	/**
