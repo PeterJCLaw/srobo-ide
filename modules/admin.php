@@ -8,6 +8,7 @@ class AdminModule extends Module
 	{
 		$this->installCommand('team-name-put', array($this, 'saveTeamName'));
 		$this->installCommand('feed-status-get', array($this, 'getBlogFeeds'));
+		$this->installCommand('feed-status-put', array($this, 'setFeedStatus'));
 	}
 
 	/**
@@ -61,5 +62,43 @@ class AdminModule extends Module
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance()->getFeeds();
 		$output->setOutput('feeds', $feeds);
+	}
+
+	/**
+	 * Sets the status of a blog feed
+	 */
+	public function setFeedStatus()
+	{
+		$this->ensureAuthed();
+		$input  = Input::getInstance();
+		$output = Output::getInstance();
+		$feeds  = Feeds::getInstance();
+
+		$feedurl    = $input->getInput('url');
+		$feedstatus = $input->getInput('status');
+
+		$userfeed = $feeds->findFeed('url', $feedurl);
+
+		if ($userfeed == null)
+		{
+			$output->setOuptut('success', false);
+			return;
+		}
+
+		$userfeed->checked = ($feedstatus != 'unchecked');
+		$userfeed->valid   = ($feedstatus == 'valid');
+
+		$newfeeds[] = $userfeed;
+		$feedsList = $feeds->getFeeds();
+		foreach ($feedsList as $feed)
+		{
+			if ($feed->user != $userfeed->user)
+			{
+				$newfeeds[] = $feed;
+			}
+		}
+
+		$success = intval($feeds->putFeeds($newfeeds));
+		$output->setOutput('success', $success);
 	}
 }
