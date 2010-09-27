@@ -5,10 +5,10 @@
 
 function PollHandler() {
 	// hold the most recent data for the poll
-	this._old_data = null;
+	this._old_data = {};
 
 	// hold the most recent data for the poll, in json form
-	this._old_data_json = null;
+	this._old_data_json = '';
 
 	// store a copy of our instance!
 	PollHandler.Instance = this;
