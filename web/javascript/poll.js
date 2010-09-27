@@ -63,7 +63,7 @@ PollHandler.prototype._errorRecievePoll = function() {
 }
 
 PollHandler.prototype._doPoll = function() {
-	IDE_backend_request('poll/poll', {},
+	IDE_backend_request('poll/poll', { team: team },
 		bind( this._recievePoll, this ),
 		bind( this._errorRecievePoll, this )
 	);
