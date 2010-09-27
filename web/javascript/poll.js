@@ -51,7 +51,7 @@ PollHandler.prototype._recievePoll = function(nodes) {
 		}
 
 		// shout that this piece of data has changed
-		signal( this, 'onchange-'+labal, data );
+		signal( this, 'onchange-'+label, data );
 	}
 
 	this._old_data = nodes;
