@@ -54,7 +54,7 @@ class AdminModule extends Module
 	}
 
 	/**
-	 * Gets the user's blog feed, set on the switchboard page
+	 * Get all the info for all user blog feeds we know about
 	 */
 	public function getBlogFeeds()
 	{
