@@ -4,6 +4,12 @@
  */
 
 function PollHandler() {
+	// how long between each poll, in seconds
+	this._poll_delay = 7;
+
+	// how long to wait before retrying a poll if something went awry, in seconds
+	this._poll_delay_err = 2;
+
 	// hold the most recent data for the poll
 	this._old_data = {};
 
@@ -26,12 +32,23 @@ PollHandler.GetInstance = function() {
 /* ***** Initialization code ***** */
 PollHandler.prototype._init = function() {
 	log('PollHandler: Initializing');
+	// start polling
+	this._setupPoll();
+}
+
+PollHandler.prototype._setupPoll = function(delay) {
+	var delay = delay || this._poll_delay;
+	log('PollHandler: Setting up a delayed poll');
+	callLater( delay, bind(this._doPoll, this) );
 }
 /* ***** End Initialization Code ***** */
 
 /* ***** Poll Handling ***** */
 /// look through the data we have and signal that it's new/changed.
 PollHandler.prototype._recievePoll = function(nodes) {
+	// setup the next poll
+	this._setupPoll();
+
 	// shout that we have new data, for anyone that wants it
 	signal( this, 'new-poll-data' );
 
@@ -59,7 +76,8 @@ PollHandler.prototype._recievePoll = function(nodes) {
 }
 
 PollHandler.prototype._errorRecievePoll = function() {
-	// something went wrong
+	// something went wrong, so setup another poll
+	this._setupPoll(this._poll_delay_err);
 }
 
 PollHandler.prototype._doPoll = function() {
