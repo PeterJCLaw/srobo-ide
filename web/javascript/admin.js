@@ -80,7 +80,7 @@ Admin.prototype.ShowTeams = function() {
 	for( var id in user.team_names ) {
 		td_id = TD(null, id);
 		td_name = TD({'class':'name'}, user.team_names[id]);
-		var button = BUTTON(null, 'Edit');
+		var button = BUTTON(null, 'Request name change');
 		this._signals.push(connect(button, 'onclick', bind(this._editTeam, this, {id:id,name:user.team_names[id]})));
 		td_button = TD(null, button);
 		oddeven = i++ % 2 == 0 ? 'even' : 'odd';
@@ -94,36 +94,32 @@ Admin.prototype._editTeam = function(ref) {
 	var row = $('admin-teams-table-'+ref.id);
 	var cell = getFirstElementByTagAndClassName('td', 'name', row);
 	var button = getFirstElementByTagAndClassName('button', null, row);
-	if(button.innerHTML == 'Edit') {
+	if(button.innerHTML == 'Request name change') {
 		var input = INPUT({value:cell.innerHTML});
 		replaceChildNodes(cell, input);
 		button.innerHTML = 'Save';
 	} else {	//save it
-		var d = loadJSONDoc("./admin/teamname", {
-				'id':ref.id,
-				'name':cell.firstChild.value
-			});
-
+		IDE_backend_request("admin/team-name-put",
+			{
+			   'id': ref.id,
+			 'name': cell.firstChild.value
+			},
+			bind( this._receiveEditTeam, this, ref ),
+			bind( this._errorEditTeam, this, ref )
+		);
 		cell.firstChild.disabled = true;
 		button.disabled = true;
-
-		d.addCallback( bind( this._receiveEditTeam, this, ref) );
-		d.addErrback( bind( this._errorEditTeam, this, ref) );
 	}
 }
 Admin.prototype._receiveEditTeam = function(ref, nodes) {
 	var row = $('admin-teams-table-'+ref.id);
 	if(nodes.success) {
-		this._prompt = status_msg("Team name updated", LEVEL_OK);
+		this._prompt = status_msg("Team name change request succeeded, team name will be changed when a mentor has approved it", LEVEL_OK);
 		var cell = getFirstElementByTagAndClassName('td', 'name', row);
+		cell.innerHTML = ref.name;
 		var button = getFirstElementByTagAndClassName('button', null, row);
-		cell.innerHTML = nodes.name;
-		button.innerHTML = 'Edit';
+		button.innerHTML = 'Request name change';
 		button.disabled = false;
-		user.team_names[nodes.id] = nodes.name;
-		if(nodes.id == team) {
-			$('teamname').innerHTML = nodes.name;
-		}
 	} else {
 		this._errorEditTeam(ref, nodes);
 	}
@@ -160,6 +156,9 @@ Admin.prototype._receiveGetBlogFeeds = function(nodes) {
 	var options = {unchecked:'Unchecked',valid:'Valid',invalid:'Invalid'};
 	//iterate over all feeds and append them to the table
 	for( var i=0; i<nodes.feeds.length; i++ ) {
+		// Add an id to each field to ensure that they're unique.
+		// These used to be the DB ids, but there's no DB any more...
+		nodes.feeds[i].id = i;
 		var feed = nodes.feeds[i];
 		td_user = TD({'class':'user'}, feed.user);
 		td_url = TD({'class':'url'}, A({href:feed.url},feed.url));
@@ -182,16 +181,16 @@ Admin.prototype._errorGetBlogFeeds = function() {
 }
 Admin.prototype.GetBlogFeeds = function() {
 	log("Admin: Retrieving blog feeds");
-	var d = loadJSONDoc("./admin/listblogfeeds", {});
-
-	d.addCallback( bind(this._receiveGetBlogFeeds, this) );
-	d.addErrback( bind(this._errorGetBlogFeeds, this) );
+	IDE_backend_request("admin/feed-status-get", {},
+		bind(this._receiveGetBlogFeeds, this),
+		bind(this._errorGetBlogFeeds, this)
+	);
 }
 /* *****    End Student blog feed listing code	***** */
 
 /* *****	RSS feed validation code	***** */
 Admin.prototype._receiveBlogStatus = function(ref, nodes) {
-	if(nodes.success > 0 ) {
+	if(nodes.success) {
 		this._prompt = status_msg("Blog feed updated", LEVEL_OK);
 	} else {
 		this._errorBlogStatus(ref, nodes);
@@ -205,13 +204,14 @@ Admin.prototype._errorBlogStatus = function(ref, nodes) {
 Admin.prototype.setBlogStatus = function(ref) {
 	log("Admin: Setting blog feed status");
 	var status = $('admin-feeds-'+ref.id).value;
-	var d = loadJSONDoc("./admin/setfeedstatus", {
-			id:ref.id,
-			url:ref.url,
-			status:status
-		});
-	d.addCallback( bind( this._receiveBlogStatus, this, ref) );
-	d.addErrback( bind( this._errorBlogStatus, this, ref) );
+	IDE_backend_request("admin/feed-status-put",
+		{
+		    url: ref.url,
+		 status: status
+		},
+		bind( this._receiveBlogStatus, this, ref ),
+		bind( this._errorBlogStatus, this, ref )
+	);
 
 	ref.status = status;
 	this.showBlogStatus(ref);

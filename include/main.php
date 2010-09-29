@@ -43,3 +43,4 @@ require_once('include/output.php');
 require_once('include/project-manager.php');
 require_once('include/user.php');
 require_once('include/notifications.php');
+require_once('include/teamnames.php');

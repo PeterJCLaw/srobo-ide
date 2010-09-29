@@ -42,6 +42,11 @@ class LDAPAuth extends SecureTokenAuth
 		return $teams;
 	}
 
+	public function isCurrentUserAdmin()
+	{
+		return false;
+	}
+
 	public function displayNameForGroup($group)
 	{
 		$user = $this->ldapManager->getUser();
