@@ -45,7 +45,7 @@ class UserModule extends Module
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
 		$output->setOutput('email', $auth->emailForUser($this->username));
 		$output->setOutput('teams', $auth->getCurrentUserTeams());
-		$output->setOutput('is-admin', false);
+		$output->setOutput('is-admin', $auth->isCurrentUserAdmin());
 		if (file_exists("$this->settingsPath/$this->username.json"))
 		{
 			$data = file_get_contents("$this->settingsPath/$this->username.json");

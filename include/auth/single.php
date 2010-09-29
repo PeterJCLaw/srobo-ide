@@ -20,6 +20,11 @@ class SingleAuth extends SecureTokenAuth
 		return Configuration::getInstance()->getConfig("user.default.teams");
 	}
 
+	public function isCurrentUserAdmin()
+	{
+		return (bool) Configuration::getInstance()->getConfig('user.default.is_admin');
+	}
+
 	public function displayNameForGroup($group)
 	{
 		return $group;
@@ -33,5 +38,10 @@ class SingleAuth extends SecureTokenAuth
 	public function emailForUser($user)
 	{
 		return $user . "@" . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'example.com');
+	}
+
+	public function setTeamDesc($team, $name)
+	{
+		throw new Exception('Cannot change team name in single or auto auth modes.', E_NOT_IMPL);
 	}
 }
