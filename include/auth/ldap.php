@@ -89,18 +89,4 @@ class LDAPAuth extends SecureTokenAuth
 			throw new Exception("you aren't authed to ldap", E_LDAP_NOT_AUTHED);
 		}
 	}
-
-	public function setTeamDesc($team, $name)
-	{
-		$userTeams = $this->getTeams($this->getCurrentUser());
-		$prefix = Configuration::getInstance()->getConfig('ldap.team.prefix');
-		if(!in_array($team, $userTeams))
-		{
-			throw new Exception('You cannot change the name of a team that you are not in!', E_PERM_DENIED);
-		}
-		else
-		{
-			$this->ldapManager->changeTeamDesc($prefix.$team, $name);
-		}
-	}
 }
