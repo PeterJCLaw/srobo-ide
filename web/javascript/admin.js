@@ -80,7 +80,7 @@ Admin.prototype.ShowTeams = function() {
 	for( var id in user.team_names ) {
 		td_id = TD(null, id);
 		td_name = TD({'class':'name'}, user.team_names[id]);
-		var button = BUTTON(null, 'Edit');
+		var button = BUTTON(null, 'Request name change');
 		this._signals.push(connect(button, 'onclick', bind(this._editTeam, this, {id:id,name:user.team_names[id]})));
 		td_button = TD(null, button);
 		oddeven = i++ % 2 == 0 ? 'even' : 'odd';
@@ -94,7 +94,7 @@ Admin.prototype._editTeam = function(ref) {
 	var row = $('admin-teams-table-'+ref.id);
 	var cell = getFirstElementByTagAndClassName('td', 'name', row);
 	var button = getFirstElementByTagAndClassName('button', null, row);
-	if(button.innerHTML == 'Edit') {
+	if(button.innerHTML == 'Request name change') {
 		var input = INPUT({value:cell.innerHTML});
 		replaceChildNodes(cell, input);
 		button.innerHTML = 'Save';
@@ -116,7 +116,7 @@ Admin.prototype._receiveEditTeam = function(ref, nodes) {
 	if(nodes.success) {
 		this._prompt = status_msg("Team name change request succeeded, team name will be changed when a mentor has approved it", LEVEL_OK);
 		var button = getFirstElementByTagAndClassName('button', null, row);
-		button.innerHTML = 'Edit';
+		button.innerHTML = 'Request name change';
 		button.disabled = false;
 		user.team_names[nodes.id] = nodes.name;
 		if(nodes.id == team) {
