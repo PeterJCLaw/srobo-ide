@@ -5,7 +5,7 @@ _FOLDERS = settings $(_REPOS) $(_ZIPS) /tmp/ide-feed-cache notifications
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
 
-.PHONY: all default dev docs clean applet
+.PHONY: all default dev docs clean applet folders
 
 # Useful groupings
 default: dev
@@ -20,7 +20,7 @@ clean:
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
-dev: applet $(_FOLDERS)
+dev: applet folders
 
 docs:
 	doxygen doxyfile
@@ -30,6 +30,8 @@ applet/.keystore:
 	keytool -genkeypair -keyalg rsa -alias test-only-applet-key \
 	-storepass $(_JAVA_KEYSTORE_PWD) -keypass $(_JAVA_KEYSTORE_PWD) \
 	-dname "cn=Test User, ou=SR, o=SR, c=UK" -keystore $(_JAVA_KEYSTORE)
+
+folders: $(_FOLDERS)
 
 $(_FOLDERS):
 	mkdir -p -m 777 $@

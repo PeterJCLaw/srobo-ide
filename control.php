@@ -79,19 +79,6 @@ ob_end_clean();
 
 $data = $output->encodeOutput();
 
-// gzip compression
-if (extension_loaded('zlib') &&
-    strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'deflate'))
-{
-	$compress = gzdeflate($data, 9);
-	if (strlen($compress) < strlen($data))
-	{
-		// use the gzip-compressed data
-		header('Content-Encoding: deflate');
-		$data = $compress;
-	}
-}
-
 header('Content-type: text/json');
 header('Content-length: ' . strlen($data));
 
