@@ -83,7 +83,9 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 /// Compare (git) hashes of potentially unequal length
 function IDE_hash_compare(a, b) {
 	var min_hash_length = 6;
-	if(a.length < min_hash_length || b.length < min_hash_length) {
+	if ( typeof(a) != 'string' || typeof(b) != 'string'
+	|| a.length < min_hash_length || b.length < min_hash_length
+	) {
 		return false;
 	}
 	if(a == b) {
