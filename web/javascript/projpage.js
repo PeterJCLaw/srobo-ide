@@ -20,8 +20,6 @@ function ProjPage() {
 	this.flist = null;
 	this.project = "";
 
-	this.last_updated	= new Date();
-
 	// Member functions (declared below)
 	// Public:
 	//  - show: Show and activate the projects page
