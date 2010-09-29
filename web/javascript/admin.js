@@ -114,10 +114,8 @@ Admin.prototype._editTeam = function(ref) {
 Admin.prototype._receiveEditTeam = function(ref, nodes) {
 	var row = $('admin-teams-table-'+ref.id);
 	if(nodes.success) {
-		this._prompt = status_msg("Team name updated", LEVEL_OK);
-		var cell = getFirstElementByTagAndClassName('td', 'name', row);
+		this._prompt = status_msg("Team name change request succeeded, team name will be changed when a mentor has approved it", LEVEL_OK);
 		var button = getFirstElementByTagAndClassName('button', null, row);
-		cell.innerHTML = nodes.name;
 		button.innerHTML = 'Edit';
 		button.disabled = false;
 		user.team_names[nodes.id] = nodes.name;
