@@ -89,15 +89,16 @@ class FileModule extends Module
 	public function getFileTreeCompat()
 	{
 		$output = Output::getInstance();
-        $uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
-        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
-        $results = array();
-        foreach ($cleanOut as $item) {
-            $results[] = $item;
-        }
+		$uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
+		$results = $this->sanitiseFileList($uncleanOut);
 		$output->setOutput('tree', $results);
-        $output->setOutput("ponies", $uncleanOut);
 		return true;
+	}
+
+	private function sanitiseFileList($unclean)
+	{
+		$clean = array_filter($unclean, function($var) {return $var['name'] != '__init__.py';});
+		return array_values($clean);
 	}
 
     public function checkoutFile() {
@@ -130,12 +131,8 @@ class FileModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-        $uncleanOut = $this->repository()->listFiles($path);
-        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
-        $results = array();
-        foreach ($cleanOut as $item) {
-            $results[] = $item;
-        }
+		$uncleanOut = $this->repository()->listFiles($path);
+		$results = sanitiseFileList($uncleanOut);
 		$output->setOutput('files', $results);
 		return true;
 	}
