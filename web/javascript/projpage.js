@@ -341,14 +341,12 @@ ProjFileList.prototype.update = function( pname, team, rev ) {
 		this.rev = rev;
 	}
 
+	// if there's an actual change then show that we're loading something new
 	if( pname != this._project || team != this._team || rev != curr_rev ) {
-		// Hide the list whilst we're loading it
-		swapDOM( "proj-filelist",
-			 DIV( {"id": "proj-filelist",
-			       "class" : "loading"},
-			      "Loading project file listing..." ) );
+		this._show_loading();
 	}
 
+	// store the new values
 	this._project = pname;
 	this._team = team;
 	this.refresh();
@@ -402,6 +400,17 @@ ProjFileList.prototype.refresh = function(auto) {
 	                                         project: this._project,
 	                                         path:    "."},
 	                                         bind(this._received, this), err_handler);
+}
+
+/// Show that we're loading a new file listing.
+/// Should be used when we're changing team, project or revision, but not
+/// if it's just an automatic update.
+ProjFileList.prototype._show_loading = function() {
+	swapDOM( "proj-filelist",
+		DIV( {  id: 'proj-filelist',
+		   'class': 'loading'},
+		   'Loading project file listing...' )
+	);
 }
 
 ProjFileList.prototype._hide = function() {
