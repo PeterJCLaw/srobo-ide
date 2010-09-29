@@ -97,6 +97,7 @@ class FileModule extends Module
         }
 		$output->setOutput('tree', $results);
         $output->setOutput("ponies", $uncleanOut);
+		$output->setOutput('latest-hash', $this->repository()->getCurrentRevision());
 		return true;
 	}
 
