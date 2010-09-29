@@ -6,6 +6,7 @@ TEST basic/user
 TEST basic/case-transform
 TEST basic/notifications
 TEST basic/compat-tree
+TEST basic/settings
 
 TEST utils/mkdir
 
