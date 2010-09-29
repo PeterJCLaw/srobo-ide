@@ -92,7 +92,7 @@ function load_gui() {
 	tabbar = new TabBar();
 
 	// Centralised poll handling
-	pollhandler = new PollHandler();
+	pollhandler = PollHandler.GetInstance();
 
 	// Edit page
 	editpage = new EditPage();
