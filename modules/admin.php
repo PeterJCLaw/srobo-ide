@@ -44,14 +44,10 @@ class AdminModule extends Module
 		$team = $input->getInput('id');
 		$name = $input->getInput('name');
 
-		$auth->setTeamDesc($team, $name);
+        TeamNameStrategy::getDefaultInstance()->writeNameChangeRequest($team,$name);
 
-		$output->setOutput('id', $team);
-		// TODO: return false on failure
 		$output->setOutput('success', true);
-		// TODO: detect failure, and return the old value in that case.
-		$output->setOutput('name', $name);
-	}
+    }
 
 	/**
 	 * Get all the info for all user blog feeds we know about
