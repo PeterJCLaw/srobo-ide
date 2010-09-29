@@ -283,14 +283,8 @@ function ProjFileList() {
 	this._project = "";
 	this._team = null;
 
-	//allow for an auto refresh
-	this._timeout = null;
-	//how often to check to see if it's needed, in seconds
-	this._refresh_delay = 7;
-	//when was it 'born', milliseconds since epoch
-	this._birth = new Date().valueOf();
-	//how old do we let it get before updating
-	this._refresh_freq = 25 * 1000;	//milliseconds
+	// Store signals we're hooked up to.
+	this._signals = [];
 
 	//prompt when it errors during an update
 	this._err_prompt = null;
@@ -304,6 +298,9 @@ function ProjFileList() {
 
 	// The files/folders that are currently selected
 	this.selection = [];
+
+	this._signals.push(connect( PollHandler.GetInstance(),
+		'onchange-projects', bind(this._auto_refresh, this) ));
 
 	// Member functions:
 	// Public:
@@ -348,17 +345,7 @@ ProjFileList.prototype.update = function( pname, team, rev ) {
 	this._project = pname;
 	this._team = team;
 	this.refresh();
-}
 
-ProjFileList.prototype._prepare_auto_refresh = function() {
-	log('Preparing an automatic file list refresh');
-	if( this._timeout != null )
-		this._timeout.cancel();
-
-	if( this.rev != "HEAD" && this.rev != 0 && this.rev != null )	//not showing HEAD
-		return;
-
-	this._timeout = callLater(this._refresh_delay, bind(this._auto_refresh, this));
 }
 
 ProjFileList.prototype._auto_refresh = function() {
@@ -385,15 +372,14 @@ ProjFileList.prototype.refresh = function(auto) {
 		this._err_prompt = null;
 	}
 
-	this._timeout = null;
 	var err_handler;
-	if(!auto)	//if it's an automatic call don't interrupt the user - just setup another
+	//if it's an automatic call don't interrupt the user - just try again
+	if(!auto) {
 		err_handler = bind( function (){
 			this._err_prompt = status_button( "Error retrieving the project file listing", LEVEL_ERROR,
 					   "retry", bind( this.refresh, this ) );
 		}, this );
-	else
-		err_handler = bind( this._prepare_auto_refresh, this );
+	}
 	IDE_backend_request("file/compat-tree", {team:    this._team,
 	                                         project: this._project,
 	                                         path:    "."},
@@ -429,9 +415,7 @@ function flist_cmp(a,b) {
 // Handler for receiving the file list
 ProjFileList.prototype._received = function(nodes) {
 	this.selection = new Array();
-	this._birth = new Date().valueOf();
 	log( "filelist received" );
-	this._prepare_auto_refresh();
 	this.robot = false;	//test for robot.py: reset before a new filelist is loaded
 
 	swapDOM( "proj-filelist",
