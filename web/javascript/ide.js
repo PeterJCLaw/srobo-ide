@@ -80,6 +80,21 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 	xhr.send(rq);
 }
 
+/// Compare (git) hashes of potentially unequal length
+function IDE_hash_compare(a, b) {
+	var min_hash_length = 6;
+	if(a.length < min_hash_length || b.length < min_hash_length) {
+		return false;
+	}
+	if(a == b) {
+		return true;
+	}
+	var min_len = Math.min(a.length, b.length);
+	var short_a = a.substring(0, min_len);
+	var short_b = b.substring(0, min_len);
+	return (short_a == short_b)
+}
+
 function IDE_path_get_project(path) {
 	var split = path.split(/\//);
 	return split[1];
