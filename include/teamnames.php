@@ -20,7 +20,7 @@ class PlainTextTeamNameStrategy extends TeamNameStrategy
     public function writeNameChangeRequest($teamId,$newName)
     {
         $contents = file_get_contents($this->requestsFile);
-        $contents += "$teamId,$newName\n";
+        $contents = $contents . "$teamId,$newName\n";
         file_put_contents($this->requestsFile,$contents);
     }
 }
