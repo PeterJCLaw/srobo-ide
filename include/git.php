@@ -293,6 +293,28 @@ class GitRepository
 	}
 
 	/**
+	 * Stashes any current changes so you can do other things to the tree
+	 * without messing up any uncommitted changes.
+	 * Returns whether or not the stash was necessary.
+	 */
+	private function stash($id)
+	{
+		$res = $this->gitExecute(true, 'stash save '.escapeshellarg($id));
+		return $res != 'No local changes to save';
+	}
+
+	/**
+	 * Un-stashes a specified stash by save name
+	 */
+	private function stashPop($id)
+	{
+		$key = $this->gitExecute(true, 'stash list | grep '
+			.escapeshellarg('stash@{[[:digit:]]*}: On master: '.$id.'$')
+			.' | grep -o "stash@{[[:digit:]]*}"');
+		$this->gitExecute(true, 'stash pop '.$key);
+	}
+
+	/**
 	 * performs a git commit
 	 */
 	public function commit($message, $name, $email)
