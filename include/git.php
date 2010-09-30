@@ -335,6 +335,8 @@ class GitRepository
 	{
 		if ($hash != null)
 		{
+			$stash_id = 'Stashing before fileTreeCompat of '.$hash;
+			$needs_unstash = $this->stash($stash_id);
 			$this->checkoutRepo($hash);
 		}
 
@@ -379,6 +381,10 @@ class GitRepository
 		{
 			// reset the tree back to tip
 			$this->checkoutRepo('master');
+			if ($needs_unstash)
+			{
+				$this->stashPop($stash_id);
+			}
 		}
 
 		return $result;
