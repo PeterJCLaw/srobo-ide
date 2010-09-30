@@ -132,7 +132,7 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
 		$uncleanOut = $this->repository()->listFiles($path);
-		$results = sanitiseFileList($uncleanOut);
+		$results = $this->sanitiseFileList($uncleanOut);
 		$output->setOutput('files', $results);
 		return true;
 	}
