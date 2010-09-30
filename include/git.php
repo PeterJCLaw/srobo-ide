@@ -338,7 +338,6 @@ class GitRepository
 			{
 				$result[] = array('kind'     => 'FILE',
 				                  'name'     => $filename,
-				                  'rev'      => $hash,
 				                  'path'     => "/$base/$realpath",
 				                  'children' => array(),
 				                  'autosave' => 0);
@@ -347,7 +346,6 @@ class GitRepository
 			{
 				$result[] = array('kind'     => 'FOLDER',
 				                  'name'     => $filename,
-				                  'rev'      => $hash,
 				                  'path'     => "/$base/$realpath",
 				                  'children' => $this->fileTreeCompat($base, "$subpath/$realpath"),
 				                  'autosave' => 0);

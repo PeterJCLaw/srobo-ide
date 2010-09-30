@@ -34,5 +34,4 @@ test_equal($tree[1]['path'], '/cake/ninjas', 'tested folder had incorrect path')
 test_equal($tree[1]['children'][0]['kind'], 'FILE', 'tested sub-file had incorrect kind');
 test_equal($tree[1]['children'][0]['name'], 'nuns', 'tested sub-file had incorrect name');
 test_equal($tree[1]['children'][0]['path'], '/cake/ninjas/nuns', 'tested sub-file had incorrect path');
-test_true(isset($tree[0]['rev']), 'revision not set');
 test_true(isset($tree[0]['autosave']), 'autosave not set');
