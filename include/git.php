@@ -377,7 +377,8 @@ class GitRepository
 
 		if ($hash != null)
 		{
-			$this->checkoutRepo($this->getCurrentRevision());
+			// reset the tree back to tip
+			$this->checkoutRepo('master');
 		}
 
 		return $result;
