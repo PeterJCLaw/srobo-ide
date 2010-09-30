@@ -3,10 +3,10 @@
 // Grab the include of SimplePie, looking for it in both where Ubuntu and Fedora put it.
 $display_errors = ini_set('display_errors', 'Off');
 $error_reporting = error_reporting(E_ERROR | E_WARNING| E_PARSE | E_NOTICE);
-$gotSimplePie = include_once('simplepie/simplepie.inc');
+$gotSimplePie = include_once('php-simplepie/simplepie.inc');
 if (!$gotSimplePie)
 {
-	$gotSimplePie = include_once('php-simplepie/simplepie.inc');
+	$gotSimplePie = include_once('simplepie/simplepie.inc');
 }
 ini_set('display_errors', $display_errors);
 error_reporting($error_reporting);
