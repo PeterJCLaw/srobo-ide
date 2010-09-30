@@ -258,6 +258,14 @@ class GitRepository
 		}
 	}
 
+    /**
+     * Checkout the entire repository to a revision
+     */
+    private function checkoutRepo($revision)
+    {
+        $this->gitExecute(true, "checkout $revision");
+    }
+
     public function checkoutFile($file,$revision=null) {
         $shellPath = escapeshellarg($file);
         if ($revision == null) {
@@ -301,9 +309,17 @@ class GitRepository
 	/**
 	 * Gets the file tree for the git repository
 	 */
-	public function fileTreeCompat($base, $subpath = '.')
+	public function fileTreeCompat($base,$subpath = '.',$hash=null)
 	{
-		$hash = $this->getCurrentRevision();
+        if ($hash == null)
+        {
+    		$hash = $this->getCurrentRevision();
+        }
+        else
+        {
+            $this->checkoutRepo($hash);
+        }
+
 		$result = array();
 		for ($iterator = new FilesystemIterator($this->working_path . "/$subpath");
 		     $iterator->valid();
@@ -342,6 +358,7 @@ class GitRepository
 			if ($a > $b)  return 1;
 			if ($a == $b) return 0;
 		});
+        $this->checkoutRepo($this->getCurrentRevision());
 		return $result;
 	}
 
