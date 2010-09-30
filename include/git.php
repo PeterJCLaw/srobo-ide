@@ -311,14 +311,10 @@ class GitRepository
 	 */
 	public function fileTreeCompat($base,$subpath = '.',$hash=null)
 	{
-        if ($hash == null)
-        {
-    		$hash = $this->getCurrentRevision();
-        }
-        else
-        {
-            $this->checkoutRepo($hash);
-        }
+		if ($hash != null)
+		{
+			$this->checkoutRepo($hash);
+		}
 
 		$result = array();
 		for ($iterator = new FilesystemIterator($this->working_path . "/$subpath");
@@ -356,7 +352,12 @@ class GitRepository
 			if ($a > $b)  return 1;
 			if ($a == $b) return 0;
 		});
-        $this->checkoutRepo($this->getCurrentRevision());
+
+		if ($hash != null)
+		{
+			$this->checkoutRepo($this->getCurrentRevision());
+		}
+
 		return $result;
 	}
 
