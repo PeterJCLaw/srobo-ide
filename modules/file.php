@@ -174,7 +174,17 @@ class FileModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-		$output->setOutput('data', $this->repository()->getFile($path));
+		$revision = $input->getInput('rev', true);
+		// a specific revision is requested
+		if($revision != null && $revision != 'HEAD')
+		{
+			$content = $this->repository()->getFile($path, $revision);
+		}
+		else
+		{
+			$content = $this->repository()->getFile($path);
+		}
+		$output->setOutput('data', $content);
 		return true;
 	}
 
