@@ -33,6 +33,7 @@ try {
 	}
 	else
 	{
+		getDefaultTokenStrategy()->removeToken();
 		readfile('web/login.html');
 	}
 } catch (Exception $e) {
