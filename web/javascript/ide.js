@@ -80,6 +80,18 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 	xhr.send(rq);
 }
 
+/// Shrink a (git) hashes to a common and more size for display
+function IDE_hash_shrink(hash) {
+	var hash_length = 9;
+	if(hash == null) {
+		return false;
+	}
+	if(hash.length < hash_length) {
+		return hash;
+	}
+	return hash.substring(0, hash_length);
+}
+
 /// Compare (git) hashes of potentially unequal length
 function IDE_hash_compare(a, b) {
 	var min_hash_length = 6;
