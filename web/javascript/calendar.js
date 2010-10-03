@@ -145,7 +145,9 @@ Calendar.prototype.processDates = function() {
 	//get array of days with corresponding log entries
 	for(var z=0; z < this.logs.length; z++) {
 		var now = this.logs[z].date.getDate();
-		if(findValue(this.logdays, now) < 0) {
+		if( this.logs[z].date.getMonth() == this.date.getMonth()	// is in the month on display
+		 && this.logs[z].date.getYear() == this.date.getYear()	// is in the year on display
+		 && findValue(this.logdays, now) < 0) {
 			this.logdays.push(now);
 		}
 	}
