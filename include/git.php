@@ -456,7 +456,18 @@ class GitRepository
 		}
 		else
 		{
-			return '';
+			$stash_id = 'Stashing before getFile of '.$commit;
+			$needs_unstash = $this->stash($stash_id);
+			$this->checkoutFile($path, $commit);
+
+			return file_get_contents($this->working_path . "/$path");
+
+			// reset the tree back to tip
+			$this->checkoutFile($path, 'master');
+			if ($needs_unstash)
+			{
+				$this->stashPop($stash_id);
+			}
 		}
 	}
 
