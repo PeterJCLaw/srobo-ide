@@ -209,7 +209,9 @@ Calendar.prototype.change_day = function(target) {
 
 Calendar.prototype._load_new_rev = function() {
 	var target = $("cal-revs").value;
-	if(target >= 0 || target == 'HEAD')
+
+	// Check that it's not a special value
+	if( !(target < 0) )
 		this._load_rev( target );
 	if(target == 'HEAD')
 		this.init();
