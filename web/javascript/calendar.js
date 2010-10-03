@@ -192,7 +192,7 @@ Calendar.prototype.change_day = function(target) {
 	for(var i = 0; i < this.logs.length; i++) {
 		if(this.logs[i].date.getDate() == target) {
 			appendChildNodes("cal-revs", OPTION({ "value" : this.logs[i].rev},
-							    this.logs[i].rev + " " +
+							    IDE_hash_shrink(this.logs[i].rev) + " " +
 							    this.logs[i].author+": "+
 							    this.logs[i].message.slice(0, 20)+" ("+
 							    this.logs[i].date.getHours()+":"+

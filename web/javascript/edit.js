@@ -641,7 +641,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 				}
 				appendChildNodes("history",
 					OPTION( { value: nodes.log[i].rev, title: nodes.log[i].message },
-						"r" + nodes.log[i].hash.substring(0, 9) +
+						"r" + IDE_hash_shrink(nodes.log[i].hash) +
 						" " + histDate(i) + " [" + author + "]"
 					)
 				);
