@@ -400,6 +400,7 @@ ProjFileList.prototype.refresh = function(auto) {
 		err_handler = bind( this._prepare_auto_refresh, this );
 	IDE_backend_request("file/compat-tree", {team:    this._team,
 	                                         project: this._project,
+	                                         rev:     this.rev,
 	                                         path:    "."},
 	                                         bind(this._received, this), err_handler);
 }

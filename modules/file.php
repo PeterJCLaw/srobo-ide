@@ -100,8 +100,20 @@ class FileModule extends Module
 	 */
 	public function getFileTreeCompat()
 	{
+		$input  = Input::getInstance();
 		$output = Output::getInstance();
-		$uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
+
+		$revision = $input->getInput('rev', true);
+		// a specific revision is requested
+		if($revision != null && $revision != 'HEAD')
+		{
+			var_dump($this->projectName, $hash);
+			$uncleanOut = $this->repository()->fileTreeCompat($this->projectName, '.', $revision);
+		}
+		else
+		{
+			$uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
+		}
 		$results = $this->sanitiseFileList($uncleanOut);
 		$output->setOutput('tree', $results);
 		return true;
