@@ -15,8 +15,6 @@ require_once('include/main.php');
 try {
     $config = Configuration::getInstance();
 
-    throw new Exception("ponies");
-
     if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))
     {
     	header('HTTP/1.1 403 Forbidden');
