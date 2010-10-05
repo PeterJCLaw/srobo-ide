@@ -23,7 +23,12 @@ class Configuration
 		if (file_exists($path))
 		{
 			$config = parse_ini_file($path);
-			$this->config = $config + $this->config;
+			if ($this->config == false) {
+				$this->config = $config;
+			} else if ($config != false) {
+				$this->config = $config + $this->config;
+			}
+
 		}
 	}
 
