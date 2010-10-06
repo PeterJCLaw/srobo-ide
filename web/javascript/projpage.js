@@ -193,12 +193,8 @@ ProjPage.prototype.CreateNewProject = function(newProjName) {
 
 	IDE_backend_request("proj/new", {team: team, project: newProjName},
 		bind(this._createProjectSuccess, this, newProjName),
-		bind(function(){
-			this._err_prompt = status_button("Error creating project",
-                                             LEVEL_ERROR,
-                                             "retry",
-                                             bind(this._CreateNewProject));
-		}, this));
+		bind(this._createProjectFailure, this, newProjName)
+	);
 }
 
 ProjPage.prototype._createProjectSuccess = function(newProjName) {
@@ -209,9 +205,11 @@ ProjPage.prototype._createProjectSuccess = function(newProjName) {
 	this._list.update(team);
 }
 
-ProjPage.prototype._createProjectFailure = function() {
+ProjPage.prototype._createProjectFailure = function(newProjName) {
 	/* XXX - check for preexisting projects perhaps */
-	status_msg('Create project failed', LEVEL_ERROR);
+	status_button('Error creating project', LEVEL_ERROR, 'retry',
+		bind(this.CreateNewProject, this, newProjName)
+	);
 }
 
 /*** The simulator is nowhere near ready, so hide this for the moment
