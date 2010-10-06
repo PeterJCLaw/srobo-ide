@@ -350,11 +350,7 @@ class FileModule extends Module
 		$binary = $config->getConfig('pylint_path');
 		if (!$binary)
 		{
-			$output->setOutput("errors", array());
-			$output->setOutput("messages", array('pylint is not installed'));
-			$output->setOutput('path', $dirName);
-			$output->setOutput('file', $fileName);
-			return true;
+			throw new Exception("pylint is not installed", E_NOT_IMPL);
 		}
 
 		//if the file exists, lint it otherwise return a dictionary explaining
