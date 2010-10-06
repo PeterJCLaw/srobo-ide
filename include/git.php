@@ -1,5 +1,12 @@
 <?php
 
+//define a compression level constant, must be between 0 and 9
+define('COMPRESSION_LEVEL', 6);
+
+//awesome hack function to inline constants in strings
+function _expr($v) { return $v; }
+$_expr = '_expr';
+
 /**
  * A class to manage git repositories
  */
@@ -535,7 +542,7 @@ class GitRepository
 		touch($dest);
 		$dest = realpath($dest);
 		$shell_dest = escapeshellarg($dest);
-		$this->gitExecute(true, "archive --format=zip $commit -6 > $shell_dest");
+		$this->gitExecute(true, "archive --format=zip $commit -{$_expr(COMPRESSION_LEVEL)} > $shell_dest");
 	}
 
 	/**
