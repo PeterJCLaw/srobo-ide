@@ -873,8 +873,7 @@ function ProjOps() {
 
 	this._mv_success = function(nodes) {
 		logDebug("_mv_success()");
-		logDebug(nodes.status);
-		if(nodes.status == 0) {
+		if(nodes.success) {
 			status_msg("Move successful!", LEVEL_OK);
 			projpage.flist.refresh();
 		} else {
@@ -974,11 +973,8 @@ function ProjOps() {
 	}
 
 	this._cp_callback1 = function() {
-            logDebug("ponies");
 			status_msg("Successful Copy", LEVEL_OK);
-            logDebug("ponies2");
 			projpage.flist.refresh();
-            logDebug("ponies3");
 	}
 	this._cp_callback2 = function(fname, cmsg) {
 		logDebug("copying "+projpage.flist.selection[0]+" to "+fname);

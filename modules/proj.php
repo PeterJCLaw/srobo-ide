@@ -123,7 +123,6 @@ class ProjModule extends Module
 
         //stage the files
         foreach ($files as $file) {
-            $output->setOutput("loop","loop");
             $this->projectRepository->stage($file);
         }
 
@@ -135,6 +134,7 @@ class ProjModule extends Module
 		                                                     $currentUser);
 		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
+		$output->setOutput('success', true);
 	}
 
 	public function projectLog()
