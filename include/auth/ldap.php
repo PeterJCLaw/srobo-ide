@@ -78,7 +78,7 @@ class LDAPAuth extends SecureTokenAuth
 			}
 		}
 
-		return $group;
+		return "Team $team";
 	}
 
 	public function displayNameForUser($user)
