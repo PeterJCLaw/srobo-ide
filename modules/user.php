@@ -38,9 +38,16 @@ class UserModule extends Module
 		$output = Output::getInstance();
 		$auth = $this->ensureAuthed();
 
+		$teamNumbers = $auth->getCurrentUserTeams();
+		$teams = array();
+		foreach ($teamNumbers as $id)
+		{
+			$teams[$id] = $auth->teamName($id);
+		}
+
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
 		$output->setOutput('email', $auth->emailForUser($this->username));
-		$output->setOutput('teams', $auth->getCurrentUserTeams());
+		$output->setOutput('teams', $teams);
 		$output->setOutput('is-admin', $auth->isCurrentUserAdmin());
 		$settingsManager = Settings::getInstance();
 		$settings = $settingsManager->getSettings($this->username);
