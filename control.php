@@ -59,8 +59,7 @@ try
 }
 catch (Exception $e)
 {
-	$output->setOutput('error', array($e->getCode(), $e->getMessage()));
-	file_put_contents('/tmp/exception', $e->getTraceAsString());
+	$output->setOutput('error', array($e->getCode(), $e->getMessage(), $e->getTraceAsString()));
 }
 
 // test for notifications
