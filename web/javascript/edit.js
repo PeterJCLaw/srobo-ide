@@ -478,9 +478,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 		IDE_backend_request("file/put", {team: team,
 		                                 project: this.project,
-		                                 path: this.path,
+		                                 path: IDE_path_get_file(this.path),
 		                                 rev: this.rev,
-		                                 data: this.content},
+		                                 data: this.contents},
 		                                 bind(this._receive_autosave, this),
 		                                 bind(this._on_keydown, this, 'auto'));
 	}
