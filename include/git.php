@@ -532,7 +532,6 @@ class GitRepository
 	 */
 	public function archiveSourceZip($dest, $commit = 'HEAD')
 	{
-		// TODO: fix to actually obey commit
 		touch($dest);
 		$dest = realpath($dest);
 		$shell_dest = escapeshellarg($dest);
