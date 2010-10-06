@@ -123,7 +123,6 @@ class ProjModule extends Module
 
         //stage the files
         foreach ($files as $file) {
-            $output->setOutput("loop","loop");
             $this->projectRepository->stage($file);
         }
 

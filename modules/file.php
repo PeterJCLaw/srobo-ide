@@ -143,7 +143,6 @@ class FileModule extends Module
         } else {
             $output->setOutput("revision reverting","");
             foreach ($paths as $file) {
-                $output->setOutput("ponies","ponies");
                 $this->repository()->checkoutFile($file,$revision);
             }
         }
@@ -223,7 +222,6 @@ class FileModule extends Module
         $files = $input->getInput("files");
 
         foreach ($files as $file) {
-            $output->setOutput("loop","loop");
     		$this->repository()->removeFile($file);
         }
 		return true;
