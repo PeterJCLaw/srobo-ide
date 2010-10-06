@@ -20,7 +20,7 @@ clean:
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
-dev: applet folders
+dev: applet folders config
 
 config:
 	echo -n "pylint_path = " > config/automagic.ini
