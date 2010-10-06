@@ -37,6 +37,7 @@ class Configuration
 	private function __construct()
 	{
 		$this->add_config_file('config/config.ini');
+		$this->add_config_file('config/automagic.ini');
 		$this->add_config_file('config/local.ini');
 	}
 

@@ -5,11 +5,11 @@ _FOLDERS = settings $(_REPOS) $(_ZIPS) /tmp/ide-feed-cache notifications
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
 
-.PHONY: all default dev docs clean applet folders
+.PHONY: all default dev docs clean applet folders config
 
 # Useful groupings
 default: dev
-all: dev docs applet
+all: dev docs applet config
 
 applet: applet/build.xml applet/.keystore
 	cd applet/ && ant build
@@ -21,6 +21,10 @@ clean:
 	cd applet/ && ant clean
 
 dev: applet folders
+
+config:
+	echo -n "pylint_path = " > config/automagic.ini
+	which pylint >> config/automagic.ini
 
 docs:
 	doxygen doxyfile
