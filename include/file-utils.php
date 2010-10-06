@@ -43,10 +43,5 @@ function delete_recursive($path)
 
 function mkdir_full($path, $mode = 0755)
 {
-	path_walk(function ($path) use ($mode) {
-		if (!file_exists($path))
-		{
-			mkdir($path, $mode);
-		}
-	}, $path, false);
+	mkdir($path, $mode, true);
 }
