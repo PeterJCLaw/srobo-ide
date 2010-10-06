@@ -59,7 +59,7 @@ class LDAPAuth extends SecureTokenAuth
         return FALSE;
 	}
 
-	public function displayNameForGroup($group)
+	public function displayNameForTeam($team)
 	{
 		$user = $this->ldapManager->getUser();
 		$ldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
@@ -67,7 +67,7 @@ class LDAPAuth extends SecureTokenAuth
 
 		foreach ($groups as $group)
 		{
-			if ($group["cn"] == "team"+$group)
+			if ($group["cn"] == "team"+$team)
 			{
 				return $group["description"];
 			}

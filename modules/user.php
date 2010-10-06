@@ -2,14 +2,10 @@
 
 class UserModule extends Module
 {
-	private $settingsPath;
 	private $username;
 
 	public function __construct()
 	{
-		$config = Configuration::getInstance();
-		$this->settingsPath = $config->getConfig('settingspath');
-
 		$this->installCommand('info', array($this, 'getInfo'));
 		$this->installCommand('settings-put', array($this, 'saveSettings'));
 		$this->installCommand('blog-feed', array($this, 'getBlogFeed'));
@@ -42,19 +38,19 @@ class UserModule extends Module
 		$output = Output::getInstance();
 		$auth = $this->ensureAuthed();
 
+		$teamNumbers = $auth->getCurrentUserTeams();
+		$teams = array();
+		foreach ($teamNumbers as $id)
+		{
+			$teams[$id] = $auth->displayNameForTeam($id);
+		}
+
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
 		$output->setOutput('email', $auth->emailForUser($this->username));
-		$output->setOutput('teams', $auth->getCurrentUserTeams());
+		$output->setOutput('teams', $teams);
 		$output->setOutput('is-admin', $auth->isCurrentUserAdmin());
-		if (file_exists("$this->settingsPath/$this->username.json"))
-		{
-			$data = file_get_contents("$this->settingsPath/$this->username.json");
-			$settings = json_decode($data);
-		}
-		else
-		{
-			$settings = array();
-		}
+		$settingsManager = Settings::getInstance();
+		$settings = $settingsManager->getSettings($this->username);
 		$output->setOutput('settings', $settings);
 	}
 
@@ -66,8 +62,8 @@ class UserModule extends Module
 		$this->ensureAuthed();
 		$input = Input::getInstance();
 		$settings = $input->getInput('settings');
-		$data = json_encode($settings);
-		file_put_contents("$this->settingsPath/$this->username.json", $data);
+		$settingsManager = Settings::getInstance();
+		$settingsManager->setSettings($this->username, $settings);
 	}
 
 	/**

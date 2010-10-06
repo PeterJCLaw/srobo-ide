@@ -342,10 +342,9 @@ function User() {
 
 		this.team_names = {};
 		this.teams = [];
-		for( var i = 0; i < info["teams"].length; i++ ) {
-			var num = info["teams"][i];
-			this.team_names[num] = "Team " + num;
-			this.teams.push(parseInt(num, 10));
+		for( var id in info["teams"] ) {
+			this.team_names[id] = info["teams"][id];
+			this.teams.push(id);
 		}
 
 		this._settings = (info.settings instanceof Array) ? {} : info.settings;
