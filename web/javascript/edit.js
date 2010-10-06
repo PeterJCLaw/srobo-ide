@@ -481,17 +481,14 @@ function EditTab(iea, team, project, path, rev, mode) {
 		                                 path: IDE_path_get_file(this.path),
 		                                 rev: this.rev,
 		                                 data: this.contents},
-		                                 bind(this._receive_autosave, this),
+		                                 bind(this._receive_autosave, this, this.contents),
 		                                 bind(this._on_keydown, this, 'auto'));
 	}
 
 	//ajax event handler for autosaving to server, based on the one for commits
-	this._receive_autosave = function(reply){
-		/*if(typeof reply.date != 'undefined') {
-			this.autosaved = reply.code;
-			projpage.flist.refresh();
-		}*/
-		status_msg("autosaved file", LEVEL_OK);
+	this._receive_autosave = function(code){
+		this._autosaved = code;
+		projpage.flist.refresh('auto');
 	}
 
 	this.is_modified = function() {
