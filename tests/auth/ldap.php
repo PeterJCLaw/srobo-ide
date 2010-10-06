@@ -6,8 +6,8 @@ if (!$config->getConfig("ldap.host"))
 $config->override('ldap.host', 'localhost');
 
 $input = Input::getInstance();
-$input->setInput("user", "your_ldap_auth_user_here");
-$input->setInput("password", "your_ldap_auth_pass_here");
+$input->setInput("user", "ide");
+$input->setInput("password", $config->getConfig("ldap.ideuser.password"));
 
 $auth = AuthBackend::getInstance();
 test_nonnull($auth, "failed to get the auth backend");
