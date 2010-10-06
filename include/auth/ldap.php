@@ -61,6 +61,7 @@ class LDAPAuth extends SecureTokenAuth
 
 	public function displayNameForTeam($team)
 	{
+		$config = Configuration::getInstance();
 		$user = $this->ldapManager->getUser();
 		$ldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
 		$groups = $this->ldapManager->getGroupsForUser($user);
