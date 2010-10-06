@@ -318,16 +318,13 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._check_syntax = function() {
 		//tell the log and grab the latest contents
 		logDebug( "Checking syntax of " + this.path );
-		this._capture_code();
 
-		//throw the contents to the backend, if needed
-		if(this._original != this.contents)
-			opts = {'alert' : true, 'code' : this.contents }
-		else
-			opts = {'alert' : true}
-
-		//get the errors page to run the check
-		errorspage.check(this.path, opts);
+		// get the errors page to run the check, after autosaving the file.
+		this._autosave(
+			bind( errorspage.check, errorspage, this.path, { alert: true } ),
+			partial( status_button, "Unable to check syntax", LEVEL_WARN,
+				"retry", bind(this._check_syntax, this) )
+		);
 	}
 
 	this._diff = function() {
