@@ -20,16 +20,18 @@ clean:
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
-dev: applet folders
+dev: applet folders config
 
-config:
-	echo -n "pylint_path = " > config/automagic.ini
-	which pylint >> config/automagic.ini
+config: config/automagic.ini
 
 docs:
 	doxygen doxyfile
 
 # Helpers
+config/automagic.ini:
+	echo -n "pylint_path = " > $@
+	which pylint >> $@
+
 applet/.keystore:
 	keytool -genkeypair -keyalg rsa -alias test-only-applet-key \
 	-storepass $(_JAVA_KEYSTORE_PWD) -keypass $(_JAVA_KEYSTORE_PWD) \
