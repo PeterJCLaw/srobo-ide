@@ -467,12 +467,17 @@ function EditTab(iea, team, project, path, rev, mode) {
 		}
 	}
 
-	this._autosave = function() {
+	this._autosave = function(cb, errCb) {
+		var errCb = errCb || bind(this._on_keydown, this, 'auto');
 		this._timeout = null;
 		//do an update and check to see if we need to autosave
 		this._capture_code();
+		// If there's no need to save then call the success callback anyway
 		if(this.contents == this._original || this.contents == this._autosaved)
+		{
+			cb();
 			return;
+		}
 
 		logDebug('EditTab: Autosaving '+this.path)
 
@@ -481,14 +486,17 @@ function EditTab(iea, team, project, path, rev, mode) {
 		                                 path: IDE_path_get_file(this.path),
 		                                 rev: this.rev,
 		                                 data: this.contents},
-		                                 bind(this._receive_autosave, this, this.contents),
-		                                 bind(this._on_keydown, this, 'auto'));
+		                                 bind(this._receive_autosave, this, this.contents, cb),
+		                                 errCb);
 	}
 
 	//ajax event handler for autosaving to server, based on the one for commits
-	this._receive_autosave = function(code){
+	this._receive_autosave = function(code, cb){
 		this._autosaved = code;
 		projpage.flist.refresh('auto');
+		if (typeof cb == 'function') {
+			cb();
+		}
 	}
 
 	this.is_modified = function() {
