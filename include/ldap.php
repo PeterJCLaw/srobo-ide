@@ -16,27 +16,24 @@ class LDAPManager
 
 	public function getGroupsForUser($user)
 	{
-		if ($this->authed && $this->user == 'ide')
-		{
-			//do an ldap search
-			$resultsID = ldap_search($this->connection,'ou=groups,o=sr', "memberUid=$user");
-			$results = ldap_get_entries($this->connection , $resultsID);
-			$saneGroups = array();
-			for ($i = 0; $i < $results['count']; $i++)
-			{
-				$group = $results[$i];
-				$saneGroup = array();
-				$saneGroup['cn'] = $group['cn'][0];
-				$saneGroup['description'] = $group['description'][0];
-				$saneGroups[] = $saneGroup;
-			}
-
-			return $saneGroups;
-		}
-		else
-		{
+		if (!$this->authed)
 			throw new Exception('cannot search groups, not authed to ldap', E_LDAP_NOT_AUTHED);
+		if ($this->user != 'ide')
+			throw new Exception('cannot search groups, not the IDE user', E_LDAP_NOT_AUTHED);
+		//do an ldap search
+		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', "memberUid=$user");
+		$results = ldap_get_entries($this->connection , $resultsID);
+		$saneGroups = array();
+		for ($i = 0; $i < $results['count']; $i++)
+		{
+			$group = $results[$i];
+			$saneGroup = array();
+			$saneGroup['cn'] = $group['cn'][0];
+			$saneGroup['description'] = $group['description'][0];
+			$saneGroups[] = $saneGroup;
 		}
+
+		return $saneGroups;
 	}
 
 	public function getUserInfo($user)
