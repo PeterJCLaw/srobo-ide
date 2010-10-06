@@ -491,6 +491,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this.autosaved = reply.code;
 			projpage.flist.refresh();
 		}*/
+		status_msg("autosaved file", LEVEL_OK);
 	}
 
 	this.is_modified = function() {
