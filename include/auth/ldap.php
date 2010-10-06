@@ -44,7 +44,8 @@ class LDAPAuth extends SecureTokenAuth
 
 	public function isCurrentUserAdmin()
 	{
-        $adminName = Configuration::getInstance()->getConfig("ldap.admin_group");
+		$config = Configuration::getInstance();
+        $adminName = $config->getConfig("ldap.admin_group");
         $user = $this->ldapManager->getUser();
         $IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
         $groups = $IDEldapManager->getGroupsForUser($user);
