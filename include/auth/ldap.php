@@ -46,17 +46,17 @@ class LDAPAuth extends SecureTokenAuth
 	{
         $adminName = Configuration::getInstance()->getConfig("ldap.admin_group");
         $user = $this->ldapManager->getUser();
-        $groups = $this->ldapManager->getGroupsForUser($user);
+        $IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
+        $groups = $IDEldapManager->getGroupsForUser($user);
         foreach ($groups as $group)
         {
             if ($group["cn"] == $adminName)
             {
-                return TRUE;
+                return true;
             }
-
         }
 
-        return FALSE;
+        return false;
 	}
 
 	public function displayNameForTeam($team)
