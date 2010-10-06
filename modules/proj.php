@@ -134,6 +134,7 @@ class ProjModule extends Module
 		                                                     $currentUser);
 		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
+		$output->setOutput('success', true);
 	}
 
 	public function projectLog()
