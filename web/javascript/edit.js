@@ -290,8 +290,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._load_contents = function() {
 		IDE_backend_request("file/get", { team : this.team,
 		                   project: this.project,
-						   path : IDE_path_get_file(this.path)/*,
-						   revision : this.rev*/},
+						   path : IDE_path_get_file(this.path),
+						   rev : this.rev },
 						   bind(this._recv_contents, this),
 						   bind(this._recv_contents_err, this));
 	}
@@ -640,8 +640,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 					author = author.substring(0, pos-1);
 				}
 				appendChildNodes("history",
-					OPTION( { value: nodes.log[i].rev, title: nodes.log[i].message },
-						"r" + nodes.log[i].hash.substring(0, 9) +
+					OPTION( { value: nodes.log[i].hash, title: nodes.log[i].message },
+						"r" + IDE_hash_shrink(nodes.log[i].hash) +
 						" " + histDate(i) + " [" + author + "]"
 					)
 				);

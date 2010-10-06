@@ -39,9 +39,4 @@ class SingleAuth extends SecureTokenAuth
 	{
 		return $user . "@" . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'example.com');
 	}
-
-	public function setTeamDesc($team, $name)
-	{
-		throw new Exception('Cannot change team name in single or auto auth modes.', E_NOT_IMPL);
-	}
 }

@@ -258,6 +258,14 @@ class GitRepository
 		}
 	}
 
+    /**
+     * Checkout the entire repository to a revision
+     */
+    private function checkoutRepo($revision)
+    {
+        $this->gitExecute(true, "checkout $revision");
+    }
+
     public function checkoutFile($file,$revision=null) {
         $shellPath = escapeshellarg($file);
         if ($revision == null) {
@@ -285,6 +293,28 @@ class GitRepository
 	}
 
 	/**
+	 * Stashes any current changes so you can do other things to the tree
+	 * without messing up any uncommitted changes.
+	 * Returns whether or not the stash was necessary.
+	 */
+	private function stash($id)
+	{
+		$res = $this->gitExecute(true, 'stash save '.escapeshellarg($id));
+		return $res != 'No local changes to save';
+	}
+
+	/**
+	 * Un-stashes a specified stash by save name
+	 */
+	private function stashPop($id)
+	{
+		$key = $this->gitExecute(true, 'stash list | grep '
+			.escapeshellarg('stash@{[[:digit:]]*}: On master: '.$id.'$')
+			.' | grep -o "stash@{[[:digit:]]*}"');
+		$this->gitExecute(true, 'stash pop '.$key);
+	}
+
+	/**
 	 * performs a git commit
 	 */
 	public function commit($message, $name, $email)
@@ -301,9 +331,15 @@ class GitRepository
 	/**
 	 * Gets the file tree for the git repository
 	 */
-	public function fileTreeCompat($base, $subpath = '.')
+	public function fileTreeCompat($base,$subpath = '.',$hash=null)
 	{
-		$hash = $this->getCurrentRevision();
+		if ($hash != null)
+		{
+			$stash_id = 'Stashing before fileTreeCompat of '.$hash;
+			$needs_unstash = $this->stash($stash_id);
+			$this->checkoutRepo($hash);
+		}
+
 		$result = array();
 		for ($iterator = new FilesystemIterator($this->working_path . "/$subpath");
 		     $iterator->valid();
@@ -322,7 +358,6 @@ class GitRepository
 			{
 				$result[] = array('kind'     => 'FILE',
 				                  'name'     => $filename,
-				                  'rev'      => $hash,
 				                  'path'     => "/$base/$realpath",
 				                  'children' => array(),
 				                  'autosave' => 0);
@@ -331,7 +366,6 @@ class GitRepository
 			{
 				$result[] = array('kind'     => 'FOLDER',
 				                  'name'     => $filename,
-				                  'rev'      => $hash,
 				                  'path'     => "/$base/$realpath",
 				                  'children' => $this->fileTreeCompat($base, "$subpath/$realpath"),
 				                  'autosave' => 0);
@@ -342,6 +376,17 @@ class GitRepository
 			if ($a > $b)  return 1;
 			if ($a == $b) return 0;
 		});
+
+		if ($hash != null)
+		{
+			// reset the tree back to tip
+			$this->checkoutRepo('master');
+			if ($needs_unstash)
+			{
+				$this->stashPop($stash_id);
+			}
+		}
+
 		return $result;
 	}
 
@@ -411,7 +456,18 @@ class GitRepository
 		}
 		else
 		{
-			return '';
+			$stash_id = 'Stashing before getFile of '.$commit;
+			$needs_unstash = $this->stash($stash_id);
+			$this->checkoutFile($path, $commit);
+
+			return file_get_contents($this->working_path . "/$path");
+
+			// reset the tree back to tip
+			$this->checkoutFile($path, 'master');
+			if ($needs_unstash)
+			{
+				$this->stashPop($stash_id);
+			}
 		}
 	}
 
@@ -476,7 +532,6 @@ class GitRepository
 	 */
 	public function archiveSourceZip($dest, $commit = 'HEAD')
 	{
-		// TODO: fix to actually obey commit
 		touch($dest);
 		$dest = realpath($dest);
 		$shell_dest = escapeshellarg($dest);

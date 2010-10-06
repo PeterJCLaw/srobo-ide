@@ -27,5 +27,4 @@ abstract class AuthBackend
 	abstract public function displayNameForGroup($group);
 	abstract public function displayNameForUser($user);
 	abstract public function emailForUser($user);
-	abstract public function setTeamDesc($team, $name);
 }

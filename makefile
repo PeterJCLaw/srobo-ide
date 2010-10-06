@@ -5,7 +5,7 @@ _FOLDERS = settings $(_REPOS) $(_ZIPS) /tmp/ide-feed-cache notifications
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
 
-.PHONY: all default dev docs clean applet
+.PHONY: all default dev docs clean applet folders
 
 # Useful groupings
 default: dev

@@ -59,6 +59,9 @@ class FileModule extends Module
         $this->installCommand("co", array($this, "checkoutFile"));
 	}
 
+	/**
+	 * Ensures that the user is in the team they claim to be
+	 */
 	private function verifyTeam()
 	{
 		$auth = AuthBackend::getInstance();
@@ -68,6 +71,9 @@ class FileModule extends Module
 		}
 	}
 
+	/**
+	 * Gets a handle on the repository for the current project
+	 */
 	private function repository()
 	{
 		$pm = ProjectManager::getInstance();
@@ -76,6 +82,9 @@ class FileModule extends Module
 		return $repo;
 	}
 
+	/**
+	 * Makes a directory in the repository
+	 */
     public function makeDirectory() {
         $input = Input::getInstance();
         $output = Output::getInstance();
@@ -86,18 +95,37 @@ class FileModule extends Module
         return true;
     }
 
+	/**
+	 * Gets a recursive file tree, optionally at a specific revision
+	 */
 	public function getFileTreeCompat()
 	{
+		$input  = Input::getInstance();
 		$output = Output::getInstance();
-        $uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
-        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
-        $results = array();
-        foreach ($cleanOut as $item) {
-            $results[] = $item;
-        }
+
+		$revision = $input->getInput('rev', true);
+		// a specific revision is requested
+		if($revision != null && $revision != 'HEAD')
+		{
+			var_dump($this->projectName, $hash);
+			$uncleanOut = $this->repository()->fileTreeCompat($this->projectName, '.', $revision);
+		}
+		else
+		{
+			$uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
+		}
+		$results = $this->sanitiseFileList($uncleanOut);
 		$output->setOutput('tree', $results);
-        $output->setOutput("ponies", $uncleanOut);
 		return true;
+	}
+
+	/**
+	 * Removes __init__.py from the given array
+	 */
+	private function sanitiseFileList($unclean)
+	{
+		$clean = array_filter($unclean, function($var) {return $var['name'] != '__init__.py';});
+		return array_values($clean);
 	}
 
     public function checkoutFile() {
@@ -124,31 +152,45 @@ class FileModule extends Module
         return true;
     }
 
-
+	/**
+	 * Get a flat list of files in a specific folder
+	 */
 	public function listFiles()
 	{
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-        $uncleanOut = $this->repository()->listFiles($path);
-        $cleanOut = array_filter($uncleanOut, function($var) {return $var["name"] != "__init__.py";});
-        $results = array();
-        foreach ($cleanOut as $item) {
-            $results[] = $item;
-        }
+		$uncleanOut = $this->repository()->listFiles($path);
+		$results = $this->sanitiseFileList($uncleanOut);
 		$output->setOutput('files', $results);
 		return true;
 	}
 
+	/**
+	 * Get the contents of a given file in the repository
+	 */
 	public function getFile()
 	{
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-		$output->setOutput('data', $this->repository()->getFile($path));
+		$revision = $input->getInput('rev', true);
+		// a specific revision is requested
+		if($revision != null && $revision != 'HEAD')
+		{
+			$content = $this->repository()->getFile($path, $revision);
+		}
+		else
+		{
+			$content = $this->repository()->getFile($path);
+		}
+		$output->setOutput('data', $content);
 		return true;
 	}
 
+	/**
+	 * Save a file, without committing it
+	 */
 	public function putFile()
 	{
 		$input  = Input::getInstance();
@@ -159,6 +201,9 @@ class FileModule extends Module
 		return true;
 	}
 
+	/**
+	 * Make a new file in the repository
+	 */
 	public function newFile()
 	{
 		$input  = Input::getInstance();
@@ -168,6 +213,9 @@ class FileModule extends Module
 		return true;
 	}
 
+	/**
+	 * Delete a given file in the repository
+	 */
 	public function deleteFile()
 	{
 		$input  = Input::getInstance();
@@ -181,6 +229,9 @@ class FileModule extends Module
 		return true;
 	}
 
+	/**
+	 * Copy a given file in the repository
+	 */
 	public function copyFile()
 	{
 		$input   = Input::getInstance();
@@ -193,6 +244,9 @@ class FileModule extends Module
 		return true;
 	}
 
+	/**
+	 * Move a given file in the repository
+	 */
 	public function moveFile()
 	{
 		$input   = Input::getInstance();
@@ -272,6 +326,9 @@ class FileModule extends Module
 		$output->setOutput("diff", $diff);
 	}
 
+	/**
+	 * Checks a given file for errors
+	 */
 	public function lintFile()
 	{
 		$input  = Input::getInstance();

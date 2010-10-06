@@ -44,7 +44,19 @@ class LDAPAuth extends SecureTokenAuth
 
 	public function isCurrentUserAdmin()
 	{
-		return false;
+        $adminName = Configuration::getInstance()->getconfig("ldap.admin_group");
+        $user = $this->ldapManager->getUser();
+        $groups = $this->ldapManager->getGroupsForUser($user);
+        foreach ($groups as $group)
+        {
+            if ($group["cn"] == $adminName)
+            {
+                return TRUE;
+            }
+
+        }
+
+        return FALSE;
 	}
 
 	public function displayNameForGroup($group)
@@ -87,20 +99,6 @@ class LDAPAuth extends SecureTokenAuth
 		else
 		{
 			throw new Exception("you aren't authed to ldap", E_LDAP_NOT_AUTHED);
-		}
-	}
-
-	public function setTeamDesc($team, $name)
-	{
-		$userTeams = $this->getTeams($this->getCurrentUser());
-		$prefix = Configuration::getInstance()->getConfig('ldap.team.prefix');
-		if(!in_array($team, $userTeams))
-		{
-			throw new Exception('You cannot change the name of a team that you are not in!', E_PERM_DENIED);
-		}
-		else
-		{
-			$this->ldapManager->changeTeamDesc($prefix.$team, $name);
 		}
 	}
 }

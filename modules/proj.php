@@ -57,6 +57,7 @@ class ProjModule extends Module
 		$this->installCommand('commit', array($this, 'commitProject'));
 		$this->installCommand('co', array($this, 'checkoutProject'));
         $this->installCommand("copy", array($this, "copyProject"));
+		$this->installCommand('zip', array($this, 'redirectToZip'));
 	}
 
 	private function verifyTeam()
@@ -169,7 +170,6 @@ class ProjModule extends Module
 	public function checkoutProject()
 	{
 		$this->verifyTeam();
-		$config = Configuration::getInstance();
 
 		//bail if we aren't in a repo
 		if ($this->projectRepository == null)
@@ -177,6 +177,7 @@ class ProjModule extends Module
 			return false;
 		}
 
+		$config = Configuration::getInstance();
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 
@@ -186,9 +187,34 @@ class ProjModule extends Module
 		$projdir = "$teamdir/$this->projectName";
 		if (!is_dir($projdir))
 			mkdir($projdir);
-		$this->projectRepository->archiveSourceZip("$projdir/robot.zip");
+
+		$hash = $input->getInput('rev');
+		$this->projectRepository->archiveSourceZip("$projdir/robot.zip", $hash);
 
 		$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
+	}
+
+	public function redirectToZip()
+	{
+		$this->verifyTeam();
+
+		//bail if we aren't in a repo
+		if ($this->projectRepository == null)
+		{
+			return false;
+		}
+
+		$config = Configuration::getInstance();
+		$output = Output::getInstance();
+		$input = Input::getInstance();
+
+		$zipPath = $config->getConfig('zippath').'/'.$this->team.'/'.$this->projectName.'/robot.zip';
+		if (!is_file($zipPath))
+		{
+			$this->checkoutProject();
+		}
+		$basepath = str_replace('//', '/', dirname($_SERVER['SCRIPT_NAME']).'/');
+		header('Location: '.$basepath.$zipPath);
 	}
 
 	private function getRootRepoPath()

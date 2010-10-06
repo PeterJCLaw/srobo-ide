@@ -145,7 +145,9 @@ Calendar.prototype.processDates = function() {
 	//get array of days with corresponding log entries
 	for(var z=0; z < this.logs.length; z++) {
 		var now = this.logs[z].date.getDate();
-		if(findValue(this.logdays, now) < 0) {
+		if( this.logs[z].date.getMonth() == this.date.getMonth()	// is in the month on display
+		 && this.logs[z].date.getYear() == this.date.getYear()	// is in the year on display
+		 && findValue(this.logdays, now) < 0) {
 			this.logdays.push(now);
 		}
 	}
@@ -192,7 +194,7 @@ Calendar.prototype.change_day = function(target) {
 	for(var i = 0; i < this.logs.length; i++) {
 		if(this.logs[i].date.getDate() == target) {
 			appendChildNodes("cal-revs", OPTION({ "value" : this.logs[i].rev},
-							    this.logs[i].rev + " " +
+							    IDE_hash_shrink(this.logs[i].rev) + " " +
 							    this.logs[i].author+": "+
 							    this.logs[i].message.slice(0, 20)+" ("+
 							    this.logs[i].date.getHours()+":"+
@@ -209,7 +211,9 @@ Calendar.prototype.change_day = function(target) {
 
 Calendar.prototype._load_new_rev = function() {
 	var target = $("cal-revs").value;
-	if(target >= 0 || target == 'HEAD')
+
+	// Check that it's not a special value
+	if( !(target < 0) )
 		this._load_rev( target );
 	if(target == 'HEAD')
 		this.init();

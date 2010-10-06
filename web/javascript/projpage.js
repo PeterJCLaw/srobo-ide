@@ -261,7 +261,7 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 }
 
 ProjPage.prototype._exportProject = function() {
-	Checkout.GetInstance().checkout(team, this.project, function() {}, function(errno, errcode) {
+	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {}, function(errno, errcode) {
 		alert("checkout-induced death: " + errcode);
 	});
 }
@@ -400,6 +400,7 @@ ProjFileList.prototype.refresh = function(auto) {
 		err_handler = bind( this._prepare_auto_refresh, this );
 	IDE_backend_request("file/compat-tree", {team:    this._team,
 	                                         project: this._project,
+	                                         rev:     this.rev,
 	                                         path:    "."},
 	                                         bind(this._received, this), err_handler);
 }

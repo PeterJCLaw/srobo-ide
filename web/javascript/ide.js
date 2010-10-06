@@ -80,6 +80,33 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 	xhr.send(rq);
 }
 
+/// Shrink a (git) hashes to a common and more size for display
+function IDE_hash_shrink(hash) {
+	var hash_length = 9;
+	if(hash == null) {
+		return false;
+	}
+	if(hash.length < hash_length) {
+		return hash;
+	}
+	return hash.substring(0, hash_length);
+}
+
+/// Compare (git) hashes of potentially unequal length
+function IDE_hash_compare(a, b) {
+	var min_hash_length = 6;
+	if(a.length < min_hash_length || b.length < min_hash_length) {
+		return false;
+	}
+	if(a == b) {
+		return true;
+	}
+	var min_len = Math.min(a.length, b.length);
+	var short_a = a.substring(0, min_len);
+	var short_b = b.substring(0, min_len);
+	return (short_a == short_b)
+}
+
 function IDE_path_get_project(path) {
 	var split = path.split(/\//);
 	return split[1];

@@ -12,26 +12,30 @@ error_reporting(E_ALL | E_STRICT);
 
 // includes
 require_once('include/main.php');
+try {
+	$config = Configuration::getInstance();
 
-$config = Configuration::getInstance();
-if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))
-{
-	header('HTTP/1.1 403 Forbidden');
-	header('Content-type: text/plain');
-	echo "Unencrypted HTTP not allowed, please use HTTPS.\n";
-	exit();
-}
+	if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))
+	{
+		header('HTTP/1.1 403 Forbidden');
+		header('Content-type: text/plain');
+		echo "Unencrypted HTTP not allowed, please use HTTPS.\n";
+		exit();
+	}
 
-// If the user is logged in give them the main index page
-// Else give them the login page
-$auth = AuthBackend::getInstance();
-$token = getDefaultTokenStrategy()->getAuthToken();
-if ($auth->validateAuthToken($token))
-{
-	readfile('web/index.html');
+	// If the user is logged in give them the main index page
+	// Else give them the login page
+	$auth = AuthBackend::getInstance();
+	$token = getDefaultTokenStrategy()->getAuthToken();
+	if ($auth->validateAuthToken($token))
+	{
+		readfile('web/index.html');
+	}
+	else
+	{
+		getDefaultTokenStrategy()->removeAuthToken();
+		readfile('web/login.html');
+	}
+} catch (Exception $e) {
+	echo 'The ide exploded, please tell the srobo team immediately';
 }
-else
-{
-	readfile('web/login.html');
-}
-
