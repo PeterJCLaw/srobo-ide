@@ -873,8 +873,7 @@ function ProjOps() {
 
 	this._mv_success = function(nodes) {
 		logDebug("_mv_success()");
-		logDebug(nodes.status);
-		if(nodes.status == 0) {
+		if(nodes.success) {
 			status_msg("Move successful!", LEVEL_OK);
 			projpage.flist.refresh();
 		} else {
