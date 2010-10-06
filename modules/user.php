@@ -42,7 +42,7 @@ class UserModule extends Module
 		$teams = array();
 		foreach ($teamNumbers as $id)
 		{
-			$teams[$id] = $auth->teamName($id);
+			$teams[$id] = $auth->displayNameForTeam($id);
 		}
 
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
