@@ -1,6 +1,4 @@
-_REPOS = repos/1 repos/2
-_ZIPS = zips/1 zips/2
-_FOLDERS = settings $(_REPOS) $(_ZIPS) /tmp/ide-feed-cache notifications
+_FOLDERS = settings repos zips /tmp/ide-feed-cache notifications
 
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
@@ -16,7 +14,7 @@ applet: applet/build.xml applet/.keystore
 
 # Actual targets
 clean:
-	rm -rf $(_FOLDERS) repos html latex zips
+	rm -rf $(_FOLDERS) html latex
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
