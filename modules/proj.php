@@ -169,7 +169,6 @@ class ProjModule extends Module
 	public function checkoutProject()
 	{
 		$this->verifyTeam();
-		$config = Configuration::getInstance();
 
 		//bail if we aren't in a repo
 		if ($this->projectRepository == null)
@@ -177,6 +176,7 @@ class ProjModule extends Module
 			return false;
 		}
 
+		$config = Configuration::getInstance();
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 
@@ -186,7 +186,9 @@ class ProjModule extends Module
 		$projdir = "$teamdir/$this->projectName";
 		if (!is_dir($projdir))
 			mkdir($projdir);
-		$this->projectRepository->archiveSourceZip("$projdir/robot.zip");
+
+		$hash = $input->getInput('rev');
+		$this->projectRepository->archiveSourceZip("$projdir/robot.zip", $hash);
 
 		$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
 	}

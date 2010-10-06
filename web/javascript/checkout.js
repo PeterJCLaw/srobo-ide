@@ -101,7 +101,7 @@ Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
  *  their browser supports it.
  * We also munge the successCallback to record the number of checkouts the user has done.
  */
-Checkout.prototype.checkout = function(team, project, successCallback, errorCallback) {
+Checkout.prototype.checkout = function(team, project, rev, successCallback, errorCallback) {
 	// Just offered java
 	if (this._offer_java_signal != null) {
 		// disconnect the signal and null the ident
@@ -119,7 +119,7 @@ Checkout.prototype.checkout = function(team, project, successCallback, errorCall
 	 && user.get_setting(this._setting_key) == null
 	 && this._java_works
 	) {
-		this._offer_java(team, project, successCallback, errorCallback);
+		this._offer_java(team, project, rev, successCallback, errorCallback);
 		return;
 	}
 
@@ -134,16 +134,16 @@ Checkout.prototype.checkout = function(team, project, successCallback, errorCall
 		successCallback();
 	}
 	// get URL
-	IDE_backend_request("proj/co", {team: team, project: project},
+	IDE_backend_request("proj/co", {team: team, project: project, rev: rev},
 	                    bind(this._download, this, record_export, errorCallback),
 	                    errorCallback);
 }
 
-Checkout.prototype._offer_java = function(team, project, successCallback, errorCallback) {
+Checkout.prototype._offer_java = function(team, project, rev, successCallback, errorCallback) {
 	var sp = SettingsPage.GetInstance();
 	sp.init();
 	status_msg('Would you like to make exporting simpler?', LEVEL_INFO);
 	var s = sp.getSetting(this._setting_key);
 	s.flash();
-	this._offer_java_signal = connect(sp, 'save', bind(this.checkout, this, team, project, successCallback, errorCallback));
+	this._offer_java_signal = connect(sp, 'save', bind(this.checkout, this, team, project, rev, successCallback, errorCallback));
 }
