@@ -661,6 +661,10 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._get_revisions = function() {
 		logDebug("retrieving file history");
 		this._receive_revisions({log: []});
+		// Don't even try to get revisions if we know that it's a new file
+		if(this._isNew) {
+			return;
+		}
         IDE_backend_request('file/log', {
                 team: team,
              project: IDE_path_get_project(this.path),
