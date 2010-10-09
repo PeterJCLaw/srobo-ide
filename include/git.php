@@ -496,7 +496,8 @@ class GitRepository
     /**
      * Stages a file
      */
-    public function stage($path) {
+    public function stage($path)
+    {
 		$shell_path = escapeshellarg($path);
 		$this->gitExecute(true, "add $shell_path");
     }
