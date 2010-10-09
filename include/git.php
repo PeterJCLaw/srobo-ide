@@ -327,6 +327,14 @@ class GitRepository
 	}
 
 	/**
+	 * Returns a list of files with un-staged changes.
+	 */
+	public function unstagedChanges()
+	{
+		return explode("\n", $this->gitExecute(true, 'diff --name-only'));
+	}
+
+	/**
 	 * performs a git commit
 	 */
 	public function commit($message, $name, $email)
