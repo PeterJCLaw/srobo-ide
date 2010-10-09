@@ -75,7 +75,8 @@ class GitRepository
         return $this->working_path;
     }
 
-    public function unstageAll() {
+    public function unstageAll()
+    {
         $this->gitExecute("reset");
     }
 
@@ -269,11 +270,15 @@ class GitRepository
         $this->gitExecute(true, "checkout $revision");
     }
 
-    public function checkoutFile($file,$revision=null) {
+    public function checkoutFile($file,$revision=null)
+    {
         $shellPath = escapeshellarg($file);
-        if ($revision == null) {
+        if ($revision == null)
+        {
             $this->gitExecute(true, "checkout $shellPath");
-        } else {
+        }
+        else
+        {
             $this->gitExecute(true, "checkout $revision -- $shellPath");
         }
     }
@@ -315,6 +320,14 @@ class GitRepository
 			.escapeshellarg('stash@{[[:digit:]]*}: On master: '.$id.'$')
 			.' | grep -o "stash@{[[:digit:]]*}"');
 		$this->gitExecute(true, 'stash pop '.$key);
+	}
+
+	/**
+	 * Returns a list of files with un-staged changes.
+	 */
+	public function unstagedChanges()
+	{
+		return explode("\n", $this->gitExecute(true, 'diff --name-only'));
 	}
 
 	/**
@@ -375,6 +388,8 @@ class GitRepository
 			}
 		}
 		usort($result, function($a, $b) {
+			$a = $a['name'];
+			$b = $b['name'];
 			if ($a < $b)  return -1;
 			if ($a > $b)  return 1;
 			if ($a == $b) return 0;
@@ -485,7 +500,8 @@ class GitRepository
     /**
      * Stages a file
      */
-    public function stage($path) {
+    public function stage($path)
+    {
 		$shell_path = escapeshellarg($path);
 		$this->gitExecute(true, "add $shell_path");
     }
