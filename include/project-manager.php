@@ -103,9 +103,28 @@ class ProjectManager
 
 	public function updateRepository($team, $project, $user)
 	{
+		// grab the repo
 		$userRepo = $this->getUserRepository($team, $project, $user);
+		// grab unstaged changes
+		$unstaged = $userRepo->unstagedChanges();
+		// read them all
+		$unstagedFiles = array();
+		foreach ($unstaged as $key)
+		{
+			$unstagedFiles[$key] = $userRepo->getFile($key);
+		}
+		// reset --hard
+		$userRepo->reset();
+		// fetch
 		$userRepo->fetch();
+		// merge
 		$conflicts = $userRepo->merge(array('origin/master'));
+		// rewrite files
+		foreach ($unstagedFiles as $path => $data)
+		{
+			$userRepo->putFile($path, $data);
+		}
+		// check for conflicts
 		if (empty($conflicts))
 		{
 			$userRepo->push();
