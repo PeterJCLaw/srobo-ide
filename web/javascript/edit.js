@@ -318,16 +318,13 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._check_syntax = function() {
 		//tell the log and grab the latest contents
 		logDebug( "Checking syntax of " + this.path );
-		this._capture_code();
 
-		//throw the contents to the backend, if needed
-		if(this._original != this.contents)
-			opts = {'alert' : true, 'code' : this.contents }
-		else
-			opts = {'alert' : true}
-
-		//get the errors page to run the check
-		errorspage.check(this.path, opts);
+		// get the errors page to run the check, after autosaving the file.
+		this._autosave(
+			bind( errorspage.check, errorspage, this.path, { alert: true } ),
+			partial( status_button, "Unable to check syntax", LEVEL_WARN,
+				"retry", bind(this._check_syntax, this) )
+		);
 	}
 
 	this._diff = function() {
@@ -467,12 +464,17 @@ function EditTab(iea, team, project, path, rev, mode) {
 		}
 	}
 
-	this._autosave = function() {
+	this._autosave = function(cb, errCb) {
+		var errCb = errCb || bind(this._on_keydown, this, 'auto');
 		this._timeout = null;
 		//do an update and check to see if we need to autosave
 		this._capture_code();
+		// If there's no need to save then call the success callback anyway
 		if(this.contents == this._original || this.contents == this._autosaved)
+		{
+			cb();
 			return;
+		}
 
 		logDebug('EditTab: Autosaving '+this.path)
 
@@ -481,17 +483,17 @@ function EditTab(iea, team, project, path, rev, mode) {
 		                                 path: IDE_path_get_file(this.path),
 		                                 rev: this.rev,
 		                                 data: this.contents},
-		                                 bind(this._receive_autosave, this),
-		                                 bind(this._on_keydown, this, 'auto'));
+		                                 bind(this._receive_autosave, this, this.contents, cb),
+		                                 errCb);
 	}
 
 	//ajax event handler for autosaving to server, based on the one for commits
-	this._receive_autosave = function(reply){
-		/*if(typeof reply.date != 'undefined') {
-			this.autosaved = reply.code;
-			projpage.flist.refresh();
-		}*/
-		status_msg("autosaved file", LEVEL_OK);
+	this._receive_autosave = function(code, cb){
+		this._autosaved = code;
+		projpage.flist.refresh('auto');
+		if (typeof cb == 'function') {
+			cb();
+		}
 	}
 
 	this.is_modified = function() {
@@ -659,6 +661,10 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._get_revisions = function() {
 		logDebug("retrieving file history");
 		this._receive_revisions({log: []});
+		// Don't even try to get revisions if we know that it's a new file
+		if(this._isNew) {
+			return;
+		}
         IDE_backend_request('file/log', {
                 team: team,
              project: IDE_path_get_project(this.path),

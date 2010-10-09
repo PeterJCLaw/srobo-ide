@@ -332,7 +332,6 @@ class FileModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$config = Configuration::getInstance();
-		$auth = AuthBackend :: getInstance();
 		$path   = $input->getInput('path');
 
 		//base dir might need changing with alistair's new git situation
