@@ -69,7 +69,7 @@ class LDAPAuth extends SecureTokenAuth
 
 		foreach ($groups as $group)
 		{
-			if ($group["cn"] == "team"+$team)
+			if ($group["cn"] == "team$team")
 			{
 				if (isset($group["description"]))
 					return $group["description"];
