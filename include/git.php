@@ -379,6 +379,8 @@ class GitRepository
 			}
 		}
 		usort($result, function($a, $b) {
+			$a = $a['name'];
+			$b = $b['name'];
 			if ($a < $b)  return -1;
 			if ($a > $b)  return 1;
 			if ($a == $b) return 0;
