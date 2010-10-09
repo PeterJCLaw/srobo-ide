@@ -274,11 +274,15 @@ class GitRepository
         $this->gitExecute(true, "checkout $revision");
     }
 
-    public function checkoutFile($file,$revision=null) {
+    public function checkoutFile($file,$revision=null)
+    {
         $shellPath = escapeshellarg($file);
-        if ($revision == null) {
+        if ($revision == null)
+        {
             $this->gitExecute(true, "checkout $shellPath");
-        } else {
+        }
+        else
+        {
             $this->gitExecute(true, "checkout $revision -- $shellPath");
         }
     }
