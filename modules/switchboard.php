@@ -15,9 +15,9 @@ class SwitchboardModule extends Module
 		$this->installCommand('milestones', array($this, 'getMilestones'));
 	}
 
-    /**
-     * Gets switchboard messages
-     */
+	/**
+	 * Gets switchboard messages
+	 */
 	public function getMessages()
 	{
 		$output = Output::getInstance();
@@ -30,30 +30,30 @@ class SwitchboardModule extends Module
 		$output->setOutput('messages', $messages);
 	}
 
-    /**
-     * Gets switchboard milestones
-     */
+	/**
+	 * Gets switchboard milestones
+	 */
 	public function getMilestones()
 	{
+		$config = Configuration::getInstance();
 		$output = Output::getInstance();
-		$output->setOutput('start', (int)((time() - 3600) . '000'));
-		$output->setOutput('end',   (int)((time() + 3600) . '000'));
-		$output->setOutput('events', array(
-			array(
-				'title' => 'One',
-				'desc'  => 'First Event',
-				'date'  => 'Now'
-			),
-			array(
-				'title' => 'Two',
-				'desc'  => 'Second Event',
-				'date'  => 'Also Now'
-			),
-			array(
-				'title' => 'Three',
-				'desc'  => 'Third Event',
-				'date'  => 'Still Now'
-			)
-		));
+
+		$start = strtotime($config->getConfig('switchboard.start'));
+		$end   = strtotime($config->getConfig('switchboard.end'));
+		$eventsFile = $config->getConfig('switchboard.events');
+		$eventsIn = file_get_contents($eventsFile);
+		$eventsIn = json_decode($eventsIn);
+
+		$events = array();
+		foreach($eventsIn as $event)
+		{
+			var_dump($event);
+			$event->date = strtotime($event->date);
+			$events[] = $event;
+		}
+
+		$output->setOutput('start', $start);
+		$output->setOutput('end', $end);
+		$output->setOutput('events', $events);
 	}
 }

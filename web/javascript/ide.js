@@ -61,7 +61,7 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 				IDE_backend_debug = rp.debug;
 			}
 			if (rp.notifications) {
-				rp.notifications.forEach(IDE_notification_callback);
+				forEach(rp.notifications, IDE_notification_callback);
 			}
 			if (rp.error) {
 				errorCallback(rp.error[0], rp.error[1], args);

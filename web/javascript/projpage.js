@@ -158,7 +158,7 @@ ProjPage.prototype.CreateCopyProject = function(newProjName) {
                         {
                             "team":team,
                             "project":this.project,
-                            "new-name":newProjName,
+                            "new-name":newProjName
                         },
                         bind( partial(this._CopyProjectSuccess, newProjName), this),
 	                    bind( function() {
@@ -1048,7 +1048,7 @@ function ProjOps() {
         IDE_backend_request("file/del",
                             { "team" : team,
         				      "project" : projpage.project,
-		        			  "files" : death_list,
+		        			  "files" : death_list
                             },
                             bind(function() {
                                                 IDE_backend_request("proj/commit",

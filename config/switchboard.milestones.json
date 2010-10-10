@@ -1,0 +1,27 @@
+[
+	{
+		"title":"KickStart",
+		"date":"2010-09-18",
+		"desc":"Everything started here"
+	},
+	{
+		"title":"Tech Day 1",
+		"date":"2011-01-18",
+		"desc":"Another opportunity to meet up with the other competitors and mentors"
+	},
+	{
+		"title":"Tech Day 2",
+		"date":"2011-02-18",
+		"desc":"Another opportunity to meet up with the other competitors and mentors"
+	},
+	{
+		"title":"Competition Prep Day",
+		"date":"2011-04-16",
+		"desc":"One mad last hack opportunity"
+	},
+	{
+		"title":"Competition",
+		"date":"2011-04-17",
+		"desc":"Everything ends here"
+	}
+]
