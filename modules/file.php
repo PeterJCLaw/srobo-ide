@@ -330,7 +330,7 @@ class FileModule extends Module
 		else
 		{
 			$this->repository()->putFile($path, $newCode);
-			$diff = $this->repository()->cachedDiff($path);
+			$diff = $this->repository()->diff($path);
 		}
 
 		$output->setOutput("diff", $diff);

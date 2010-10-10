@@ -27,6 +27,7 @@ class SwitchboardModule extends Module
 		$messagesLimit = $config->getConfig('messages_limit');
 
 		$messages = Feeds::getRecentPosts($messagesURL, $messagesLimit);
+		$output->setOutput('feedurl', $messagesURL);
 		$output->setOutput('messages', $messages);
 	}
 
