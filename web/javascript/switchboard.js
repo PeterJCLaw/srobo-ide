@@ -273,13 +273,12 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	/* Add the events */
 	for(var m=0; m < nodes.events.length; m++)
 	{	/* create and position a new <div> for each timeline event */
-		var e = DIV({"class":"timeline-bar-event",
-				"id":"timeline-ev-"+m,
-				"title":nodes.events[m].title}, "");
-		this._signals.push( connect( e, "onclick", bind( this.changeMilestone, this, m) ) );
+		var e = DIV({
+		  'class': "timeline-bar-event",
+		       id: "timeline-ev-"+m,
+		    title: nodes.events[m].title}, "");
+		this._signals.push( connect( e, "onclick", bind(this.changeMilestone, this, m) ) );
 		appendChildNodes($("timeline-bar-in"), e);
-		setStyle(e,
-			{'margin-left': getOffset(nodes.events[m].date)});
 	}
 }
 
