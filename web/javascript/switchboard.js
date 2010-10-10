@@ -286,6 +286,7 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 		  'class': "timeline-bar-event",
 		       id: "timeline-ev-"+m,
 		    title: nodes.events[m].title}, "");
+		setStyle(e, {'margin-left':offset});
 		this._signals.push( connect( e, "onclick", bind(this.changeMilestone, this, m) ) );
 		appendChildNodes($("timeline-bar-in"), e);
 	}
