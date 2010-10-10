@@ -74,7 +74,7 @@ Checkout.prototype._java = function(url, successCallback, errorCallback) {
 	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + url));
 	//if downloading worked
 	if (retcode == 0) {
-		successCallBack();
+		successCallback();
 	} else {
 		// negative response code means that java is not going to work ever
 		if (retcode < 0) {
