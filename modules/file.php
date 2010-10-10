@@ -175,7 +175,7 @@ class FileModule extends Module
 		$path   = $input->getInput('path');
 		$revision = $input->getInput('rev', true);
 		// a specific revision is requested
-		if($revision != null && $revision != 'HEAD')
+		if($revision != null)
 		{
 			$content = $this->repository()->getFile($path, $revision);
 		}
