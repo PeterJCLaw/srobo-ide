@@ -149,7 +149,7 @@ Switchboard.prototype._receiveGetFeed = function(nodes)
 	else
 	{
 		//update url on page
-		document.user_feed_form.user_feed_input.value = nodes.url;
+		$('user-feed-url').value = nodes.url || '';
 	}
 	if(nodes.checked > 0 && nodes.valid > 0)	//it's been checked and found valid
 	{
