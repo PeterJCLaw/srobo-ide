@@ -184,17 +184,16 @@ Switchboard.prototype.GetFeed = function()
 Switchboard.prototype.receiveMessages = function(nodes)
 {
 	// Remove any existing messages before adding new ones
-	replaceChildNodes($("message-list"));
-	for(var m in nodes.messages)
+	var a = A({'href':nodes.feedurl, 'target':'_blank'}, 'View Feed');
+	replaceChildNodes('message-list', a);
+	for(var m=0; m < nodes.messages.length; m++)
 	{
 		var item = nodes.messages[m];
-		var a = A({'href':item.link, 'target':'_blank'}, item.title);	//Write message title link
-		var s = SPAN({}, "");
-		s.innerHTML = ": "+item.body+" [by "+item.author+"]";		//message body
-		var l = LI({},"");
-		appendChildNodes(l, a);						//Add the title to the list element
-		appendChildNodes(l, s);						//Add the message to the list element
-		appendChildNodes($("message-list"),l);				//Add the whole list to the message window
+		//Write message title link
+		var a = A({'href':item.link, 'target':'_blank'}, item.title);
+		var l = LI({},a);
+		//Add the whole list to the message window
+		appendChildNodes('message-list',l);
 	}
 }
 
