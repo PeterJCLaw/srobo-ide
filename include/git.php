@@ -207,7 +207,7 @@ class GitRepository
 		}
 		else
 		{
-			$log = $this->gitExecute(false, $logCommand.' '.escapeshellarg($file));
+			$log = $this->gitExecute(false, $logCommand.' -- '.escapeshellarg($file));
 		}
 		$lines = explode("\n", $log);
 		$results = array();
