@@ -44,8 +44,31 @@ test_true(file_exists("$repopath/wut"), 'failed to create file');
 $input->setInput('data', 'deathcakes');
 $file->dispatchCommand('put');
 test_equal(file_get_contents("$repopath/wut"), 'deathcakes', 'wrong content in file');
+
+// Commit and test the result
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+$input->setInput('rev', 'HEAD');
 $file->dispatchCommand('get');
-test_equal($output->getOutput('data'), 'deathcakes', 'read file incorrectly');
+test_equal($output->getOutput('original'), 'deathcakes', 'read unchanged original file incorrectly');
+test_equal($output->getOutput('autosaved'), null, 'read unchanged autosaved file incorrectly');
+
+// Autosave and test the result
+$input->setInput('data', 'bananas');
+$file->dispatchCommand('put');
+$file->dispatchCommand('get');
+test_equal($output->getOutput('original'), 'deathcakes', 'read changed original file incorrectly');
+test_equal($output->getOutput('autosaved'), 'bananas', 'read changed autosaved file incorrectly');
+
+// Clear the autosave and test the result
+$input->setInput('files', array($input->getInput('path')));
+$input->setInput('revision', 0);
+$file->dispatchCommand('co');
+$file->dispatchCommand('get');
+test_equal($output->getOutput('original'), 'deathcakes', 'read checkouted original file incorrectly');
+test_equal($output->getOutput('autosaved'), null, 'read checkouted autosaved file incorrectly');
+
+// Move the file and test the result
 $input->setInput('old-path', 'wut');
 $input->setInput('new-path', 'huh');
 $file->dispatchCommand('cp');
