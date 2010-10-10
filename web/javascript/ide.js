@@ -108,8 +108,13 @@ function IDE_hash_compare(a, b) {
 }
 
 function IDE_path_get_project(path) {
-	var split = path.split(/\//);
-	return split[1];
+	// index of '/' starting from char 1 onwards
+	var idx = path.indexOf('/', 1);
+	if(idx < 0) {
+		return path;
+	}
+	// return a substring to that point
+	return path.substring(1,idx);
 }
 
 function IDE_path_get_file(path) {
