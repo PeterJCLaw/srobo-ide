@@ -298,7 +298,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._recv_contents = function(nodes) {
 		this._isNew = false;
 		this._original = nodes.original;
-		this._autosaved = nodes.autosaved;
+		this._autosaved = nodes.autosaved || null;
 
 		if(this._mode == 'AUTOSAVE') {
 			this.contents = this._autosaved;
