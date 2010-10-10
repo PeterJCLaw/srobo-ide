@@ -5,6 +5,7 @@ import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,9 +15,9 @@ public class ZipWriteRunner implements Runnable {
 	private ConcurrentHashMap<Integer, FutureValue<Boolean>> mJobSuccessMap = new ConcurrentHashMap<Integer, FutureValue<Boolean>>();
 
 	/**
-     * Sets a new zip to be written to the file system
-     */
-    public FutureValue<Boolean> setZip(byte[] zip) throws InterruptedException {
+	 * Sets a new zip to be written to the file system
+	 */
+	public FutureValue<Boolean> setZip(byte[] zip) throws InterruptedException {
 		FileWriteJob newJob = new FileWriteJob(zip);
 		FutureValue<Boolean> result = new FutureValue<Boolean>();
 		mJobSuccessMap.put(newJob.getCode(), result);
@@ -72,20 +73,26 @@ public class ZipWriteRunner implements Runnable {
 	}
 
 	private void writeFile(File f) throws InterruptedException {
-		
+
 		FileWriteJob job;
 		System.err.println("tag5");
 		job = mWriteQueue.take();
 		System.err.println("tag6");
 		try {
-		    FileOutputStream fos = new FileOutputStream(f);
+			FileOutputStream fos = new FileOutputStream(f);
 			System.err.println("tag7");
 			fos.write(job.getContents());
 			System.err.println("tag8");
 			fos.flush();
 			System.err.println("tag9");
 			fos.close();
-			fos.getFD().sync();
+			
+			try {
+				fos.getFD().sync();
+			} catch (SyncFailedException sfe) {
+				System.err.println("sync failed, continuing anyway");
+			}
+			
 			System.err.println("tag10");
 			System.err.println("setting job with code " + job.getCode() + "to true");
 			mJobSuccessMap.get(job.getCode()).set(true);
