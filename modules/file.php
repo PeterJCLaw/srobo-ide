@@ -180,17 +180,19 @@ class FileModule extends Module
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-		$revision = $input->getInput('rev', true);
-		// a specific revision is requested
-		if($revision != null)
+		$revision = $input->getInput('rev');
+
+		// The data the repo has stored
+		$original = $this->repository()->getFile($path, $revision);
+
+		// only bother specifying the autosave data if HEAD
+		if($revision == 'HEAD')
 		{
-			$content = $this->repository()->getFile($path, $revision);
+			$autosaved = $this->repository()->getFile($path);
 		}
-		else
-		{
-			$content = $this->repository()->getFile($path);
-		}
-		$output->setOutput('data', $content);
+
+		$output->setOutput('autosaved', $autosaved);
+		$output->setOutput('original', $original);
 		return true;
 	}
 

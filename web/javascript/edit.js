@@ -289,17 +289,22 @@ function EditTab(iea, team, project, path, rev, mode) {
 		IDE_backend_request("file/get", { team : this.team,
 		                   project: this.project,
 						   path : IDE_path_get_file(this.path),
-						   rev : this._mode == 'AUTOSAVE' ? null : this.rev },
+						   rev : this.rev },
 						   bind(this._recv_contents, this),
 						   bind(this._recv_contents_err, this));
 	}
 
 	// Handler for the reception of file contents
 	this._recv_contents = function(nodes) {
-		this.contents = nodes.data;
-		this._original = nodes.data;
-		this._autosaved = nodes.data;
 		this._isNew = false;
+		this._original = nodes.original;
+		this._autosaved = nodes.autosaved;
+
+		if(this._mode == 'AUTOSAVE') {
+			this.contents = this._autosaved;
+		} else {
+			this.contents = this._original;
+		}
 
 		this._update_contents();
 	}
