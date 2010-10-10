@@ -368,7 +368,7 @@ class FileModule extends Module
 		if (file_exists("$base/$path"))
 		{
 			//setup linting process
-			$proc = proc_open("$binary -e -f parseable --reports=n $path",
+			$proc = proc_open("$binary --rcfile=/dev/null -e -f parseable --reports=n $path",
 				array(0 => array("file", "/dev/null", "r"),
 				      1 => array("pipe", "w"),
 				      2 => array("pipe", "w")),
