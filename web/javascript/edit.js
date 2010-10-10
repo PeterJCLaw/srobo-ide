@@ -621,6 +621,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 					bind(this._change_revision, this, true)
 				);
 			} else {
+				this._mode = 'REPO';
 				this.rev = $("history").value;
 				status_msg("Opening history .."+$("history").value, LEVEL_OK);
 				this._load_contents();
