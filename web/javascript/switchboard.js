@@ -222,7 +222,8 @@ Switchboard.prototype.changeMilestone = function(id)
 	}
 	this.milestone = id;
 	setStyle("timeline-ev-"+id, {'background':'#FFFC00'});
-	$("timeline-description").innerHTML = "<strong>"+this.events[id].title+": </strong>"+this.events[id].desc+" ("+this.events[id].date+")";
+	$("timeline-description").innerHTML = "<strong>" + this.events[id].title + ": </strong>" +
+		this.events[id].desc + " (" + (new Date(this.events[id].date*1000)).toDateString() + ")";
 }
 
 Switchboard.prototype.receiveMilestones = function(nodes)
