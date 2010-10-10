@@ -668,8 +668,7 @@ function EditTab(iea, team, project, path, rev, mode) {
         IDE_backend_request('file/log', {
                 team: team,
              project: IDE_path_get_project(this.path),
-                path: IDE_path_get_file(this.path),
-              offset: 0
+                path: IDE_path_get_file(this.path)
             },
             bind(this._receive_revisions, this),
             bind(this._error_receive_revisions, this)
