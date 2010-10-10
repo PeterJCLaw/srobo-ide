@@ -400,25 +400,14 @@ class FileModule extends Module
 			}
 			else
 			{
-				$lines = explode("\n", $stderr);
+				$lines = explode("\n", $stdout);
 				$errors = array();
 				foreach ($lines as $line)
 				{
-					if (array_search($line, array("","\n","Warnings...")) === False)
-					{
-						$errors[] = $line;
-					}
+					if (stripos($line, "[E")) $errors[] = $line;
+					else if (stripos($line, "[W")) $warnings[] = $line;
 				}
 
-				$lines = explode("\n", $stdout);
-				$warnings = array();
-				foreach ($lines as $line)
-				{
-					if (array_search($line, array("","\n","Warnings...")) === False)
-					{
-						$warnings[] = $line;
-					}
-				}
 
 				$output->setOutput("errors", $errors);
 				$output->setOutput("messages", $warnings);
