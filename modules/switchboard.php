@@ -15,9 +15,9 @@ class SwitchboardModule extends Module
 		$this->installCommand('milestones', array($this, 'getMilestones'));
 	}
 
-    /**
-     * Gets switchboard messages
-     */
+	/**
+	 * Gets switchboard messages
+	 */
 	public function getMessages()
 	{
 		$output = Output::getInstance();
@@ -30,9 +30,9 @@ class SwitchboardModule extends Module
 		$output->setOutput('messages', $messages);
 	}
 
-    /**
-     * Gets switchboard milestones
-     */
+	/**
+	 * Gets switchboard milestones
+	 */
 	public function getMilestones()
 	{
 		$output = Output::getInstance();
