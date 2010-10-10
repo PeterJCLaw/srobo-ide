@@ -1142,7 +1142,7 @@ function ProjOps() {
                                                         {
                                                             team:team,
                                                             project:project,
-					                                        message : 'Undelete '+files+'to r'+projpage.flist.rev,
+					                                        message : 'Undelete '+files+' to '+IDE_hash_shrink(projpage.flist.rev),
                                                             paths:files
                                                         },
                                                         bind(this._undel_callback,this),

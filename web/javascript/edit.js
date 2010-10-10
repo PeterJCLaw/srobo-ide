@@ -587,7 +587,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		// Display file path
 		var t = this.path;
 		if( this.rev != 0 )
-			t = t + " - r" + this.rev;
+			t = t + " - " + IDE_hash_shrink(this.rev);
 		replaceChildNodes( $("tab-filename"), t );
 	}
 
@@ -639,7 +639,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 				}
 				appendChildNodes("history",
 					OPTION( { value: nodes.log[i].hash, title: nodes.log[i].message },
-						"r" + IDE_hash_shrink(nodes.log[i].hash) +
+						IDE_hash_shrink(nodes.log[i].hash) +
 						" " + histDate(i) + " [" + author + "]"
 					)
 				);

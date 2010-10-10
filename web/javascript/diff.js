@@ -100,7 +100,7 @@ DiffPage.prototype._recieveDiff = function(nodes) {
 	} else {
 		description = 'from your modifications, based on';
 	}
-	description += ' r' + this.revhash;
+	description += IDE_hash_shrink(this.revhash);
 	$('diff-page-summary').innerHTML = 'Displaying differences on '
 			+this.file+' '+description;
 	this.init();
