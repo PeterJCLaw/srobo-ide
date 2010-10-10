@@ -287,7 +287,7 @@ class FileModule extends Module
 		$number = ($number != null ? $number : 10);
 		$offset = ($offset != null ? $offset : 0);
 
-		$log = $repo->log($firstRev, $currRev);
+		$log = $repo->log($firstRev, $currRev, $path);
 
 		var_dump($log);
 
