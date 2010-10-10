@@ -291,7 +291,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		IDE_backend_request("file/get", { team : this.team,
 		                   project: this.project,
 						   path : IDE_path_get_file(this.path),
-						   rev : this.rev },
+						   rev : this._mode == 'AUTOSAVE' ? null : this.rev },
 						   bind(this._recv_contents, this),
 						   bind(this._recv_contents_err, this));
 	}
