@@ -481,7 +481,7 @@ ProjFileList.prototype._autosave_link = function( node, level ) {
 				"class" : 'autosave',
 				"ide_path" : node.path,
 				"ide_kind" : 'AUTOSAVE' },
-				'AutoSave (r'+node.autosave.revision+' at '+node.autosave.date+')' );
+				'Autosave ('+(new Date(node.autosave * 1000)).toDateString()+')' );
 	connect( link, "onclick", bind( this._onclick, this ) );
 	return link;
 }
