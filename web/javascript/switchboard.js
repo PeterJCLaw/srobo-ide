@@ -237,9 +237,9 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	this.events = nodes.events;
 
 	/* Date manipulation */
-	var start_date = new Date(nodes.start);
+	var start_date = new Date(nodes.start * 1000);
 	logDebug("Timeline start: "+ start_date);
-	var end_date = new Date(nodes.end);
+	var end_date = new Date(nodes.end * 1000);
 	logDebug("Timeline end: "+ end_date);
 	var duration = end_date - start_date;
 	logDebug("Timeline Duration: "+duration);
@@ -253,7 +253,7 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 			if(!parseInt(event_date)) {
 				return false;
 			}
-			var d = new Date(event_date);
+			var d = new Date(event_date * 1000);
 			var o = Math.floor(((d - start_date)/duration)*bar_width)+"px";
 			return o;
 		}
