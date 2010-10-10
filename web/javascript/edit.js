@@ -307,6 +307,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		}
 
 		this._update_contents();
+		this._show_modified();
 	}
 
 	// Handler for errors in receiving the file contents
