@@ -416,7 +416,7 @@ Setting.Type = Enum('Setting.Type', [
 SettingsPage.Settings = {
 	'export.usejava' : {
 		name: 'File export mechanism',
-		description: 'Whether or not to use the SR file exporter to automatically save exports onto the SR memory stick.',
+		description: 'Use the automatic Java file export system or not. This system automatically finds and saves the project to the correct location on your usb stick. Otherwise you get a save file dialogue, asking you to find the usb stick manually',
 		options: {
 			'default': Setting.Options.select,
 			dependsUpon: {callBack: bind(navigator.javaEnabled, navigator)},
