@@ -25,7 +25,8 @@ function ide_log($message)
 
 if (!IN_TESTS)
 	set_error_handler(function ($errno, $error) {
-		ide_log("PHP error: $error");
+		if ($errno != 0)
+			ide_log("PHP error: $error");
 	});
 
 require_once('include/feeds.php');
