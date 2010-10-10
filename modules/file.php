@@ -85,7 +85,8 @@ class FileModule extends Module
 	/**
 	 * Makes a directory in the repository
 	 */
-    public function makeDirectory() {
+    public function makeDirectory()
+    {
         $input = Input::getInstance();
         $output = Output::getInstance();
         $path = $input->getInput("path");
@@ -128,21 +129,27 @@ class FileModule extends Module
 		return array_values($clean);
 	}
 
-    public function checkoutFile() {
+    public function checkoutFile()
+    {
         $input = Input::getInstance();
         $output = Output::getInstance();
         $paths = $input->getInput("files");
         $revision = $input->getInput("revision");
         //latest
         $output->setOutput("rev", $revision);
-        if ($revision === 0 || $revision === "HEAD") {
-            foreach ($paths as $file) {
+        if ($revision === 0 || $revision === "HEAD")
+        {
+            foreach ($paths as $file)
+            {
                 $this->repository()->checkoutFile($file);
             }
 
-        } else {
+        }
+        else
+        {
             $output->setOutput("revision reverting","");
-            foreach ($paths as $file) {
+            foreach ($paths as $file)
+            {
                 $this->repository()->checkoutFile($file,$revision);
             }
         }
@@ -221,7 +228,8 @@ class FileModule extends Module
 		$output = Output::getInstance();
         $files = $input->getInput("files");
 
-        foreach ($files as $file) {
+        foreach ($files as $file)
+        {
     		$this->repository()->removeFile($file);
         }
 		return true;
@@ -279,14 +287,15 @@ class FileModule extends Module
 		$number = ($number != null ? $number : 10);
 		$offset = ($offset != null ? $offset : 0);
 
-		$log = $repo->log($firstRev, $currRev);
+		$log = $repo->log($firstRev, $currRev, $path);
 
 		var_dump($log);
 
 		$output->setOutput('log', array_slice($log, $offset, $number));
 
 		$authors = array();
-		foreach($log as $rev) {
+		foreach($log as $rev)
+		{
 			$authors[] = $rev['author'];
 		}
 

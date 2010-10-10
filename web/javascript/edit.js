@@ -302,8 +302,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		this._original = nodes.data;
 		this._autosaved = nodes.data;
 		this._isNew = false;
-		this.rev = "1";
-		this.file_rev = "1";
+		this.file_rev = this.rev
 
 		this._update_contents();
 	}
