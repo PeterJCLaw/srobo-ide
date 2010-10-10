@@ -480,7 +480,7 @@ class GitRepository
 			$needs_unstash = $this->stash($stash_id);
 			$this->checkoutFile($path, $commit);
 
-			return file_get_contents($this->working_path . "/$path");
+			$code = file_get_contents($this->working_path . "/$path");
 
 			// reset the tree back to tip
 			$this->checkoutFile($path, 'master');
@@ -488,6 +488,7 @@ class GitRepository
 			{
 				$this->stashPop($stash_id);
 			}
+			return $code;
 		}
 	}
 
