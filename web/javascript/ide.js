@@ -113,7 +113,11 @@ function IDE_path_get_project(path) {
 }
 
 function IDE_path_get_file(path) {
-	var split = path.split(/\//);
-	split = split.slice(2);
-	return split.join('/');
+	// index of '/' starting from char 1 onwards
+	var idx = path.indexOf('/', 1);
+	if(idx < 0) {
+		return path;
+	}
+	// return a substring from that point
+	return path.substring(idx+1);
 }
