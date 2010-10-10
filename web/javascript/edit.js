@@ -466,18 +466,20 @@ function EditTab(iea, team, project, path, rev, mode) {
 	}
 
 	this._autosave = function(cb, errCb) {
+		var cb = cb || null;
 		var errCb = errCb || bind(this._on_keydown, this, 'auto');
 		this._timeout = null;
 		//do an update and check to see if we need to autosave
 		this._capture_code();
-		// If there's no need to save then call the success callback anyway
-		if(this.contents == this._original || this.contents == this._autosaved)
+
+		// If there's no change and no callback then bail
+		if( (this.contents == this._original || this.contents == this._autosaved)
+		  && cb == null )
 		{
-			cb();
 			return;
 		}
 
-		logDebug('EditTab: Autosaving '+this.path)
+		logDebug('EditTab: Autosaving '+this.path);
 
 		IDE_backend_request("file/put", {team: team,
 		                                 project: this.project,
