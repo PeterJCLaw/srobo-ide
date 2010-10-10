@@ -368,8 +368,12 @@ class FileModule extends Module
 		if (file_exists("$base/$path"))
 		{
 			//setup linting process
-			putenv("PYLINTHOME=/dev/null");
-			$proc = proc_open("$binary --rcfile=/dev/null -e -f parseable --reports=n $path",
+			$dir = $config->getConfig("pylintdir");
+			if (!is_dir($dir)) {
+				mkdir($dir);
+			}
+			putenv("PYLINTHOME=$dir");
+			$proc = proc_open("$binary -e -f parseable --reports=n $path",
 				array(0 => array("file", "/dev/null", "r"),
 				      1 => array("pipe", "w"),
 				      2 => array("pipe", "w")),
