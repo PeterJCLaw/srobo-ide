@@ -250,6 +250,9 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	/* Convert a date into a pixel offset */
 	function getOffset(event_date)
 		{
+			if(!parseInt(event_date)) {
+				return false;
+			}
 			var d = new Date(event_date);
 			var o = Math.floor(((d - start_date)/duration)*bar_width)+"px";
 			return o;
@@ -273,6 +276,11 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	/* Add the events */
 	for(var m=0; m < nodes.events.length; m++)
 	{	/* create and position a new <div> for each timeline event */
+		var offset = getOffset(nodes.events[m].date);
+		// ensure that the date is valid
+		if( !!offset ) {
+			continue;
+		}
 		var e = DIV({
 		  'class': "timeline-bar-event",
 		       id: "timeline-ev-"+m,
