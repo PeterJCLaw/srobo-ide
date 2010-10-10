@@ -270,7 +270,7 @@ a.button, #login-box #login-button {
 	white-space: nowrap;
 }
 #login-box #login-button {
-	background-color: inherit;
+	background-color: #253571;
 	width: 50%;
 	margin: 10px auto;
 }
