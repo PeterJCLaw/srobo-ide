@@ -278,7 +278,8 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	{	/* create and position a new <div> for each timeline event */
 		var offset = getOffset(nodes.events[m].date);
 		// ensure that the date is valid
-		if( !!offset ) {
+		if( offset === false ) {
+			logDebug('Invalid offset in event: '+nodes.events[m].title);
 			continue;
 		}
 		var e = DIV({
