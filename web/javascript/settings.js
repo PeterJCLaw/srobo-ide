@@ -115,8 +115,8 @@ SettingsPage.prototype.saveSettings = function() {
 	var values = new Object();
 	for(var s in this._settings) {
 		var val = this._settings[s].getValue();
-		// fake option that we can't let past!
-		if(val == Setting.Options.select) {
+		// fake option that we can't let past! (only if it's enabled)
+		if(val == Setting.Options.select && this._settings[s].isEnabled()) {
 			status_msg('Please select a value for "'+SettingsPage.Settings[s].name+'"', LEVEL_WARN);
 			return;
 		}
@@ -155,6 +155,10 @@ function Setting(container, name, description, options) {
 }
 
 /* ***** Disable, Enable, Flash, Remove the setting ***** */
+Setting.prototype.isEnabled = function() {
+	return this._field.disabled;
+}
+
 Setting.prototype.disable = function() {
 	addElementClass(this._container, 'disabled');
 	this._field.disabled = true;
