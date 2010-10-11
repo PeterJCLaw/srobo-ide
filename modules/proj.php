@@ -247,10 +247,15 @@ class ProjModule extends Module
 
 	private function openProject($team, $project, $createOnDemand = false)
 	{
-		if ($createOnDemand && !in_array($project, $this->projectManager->listRepositories($team)))
+		if (!in_array($project, $this->projectManager->listRepositories($team)))
 		{
-			ide_log("On-demand creation of project $project for team $team");
-			$this->projectManager->createRepository($team, $project);
+			if ($createOnDemand)
+			{
+				ide_log("On-demand creation of project $project for team $team");
+				$this->projectManager->createRepository($team, $project);
+			}
+			else
+				return;
 		}
 		$this->projectRepository =
 		    $this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
