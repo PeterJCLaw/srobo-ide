@@ -261,7 +261,7 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 }
 
 ProjPage.prototype._exportProject = function() {
-	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {status_msg("Automatic checkout succeeded", LEVEL_OK);}, function(errno, errcode) {
+	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {}, function(errno, errcode) {
 		alert("checkout-induced death: " + errcode);
 	});
 }
@@ -483,7 +483,7 @@ ProjFileList.prototype._autosave_link = function( node, level ) {
 				"class" : 'autosave',
 				"ide_path" : node.path,
 				"ide_kind" : 'AUTOSAVE' },
-				'Autosave ('+(new Date(node.autosave * 1000)).toDateString()+')' );
+				'Load autosave ('+(new Date(node.autosave * 1000)).toDateString()+')' );
 	connect( link, "onclick", bind( this._onclick, this ) );
 	return link;
 }

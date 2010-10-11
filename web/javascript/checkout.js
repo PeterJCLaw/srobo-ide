@@ -74,6 +74,7 @@ Checkout.prototype._java = function(url, successCallback, errorCallback) {
 	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + url));
 	//if downloading worked
 	if (retcode == 0) {
+		status_msg("Automatic checkout succeeded", LEVEL_OK);
 		successCallback();
 	} else {
 		// negative response code means that java is not going to work ever
