@@ -91,7 +91,7 @@ class ProjModule extends Module
 	public function createProject()
 	{
 		$this->verifyTeam();
-		$this->openProject($this->team, $this->projectName);
+		$this->openProject($this->team, $this->projectName, true);
 	}
 
     public function copyProject()
@@ -245,9 +245,9 @@ class ProjModule extends Module
 		return $repoPath;
 	}
 
-	private function openProject($team, $project)
+	private function openProject($team, $project, $createOnDemand = false)
 	{
-		if (!in_array($project, $this->projectManager->listRepositories($team)))
+		if ($createOnDemand && !in_array($project, $this->projectManager->listRepositories($team)))
 		{
 			ide_log("On-demand creation of project $project for team $team");
 			$this->projectManager->createRepository($team, $project);
