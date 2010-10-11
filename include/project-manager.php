@@ -98,8 +98,9 @@ class ProjectManager
 		// the user needs a clone of an existing master
 		else
 		{
-			return GitRepository::createRepository($path, false,
-			                                       $this->getMasterRepository($team, $project));
+			$master = $this->getMasterRepository($team, $project);
+			$masterPath = $master->gitPath();
+			return GitRepository::cloneRepository($masterPath, $path);
 		}
 	}
 
