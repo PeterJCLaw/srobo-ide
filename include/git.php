@@ -162,6 +162,31 @@ class GitRepository
 	}
 
 	/**
+	 * Clones a git repository.
+	 * @param from: the source repo
+	 * @param to: the path to put the new repo (fails if this path exists)
+	 * @returns: a GitRepository object for the new repo
+	 */
+	public static function cloneRepository($from, $to)
+	{
+		$bin = self::gitBinaryPath();
+
+		ide_log("Cloning a repository at $from to $to.");
+
+		if (file_exists($path))
+		{
+			throw new Exception('Path already exists!', E_INTERNAL_ERROR);
+		}
+
+		$shell_from = escapeshellarg($from);
+		$shell_to   = escapeshellarg($to);
+
+		shell_exec("$bin clone $shell_from $shell_to");
+
+		return new GitRepository($to);
+	}
+
+	/**
 	 * Construct some of the internals of the git repo we're going to use.
 	 */
 	private static function populateRepoObejects($path)
