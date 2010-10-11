@@ -15,6 +15,7 @@ applet: applet/build.xml applet/.keystore
 # Actual targets
 clean:
 	rm -rf $(_FOLDERS) html latex
+	rm -f config/automagic.ini
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
