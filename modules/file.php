@@ -358,7 +358,7 @@ class FileModule extends Module
 		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
 
 		//get the pylint binary
-		$binary = $config->getConfig('pylint_path');
+		$binary = $config->getConfig('pylint.path');
 		if (!$binary)
 		{
 			throw new Exception("pylint is not installed", E_NOT_IMPL);
@@ -370,7 +370,7 @@ class FileModule extends Module
 		if (file_exists("$base/$path"))
 		{
 			//setup linting process
-			$dir = $config->getConfig("pylintdir");
+			$dir = $config->getConfig("pylint.dir");
 			if (!is_dir($dir)) {
 				mkdir($dir);
 			}

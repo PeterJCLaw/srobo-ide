@@ -27,7 +27,7 @@ docs:
 
 # Helpers
 config/automagic.ini:
-	echo -n "pylint_path = " > $@
+	echo -n "pylint.path = " > $@
 	which pylint >> $@
 
 applet/.keystore:
