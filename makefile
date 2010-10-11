@@ -19,7 +19,7 @@ clean:
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
-dev: applet folders config
+dev: applet folders config lint-reference/sr.py
 
 config: config/automagic.ini
 
@@ -27,6 +27,10 @@ docs:
 	doxygen doxyfile
 
 # Helpers
+lint-reference/sr.py:
+	git submodule init
+	git submodule update
+
 config/automagic.ini:
 	echo -n "pylint.path = " > $@
 	which pylint >> $@
