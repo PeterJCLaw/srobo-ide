@@ -78,7 +78,9 @@ class FileModule extends Module
 	{
 		$pm = ProjectManager::getInstance();
 		$this->verifyTeam();
-		$repo = $pm->getUserRepository($this->team, $this->projectName, AuthBackend::getInstance()->getCurrentUser());
+		$user = AuthBackend::getInstance()->getCurrentUser();
+		$pm->updateRepository($this->team, $this->projectName, $user);
+		$repo = $pm->getUserRepository($this->team, $this->projectName, $user);
 		return $repo;
 	}
 

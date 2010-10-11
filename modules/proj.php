@@ -257,6 +257,7 @@ class ProjModule extends Module
 			else
 				return;
 		}
+		$this->updateProject();
 		$this->projectRepository =
 		    $this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
 	}
