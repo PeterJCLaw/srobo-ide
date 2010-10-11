@@ -419,7 +419,7 @@ SettingsPage.Settings = {
 		description: 'Use the automatic Java file export system or not. This system automatically finds and saves the project to the correct location on your usb stick. Otherwise you get a save file dialogue, asking you to find the usb stick manually',
 		options: {
 			'default': Setting.Options.select,
-			dependsUpon: {callBack: bind(navigator.javaEnabled, navigator)},
+			dependsUpon: {callBack: function(){return navigator.javaEnabled();}},
 			type: Setting.Type.single,
 			result: Setting.Options.bool,
 			options: { 'true': 'Use Java', 'false': "Don't use Java" }
@@ -462,5 +462,5 @@ SettingsPage.Settings = {
 			optionsCallback: function(){ return user.team_names }
 		}
 	}
-}
+};
 /* ***** End Actual available user settings ***** */

@@ -86,11 +86,11 @@ DiffPage.prototype._recieveDiff = function(nodes) {
 	var group = '';
 	for( var i=0; i < difflines.length; i++) {
 		line = difflines[i];
-		if(line[0] == mode) {
+		if(line.substring(0,1) == mode) {
 			group += line+'\n';
 		} else {
 			appendChildNodes('diff-page-diff', DIV({'class': modeclasses[mode]}, group));
-			mode = line[0];
+			mode = line.substring(0,1);
 			group = line+'\n';
 		}
 	}
