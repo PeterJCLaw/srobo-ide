@@ -126,3 +126,8 @@ function IDE_path_get_file(path) {
 	// return a substring from that point
 	return path.substring(idx+1);
 }
+
+/// Have they got java enabled?
+function IDE_java_enabled() {
+	return navigator.javaEnabled();
+}

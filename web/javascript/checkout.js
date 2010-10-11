@@ -10,7 +10,7 @@ function Checkout() {
 
 	// keep trac of whether java works here or not,
 	// default to whether the browser claims to support java
-	this._java_works = navigator.javaEnabled();
+	this._java_works = IDE_java_enabled();
 
 	// The user setting key we use
 	this._setting_key = 'export.usejava';
