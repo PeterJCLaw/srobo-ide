@@ -120,7 +120,7 @@ SettingsPage.prototype.saveSettings = function() {
 			status_msg('Please select a value for "'+SettingsPage.Settings[s].name+'"', LEVEL_WARN);
 			return;
 		}
-		values[s] = this._settings[s].getValue();
+		values[s] = val;
 	}
 	user.set_settings(values, 'loud');
 	signal(this, 'save');
