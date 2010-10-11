@@ -90,10 +90,12 @@ class ProjectManager
 	public function getUserRepository($team, $project, $user)
 	{
 		$path = $this->rootProjectPath . "/$team/users/$user/$project";
+		// return a handle to an existing checkout
 		if (file_exists($path))
 		{
 			return new GitRepository($path);
 		}
+		// the user needs a clone of an existing master
 		else
 		{
 			return GitRepository::createRepository($path, false,

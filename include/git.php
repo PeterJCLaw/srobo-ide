@@ -136,15 +136,19 @@ class GitRepository
 
 		$shell_path   = escapeshellarg($path);
 
+		// Clone an existing master repo
 		if ($source !== null)
 		{
 			if (is_object($source))
+			{
 				$source = $source->gitPath();
+			}
 
 			$shell_source = escapeshellarg($source);
 			shell_exec("$bin clone --shared --quiet " . ($bare ? "--bare " : "") .
 					   "$shell_source $shell_path");
 		}
+		// Make a shiny new master repo
 		else
 		{
 			shell_exec("cd $shell_path ; $bin init" . ($bare ? " --bare" : ''));
