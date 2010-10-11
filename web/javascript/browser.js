@@ -134,7 +134,7 @@ Browser.prototype._getFileTree = function(tm) {
 
 Browser.prototype._badCommitMsg = function(msg) {
 	//test for is-nothing or is-only-whitespace
-	return this.commitMsg == this._DEFAULT_MSG || /^$|^\s+$/.test(msg) || msg == "" || msg == null;
+	return this.commitMsg == this._DEFAULT_MSG || /^$|^\s+$/.test(msg);
 }
 
 Browser.prototype._badFname = function(name) {
@@ -194,11 +194,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 		this.type != 'isProj' &&
 		this._badCommitMsg(this.commitMsg) );
 
-	if (this.commitMsg == null || this.commitMsg == "") {
-		$("browser-status").innerHTML = "Blank commit messages are not valid";
-		$("new-commit-msg").focus();
-		return;
-	} else if(commitErrFlag) {
+	if(commitErrFlag) {
 		$("browser-status").innerHTML = "No commit message added - click to ignore";
 		connect($("browser-status"), 'onclick', bind(this.clickSaveFile, this, true));
 		$("new-commit-msg").focus();
