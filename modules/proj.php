@@ -56,8 +56,24 @@ class ProjModule extends Module
 		$this->installCommand('del', array($this, 'deleteProject'));
 		$this->installCommand('commit', array($this, 'commitProject'));
 		$this->installCommand('co', array($this, 'checkoutProject'));
-        $this->installCommand("copy", array($this, "copyProject"));
+		$this->installCommand("copy", array($this, "copyProject"));
 		$this->installCommand('zip', array($this, 'redirectToZip'));
+		$this->installCommand('update', array($this, 'updateProject'));
+	}
+
+	private function updateProject()
+	{
+		$this->verifyTeam();
+
+		if ($this->projectRepository == null)
+			return false;
+
+		$auth = AuthBackend::getInstance();
+		$currentUser = $auth->getCurrentUser();
+
+		$this->projectManager->updateRepository($this->team,
+		                                        $this->projectName,
+		                                        $currentUser);
 	}
 
 	private function verifyTeam()
@@ -75,7 +91,7 @@ class ProjModule extends Module
 	public function createProject()
 	{
 		$this->verifyTeam();
-		$this->openProject($this->team, $this->projectName);
+		$this->openProject($this->team, $this->projectName, true);
 	}
 
     public function copyProject()
@@ -229,12 +245,17 @@ class ProjModule extends Module
 		return $repoPath;
 	}
 
-	private function openProject($team, $project)
+	private function openProject($team, $project, $createOnDemand = false)
 	{
 		if (!in_array($project, $this->projectManager->listRepositories($team)))
 		{
-			ide_log("On-demand creation of project $project for team $team");
-			$this->projectManager->createRepository($team, $project);
+			if ($createOnDemand)
+			{
+				ide_log("On-demand creation of project $project for team $team");
+				$this->projectManager->createRepository($team, $project);
+			}
+			else
+				return;
 		}
 		$this->projectRepository =
 		    $this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());

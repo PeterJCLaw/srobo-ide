@@ -73,6 +73,8 @@ ProjPage.prototype._init = function() {
 	this._on_proj_change( this._selector.project );
 	this.flist.update( this._selector.project, this._selector._team );
 
+	IDE_backend_request("proj/update", {}, function () {}, function() {});
+
 	this._initted = true;
 }
 
