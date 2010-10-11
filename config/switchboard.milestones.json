@@ -1,0 +1,27 @@
+[
+	{
+		"title":"KickStart",
+		"date":"2010-09-18",
+		"desc":"KickStart Happened. It Was Awesome!"
+	},
+	{
+		"title":"Tech Day 1",
+		"date":"2011-02-05",
+		"desc":"A chance to meet other competitors, the Student Robotics team, to get help and share ideas. You should have a mobile robot chassis and be developing your other mechanisms"
+	},
+	{
+		"title":"Tech Day 2",
+		"date":"2011-03-19",
+		"desc":"Another opportunity to meet up with the other competitors and mentors. Your robot should be nearly finished, and you should have started writing code to drive it"
+	},
+	{
+		"title":"Competition Prep Day",
+		"date":"2011-04-16",
+		"desc":"One mad last hack opportunity in the competition arena"
+	},
+	{
+		"title":"Competition",
+		"date":"2011-04-17",
+		"desc":"The culmination of all your hard work"
+	}
+]

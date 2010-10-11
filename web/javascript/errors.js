@@ -33,12 +33,12 @@ function ErrorsPage() {
 	}
 
 	//load a new set of errors
-	this.load = function(info, opts) {
+	this.load = function(info, opts,project) {
 		if(this._prompt != null) {
 			this._prompt.close();
 			this._prompt = null;
 		}
-		var path = info.path+'/';
+		var path = '/' + project + '/';
 		var filelist = new Array();
 		var module_name = this._module_name(info.file);
 		this._init();
@@ -188,17 +188,18 @@ function ErrorsPage() {
 	}
 
 	this.check = function(file, opts) {
+		project = IDE_path_get_project(file)
 		IDE_backend_request("file/lint", {team: team,
-		                                  project: IDE_path_get_project(file),
+		                                  project: project,
 		                                  path: IDE_path_get_file(file)},
-		                                  partial(bind(this._done_check, this), file, opts),
+		                                  partial(bind(this._done_check, this), file, opts,project),
 		                                  bind(this._fail_check, this, file, opts));
 	}
 
-	this._done_check = function(file, opts, info) {
+	this._done_check = function(file, opts,project, info) {
 		var cb = ( opts != null && opts.callback != null && typeof opts.callback == 'function' )
 		if( info.errors.length > 0 ) {
-			this.load(info, opts);
+			this.load(info, opts, project);
 			if(cb) {
 				opts.callback('codefail', info.errors);
 			}

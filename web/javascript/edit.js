@@ -298,7 +298,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._recv_contents = function(nodes) {
 		this._isNew = false;
 		this._original = nodes.original;
-		this._autosaved = nodes.autosaved;
+		this._autosaved = nodes.autosaved || null;
 
 		if(this._mode == 'AUTOSAVE') {
 			this.contents = this._autosaved;
@@ -615,9 +615,13 @@ function EditTab(iea, team, project, path, rev, mode) {
 			break;
 		default:
 			this._capture_code();
-			if( override != true && this.contents != this._original )
-				status_button(this.path+" has been modified!", LEVEL_WARN, "Go to Revision "+$("history").value+" Anyway", bind(this._change_revision, this, true));
-			else {
+			if( override != true && this.contents != this._original ) {
+				status_button(this.path+" has been modified!", LEVEL_WARN,
+					"Go to Revision "+IDE_hash_shrink($("history").value)+" Anyway",
+					bind(this._change_revision, this, true)
+				);
+			} else {
+				this._mode = 'REPO';
 				this.rev = $("history").value;
 				status_msg("Opening history .."+$("history").value, LEVEL_OK);
 				this._load_contents();

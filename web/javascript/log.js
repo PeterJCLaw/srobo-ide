@@ -298,6 +298,5 @@ Log.prototype._onblur = function() {
 //tab is closed
 Log.prototype.close = function() {
 	this.tab.close();
-	delete this;	//free memory
 	logDebug("Closing log tab");
 }

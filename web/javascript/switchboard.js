@@ -149,7 +149,7 @@ Switchboard.prototype._receiveGetFeed = function(nodes)
 	else
 	{
 		//update url on page
-		document.user_feed_form.user_feed_input.value = nodes.url;
+		$('user-feed-url').value = nodes.url || '';
 	}
 	if(nodes.checked > 0 && nodes.valid > 0)	//it's been checked and found valid
 	{
@@ -184,17 +184,16 @@ Switchboard.prototype.GetFeed = function()
 Switchboard.prototype.receiveMessages = function(nodes)
 {
 	// Remove any existing messages before adding new ones
-	replaceChildNodes($("message-list"));
-	for(var m in nodes.messages)
+	var a = A({'href':nodes.feedurl, 'target':'_blank'}, 'View Feed');
+	replaceChildNodes('message-list', a);
+	for(var m=0; m < nodes.messages.length; m++)
 	{
 		var item = nodes.messages[m];
-		var a = A({'href':item.link, 'target':'_blank'}, item.title);	//Write message title link
-		var s = SPAN({}, "");
-		s.innerHTML = ": "+item.body+" [by "+item.author+"]";		//message body
-		var l = LI({},"");
-		appendChildNodes(l, a);						//Add the title to the list element
-		appendChildNodes(l, s);						//Add the message to the list element
-		appendChildNodes($("message-list"),l);				//Add the whole list to the message window
+		//Write message title link
+		var a = A({'href':item.link, 'target':'_blank'}, item.title);
+		var l = LI({},a);
+		//Add the whole list to the message window
+		appendChildNodes('message-list',l);
 	}
 }
 
@@ -222,7 +221,8 @@ Switchboard.prototype.changeMilestone = function(id)
 	}
 	this.milestone = id;
 	setStyle("timeline-ev-"+id, {'background':'#FFFC00'});
-	$("timeline-description").innerHTML = "<strong>"+this.events[id].title+": </strong>"+this.events[id].desc+" ("+this.events[id].date+")";
+	$("timeline-description").innerHTML = "<strong>" + this.events[id].title + ": </strong>" +
+		this.events[id].desc + " (" + (new Date(this.events[id].date*1000)).toDateString() + ")";
 }
 
 Switchboard.prototype.receiveMilestones = function(nodes)
@@ -237,9 +237,9 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	this.events = nodes.events;
 
 	/* Date manipulation */
-	var start_date = new Date(nodes.start);
+	var start_date = new Date(nodes.start * 1000);
 	logDebug("Timeline start: "+ start_date);
-	var end_date = new Date(nodes.end);
+	var end_date = new Date(nodes.end * 1000);
 	logDebug("Timeline end: "+ end_date);
 	var duration = end_date - start_date;
 	logDebug("Timeline Duration: "+duration);
@@ -250,7 +250,10 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	/* Convert a date into a pixel offset */
 	function getOffset(event_date)
 		{
-			var d = new Date(event_date);
+			if(!parseInt(event_date)) {
+				return false;
+			}
+			var d = new Date(event_date * 1000);
 			var o = Math.floor(((d - start_date)/duration)*bar_width)+"px";
 			return o;
 		}
@@ -273,13 +276,19 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 	/* Add the events */
 	for(var m=0; m < nodes.events.length; m++)
 	{	/* create and position a new <div> for each timeline event */
-		var e = DIV({"class":"timeline-bar-event",
-				"id":"timeline-ev-"+m,
-				"title":nodes.events[m].title}, "");
-		this._signals.push( connect( e, "onclick", bind( this.changeMilestone, this, m) ) );
+		var offset = getOffset(nodes.events[m].date);
+		// ensure that the date is valid
+		if( offset === false ) {
+			logDebug('Invalid offset in event: '+nodes.events[m].title);
+			continue;
+		}
+		var e = DIV({
+		  'class': "timeline-bar-event",
+		       id: "timeline-ev-"+m,
+		    title: nodes.events[m].title}, "");
+		setStyle(e, {'margin-left':offset});
+		this._signals.push( connect( e, "onclick", bind(this.changeMilestone, this, m) ) );
 		appendChildNodes($("timeline-bar-in"), e);
-		setStyle(e,
-			{'margin-left': getOffset(nodes.events[m].date)});
 	}
 }
 

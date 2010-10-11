@@ -61,7 +61,7 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 				IDE_backend_debug = rp.debug;
 			}
 			if (rp.notifications) {
-				rp.notifications.forEach(IDE_notification_callback);
+				forEach(rp.notifications, IDE_notification_callback);
 			}
 			if (rp.error) {
 				errorCallback(rp.error[0], rp.error[1], args);
@@ -108,12 +108,21 @@ function IDE_hash_compare(a, b) {
 }
 
 function IDE_path_get_project(path) {
-	var split = path.split(/\//);
-	return split[1];
+	// index of '/' starting from char 1 onwards
+	var idx = path.indexOf('/', 1);
+	if(idx < 0) {
+		return path;
+	}
+	// return a substring to that point
+	return path.substring(1,idx);
 }
 
 function IDE_path_get_file(path) {
-	var split = path.split(/\//);
-	split = split.slice(2);
-	return split.join('/');
+	// index of '/' starting from char 1 onwards
+	var idx = path.indexOf('/', 1);
+	if(idx < 0) {
+		return path;
+	}
+	// return a substring from that point
+	return path.substring(idx+1);
 }

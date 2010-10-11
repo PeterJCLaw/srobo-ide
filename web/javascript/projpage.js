@@ -160,7 +160,7 @@ ProjPage.prototype.CreateCopyProject = function(newProjName) {
                         {
                             "team":team,
                             "project":this.project,
-                            "new-name":newProjName,
+                            "new-name":newProjName
                         },
                         bind( partial(this._CopyProjectSuccess, newProjName), this),
 	                    bind( function() {
@@ -261,7 +261,7 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 }
 
 ProjPage.prototype._exportProject = function() {
-	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {}, function(errno, errcode) {
+	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {status_msg("Automatic checkout succeeded", LEVEL_OK);}, function(errno, errcode) {
 		alert("checkout-induced death: " + errcode);
 	});
 }
@@ -1050,7 +1050,7 @@ function ProjOps() {
         IDE_backend_request("file/del",
                             { "team" : team,
         				      "project" : projpage.project,
-		        			  "files" : death_list,
+		        			  "files" : death_list
                             },
                             bind(function() {
                                                 IDE_backend_request("proj/commit",

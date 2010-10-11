@@ -330,7 +330,7 @@ class FileModule extends Module
 		else
 		{
 			$this->repository()->putFile($path, $newCode);
-			$diff = $this->repository()->cachedDiff($path);
+			$diff = $this->repository()->diff($path);
 		}
 
 		$output->setOutput("diff", $diff);
@@ -402,9 +402,14 @@ class FileModule extends Module
 			{
 				$lines = explode("\n", $stdout);
 				$errors = array();
+				$warnings = array();
 				foreach ($lines as $line)
 				{
-					if (stripos($line, "[E")) $errors[] = $line;
+					if (stripos($line, "[E"))
+					{
+						$warnings[] = $line;
+						$errors[] = $line;
+					}
 					else if (stripos($line, "[W")) $warnings[] = $line;
 				}
 

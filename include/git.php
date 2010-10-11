@@ -534,11 +534,18 @@ class GitRepository
 	}
 
 	/**
-	 * Gets the currently cached diff, optionally for just one file
+	 * Gets the current diff
+	 * @param file: optional path or paths to get the diff for
+	 * @param staged: whether or not (the default) to return the cached diff
 	 */
-	public function cachedDiff($file=null)
+	public function diff($file=null, $staged=false)
 	{
-		$command = 'diff --cached';
+		$command = 'diff';
+		if($staged)
+		{
+			$command .= ' --cached';
+		}
+
 		if ($file === null)
 		{
 			return $this->gitExecute(true, $command);
