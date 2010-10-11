@@ -56,8 +56,24 @@ class ProjModule extends Module
 		$this->installCommand('del', array($this, 'deleteProject'));
 		$this->installCommand('commit', array($this, 'commitProject'));
 		$this->installCommand('co', array($this, 'checkoutProject'));
-        $this->installCommand("copy", array($this, "copyProject"));
+		$this->installCommand("copy", array($this, "copyProject"));
 		$this->installCommand('zip', array($this, 'redirectToZip'));
+		$this->installCommand('update', array($this, 'updateProject'));
+	}
+
+	private function updateProject()
+	{
+		$this->verifyTeam();
+
+		if ($this->projectRepository == null)
+			return false;
+
+		$auth = AuthBackend::getInstance();
+		$currentUser = $auth->getCurrentUser();
+
+		$this->projectManager->updateRepository($this->team,
+		                                        $this->projectName,
+		                                        $currentUser);
 	}
 
 	private function verifyTeam()
