@@ -358,10 +358,17 @@ class FileModule extends Module
 		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
 
 		//get the pylint binary
-		$binary = $config->getConfig('pylint_path');
+		$binary = $config->getConfig('pylint.path');
 		if (!$binary)
 		{
 			throw new Exception("pylint is not installed", E_NOT_IMPL);
+		}
+
+		// check for the reference file
+		$dummy = $config->getConfig('pylint.referenceFile');
+		if (!file_exists($dummy))
+		{
+			throw new Exception('Could not find dummy pyenv', E_NOT_IMPL);
 		}
 
 		//if the file exists, lint it otherwise return a dictionary explaining
@@ -369,8 +376,12 @@ class FileModule extends Module
 		//with software because check syntax button always points at an existing file
 		if (file_exists("$base/$path"))
 		{
+			// copy the reference file in
+			$dummy_copy = $base.'/'.basename($dummy);
+			copy($dummy, $dummy_copy);
+
 			//setup linting process
-			$dir = $config->getConfig("pylintdir");
+			$dir = $config->getConfig("pylint.dir");
 			if (!is_dir($dir)) {
 				mkdir($dir);
 			}
@@ -387,6 +398,9 @@ class FileModule extends Module
 			$stdout = stream_get_contents($pipes[1]);
 			$stderr = stream_get_contents($pipes[2]);
 			$status = proc_close($proc);
+
+			// remove the reference file
+			unlink($dummy_copy);
 
 			//status code zero indicates success, so return empty errors
 			if ($status == 0)

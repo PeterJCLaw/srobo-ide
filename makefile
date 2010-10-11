@@ -15,6 +15,7 @@ applet: applet/build.xml applet/.keystore
 # Actual targets
 clean:
 	rm -rf $(_FOLDERS) html latex
+	rm -f config/automagic.ini
 	rm -f applet/.keystore
 	cd applet/ && ant clean
 
@@ -27,7 +28,7 @@ docs:
 
 # Helpers
 config/automagic.ini:
-	echo -n "pylint_path = " > $@
+	echo -n "pylint.path = " > $@
 	which pylint >> $@
 
 applet/.keystore:
