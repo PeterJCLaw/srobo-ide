@@ -27,9 +27,9 @@ function Browser(cback, options) {
 	this.commitMsg = "";
 
 	this._DEFAULT_MSG = "Commit message";
+	this._DEFAULT_DNAME = "new-directory";
 	this._DEFAULT_FNAME = "new.py";
 	this._DEFAULT_PNAME = "new-project";
-	this._DEFAULT_DNAME = "new-directory";
 
 	this._List = new Array();
 	this.type = options.type;
