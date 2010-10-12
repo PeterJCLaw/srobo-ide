@@ -455,7 +455,7 @@ class FileModule extends Module
 		else
 		{
 			$output->setOutput('errors', array("file does not exist"));
-			$output->setOutput("warnings", array());
+			$output->setOutput("messages", array());
 			$output->setOutput("path", $dirName);
 			$output->setOutput("file", $fileName);
 			//$output->setOutput("errors", 1);
