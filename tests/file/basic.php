@@ -137,6 +137,12 @@ test_equal($output->getOutput('path'), '.', 'Reported wrong path');
 test_equal($output->getOutput('errors'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report errors correctly');
 test_equal($output->getOutput('messages'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report messages correctly');
 
+subsection("non-existent file");
+$input->setInput('path', 'face.py');
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('errors'), array("file does not exist"), 'Failed to report missing file');
+test_equal($output->getOutput('messages'), array(), 'Reported extra messages');
+
 
 if (is_dir("/tmp/test-repos"))
 {
