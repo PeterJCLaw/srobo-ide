@@ -3,11 +3,11 @@ _FOLDERS = settings repos zips /tmp/ide-feed-cache notifications
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
 
-.PHONY: all default dev docs clean applet folders config
+.PHONY: all default dev docs clean applet folders config submodules
 
 # Useful groupings
 default: dev
-all: dev docs applet config
+all: dev docs applet submodules config
 
 applet: applet/build.xml applet/.keystore
 	cd applet/ && ant build
@@ -44,3 +44,7 @@ folders: $(_FOLDERS)
 
 $(_FOLDERS):
 	mkdir -p -m 777 $@
+
+submodules:
+	git submodule init
+	git submodule update

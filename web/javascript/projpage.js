@@ -240,7 +240,7 @@ ProjPage.prototype.clickExportProject = function() {
 		return false;
 	}
 
-	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true, 'alert':true, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)});
+	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true, 'alert':true, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)}, false);
 }
 
 ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {

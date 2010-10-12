@@ -187,11 +187,16 @@ function ErrorsPage() {
 		}
 	}
 
-	this.check = function(file, opts) {
+	/**
+	 * use autosave parameter if to check against autosave or normal save
+	 */
+	this.check = function(file, opts, autosave) {
 		project = IDE_path_get_project(file)
 		IDE_backend_request("file/lint", {team: team,
 		                                  project: project,
-		                                  path: IDE_path_get_file(file)},
+		                                  path: IDE_path_get_file(file),
+										  autosave: autosave
+										 },
 		                                  partial(bind(this._done_check, this), file, opts,project),
 		                                  bind(this._fail_check, this, file, opts));
 	}

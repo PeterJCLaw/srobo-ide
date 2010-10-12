@@ -364,9 +364,11 @@ class GitRepository
 	 */
 	public function commit($message, $name, $email)
 	{
+		if ($message == '')
+			$message = ' ';
 		$tmp = tempnam('/tmp', 'ide-');
 		file_put_contents($tmp, $message);
-		$this->gitExecute(true, "commit --allow-empty-message -F $tmp", array('GIT_AUTHOR_NAME'    => $name,
+		$this->gitExecute(true, "commit -F $tmp", array('GIT_AUTHOR_NAME'    => $name,
 		                                                'GIT_AUTHOR_EMAIL'   => $email,
 		                                                'GIT_COMMITER_NAME'  => $name,
 		                                                'GIT_COMMITER_EMAIL' => $email));
