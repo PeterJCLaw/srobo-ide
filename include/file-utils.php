@@ -45,3 +45,12 @@ function mkdir_full($path, $mode = 0755)
 {
 	mkdir($path, $mode, true);
 }
+
+function tmpdir($dir = null, $prefix = 'ide')
+{
+	$dir = $dir != null ? $dir : sys_get_temp_dir();
+	$file = tempnam($dir, $prefix);
+	unlink($file);
+	mkdir($file);
+	return $file;
+}

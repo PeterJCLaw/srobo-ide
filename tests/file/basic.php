@@ -45,7 +45,7 @@ $input->setInput('data', 'deathcakes');
 $file->dispatchCommand('put');
 test_equal(file_get_contents("$repopath/wut"), 'deathcakes', 'wrong content in file');
 
-// Commit and test the result
+section("Commit and test the result");
 $repo->stage($input->getInput('path'));
 $repo->commit('message', 'test-name', 'test@email.tld');
 $input->setInput('rev', 'HEAD');
@@ -53,14 +53,14 @@ $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read unchanged original file incorrectly');
 test_equal($output->getOutput('autosaved'), null, 'read unchanged autosaved file incorrectly');
 
-// Autosave and test the result
+section("Autosave and test the result");
 $input->setInput('data', 'bananas');
 $file->dispatchCommand('put');
 $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read changed original file incorrectly');
 test_equal($output->getOutput('autosaved'), 'bananas', 'read changed autosaved file incorrectly');
 
-// Clear the autosave and test the result
+section("Clear the autosave and test the result");
 $input->setInput('files', array($input->getInput('path')));
 $input->setInput('revision', 0);
 $file->dispatchCommand('co');
@@ -68,7 +68,7 @@ $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read checkouted original file incorrectly');
 test_equal($output->getOutput('autosaved'), null, 'read checkouted autosaved file incorrectly');
 
-// Move the file and test the result
+section("Move the file and test the result");
 $input->setInput('old-path', 'wut');
 $input->setInput('new-path', 'huh');
 $file->dispatchCommand('cp');
@@ -92,6 +92,57 @@ $file->dispatchCommand('list');
 test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'), 'incorrect file list');
 $file->dispatchCommand('compat-tree');
 test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'), 'incorrect file tree');
+
+section("Test linting");
+$goodData = 'from sr import *
+
+def main():
+	yield query.io[1].input[1].d
+	#beans
+';
+
+$input->setInput('path', 'robot.py');
+$input->setInput('data', $goodData);
+$file->dispatchCommand('put');
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+
+subsection("good file, committed");
+$input->setInput('autosave', null);
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
+test_equal($output->getOutput('path'), '.', 'Reported wrong path');
+test_equal($output->getOutput('errors'), array(), 'Reported false errors');
+test_equal($output->getOutput('messages'), array(), 'Reported extra messages');
+
+subsection("really bad file, committed");
+$input->setInput('data', 'bananas');
+$file->dispatchCommand('put');
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
+test_equal($output->getOutput('path'), '.', 'Reported wrong path');
+test_equal($output->getOutput('errors'), array("robot.py:1: [E] Undefined variable 'bananas'"), 'Failed to report errors correctly');
+test_equal($output->getOutput('messages'), array("robot.py:1: [E] Undefined variable 'bananas'"), 'Failed to report messages correctly');
+
+subsection("other bad file, committed");
+$input->setInput('data', str_replace('query', 'qeury', $goodData));
+$file->dispatchCommand('put');
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
+test_equal($output->getOutput('path'), '.', 'Reported wrong path');
+test_equal($output->getOutput('errors'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report errors correctly');
+test_equal($output->getOutput('messages'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report messages correctly');
+
+subsection("non-existent file");
+$input->setInput('path', 'face.py');
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('errors'), array("file does not exist"), 'Failed to report missing file');
+test_equal($output->getOutput('messages'), array(), 'Reported extra messages');
+
 
 if (is_dir("/tmp/test-repos"))
 {

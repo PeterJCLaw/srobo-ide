@@ -73,8 +73,6 @@ ProjPage.prototype._init = function() {
 	this._on_proj_change( this._selector.project );
 	this.flist.update( this._selector.project, this._selector._team );
 
-	IDE_backend_request("proj/update", {}, function () {}, function() {});
-
 	this._initted = true;
 }
 
@@ -240,7 +238,7 @@ ProjPage.prototype.clickExportProject = function() {
 		return false;
 	}
 
-	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true, 'alert':true, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)});
+	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true, 'alert':true, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)}, false);
 }
 
 ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {

@@ -130,3 +130,13 @@ function skip_test()
 	echo "___SKIP_TEST";
 	exit(0);
 }
+
+function section($label)
+{
+	echo ucwords("\n -- $label -- \n\n");
+}
+
+function subsection($label)
+{
+	echo "\n$label\n";
+}

@@ -404,7 +404,7 @@ function User() {
 		}
 
 		IDE_backend_request("auth/deauthenticate", {},
-		                    bind(window.location.reload, window.location),
+		                    function() { window.location.reload(); },
 		                    partial( status_button, "Failed to log out",
 		                               LEVEL_ERROR, "retry",
 		                               bind( this._logout_click, this, null )

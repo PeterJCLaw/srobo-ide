@@ -358,10 +358,17 @@ class FileModule extends Module
 		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
 
 		//get the pylint binary
-		$binary = $config->getConfig('pylint_path');
+		$binary = $config->getConfig('pylint.path');
 		if (!$binary)
 		{
 			throw new Exception("pylint is not installed", E_NOT_IMPL);
+		}
+
+		// check for the reference file
+		$dummy = $config->getConfig('pylint.referenceFile');
+		if (!file_exists($dummy))
+		{
+			throw new Exception('Could not find dummy pyenv', E_NOT_IMPL);
 		}
 
 		//if the file exists, lint it otherwise return a dictionary explaining
@@ -369,8 +376,36 @@ class FileModule extends Module
 		//with software because check syntax button always points at an existing file
 		if (file_exists("$base/$path"))
 		{
+			// copy the reference file in
+			$useAutosave = $input->getInput('autosave', true);
+			$contents = null;
+
+			// if we want the commited version do this
+			if (!$useAutosave) {
+				$contents = $this->repository()->getFile($path);
+				$this->repository()->checkoutFile($path);
+			}
+
+			// Grab a temp folder that we can work in. We'll remove it later.
+			$tmpDir = tmpdir();
+			echo "base, path, tmp\n";
+			var_dump($base, $path, $tmpDir);
+
+			// Copy the user's files to the temp folder
+			$td_shell = escapeshellarg($tmpDir);
+			$base_shell = escapeshellarg($base);
+			echo "td, base, exec\n";
+			var_dump($td_shell, $base_shell);
+			var_dump(shell_exec('cp -r '.$base_shell.' '.$td_shell));
+
+			// Copy the reference file to the tenp folder
+			$dummy_copy = $tmpDir.'/'.basename($base).'/'.basename($dummy);
+			echo "dummy copy\n";
+			var_dump($dummy_copy);
+			copy($dummy, $dummy_copy);
+
 			//setup linting process
-			$dir = $config->getConfig("pylintdir");
+			$dir = $config->getConfig("pylint.dir");
 			if (!is_dir($dir)) {
 				mkdir($dir);
 			}
@@ -380,13 +415,21 @@ class FileModule extends Module
 				      1 => array("pipe", "w"),
 				      2 => array("pipe", "w")),
 				$pipes,
-				$base
+				$tmpDir.'/'.basename($base)
 			);
 
 			//get stdout and stderr, then we're done with the process, so close it
 			$stdout = stream_get_contents($pipes[1]);
 			$stderr = stream_get_contents($pipes[2]);
 			$status = proc_close($proc);
+
+			// remove the temporary folder
+			unlink($tmpDir);
+
+			// restore the autosaved version
+			if (!$useAutosave) {
+				$this->repository()->putFile($path, $contents);
+			}
 
 			//status code zero indicates success, so return empty errors
 			if ($status == 0)
@@ -427,7 +470,7 @@ class FileModule extends Module
 		else
 		{
 			$output->setOutput('errors', array("file does not exist"));
-			$output->setOutput("warnings", array());
+			$output->setOutput("messages", array());
 			$output->setOutput("path", $dirName);
 			$output->setOutput("file", $fileName);
 			//$output->setOutput("errors", 1);
