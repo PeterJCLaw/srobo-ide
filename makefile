@@ -27,9 +27,7 @@ docs:
 	doxygen doxyfile
 
 # Helpers
-lint-reference/sr.py:
-	git submodule init
-	git submodule update
+lint-reference/sr.py: submodules
 
 config/automagic.ini:
 	echo -n "pylint.path = " > $@
