@@ -386,7 +386,22 @@ class FileModule extends Module
 				$this->repository()->checkoutFile($path);
 			}
 
-			$dummy_copy = $base.'/'.basename($dummy);
+			// Grab a temp folder that we can work in. We'll remove it later.
+			$tmpDir = tmpdir();
+			echo "base, path, tmp\n";
+			var_dump($base, $path, $tmpDir);
+
+			// Copy the user's files to the temp folder
+			$td_shell = escapeshellarg($tmpDir);
+			$base_shell = escapeshellarg($base);
+			echo "td, base, exec\n";
+			var_dump($td_shell, $base_shell);
+			var_dump(shell_exec('cp -r '.$base_shell.' '.$td_shell));
+
+			// Copy the reference file to the tenp folder
+			$dummy_copy = $tmpDir.'/'.basename($base).'/'.basename($dummy);
+			echo "dummy copy\n";
+			var_dump($dummy_copy);
 			copy($dummy, $dummy_copy);
 
 			//setup linting process
@@ -400,7 +415,7 @@ class FileModule extends Module
 				      1 => array("pipe", "w"),
 				      2 => array("pipe", "w")),
 				$pipes,
-				$base
+				$tmpDir.'/'.basename($base)
 			);
 
 			//get stdout and stderr, then we're done with the process, so close it
@@ -408,8 +423,8 @@ class FileModule extends Module
 			$stderr = stream_get_contents($pipes[2]);
 			$status = proc_close($proc);
 
-			// remove the reference file
-			unlink($dummy_copy);
+			// remove the temporary folder
+			unlink($tmpDir);
 
 			// restore the autosaved version
 			if (!$useAutosave) {
