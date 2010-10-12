@@ -364,6 +364,8 @@ class GitRepository
 	 */
 	public function commit($message, $name, $email)
 	{
+		if ($message == '')
+			$message = ' ';
 		$tmp = tempnam('/tmp', 'ide-');
 		file_put_contents($tmp, $message);
 		$this->gitExecute(true, "commit -F $tmp", array('GIT_AUTHOR_NAME'    => $name,
