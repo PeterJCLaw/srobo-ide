@@ -61,7 +61,7 @@ Log.prototype._receiveHistory = function(opt, revisions) {
 	//extract data from query response
 	update(this.history, revisions.log);
 	update(this.userList, revisions.authors);
-	this.overflow = revisions.overflow;
+	this.overflow = 0;
 	if(opt == null || opt != 'quiet')
 		status_msg("File history loaded successfully", LEVEL_OK);
 	//present data
@@ -105,7 +105,7 @@ Log.prototype._populateList = function() {
 	if(entries <= 0) {
 		$("log-summary").innerHTML = "There are no revisions available for file(s): "+this.file;
 	} else {
-		$("log-summary").innerHTML = "Displaying "+entries+" revision(s) between "+this._histDate(this.history.length-1)+" & "+this._histDate(0)+" Page "+(this.offset+1)+" of "+(this.overflow);
+		$("log-summary").innerHTML = "Displaying "+entries+" revision(s) between "+this._histDate(this.history.length-1)+" & "+this._histDate(0)+" Page "+(this.offset+1)+" of "+(this.overflow+1);
 	}
 
 	//fill drop down box with authors attributed to file(s)
