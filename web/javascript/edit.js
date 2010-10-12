@@ -323,7 +323,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 		// get the errors page to run the check, after autosaving the file.
 		this._autosave(
-			bind( errorspage.check, errorspage, this.path, { alert: true } ),
+			bind( errorspage.check, errorspage, this.path, { alert: true },true ),
 			partial( status_button, "Unable to check syntax", LEVEL_WARN,
 				"retry", bind(this._check_syntax, this) )
 		);
