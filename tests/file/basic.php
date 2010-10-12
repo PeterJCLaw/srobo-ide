@@ -93,6 +93,51 @@ test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'),
 $file->dispatchCommand('compat-tree');
 test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'), 'incorrect file tree');
 
+// Test linting
+$goodData = 'from sr import *
+
+def main():
+	yield query.io[1].input[1].d
+	#beans
+';
+
+$input->setInput('path', 'robot.py');
+$input->setInput('data', $goodData);
+$file->dispatchCommand('put');
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+
+// good file, committed
+$input->setInput('autosave', false);
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
+test_equal($output->getOutput('path'), '.', 'Reported wrong path');
+test_equal($output->getOutput('errors'), array(), 'Reported false errors');
+test_equal($output->getOutput('messages'), array(), 'Reported extra messages');
+
+// really bad file, committed
+$input->setInput('data', 'bananas');
+$file->dispatchCommand('put');
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
+test_equal($output->getOutput('path'), '.', 'Reported wrong path');
+test_equal($output->getOutput('errors'), array("robot.py:1: [E] Undefined variable 'bananas'"), 'Failed to report errors correctly');
+test_equal($output->getOutput('messages'), array("robot.py:1: [E] Undefined variable 'bananas'"), 'Failed to report messages correctly');
+
+// other bad file, committed
+$input->setInput('data', str_replace('query', 'qeury', $goodData));
+$file->dispatchCommand('put');
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+$file->dispatchCommand('lint');
+test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
+test_equal($output->getOutput('path'), '.', 'Reported wrong path');
+test_equal($output->getOutput('errors'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report errors correctly');
+test_equal($output->getOutput('messages'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report messages correctly');
+
+
 if (is_dir("/tmp/test-repos"))
 {
 	exec("rm -rf /tmp/test-repos");
