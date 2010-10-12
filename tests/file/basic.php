@@ -108,7 +108,7 @@ $repo->stage($input->getInput('path'));
 $repo->commit('message', 'test-name', 'test@email.tld');
 
 // good file, committed
-$input->setInput('autosave', false);
+$input->setInput('autosave', null);
 $file->dispatchCommand('lint');
 test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
 test_equal($output->getOutput('path'), '.', 'Reported wrong path');

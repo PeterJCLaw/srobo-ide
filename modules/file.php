@@ -377,7 +377,7 @@ class FileModule extends Module
 		if (file_exists("$base/$path"))
 		{
 			// copy the reference file in
-			$useAutosave = $input->getInput("autosave");
+			$useAutosave = $input->getInput('autosave', true);
 			$contents = null;
 
 			// if we want the commited version do this
