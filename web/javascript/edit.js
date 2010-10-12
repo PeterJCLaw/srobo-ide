@@ -338,7 +338,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		if(this._original != this.contents)
 			diffpage.diff(this.path, this.rev, this.contents);
 		else
-			status_msg("File not modified!", LEVEL_WARN);
+			status_msg("File not modified", LEVEL_OK);
 
 	}
 
