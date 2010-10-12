@@ -58,7 +58,9 @@ Browser.prototype._init = function() {
 	this.display();
 
 	//get file listings - if not just commit message
-	if(this.type != 'isCommit' && this.type != 'isProj') {
+	if (this.type == 'isFile'
+	 || this.type == 'isDir'
+	) {
 		var projlist = new ProjList();
 		projlist.update(team);
 		// The selection box for selecting a project
