@@ -377,6 +377,15 @@ class FileModule extends Module
 		if (file_exists("$base/$path"))
 		{
 			// copy the reference file in
+			$useAutosave = $input->getInput("autosave");
+			$contents = null;
+
+			// if we want the commited version do this
+			if (!$useAutosave) {
+				$contents = $this->repository()->getFile($path);
+				$this->repository()->checkoutFile($path);
+			}
+
 			$dummy_copy = $base.'/'.basename($dummy);
 			copy($dummy, $dummy_copy);
 
@@ -401,6 +410,11 @@ class FileModule extends Module
 
 			// remove the reference file
 			unlink($dummy_copy);
+
+			// restore the autosaved version
+			if (!$useAutosave) {
+				$this->repository()->putFile($path, $contents);
+			}
 
 			//status code zero indicates success, so return empty errors
 			if ($status == 0)
