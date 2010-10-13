@@ -56,7 +56,7 @@ class FileModule extends Module
 		$this->installCommand('lint', array($this, 'lintFile'));
 		$this->installCommand('diff', array($this, 'diff'));
 		$this->installCommand('mkdir', array($this, 'makeDirectory'));
-        $this->installCommand("co", array($this, "checkoutFile"));
+		$this->installCommand('co', array($this, 'checkoutFile'));
 	}
 
 	/**
@@ -87,16 +87,16 @@ class FileModule extends Module
 	/**
 	 * Makes a directory in the repository
 	 */
-    public function makeDirectory()
-    {
-        $input = Input::getInstance();
-        $output = Output::getInstance();
-        $path = $input->getInput("path");
-        $this->repository()->gitMKDir($path);
-        $output->setOutput("success",1);
-        $output->setOutput("feedback", "successfully created folder $path");
-        return true;
-    }
+	public function makeDirectory()
+	{
+		$input = Input::getInstance();
+		$output = Output::getInstance();
+		$path = $input->getInput("path");
+		$this->repository()->gitMKDir($path);
+		$output->setOutput("success",1);
+		$output->setOutput("feedback", "successfully created folder $path");
+		return true;
+	}
 
 	/**
 	 * Gets a recursive file tree, optionally at a specific revision
@@ -131,34 +131,34 @@ class FileModule extends Module
 		return array_values($clean);
 	}
 
-    public function checkoutFile()
-    {
-        $input = Input::getInstance();
-        $output = Output::getInstance();
-        $paths = $input->getInput("files");
-        $revision = $input->getInput("revision");
-        //latest
-        $output->setOutput("rev", $revision);
-        if ($revision === 0 || $revision === "HEAD")
-        {
-            foreach ($paths as $file)
-            {
-                $this->repository()->checkoutFile($file);
-            }
+	public function checkoutFile()
+	{
+		$input = Input::getInstance();
+		$output = Output::getInstance();
+		$paths = $input->getInput("files");
+		$revision = $input->getInput("revision");
+		//latest
+		$output->setOutput("rev", $revision);
+		if ($revision === 0 || $revision === "HEAD")
+		{
+			foreach ($paths as $file)
+			{
+				$this->repository()->checkoutFile($file);
+			}
 
-        }
-        else
-        {
-            $output->setOutput("revision reverting","");
-            foreach ($paths as $file)
-            {
-                $this->repository()->checkoutFile($file,$revision);
-            }
-        }
+		}
+		else
+		{
+			$output->setOutput("revision reverting","");
+			foreach ($paths as $file)
+			{
+				$this->repository()->checkoutFile($file,$revision);
+			}
+		}
 
-        $output->setOutput("success",true);
-        return true;
-    }
+		$output->setOutput("success",true);
+		return true;
+	}
 
 	/**
 	 * Get a flat list of files in a specific folder
@@ -231,12 +231,12 @@ class FileModule extends Module
 	{
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
-        $files = $input->getInput("files");
+		$files = $input->getInput("files");
 
-        foreach ($files as $file)
-        {
-    		$this->repository()->removeFile($file);
-        }
+		foreach ($files as $file)
+		{
+			$this->repository()->removeFile($file);
+		}
 		return true;
 	}
 
