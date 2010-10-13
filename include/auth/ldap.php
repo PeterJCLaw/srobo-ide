@@ -32,7 +32,7 @@ class LDAPAuth extends SecureTokenAuth
 
 		foreach ($groups as $group)
 		{
-            $groupNamePrefix = $config->getConfig("ldap.team.prefix");
+			$groupNamePrefix = $config->getConfig("ldap.team.prefix");
 			if (stripos($group["cn"], $groupNamePrefix) === 0)
 			{
 				$teams[] = (int)substr($group["cn"], strlen($groupNamePrefix));
@@ -45,19 +45,19 @@ class LDAPAuth extends SecureTokenAuth
 	public function isCurrentUserAdmin()
 	{
 		$config = Configuration::getInstance();
-        $adminName = $config->getConfig("ldap.admin_group");
-        $user = $this->ldapManager->getUser();
-        $IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
-        $groups = $IDEldapManager->getGroupsForUser($user);
-        foreach ($groups as $group)
-        {
-            if ($group["cn"] == $adminName)
-            {
-                return true;
-            }
-        }
+		$adminName = $config->getConfig("ldap.admin_group");
+		$user = $this->ldapManager->getUser();
+		$IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
+		$groups = $IDEldapManager->getGroupsForUser($user);
+		foreach ($groups as $group)
+		{
+			if ($group["cn"] == $adminName)
+			{
+				return true;
+			}
+		}
 
-        return false;
+		return false;
 	}
 
 	public function displayNameForTeam($team)
@@ -72,9 +72,13 @@ class LDAPAuth extends SecureTokenAuth
 			if ($group["cn"] == $config->getConfig("ldap.team.prefix") . $team)
 			{
 				if (isset($group["description"]))
+				{
 					return $group["description"];
+				}
 				else
+				{
 					return "Team $team";
+				}
 			}
 		}
 

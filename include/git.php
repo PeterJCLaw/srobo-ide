@@ -59,26 +59,26 @@ class GitRepository
 		}
 	}
 
-    /**
-     * Determines if a repository is bare
-     */
+	/**
+	 * Determines if a repository is bare
+	 */
 	public function isBare()
 	{
 		return $this->working_path === null;
 	}
 
-    /**
-     * Get the path of the git repository
-     */
-    public function getPath()
-    {
-        return $this->working_path;
-    }
+	/**
+	 * Get the path of the git repository
+	 */
+	public function getPath()
+	{
+		return $this->working_path;
+	}
 
-    public function unstageAll()
-    {
-        $this->gitExecute("reset");
-    }
+	public function unstageAll()
+	{
+		$this->gitExecute("reset");
+	}
 
 	/**
 	 * Execute a command with the specified environment variables
@@ -146,7 +146,7 @@ class GitRepository
 
 			$shell_source = escapeshellarg($source);
 			shell_exec("$bin clone --shared --quiet " . ($bare ? "--bare " : "") .
-					   "$shell_source $shell_path");
+			           "$shell_source $shell_path");
 		}
 		// Make a shiny new master repo
 		else
@@ -217,11 +217,11 @@ class GitRepository
 		return $revisions[count($revisions)-1];
 	}
 
-    public function gitMKDir($path)
-    {
-        $dir = $this->working_path . "/" . $path;
-        mkdir_full($dir);
-    }
+	public function gitMKDir($path)
+	{
+		$dir = $this->working_path . "/" . $path;
+		mkdir_full($dir);
+	}
 
 	/**
 	 * Gets the log between the arguments
@@ -275,7 +275,9 @@ class GitRepository
 		                                             . ' '
 		                                             . implode(' ', $branches));
 		if ($success)
+		{
 			return array();
+		}
 		else
 		{
 			$conflicted_files = array();
@@ -291,26 +293,26 @@ class GitRepository
 		}
 	}
 
-    /**
-     * Checkout the entire repository to a revision
-     */
-    private function checkoutRepo($revision)
-    {
-        $this->gitExecute(true, "checkout $revision");
-    }
+	/**
+	 * Checkout the entire repository to a revision
+	 */
+	private function checkoutRepo($revision)
+	{
+		$this->gitExecute(true, "checkout $revision");
+	}
 
-    public function checkoutFile($file,$revision=null)
-    {
-        $shellPath = escapeshellarg($file);
-        if ($revision == null)
-        {
-            $this->gitExecute(true, "checkout $shellPath");
-        }
-        else
-        {
-            $this->gitExecute(true, "checkout $revision -- $shellPath");
-        }
-    }
+	public function checkoutFile($file,$revision=null)
+	{
+		$shellPath = escapeshellarg($file);
+		if ($revision == null)
+		{
+			$this->gitExecute(true, "checkout $shellPath");
+		}
+		else
+		{
+			$this->gitExecute(true, "checkout $revision -- $shellPath");
+		}
+	}
 
 	/**
 	 * Pushes changes upstream.
@@ -398,10 +400,14 @@ class GitRepository
 			$realpath = str_replace('./', '', $realpath);
 			$filename = basename($realpath);
 			$fileinfo = $iterator->current();
+
 			if ($filename    == '' ||
 			    $filename[0] == '.' ||
 			    $filename    == '__init__.py')
+			{
 				continue;
+			}
+
 			if ($fileinfo->isFile())
 			{
 				$autosave = in_array($realpath, $unstagedChanges) ? $iterator->getMTime() : 0;
@@ -420,6 +426,7 @@ class GitRepository
 				                 );
 			}
 		}
+
 		usort($result, function($a, $b) {
 			$a = $a['name'];
 			$b = $b['name'];
@@ -531,14 +538,14 @@ class GitRepository
 		file_put_contents($this->working_path . "/$path", $content);
 	}
 
-    /**
-     * Stages a file
-     */
-    public function stage($path)
-    {
+	/**
+	 * Stages a file
+	 */
+	public function stage($path)
+	{
 		$shell_path = escapeshellarg($path);
 		$this->gitExecute(true, "add $shell_path");
-    }
+	}
 
 	/**
 	 * Gets a diff:
