@@ -83,7 +83,7 @@ Log.prototype._retrieveHistory = function(opt) {
 		  //this key is to filter by author
 		  user : this.user,
 		  offset : this.offset,
-		  number : 10
+		  number : 4096
 		},
 		bind(this._receiveHistory, this, opt),
 		bind(this._errorReceiveHistory, this)
