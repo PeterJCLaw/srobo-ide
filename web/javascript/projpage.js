@@ -246,16 +246,17 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 		this._exportProject();
 		return;
 	}
-	if(result == 'codefail') {	//bad code
-		var message = num_errors+" errors found";
-	} else if(result == 'checkfail') {	//the check failed
+
+	//check has failed
+	if(result == 'checkfail') {
 		var message = "Failed to check code";
-	}
-	log('_exportProjectCheckResult:'+message);
-	status_options( message, LEVEL_WARN,
+		status_options( message, LEVEL_WARN,
 				[{text:"retry", callback:bind( this.clickExportProject, this )},
 				 {text:"export anyway", callback:bind( this._exportProject, this )}]
-			);
+		);
+	}
+
+	log('_exportProjectCheckResult:'+message);
 }
 
 ProjPage.prototype._exportProject = function() {
