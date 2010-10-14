@@ -296,10 +296,29 @@ class FileModule extends Module
 
 		var_dump($log);
 
+		// if user has been passed we need to filter by author
+		$user = $input->getInput("user", true);
+		print $user;
+
+		//take a backup of the log so we can list all the authors
+		$originalLog = $log;
+
+		//check if we've got a user and filter
+		if ($user != null)
+		{
+			$filteredRevs = array();
+			foreach ($log as $rev)
+			{
+				if ($rev["author"] == $user) $filteredRevs[] = $rev;
+			}
+
+			$log = $filteredRevs;
+		}
+
 		$output->setOutput('log', array_slice($log, $offset, $number));
 
 		$authors = array();
-		foreach($log as $rev)
+		foreach($originalLog as $rev)
 		{
 			$authors[] = $rev['author'];
 		}

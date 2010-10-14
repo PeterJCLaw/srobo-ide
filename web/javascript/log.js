@@ -80,6 +80,7 @@ Log.prototype._retrieveHistory = function(opt) {
 		{ team : team,
 		  project: IDE_path_get_project(this.file),
 		  path : IDE_path_get_file(this.file),
+		  //this key is to filter by author
 		  user : this.user,
 		  offset : this.offset,
 		  number : 10
