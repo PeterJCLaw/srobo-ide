@@ -2,6 +2,7 @@ _FOLDERS = settings repos zips /tmp/ide-feed-cache notifications
 
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
+_JAVE_KEYSTORE_USER = Test User
 
 .PHONY: all default dev docs clean applet folders config submodules
 
@@ -36,7 +37,7 @@ config/automagic.ini:
 applet/.keystore:
 	keytool -genkeypair -keyalg rsa -alias test-only-applet-key \
 	-storepass $(_JAVA_KEYSTORE_PWD) -keypass $(_JAVA_KEYSTORE_PWD) \
-	-dname "cn=Test User, ou=SR, o=SR, c=UK" -keystore $(_JAVA_KEYSTORE)
+	-dname "cn=$(_JAVA_KEYSTORE_USER), ou=SR, o=SR, c=UK" -keystore $(_JAVA_KEYSTORE)
 
 folders: $(_FOLDERS)
 
