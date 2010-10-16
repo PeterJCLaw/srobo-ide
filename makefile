@@ -17,7 +17,6 @@ applet: applet/build.xml applet/.keystore
 clean:
 	rm -rf $(_FOLDERS) html latex
 	rm -f config/automagic.ini
-	rm -f applet/.keystore
 	cd applet/ && ant clean
 
 dev: applet folders config lint-reference/sr.py
@@ -47,3 +46,6 @@ $(_FOLDERS):
 submodules:
 	git submodule init
 	git submodule update
+
+sign: applet
+	jarsigner applet/build/checkout.jar prod-key
