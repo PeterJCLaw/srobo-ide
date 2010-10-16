@@ -240,6 +240,14 @@ Log.prototype._do_revert = function(commitMsg) {
                             this._errorReceiveRevision,this,commitMsg
                         )
                        )
+	//refresh open files. yes that's right, I'm abusing the scope chain massively to
+	//get the file contents here, but I don't care. Whoever wrote the edit module needs
+	//their head examined
+	for (var key in editpage._open_files) {
+		var fileHandle = editpage._open_files[key];
+		fileHandle._load_contents()
+		fileHandle._update_contents()
+	}
 }
 
 //revert to selected revision. override = true to skip user confirmation
