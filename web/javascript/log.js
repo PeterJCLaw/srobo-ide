@@ -201,7 +201,7 @@ Log.prototype._update = function() {
 }
 
 Log.prototype._receiveRevert = function(nodes,args) {
-    nodes = args["nodes"]
+    arg_nodes = args["nodes"]
 	if(nodes.commit != "")
 		status_msg("Successfully reverted to version "+this.selectedRevision+" (New Revision: "+nodes.commit+")", LEVEL_OK);
 	else
