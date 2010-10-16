@@ -208,9 +208,8 @@ Log.prototype._receiveRevert = function(nodes,args) {
 		status_msg("Failed to revert: "+nodes.success, LEVEL_ERROR);
 	//in either case update the history
 	this._retrieveHistory('quiet');
-	//refresh open files. yes that's right, I'm abusing the scope chain massively to
-	//get the file contents here, but I don't care. Whoever wrote the edit module needs
-	//their head examined
+
+	//refresh all open file pages, this will need fixing later
 	for (var key in editpage._open_files) {
 		var fileHandle = editpage._open_files[key];
 		fileHandle._load_contents()
