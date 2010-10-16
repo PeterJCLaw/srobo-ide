@@ -30,7 +30,7 @@ docs:
 lint-reference/sr.py: submodules
 
 config/automagic.ini:
-	echo -n "pylint.path = " > $@
+	/bin/echo -n "pylint.path = " > $@
 	which pylint >> $@
 
 applet/.keystore:
