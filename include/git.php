@@ -619,7 +619,7 @@ class GitRepository
 		$dirSafe       = escapeshellarg($dir);
 		$baseSafe      = escapeshellarg($base);
 		ide_log("attaching $pyenvPath to $zipPath");
-		shell_exec("cd $dirSafe ; zip -r $zipPathSafe $baseSafe");
+		shell_exec("cd $dirSafe ; zip -0r $zipPathSafe $baseSafe");
 	}
 
 	/**
