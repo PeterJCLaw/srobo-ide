@@ -212,8 +212,10 @@ Log.prototype._receiveRevert = function(nodes,args) {
 	//refresh all open file pages, this will need fixing later
 	for (var key in editpage._open_files) {
 		var fileHandle = editpage._open_files[key];
-		fileHandle._load_contents()
-		fileHandle._update_contents()
+		if (fileHandle.path == this.file) {
+			fileHandle._load_contents()
+			fileHandle._update_contents()
+		}
 	}
 }
 
