@@ -10,6 +10,60 @@ if (version_compare(PHP_VERSION, '5.3.0') < 0)
 
 error_reporting(E_ALL | E_STRICT);
 
+/*
+ * Whether or not the user's browser is partially compatible with the IDE.
+ * Any version of IE
+ */
+function partially_compatible_browser()
+{
+	return true;
+	//TODO: check that this actually picks up IEs
+	return stripos($_SERVER['HTTP_USER_AGENT'], 'internet explorer') !== FALSE;
+}
+
+/*
+ * Whether or not the user's browser is incompatible with the IDE.
+ * Basically just IE6
+ */
+function incompatible_browser()
+{
+	//TODO: make this just pick up IE6
+	return stripos($_SERVER['HTTP_USER_AGENT'], 'internet explorer') !== FALSE;
+}
+
+/*
+ * Uses a template to show the user a message
+ */
+function show_message($msg, $query = null)
+{
+	$page = file_get_contents('web/message.html');
+	$page = str_replace('MESSAGE_TEXT', $msg, $page);
+	if ($query != null)
+	{
+		$page = str_replace('<!-- QUERY', '', $page);
+		$page = str_replace('QUERY -->', '', $page);
+		$page = str_replace('BUTTON_TEXT', $query, $page);
+	}
+	echo $page;
+}
+
+// check for incompatiable browsers trying anyway
+if ( incompatible_browser() && !empty($_POST['try-anyway']) )
+{
+	show_message('Sorry, your browser isn\'t compatible with the IDE.
+	             You really should update or <a href="http://getfirefox.com">upgrade</a>!');
+	exit();
+}
+
+// check for crap browsers, first time round
+if ( partially_compatible_browser() && empty($_POST['try-anyway']) )
+{
+	show_message('Your browser isn\'t fully compatible with the IDE.
+	              Why don\'t you update or <a href="http://getfirefox.com">upgrade</a>?',
+	             'Try anyway');
+	exit();
+}
+
 // includes
 require_once('include/main.php');
 try {
