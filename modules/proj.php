@@ -143,8 +143,8 @@ class ProjModule extends Module
         }
 
 		$this->projectRepository->commit($message,
-		                                 $auth->displayNameForUser($currentUser),
-		                                 $auth->emailForUser($currentUser));
+		                                 $currentUser,
+		                                 "$currentUser@srobo.org");
 		$conflicts = $this->projectManager->updateRepository($this->team,
 		                                                     $this->projectName,
 		                                                     $currentUser);
