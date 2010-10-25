@@ -207,6 +207,16 @@ Calendar.prototype.change_day = function(target) {
 
 	projpage.hide_filelist();
 	status_msg("Please select a revision", LEVEL_OK);
+	$("cal-revs").className = "hilight"
+	setTimeout(function() {
+			$("cal-revs").className = "normal"
+		},500);
+	setTimeout(function() {
+			$("cal-revs").className = "hilight"
+		},1000);
+	setTimeout(function() {
+			$("cal-revs").className = "normal"
+		},1500);
 }
 
 Calendar.prototype._load_new_rev = function() {

@@ -80,9 +80,10 @@ Log.prototype._retrieveHistory = function(opt) {
 		{ team : team,
 		  project: IDE_path_get_project(this.file),
 		  path : IDE_path_get_file(this.file),
+		  //this key is to filter by author
 		  user : this.user,
 		  offset : this.offset,
-		  number : 10
+		  number : 4096
 		},
 		bind(this._receiveHistory, this, opt),
 		bind(this._errorReceiveHistory, this)
@@ -200,13 +201,22 @@ Log.prototype._update = function() {
 }
 
 Log.prototype._receiveRevert = function(nodes,args) {
-    nodes = args["nodes"]
+    arg_nodes = args["nodes"]
 	if(nodes.commit != "")
 		status_msg("Successfully reverted to version "+this.selectedRevision+" (New Revision: "+nodes.commit+")", LEVEL_OK);
 	else
 		status_msg("Failed to revert: "+nodes.success, LEVEL_ERROR);
 	//in either case update the history
 	this._retrieveHistory('quiet');
+
+	//refresh all open file pages, this will need fixing later
+	for (var key in editpage._open_files) {
+		var fileHandle = editpage._open_files[key];
+		if (fileHandle.path == this.file) {
+			fileHandle._load_contents()
+			fileHandle._update_contents()
+		}
+	}
 }
 
 Log.prototype._errorReceiveRevision = function(commitMsg) {
