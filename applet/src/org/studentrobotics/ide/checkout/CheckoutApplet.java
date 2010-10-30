@@ -22,13 +22,18 @@ public class CheckoutApplet extends Applet {
 
 	public static boolean hasDied = false;
 
-	public CheckoutApplet() {
+	/**
+     * constructor on the applet, has to take no arguments b/c applet lifecycle
+     * sets up the zipwriterunner and fires it off in a different threadpool
+     */
+    public CheckoutApplet() {
 		mZwr = new ZipWriteRunner();
 		ExecutorService dispatcher = Executors.newFixedThreadPool(1);
 		dispatcher.submit(mZwr);
 
 	}
 
+    //these are necessary because of the way applets work
 	public void init() {
 	}
 
@@ -58,7 +63,7 @@ public class CheckoutApplet extends Applet {
 				URLConnection conn = url.openConnection();
 				byte[] zipBytes = new byte[conn.getContentLength()];
 				conn.getInputStream().read(zipBytes);
-				
+
 
 				FutureValue<Boolean> result = mZwr.setZip(zipBytes);
 				System.err.println("dispatched");
@@ -81,14 +86,18 @@ public class CheckoutApplet extends Applet {
 				return 1;
 			}
 		}
+        //caught if a passed url to the applet is bad
 		catch (MalformedURLException mue) {
 		    mue.printStackTrace();
 		    return 1;
 		}
+        //caught if the applet throws any kind of exception
 		catch (IOException ioe) {
 		    ioe.printStackTrace();
 		    return 1;
 		}
+        //generic catch is because the security model can deny us access and we won't know
+        //so we catch a throwable
 		catch (Throwable t) {
 			t.printStackTrace();
 			return -1;
