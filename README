@@ -31,7 +31,7 @@ Dependancies:
  * pylint  # syntax checker
 
 In Ubuntu these can be achieved by installing the following packages:
- apache2 php5 libphp-simplepie php5-intl ant1.8 openjdk-6-jdk doxygen php5-cli git-core
+ apache2 php5 libphp-simplepie php5-intl ant1.8 openjdk-6-jdk doxygen php5-cli git-core pylint
 
 
 Note that by default Ubuntu Lucid will not execute PHP files in
