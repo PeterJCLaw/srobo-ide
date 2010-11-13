@@ -18,6 +18,7 @@ clean:
 	rm -rf $(_FOLDERS) html latex
 	rm -f config/automagic.ini
 	cd applet/ && ant clean
+	rm -f srobo-ide.deb metapackages/deb/srobo-ide.deb
 
 dev: applet folders config lint-reference/sr.py
 
@@ -25,6 +26,8 @@ config: config/automagic.ini
 
 docs:
 	doxygen doxyfile
+
+package: srobo-ide.deb
 
 # Helpers
 lint-reference/sr.py: submodules
@@ -49,3 +52,9 @@ submodules:
 
 sign: applet
 	jarsigner applet/build/checkout.jar prod-key
+
+srobo-ide.deb: metapackages/deb/srobo-ide.deb
+	cp metapackages/deb/srobo-ide.deb .
+
+metapackages/deb/srobo-ide.deb: metapackages/deb/srobo-ide/DEBIAN/control
+	dpkg --build metapackages/deb/srobo-ide

@@ -16,6 +16,8 @@ In the mean time here's some basic info about the make targets:
 
 `clean`: Removes both of the above.
 
+`package`: Creates a .deb that installs all the dependencies for srobo-ide
+
 You can run tests on CyanIDE by running `./run-tests`.
 
 Dependancies:

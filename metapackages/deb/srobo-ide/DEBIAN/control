@@ -1,0 +1,13 @@
+Package: srobo-ide
+Version: 0.02
+Section: main
+Priority: optional
+Architecture: all
+Depends: apache2|lighttpd, php5, libphp-simplepie, php5-intl, git-core, default-jdk|openjdk-6-jdk|sun-java6-jdk, ant|ant1.8, pylint
+Suggests: doxygen, php5-cli
+Installed-Size:
+Maintainer: Student Robotics
+Description: A metapackage for srobo-ide
+ The Student Robotics web IDE provides a web interface to develop python
+ code on top of git version control. This package provides the minimum
+ requirements to run the IDE on debian systems.
