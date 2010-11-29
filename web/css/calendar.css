@@ -26,3 +26,13 @@
 	padding: 0;
 	margin: 0;
 }
+
+.hilight {
+	font-weight:bold;
+	color:#f00;
+}
+
+.normal {
+	font-weight:normal;
+	color:#000;
+}

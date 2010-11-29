@@ -23,7 +23,10 @@ class Notifications
 	{
 		$path = "{$this->notepath}/$team.txt";
 		if (!file_exists($path))
+		{
 			touch($path);
+			chmod($path, 0666);
+		}
 		var_dump($path);
 		return $path;
 	}

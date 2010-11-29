@@ -603,6 +603,30 @@ class GitRepository
 		$dest = realpath($dest);
 		$shell_dest = escapeshellarg($dest);
 		$this->gitExecute(true, "archive --format=zip $commit -".COMPRESSION_LEVEL." > $shell_dest");
+		if ($this->shouldAttachPyenv())
+			$this->attachPyenv($dest);
+	}
+
+	private function pyenvPath()
+	{
+		return Configuration::getInstance()->getConfig('pyenv_zip');
+	}
+
+	private function shouldAttachPyenv()
+	{
+		return $this->pyenvPath() != null;
+	}
+
+	private function attachPyenv($zipPath)
+	{
+		$pyenvPath = $this->pyenvPath();
+		$dir       = dirname($pyenvPath);
+		$base      = basename($pyenvPath);
+		$zipPathSafe   = escapeshellarg($zipPath);
+		$dirSafe       = escapeshellarg($dir);
+		$baseSafe      = escapeshellarg($base);
+		ide_log("attaching $pyenvPath to $zipPath");
+		shell_exec("cd $dirSafe ; zip -0r $zipPathSafe $baseSafe");
 	}
 
 	/**

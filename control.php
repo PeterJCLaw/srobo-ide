@@ -62,14 +62,6 @@ catch (Exception $e)
 	$output->setOutput('error', array($e->getCode(), $e->getMessage(), $e->getTraceAsString()));
 }
 
-// test for notifications
-$notifications = Notifications::getInstance();
-if ($team = $input->getInput('team', true))
-{
-	$output->setOutput('notifications', $notifications->pendingNotificationsForTeam($team));
-	$notifications->clearNotificationsForTeam($team);
-}
-
 if ($config->getConfig('debug'))
 {
 	$output->setOutput('debug', explode("\n", ob_get_contents()));

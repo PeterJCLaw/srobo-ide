@@ -36,8 +36,7 @@ showElement = hideElement = function(){};
 IDE_notification_callback = function(note) {
 	var object = createDOM('span');
 	object.innerHTML = note + ' [<a href="javascript:status_click();">dismiss</a>]';
-	var message = status_rich_show(object, LEVEL_WARN);
-	setTimeout(message.close, 10000);
+	status_rich_show(object, LEVEL_WARN);
 };
 
 function IDE_backend_request(command, args, successCallback, errorCallback) {

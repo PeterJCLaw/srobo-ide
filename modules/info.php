@@ -12,9 +12,13 @@ class InfoModule extends Module
 		$info = array();
 		$info['Version'] = shell_exec('git log -1 --pretty=format:"%h on %aD"');
 
-		if ($username = AuthBackend::getInstance()->getCurrentUser())
+		$auth = AuthBackend::getInstance();
+		if ($username = $auth->getCurrentUser())
 		{
 			$info['User'] = $username;
+
+			$teamNumbers = $auth->getCurrentUserTeams();
+			$info['Teams'] = implode(', ', $teamNumbers);
 		}
 
 		Output::getInstance()->setOutput('info', $info);
