@@ -27,7 +27,7 @@ config: config/automagic.ini
 docs:
 	doxygen doxyfile
 
-package: srobo-ide.deb
+deb: srobo-ide.deb
 
 # Helpers
 lint-reference/sr.py: submodules
