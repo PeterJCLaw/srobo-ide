@@ -35,7 +35,8 @@ class Feeds
 		$this->feedsList = $this->_getFeeds();
 	}
 
-	/* Load the feeds array from the feeds json file
+	/**
+	 * Load the feeds array from the feeds json file
 	 */
 	private function _getFeeds()
 	{
@@ -50,7 +51,8 @@ class Feeds
 		}
 	}
 
-	/* Load the feeds array from the feeds json file
+	/**
+	 * Load the feeds array from the feeds json file
 	 */
 	public function getFeeds()
 	{
@@ -73,7 +75,8 @@ class Feeds
 		return array_unique($urls);
 	}
 
-	/* Save the feeds array to the feeds json file
+	/**
+	 * Save the feeds array to the feeds json file
 	 */
 	public function putFeeds($feeds)
 	{

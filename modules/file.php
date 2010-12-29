@@ -270,7 +270,7 @@ class FileModule extends Module
 		return true;
 	}
 
-	/*
+	/**
 	 * Get the log for a file.
 	 * It expects a file to restrict the log to, and, optionally, an offset to start from and the number of entries wanted.
 	 * It returns the requested entries and a list of authors that have committed to the file.
