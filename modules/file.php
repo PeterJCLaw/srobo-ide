@@ -131,6 +131,10 @@ class FileModule extends Module
 		return array_values($clean);
 	}
 
+	/**
+	 * Check out a particular revision of a file.
+	 * Also used to revert a file to its unmodified state.
+	 */
 	public function checkoutFile()
 	{
 		$input = Input::getInstance();
