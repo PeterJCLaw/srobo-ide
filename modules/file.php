@@ -323,7 +323,7 @@ class FileModule extends Module
 			$authors[] = $rev['author'];
 		}
 
-		$output->setOutput('authors', array_unique($authors));
+		$output->setOutput('authors', array_values(array_unique($authors)));
 
 		return true;
 	}
