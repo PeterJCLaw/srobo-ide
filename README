@@ -2,6 +2,10 @@ This is Student Robotics CyanIDE.
 
 It is a web-based IDE for developing code for Student Robotics robots.
 
+If you're using devmode and you hate apache for development then you'll find a lighttpd
+configuration file in this directory. Just run `lighttpd -f lighttpd.config -D` to get
+devmode.
+
 A guide for getting it running will be found here (once we've got it working properly):
 https://www.studentrobotics.org/trac/wiki/CyanIDE
 
