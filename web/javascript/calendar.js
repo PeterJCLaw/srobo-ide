@@ -240,8 +240,6 @@ Calendar.prototype.change_proj = function(project, team) {
 	this.proj = project;
 	this.team = team;
 	this.date = new Date();
-	this.logs = new Array();
-	this.logdays = new Array();
 
 	this.init();
 }
