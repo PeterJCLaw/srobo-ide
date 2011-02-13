@@ -446,7 +446,7 @@
 			return false;
 		}
 			
-		if(this.isIE || ( this.isOpera && this.isOpera < 9.6 ) ){
+		if(this.isIE || this.isOpera){
 			begin_line="\r\n"+ begin_line;
 		}else{
 			begin_line="\n"+ begin_line;

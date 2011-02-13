@@ -5,7 +5,6 @@ function Calendar() {
 
 	//holds the selected month & year
 	this.date = new Date();
-	this.date.setDate(1);
 
 	this.logs = new Array();	//will hold complete month of log entries
 	this.logdays = new Array();	//will hold max of one log entry (the last) for each day in month
@@ -21,6 +20,10 @@ var MONTHS = new Array("January", "February", "March", "April", "May", "June",
 Calendar.prototype.init = function() {
 	this.logs = new Array();
 	this.logdays = new Array();
+
+	// set the date so that we draw it with the correct days offset
+	this.date.setDate(1);
+
 	//do html
 	this.drawCal();
 	//try ajax
@@ -166,7 +169,6 @@ Calendar.prototype.updateCal = function() {
 
 Calendar.prototype.changeMonth = function(dir) {
 	this.date.setMonth(this.date.getMonth() + dir);
-	this.date.setDate(1);
 	replaceChildNodes("cal-revs",
 		OPTION({"value" : 'HEAD'}, "HEAD - the most recent version"),
 		OPTION({"value" : -1, "selected" : "selected"}, "Select a date")
@@ -226,7 +228,10 @@ Calendar.prototype._load_new_rev = function() {
 	if( !(target < 0) )
 		this._load_rev( target );
 	if(target == 'HEAD')
+	{
+		this.date = new Date();
 		this.init();
+	}
 }
 
 Calendar.prototype._load_rev = function(rev) {
@@ -238,9 +243,6 @@ Calendar.prototype.change_proj = function(project, team) {
 	this.proj = project;
 	this.team = team;
 	this.date = new Date();
-	this.date.setDate(1);
-	this.logs = new Array();
-	this.logdays = new Array();
 
 	this.init();
 }

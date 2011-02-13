@@ -65,12 +65,11 @@ class AuthModule extends Module
 	{
 		$input    = Input::getInstance();
 		$output   = Output::getInstance();
-		if ($this->authModule->getCurrentUser() === null)
+		if ($this->authModule->getCurrentUser() !== null)
 		{
-			throw new Exception('you are not authenticated', E_AUTH_FAILED);
+			$this->authModule->deauthUser();
+			getDefaultTokenStrategy()->removeAuthToken();
 		}
-		$this->authModule->deauthUser();
-		getDefaultTokenStrategy()->removeAuthToken();
 		return true;
 	}
 }
