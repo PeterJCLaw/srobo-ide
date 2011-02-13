@@ -228,7 +228,10 @@ Calendar.prototype._load_new_rev = function() {
 	if( !(target < 0) )
 		this._load_rev( target );
 	if(target == 'HEAD')
+	{
+		this.date = new Date();
 		this.init();
+	}
 }
 
 Calendar.prototype._load_rev = function(rev) {
