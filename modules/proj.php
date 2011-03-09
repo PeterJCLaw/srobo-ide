@@ -205,10 +205,23 @@ class ProjModule extends Module
 			mkdir($projdir);
 
 		$hash = $input->getInput('rev');
+    ide_log("faces1");
 		$this->projectRepository->archiveSourceZip("$projdir/robot.zip", $hash);
+    ide_log("faces2");
+    $this->projectRepository->writePyenvTo($projdir);
+    ide_log("faces3");
+    $this->completeArchive($projdir);
+    ide_log("faces4");
 
 		$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
 	}
+
+  public function completeArchive($projdir)
+  {
+    ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
+    shell_exec("cd $projdir && zip -r robot_t.zip *");
+    shell_exec("mv $projdir/robot_t.zip $projdir/robot.zip");
+  }
 
 	public function redirectToZip()
 	{
