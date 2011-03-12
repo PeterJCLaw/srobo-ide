@@ -29,6 +29,23 @@ class GitRepository
 		return $path;
 	}
 
+	public static function badCharacters()
+	{
+		return array(':', '"');
+	}
+
+	public static function checkPath($path)
+	{
+		$badChars = self::badCharacters();
+		foreach ($badChars as $char)
+		{
+			if (strpos($path, $char) !== FALSE)
+			{
+				throw new Exception("Invalid character ($char) found in path.", E_MALFORMED_REQUEST);
+			}
+		}
+	}
+
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
@@ -127,6 +144,7 @@ class GitRepository
 	 */
 	public static function createRepository($path, $bare = false, $source = null)
 	{
+		self::checkPath($path);
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		ide_log("Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
 		if (!is_dir($path))
@@ -172,6 +190,7 @@ class GitRepository
 	 */
 	public static function cloneRepository($from, $to)
 	{
+		self::checkPath($path);
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 
 		ide_log("Cloning a repository at $from to $to.");
