@@ -278,6 +278,18 @@ a.button:hover, #login-box #login-button:hover {
 	color: #253571;
 	background-color: #ffffff;
 }
+#login-box #privacy-policy-link {
+	float: right;
+}
+#login-box #privacy-policy {
+	background-color: #DFDBD8;
+	color: #000000;
+	display: none;
+	font-size: 0.7em;
+	font-weight: normal;
+	margin-top: 1em;
+	padding: 5px 10px;
+}
 
 #teamname {
 	font-weight: bold;

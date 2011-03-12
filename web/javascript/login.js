@@ -8,6 +8,10 @@ function Login() {
 	// Show the login dialog
 	this.setup = function() {
 
+		// Connect up the privacy policy link
+		disconnectAll( "privacy-policy-link" );
+		connect( "privacy-policy-link", "onclick", bind( this._show_privacy_policy, this ) );
+
 		// Connect up the onclick event to the login button
 		disconnectAll( "login-button" );
 		connect( "login-button", "onclick", bind( this._do_login, this ) );
@@ -40,6 +44,23 @@ function Login() {
 				$("password").value = '';
 				$("password").focus();
 			}, this)
+		);
+	}
+
+	this._show_privacy_policy = function(ev) {
+		var policyID = 'privacy-policy';
+		if( ev != null ) {
+			ev.preventDefault();
+			ev.stopPropagation();
+		}
+
+		IDE_backend_request('info/about', {}, function(nodes) {
+				$(policyID).innerHTML += nodes.info['Privacy Policy'];
+				showElement('privacy-policy');
+				// prevent it going again
+				disconnectAll('privacy-policy-link');
+			},
+			function(){}	// silent failure
 		);
 	}
 }
