@@ -23,6 +23,8 @@ function ide_log($message)
 	}
 }
 
+setlocale(LC_CTYPE, 'en_GB.UTF-8');
+
 if (!IN_TESTS)
 	set_error_handler(function ($errno, $error) {
 		if ($errno != 0)

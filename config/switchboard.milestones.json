@@ -5,8 +5,13 @@
 		"desc":"KickStart Happened. It Was Awesome!"
 	},
 	{
-		"title":"Tech Day 1",
+		"title":"Southampton Tech Day 1",
 		"date":"2011-02-05",
+		"desc":"A chance to meet other competitors, the Student Robotics team, to get help and share ideas. You should have a mobile robot chassis and be developing your other mechanisms"
+	},
+	{
+		"title":"Bristol Tech Day 1",
+		"date":"2011-02-12",
 		"desc":"A chance to meet other competitors, the Student Robotics team, to get help and share ideas. You should have a mobile robot chassis and be developing your other mechanisms"
 	},
 	{

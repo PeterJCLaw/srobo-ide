@@ -38,7 +38,12 @@ applet/.keystore:
 	-storepass $(_JAVA_KEYSTORE_PWD) -keypass $(_JAVA_KEYSTORE_PWD) \
 	-dname "cn=$(_JAVA_KEYSTORE_USER), ou=SR, o=SR, c=UK" -keystore $(_JAVA_KEYSTORE)
 
-folders: $(_FOLDERS)
+zips/.htaccess:
+	ln resources/zips-htaccess zips/.htaccess
+
+zip-htaccess: zips/.htaccess
+
+folders: $(_FOLDERS) zip-htaccess
 
 $(_FOLDERS):
 	mkdir -p -m 777 $@

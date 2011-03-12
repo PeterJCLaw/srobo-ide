@@ -203,12 +203,35 @@ class ProjModule extends Module
 		$projdir = "$teamdir/$this->projectName";
 		if (!is_dir($projdir))
 			mkdir($projdir);
-
+    shell_exec("rm -rf $projdir/*");
 		$hash = $input->getInput('rev');
+    ide_log("faces1");
 		$this->projectRepository->archiveSourceZip("$projdir/robot.zip", $hash);
+        $this->rezip($projdir);
+    ide_log("faces2");
+    $this->projectRepository->writePyenvTo($projdir);
+    ide_log("faces3");
+    $this->completeArchive($projdir);
+    ide_log("faces4");
 
-		$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
+
+	$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
 	}
+    
+
+    public function rezip($projdir) {
+        $projdir = escapeshellarg($projdir);
+        $moveto = tempnam("/tmp/", "robot");
+        shell_exec("cd $projdir && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip /tmp/$rand.zip && rm * && mv /tmp/$rand.zip ./robot.zip");
+    }
+
+  public function completeArchive($projdir)
+  {
+    ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
+        $projdir = escapeshellarg($projdir);
+    shell_exec("cd $projdir && zip -r robot_t.zip *");
+    shell_exec("mv $projdir/robot_t.zip $projdir/robot.zip");
+  }
 
 	public function redirectToZip()
 	{

@@ -604,9 +604,19 @@ class GitRepository
 		$s_dest = escapeshellarg($dest);
 		$s_commit = escapeshellarg($commit);
 		$this->gitExecute(true, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
-		if ($this->shouldAttachPyenv())
-			$this->attachPyenv($dest);
 	}
+
+  public function writePyenvTo($dest)
+  {
+    $pyenv_zip = $this->pyenvPath();
+    $pyenv_zip = escapeshellarg($pyenv_zip);
+    $dest = escapeshellarg($dest);
+    if ($this->shouldAttachPyenv())
+    {
+      ide_log("unzip $pyenv_zip -d $dest");
+      shell_exec("unzip $pyenv_zip -d $dest");
+    }
+  }
 
 	private function pyenvPath()
 	{

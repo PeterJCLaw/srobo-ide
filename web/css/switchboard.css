@@ -99,10 +99,17 @@
 	width: 100%;
 	border: 2px solid #DDDDDD;
 }
-#student-blogs-list, #student-blogs-list li {
+#student-blogs-list,
+#student-blogs-list > li {
 	list-style-type: none;
 	margin:0px;
 	padding:0px;
+}
+ul#student-blogs-list {
+	margin-top: 1em;
+}
+#student-blogs-list li > div {
+	margin: 1em 0px;
 }
 
 #kickstart-photo {
