@@ -203,7 +203,8 @@ class ProjModule extends Module
 		$projdir = "$teamdir/$this->projectName";
 		if (!is_dir($projdir))
 			mkdir($projdir);
-    shell_exec("rm -rf $projdir/*");
+
+		delete_recursive($projdir.'/*');
 		$hash = $input->getInput('rev');
     ide_log("faces1");
 		$this->projectRepository->archiveSourceZip("$projdir/robot.zip", $hash);
@@ -217,7 +218,7 @@ class ProjModule extends Module
 
 	$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
 	}
-    
+
 
     public function rezip($projdir) {
         $projdir = escapeshellarg($projdir);
