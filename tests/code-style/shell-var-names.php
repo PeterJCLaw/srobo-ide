@@ -46,8 +46,6 @@ function startswith($string, $expectedStart)
 	return $start == $expectedStart;
 }
 
-$failures = 1;
-
 $results = explode("\n", $raw_results);
 
 foreach($results as $result)
