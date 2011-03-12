@@ -220,12 +220,14 @@ class ProjModule extends Module
     
 
     public function rezip($projdir) {
+        $projdir = escapeshellarg($projdir);
         shell_exec("cd $projdir && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip /tmp && rm * && mv /tmp/robot.zip ./");
     }
 
   public function completeArchive($projdir)
   {
     ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
+        $projdir = escapeshellarg($projdir);
     shell_exec("cd $projdir && zip -r robot_t.zip *");
     shell_exec("mv $projdir/robot_t.zip $projdir/robot.zip");
   }

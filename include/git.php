@@ -601,6 +601,7 @@ class GitRepository
   public function writePyenvTo($dest)
   {
     $pyenv_zip = $this->pyenvPath();
+    $pyenv_zip = escapeshellarg($pyenv_zip);
     if ($this->shouldAttachPyenv())
     {
       ide_log("unzip $pyenv_zip -d $dest");
