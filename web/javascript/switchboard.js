@@ -310,18 +310,26 @@ Switchboard.prototype.GetMilestones = function()
 /* *****	Blog Post Code		***** */
 Switchboard.prototype.receiveBlogPosts = function(nodes)
 {
+	var listID = "student-blogs-list";
 	// Remove any existing messages before adding new ones
-	replaceChildNodes($("student-blogs-list"));
+	replaceChildNodes(listID);
 	for(var m in nodes.posts)
 	{
 		var item = nodes.posts[m];
-		var a = A({'href':item.link, 'target':'_blank'}, item.title);	//Write message title link
-		var s = SPAN({}, "");
-		s.innerHTML = ": "+item.body+" [by "+item.author+"]";		//message body
-		var l = LI({},"");
-		appendChildNodes(l, a);						//Add the title to the list element
-		appendChildNodes(l, s);						//Add the message to the list element
-		appendChildNodes($("student-blogs-list"),l);			//Add the whole list to the message window
+		// Write message title link & author
+		var link = A({'href':item.link, 'target':'_blank'}, item.title);
+		var authorSpan = SPAN({}, " [by "+item.author+"]");
+
+		// Put together the DOM
+		var header = STRONG({}, link);
+		var body = DIV();
+		var li = LI({}, header, authorSpan, body);
+
+		// Assign the post to in the body div
+		body.innerHTML = item.body;
+
+		// Add the whole list to the message window
+		appendChildNodes(listID, li);
 	}
 }
 
