@@ -21,3 +21,5 @@ TEST file/basic
 TEST file/simulate/unimplemented
 
 TEST ping/ping
+
+TEST code-style/shell-var-names
