@@ -221,7 +221,8 @@ class ProjModule extends Module
 
     public function rezip($projdir) {
         $projdir = escapeshellarg($projdir);
-        shell_exec("cd $projdir && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip /tmp && rm * && mv /tmp/robot.zip ./");
+        $moveto = rand();
+        shell_exec("cd $projdir && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip /tmp/$rand.zip && rm * && mv /tmp/$rand.zip ./robot.zip");
     }
 
   public function completeArchive($projdir)
