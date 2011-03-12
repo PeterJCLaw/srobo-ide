@@ -54,6 +54,12 @@ for($i=0; $i < strlen($chars); $i++)
 	createAndAssertProject('char \''.$chars[$i].'\'.');
 }
 
+$unicodes = array('£', '❝', '♞');
+foreach($unicodes as $char)
+{
+	createAndAssertProject('char \''.$char.'\'.');
+}
+
 if (is_dir("/tmp/test-repos"))
 {
 	exec("rm -rf /tmp/test-repos");
