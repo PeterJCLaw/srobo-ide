@@ -21,6 +21,8 @@ class InfoModule extends Module
 			$info['Teams'] = implode(', ', $teamNumbers);
 		}
 
+		$info['Privacy Policy'] = file_get_contents('web/common-cookies-policy.html');
+
 		Output::getInstance()->setOutput('info', $info);
 	}
 }
