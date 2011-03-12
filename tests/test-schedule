@@ -18,6 +18,7 @@ TEST proj/log
 TEST proj/del
 
 TEST file/basic
+TEST file/lint
 TEST file/simulate/unimplemented
 
 TEST ping/ping
