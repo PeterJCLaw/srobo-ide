@@ -52,6 +52,13 @@ foreach($results as $result)
 {
 	$local_fail = FALSE;
 	list($file, $line, $full_match) = get_parts($result);
+
+	// ignore the funciton declaration of gitExecute
+	if (startswith(trim($full_match), 'private function gitExecute'))
+	{
+		continue;
+	}
+
 	$args = get_cmd_line($full_match);
 //	var_dump($args);
 
