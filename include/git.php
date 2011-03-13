@@ -244,6 +244,11 @@ class GitRepository
     public function gitMKDir($path)
     {
         $dir = $this->working_path . "/" . $path;
+		// cope with the folder already existing
+		if (is_dir($dir) && file_exists($dir))
+		{
+			return true;
+		}
         return mkdir_full($dir);
     }
 
