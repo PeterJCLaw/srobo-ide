@@ -17,6 +17,7 @@ TEST proj/create
 TEST proj/log
 TEST proj/del
 
+TEST file/create
 TEST file/basic
 TEST file/lint
 TEST file/simulate/unimplemented
