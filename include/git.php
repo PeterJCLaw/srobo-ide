@@ -447,7 +447,7 @@ class GitRepository
 				$result[] = array('kind'     => 'FOLDER',
 				                  'name'     => $filename,
 				                  'path'     => "/$base/$realpath",
-				                  'children' => $this->fileTreeCompat($base, "$subpath/$realpath"),
+				                  'children' => $this->fileTreeCompat($base, $realpath),
 				                 );
 			}
 		}
