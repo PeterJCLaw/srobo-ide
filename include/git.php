@@ -220,7 +220,8 @@ class GitRepository
     public function gitMKDir($path)
     {
         $dir = $this->working_path . "/" . $path;
-        mkdir_full($dir);
+        $ret = mkdir_full($dir);
+        return $ret;
     }
 
 	/**
