@@ -205,11 +205,9 @@ class FileModule extends Module
 	public function putFile()
 	{
 		$input  = Input::getInstance();
-		$output = Output::getInstance();
 		$path   = $input->getInput('path');
 		$data   = $input->getInput('data');
-		$this->repository()->putFile($path, $data);
-		return true;
+		return $this->repository()->putFile($path, $data);
 	}
 
 	/**

@@ -566,7 +566,9 @@ class GitRepository
 	 */
 	public function putFile($path, $content)
 	{
-		file_put_contents($this->working_path . "/$path", $content);
+		// ensure that the file exists before writing to it.
+		$ret = $this->createFile($path);
+		return $ret && file_put_contents($this->working_path . "/$path", $content);
 	}
 
     /**
