@@ -50,7 +50,7 @@ function createAndAssertFolder($path)
 	$config = Configuration::getInstance();
 	$input = Input::getInstance();
 
-	echo "Testing creatin of file '$path' for team ", $input->getInput('team'), ', project ', $input->getInput('project'), ".\n";
+	subsection("Testing creatin of folder '$path' for team ".$input->getInput('team').', project '.$input->getInput('project'));
 	$input->setInput('path', $path);
 	$repopath = getRepoPath();
 
@@ -64,10 +64,11 @@ function createAndAssertFolder($path)
 
 	// create the folder
 	$input->setInput('path', $path);
-	$file->dispatchCommand('mkdir');
+	$ret = $file->dispatchCommand('mkdir');
 	$abspath = "$repopath/$path";
 	test_true(file_exists($abspath), "Failed to create folder '$abspath'");
 	test_true(is_dir($abspath), "'$abspath' is was not a folder");
+	test_true($ret, "Creation of folder '$abspath' claims to have failed");
 
 	// check that it still exists after a compat-tree call
 	$file->dispatchCommand('compat-tree');
