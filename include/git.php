@@ -244,7 +244,7 @@ class GitRepository
     public function gitMKDir($path)
     {
         $dir = $this->working_path . "/" . $path;
-        mkdir_full($dir);
+        return mkdir_full($dir);
     }
 
 	/**
@@ -491,8 +491,14 @@ class GitRepository
 	 */
 	public function createFile($path)
 	{
-		touch($this->working_path . "/$path");
-		$s_path = escapeshellarg($path);
+		// cope with it being in a subfolder that doesn't exist yet.
+		$dir = dirname($path);
+		$ret = TRUE;
+		if ($dir != '.')
+		{
+			$ret = $this->gitMKDir($dir);
+		}
+		return $ret && touch($this->working_path . "/$path");
 	}
 
 	/**

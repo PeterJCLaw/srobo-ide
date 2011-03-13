@@ -218,10 +218,8 @@ class FileModule extends Module
 	public function newFile()
 	{
 		$input  = Input::getInstance();
-		$output = Output::getInstance();
 		$path   = $input->getInput('path');
-		$this->repository()->createFile($path);
-		return true;
+		return $this->repository()->createFile($path);
 	}
 
 	/**
