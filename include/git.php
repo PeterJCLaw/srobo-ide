@@ -95,7 +95,7 @@ class GitRepository
 		                                 $pipes,
 		                                 $base,
 		                                 $env);
-		$stdout = trim(stream_get_contents($pipes[1]));
+		$stdout = stream_get_contents($pipes[1]);
 		$stderr = stream_get_contents($pipes[2]);
 		$status = proc_close($proc);
 		if ($status != 0)
@@ -118,7 +118,7 @@ class GitRepository
 			if ($catchResult)
 				return array(true, $stdout);
 			else
-				return trim($stdout);
+				return $stdout;
 		}
 	}
 
