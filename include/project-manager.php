@@ -110,6 +110,8 @@ class ProjectManager
 		$userRepo = $this->getUserRepository($team, $project, $user);
 		// grab unstaged changes
 		$unstaged = $userRepo->unstagedChanges();
+		// grab a list of all the folders as this won't be included in the unstagedChanges
+		$folders = $userRepo->listFolders();
 		// read them all
 		$unstagedFiles = array();
 		foreach ($unstaged as $key)
@@ -122,6 +124,11 @@ class ProjectManager
 		$userRepo->fetch();
 		// merge
 		$conflicts = $userRepo->merge(array('origin/master'));
+		// rewrite folders
+		foreach ($folders as $path)
+		{
+			$userRepo->gitMKDir($path);
+		}
 		// rewrite files
 		foreach ($unstagedFiles as $path => $data)
 		{

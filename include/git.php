@@ -353,10 +353,40 @@ class GitRepository
 
 	/**
 	 * Returns a list of files with un-staged changes.
+	 * @param {indexed_only} Whether or not to constrict the list only to files that are in the index.
 	 */
-	public function unstagedChanges()
+	public function unstagedChanges($indexed_only = FALSE)
 	{
-		return explode("\n", $this->gitExecute(true, 'diff --name-only'));
+		if ($indexed_only)
+		{
+			return explode("\n", $this->gitExecute(true, 'diff --name-only'));
+		}
+
+		$files = array();
+		$status = $this->gitExecute(true, 'status --porcelain');
+
+		$all_files = explode("\n", $status);
+		foreach ($all_files as $file)
+		{
+			$mod = substr($file, 1, 1);
+			// the file's been modified
+			if ($mod !== FALSE && $mod != ' ')
+			{
+				$files[] = substr($file, 3);
+			}
+		}
+		return $files;
+	}
+
+	/**
+	 * Returns a list of folders in the repo's file tree.
+	 */
+	public function listFolders()
+	{
+		$s_path = escapeshellarg($this->working_path);
+		$folders = trim(shell_exec("cd $s_path && find -type d | grep -v '\.git'"));
+		$folders = explode("\n", $folders);
+		return $folders;
 	}
 
 	/**
