@@ -443,7 +443,7 @@ class FileModule extends Module
 			$status = proc_close($proc);
 
 			// remove the temporary folder
-			unlink($tmpDir);
+			delete_recursive($tmpDir);
 
 			// restore the autosaved version
 			if (!$useAutosave) {
