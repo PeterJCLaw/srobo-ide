@@ -11,20 +11,20 @@
  */
 abstract class TokenStrategy
 {
-    /**
-     * Returns the current auth token supplied on the request
-     */
-    abstract public function getAuthToken();
+	/**
+	 * Returns the current auth token supplied on the request
+	 */
+	abstract public function getAuthToken();
 
-    /**
-     * Sets the auth token that should be passed on the next request
-     */
-    abstract public function setNextAuthToken($token);
+	/**
+	 * Sets the auth token that should be passed on the next request
+	 */
+	abstract public function setNextAuthToken($token);
 
-    /**
-     * Removes the auth token such that the client can't auth again
-     */
-    abstract public function removeAuthToken();
+	/**
+	 * Removes the auth token such that the client can't auth again
+	 */
+	abstract public function removeAuthToken();
 }
 
 /**
@@ -32,10 +32,10 @@ abstract class TokenStrategy
  */
 function getDefaultTokenStrategy()
 {
-    $name = Configuration::getInstance()->getConfig("default_token_strategy");
-    if (!class_exists($name) || !is_subclass_of($name, 'TokenStrategy'))
-    {
-        throw new Exception("The default token strategy ($name) is not valid", E_TOKEN_STRAT_CONFIG);
-    }
-    return new $name();
+	$name = Configuration::getInstance()->getConfig("default_token_strategy");
+	if (!class_exists($name) || !is_subclass_of($name, 'TokenStrategy'))
+	{
+		throw new Exception("The default token strategy ($name) is not valid", E_TOKEN_STRAT_CONFIG);
+	}
+	return new $name();
 }

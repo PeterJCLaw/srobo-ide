@@ -66,24 +66,23 @@ class ProjectManager
 		return $projects;
 	}
 
-    public function copyRepository($team, $project, $new)
-    {
-        //copy the master repository
-        $masterPathOld = $this->getMasterRepoPath($team, $project);
-        $masterPathNew = $this->getMasterRepoPath($team, $new);
-        $s_old = escapeshellarg($masterPathOld);
-        $s_new = escapeshellarg($masterPathNew);
-        shell_exec("cp -r $s_old $s_new");
+	public function copyRepository($team, $project, $new)
+	{
+		//copy the master repository
+		$masterPathOld = $this->getMasterRepoPath($team, $project);
+		$masterPathNew = $this->getMasterRepoPath($team, $new);
+		$s_old = escapeshellarg($masterPathOld);
+		$s_new = escapeshellarg($masterPathNew);
+		shell_exec("cp -r $s_old $s_new");
+	}
 
-    }
-
-    public function getMasterRepoPath($team, $project) {
+	public function getMasterRepoPath($team, $project) {
 		return $this->rootProjectPath . "/$team/master/$project.git";
-    }
+	}
 
 	public function getMasterRepository($team, $project)
 	{
-        $path = $this->getMasterRepoPath($team, $project);
+		$path = $this->getMasterRepoPath($team, $project);
 		return new GitRepository($path);
 	}
 

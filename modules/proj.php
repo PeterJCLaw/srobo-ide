@@ -66,7 +66,9 @@ class ProjModule extends Module
 		$this->verifyTeam();
 
 		if ($this->projectRepository == null)
+		{
 			return false;
+		}
 
 		$auth = AuthBackend::getInstance();
 		$currentUser = $auth->getCurrentUser();
@@ -94,11 +96,11 @@ class ProjModule extends Module
 		$this->openProject($this->team, $this->projectName, true);
 	}
 
-    public function copyProject()
-    {
-        $input = Input::getInstance();
-        $this->projectManager->copyRepository($this->team, $this->projectName, $input->getInput("new-name"));
-    }
+	public function copyProject()
+	{
+		$input = Input::getInstance();
+		$this->projectManager->copyRepository($this->team, $this->projectName, $input->getInput("new-name"));
+	}
 
 	/**
 	 * deletes a project, requires that the team and project input keys are present
@@ -133,14 +135,15 @@ class ProjModule extends Module
 
 		$currentUser = $auth->getCurrentUser();
 
-        $files = $input->getInput("paths");
-        //gaurd project state by doing a reset
-        $this->projectRepository->unstageAll();
+		$files = $input->getInput("paths");
+		//gaurd project state by doing a reset
+		$this->projectRepository->unstageAll();
 
-        //stage the files
-        foreach ($files as $file) {
-            $this->projectRepository->stage($file);
-        }
+		//stage the files
+		foreach ($files as $file)
+		{
+			$this->projectRepository->stage($file);
+		}
 
 		$this->projectRepository->commit($message,
 		                                 $currentUser,
@@ -180,7 +183,7 @@ class ProjModule extends Module
 		}
 
 		$output->setOutput('log', $this->projectRepository->log($firstRev, $currRev));
-		return TRUE;
+		return true;
 	}
 
 	public function checkoutProject()
@@ -199,10 +202,14 @@ class ProjModule extends Module
 
 		$teamdir = $config->getConfig('zippath') . '/' . $this->team;
 		if (!is_dir($teamdir))
+		{
 			mkdir($teamdir);
+		}
 		$projdir = "$teamdir/$this->projectName";
 		if (!is_dir($projdir))
+		{
 			mkdir($projdir);
+		}
 
 		delete_recursive($projdir.'/*');
 		$hash = $input->getInput('rev');
@@ -279,10 +286,12 @@ class ProjModule extends Module
 				$this->projectManager->createRepository($team, $project);
 			}
 			else
+			{
 				return;
+			}
 		}
 		$this->updateProject();
 		$this->projectRepository =
-		    $this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
+			$this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
 	}
 }

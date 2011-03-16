@@ -27,9 +27,10 @@ function Browser(cback, options) {
 	this.commitMsg = "";
 
 	this._DEFAULT_MSG = "Commit message";
+	this._DEFAULT_DNAME = "new-directory";
 	this._DEFAULT_FNAME = "new.py";
 	this._DEFAULT_PNAME = "new-project";
-	this._DEFAULT_DNAME = "new-directory";
+	this._DEFAULT_TNAME = "new-tag";
 
 	this._List = new Array();
 	this.type = options.type;
@@ -51,6 +52,8 @@ Browser.prototype._init = function() {
 		$("new-file-name").value = this._DEFAULT_DNAME;
 	else if(this.type == 'isProj')
 		$("new-file-name").value = this._DEFAULT_PNAME;
+	else if(this.type == 'isTag')
+		$("new-file-name").value = this._DEFAULT_TNAME;
 	else
 		$("new-file-name").value = this._DEFAULT_FNAME;
 
@@ -58,7 +61,9 @@ Browser.prototype._init = function() {
 	this.display();
 
 	//get file listings - if not just commit message
-	if(this.type != 'isCommit' && this.type != 'isProj') {
+	if (this.type == 'isFile'
+	 || this.type == 'isDir'
+	) {
 		var projlist = new ProjList();
 		projlist.update(team);
 		// The selection box for selecting a project
@@ -82,10 +87,13 @@ Browser.prototype._init = function() {
 	connect("new-file-name","onfocus", bind(this._fname_focus, this));
 	connect("left-pane","onclick", bind(this.rootSelected, this));
 
-	if(this.type == 'isProj')
+	if(this.type == 'isProj'
+	 || this.type == 'isTag'
+	) {
 		$("new-file-name").focus();
-	else
+	} else {
 		$("new-commit-msg").focus();
+	}
 }
 
 Browser.prototype._new_file_keypress = function(ev) {
@@ -159,6 +167,9 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 		case 'isProj':
 			var type = 'project';
 			break;
+		case 'isTag':
+			var type = 'tag';
+			break;
 	}
 
 	//don't allow null strings or pure whitespace
@@ -182,6 +193,8 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 		var warn = '"'+this.newFname+'" already exists';
 		if(this.type == 'isProj')
 			warn = 'Project '+warn;
+		else if(this.type == 'isTag')
+			warn = 'Tag '+warn;
 		else
 			warn += ' in "'+this.newDirectory.substr(1)+'"';
 
@@ -192,6 +205,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 
 	var commitErrFlag = ( !noMsg &&
 		this.type != 'isProj' &&
+		this.type != 'isTag' &&
 		this._badCommitMsg(this.commitMsg) );
 
 	if(commitErrFlag) {
@@ -209,6 +223,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 			this.callback("/"+this._selector.project+this.newDirectory+this.newFname, this.commitMsg);
 			break;
 		case 'isProj' :
+		case 'isTag' :
 			this.callback(this.newFname);
 			break;
 		case 'isCommit' :
@@ -308,6 +323,15 @@ Browser.prototype.display = function() {
 			hideElement("left-pane");
 			showElement("new-commit-msg");
 			hideElement("new-file-name");
+			break;
+		case 'isTag' :
+			$("browser-status").innerHTML = "Enter new tag name:";
+			$("browser-title").innerHTML = this.title || "New Tag";
+			hideElement("save-path");
+			hideElement("right-pane");
+			hideElement("left-pane");
+			hideElement("new-commit-msg");
+			showElement("new-file-name");
 			break;
 		case 'isProj' :
 			$("browser-status").innerHTML = "Enter new project name:";

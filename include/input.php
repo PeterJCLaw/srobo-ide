@@ -15,17 +15,17 @@ class Input
 	private $requestCommand = '';
 	private $inputs = array();
 
-    /**
-     * Gets the name of the requested module
-     */
+	/**
+	 * Gets the name of the requested module
+	 */
 	public function getRequestModule()
 	{
 		return $this->requestModule;
 	}
 
-    /**
-     * Gets the name of the requested command
-     */
+	/**
+	 * Gets the name of the requested command
+	 */
 	public function getRequestCommand()
 	{
 		return $this->requestCommand;
@@ -41,11 +41,17 @@ class Input
 	public function getInput($key, $optional = false)
 	{
 		if (isset($this->inputs[$key]))
+		{
 			return $this->inputs[$key];
+		}
 		elseif ($optional)
+		{
 			return null;
+		}
 		else
+		{
 			throw new Exception("Input key '$key' failed to exist", E_MALFORMED_REQUEST);
+		}
 	}
 
 	public function setInput($key, $value)
@@ -53,7 +59,9 @@ class Input
 		if ($value === null)
 		{
 			if (isset($this->inputs[$key]))
+			{
 				unset($this->inputs[$key]);
+			}
 		}
 		else
 		{
