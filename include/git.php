@@ -382,6 +382,7 @@ class GitRepository
 		$key = $this->gitExecute(true, 'stash list | grep '
 			.escapeshellarg('stash@{[[:digit:]]*}: On master: '.$id.'$')
 			.' | grep -o "stash@{[[:digit:]]*}"');
+		$key = trim($key);
 		$s_key = escapeshellarg($key);
 		$this->gitExecute(true, 'stash pop '.$s_key);
 	}
