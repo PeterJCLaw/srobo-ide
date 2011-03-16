@@ -200,38 +200,55 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 
-		$teamdir = $config->getConfig('zippath') . '/' . $this->team;
-		if (!is_dir($teamdir))
-		{
-			mkdir($teamdir);
-		}
-		$projdir = "$teamdir/$this->projectName";
-		if (!is_dir($projdir))
-		{
-			mkdir($projdir);
-		}
-
-		delete_recursive($projdir.'/*');
 		$hash = $input->getInput('rev');
-    ide_log("faces1");
-		$this->projectRepository->archiveSourceZip("$projdir/robot.zip", $hash);
-        $this->rezip($projdir);
-    ide_log("faces2");
-    $this->projectRepository->writePyenvTo($projdir);
-    ide_log("faces3");
-    $this->completeArchive($projdir);
-    ide_log("faces4");
 
+		// we need an actual hash so that our serve path doesn't clash
+		// even if it does then it shouldn't matter as it'll still be the same hash
+		if ($hash == 'HEAD')
+		{
+			$hash = $this->projectRepository->getCurrentRevision();
+		}
 
-	$output->setOutput('url', $config->getConfig('zipurl') . "/$this->team/$this->projectName/robot.zip");
+		$servePath = $config->getConfig('zipurl') . "/$this->team/$this->projectName/$hash";
+
+		// get a fresh tmpdir so there can't possibly be clashes.
+		$tmpDir = tmpdir();
+
+		$this->projectRepository->archiveSourceZip("$tmpDir/robot.zip", $hash);
+
+		// re-zip it to avoid the python-git issues
+		$this->rezip($tmpDir);
+		// extract pyenv there too
+		$this->projectRepository->writePyenvTo($tmpDir);
+		// zip the whole lot up
+		$this->completeArchive($tmpDir);
+
+		// ensure that the serve folder exists
+		if (!file_exists($servePath))
+		{
+			mkdir_full($servePath);
+		}
+
+		rename("$tmpDir/robot.zip", "$servePath/robot.zip");
+
+		$output->setOutput('url', "$servePath/robot.zip");
+
+		// remove our temporary folder so that we don't fill up /tmp
+		delete_recursive($tmpDir);
 	}
 
-
-    public function rezip($projdir) {
-        $projdir = escapeshellarg($projdir);
-        $moveto = tempnam("/tmp/", "robot");
-        shell_exec("cd $projdir && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip /tmp/$rand.zip && rm * && mv /tmp/$rand.zip ./robot.zip");
-    }
+	/**
+	 * Extract and then re-zip the git archive.
+	 * For some reason python can't import git's zips.
+	 * @param {path} the path that contains the robot.zip
+	 */
+	private function rezip($path)
+	{
+		$s_path = escapeshellarg($path);
+		$tmpname = tempnam(sys_get_temp_dir(), 'robot-');
+		$s_tmpname = escapeshellarg($tmpname);
+		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip $s_tmpname && rm * && mv $s_tmpname ./robot.zip");
+	}
 
   public function completeArchive($projdir)
   {

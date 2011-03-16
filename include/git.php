@@ -1,7 +1,8 @@
 <?php
 
 //define a compression level constant, must be between 0 and 9
-define('COMPRESSION_LEVEL', 6);
+// set to 0 since we have to re-zip it anyway
+define('COMPRESSION_LEVEL', 0);
 
 /**
  * A class to manage git repositories
