@@ -87,16 +87,17 @@ class FileModule extends Module
 	/**
 	 * Makes a directory in the repository
 	 */
-	public function makeDirectory()
-	{
-		$input = Input::getInstance();
-		$output = Output::getInstance();
-		$path = $input->getInput("path");
-		$this->repository()->gitMKDir($path);
-		$output->setOutput("success",1);
-		$output->setOutput("feedback", "successfully created folder $path");
-		return true;
-	}
+    public function makeDirectory()
+    {
+        $input = Input::getInstance();
+        $output = Output::getInstance();
+        $path = $input->getInput("path");
+        $success = $this->repository()->gitMKDir($path);
+        $output->setOutput("success", $success ? 1 : 0);
+        $text = $success ? 'Successfully created' : 'Failed to create';
+        $output->setOutput("feedback", "$text folder '$path'");
+        return $success;
+    }
 
 	/**
 	 * Gets a recursive file tree, optionally at a specific revision
