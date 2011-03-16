@@ -85,10 +85,10 @@ class GitRepository
 	 */
 	private function gitExecute($working, $command, $env = array(), $catchResult = false)
 	{
-		$bin = self::gitBinaryPath();
+		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$base = $working ? $this->working_path : $this->git_path;
-		ide_log("$bin $command [cwd = $base]");
-		$buildCommand = "$bin $command";
+		ide_log("$s_bin $command [cwd = $base]");
+		$buildCommand = "$s_bin $command";
 		$proc = proc_open($buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
 		                                       2 => array('pipe', 'w')),
@@ -127,14 +127,15 @@ class GitRepository
 	 */
 	public static function createRepository($path, $bare = false, $source = null)
 	{
-		$bin = self::gitBinaryPath();
+		$s_bin = escapeshellarg(self::gitBinaryPath());
 		ide_log("Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
 		if (!is_dir($path))
 		{
 			mkdir_full($path);
 		}
 
-		$shell_path   = escapeshellarg($path);
+		$s_path   = escapeshellarg($path);
+		$s_bare   = ($bare ? ' --bare' : '');
 
 		// Clone an existing master repo
 		if ($source !== null)
@@ -144,20 +145,22 @@ class GitRepository
 				$source = $source->gitPath();
 			}
 
-			$shell_source = escapeshellarg($source);
-			shell_exec("$bin clone --shared --quiet " . ($bare ? "--bare " : "") .
-			           "$shell_source $shell_path");
+			$s_source = escapeshellarg($source);
+			shell_exec($s_bin.' clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
 		}
 		// Make a shiny new master repo
 		else
 		{
-			shell_exec("cd $shell_path ; $bin init" . ($bare ? " --bare" : ''));
-			list($commitpath, $hash) = self::populateRepoObejects($shell_path);
-			shell_exec("cd $shell_path ; $bin update-ref -m $commitpath refs/heads/master $hash");
+			shell_exec("cd $s_path ; $s_bin init" . $s_bare);
+			list($commitpath, $hash) = self::populateRepoObejects($path);
+			$s_commitpath = escapeshellarg($commitpath);
+			shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
 		}
-		list($commitpath, $hash) = self::populateRepoObejects($shell_path);
-		shell_exec("cd $shell_path ; $bin update-ref -m $commitpath HEAD $hash");
-		shell_exec("cd $shell_path ; $bin update-ref -m $commitpath refs/heads/master $hash");
+		list($commitpath, $hash) = self::populateRepoObejects($path);
+		$s_commitpath = escapeshellarg($commitpath);
+		$s_hash = escapeshellarg($hash);
+		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
+		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
 		return new GitRepository($path);
 	}
 
@@ -169,7 +172,7 @@ class GitRepository
 	 */
 	public static function cloneRepository($from, $to)
 	{
-		$bin = self::gitBinaryPath();
+		$s_bin = escapeshellarg(self::gitBinaryPath());
 
 		ide_log("Cloning a repository at $from to $to.");
 
@@ -178,10 +181,10 @@ class GitRepository
 			throw new Exception('Path already exists!', E_INTERNAL_ERROR);
 		}
 
-		$shell_from = escapeshellarg($from);
-		$shell_to   = escapeshellarg($to);
+		$s_from = escapeshellarg($from);
+		$s_to   = escapeshellarg($to);
 
-		shell_exec("$bin clone $shell_from $shell_to");
+		shell_exec("$s_bin clone $s_from $s_to");
 
 		return new GitRepository($to);
 	}
@@ -191,12 +194,14 @@ class GitRepository
 	 */
 	private static function populateRepoObejects($path)
 	{
-		$bin = self::gitBinaryPath();
-		$hash = trim(shell_exec("cd $path ; $bin hash-object -w /dev/null"));
-		$treepath = realpath('resources/base-tree');
+		$s_bin = escapeshellarg(self::gitBinaryPath());
+		$s_path = escapeshellarg($path);
+		$s_hash = trim(shell_exec("cd $s_path ; $s_bin hash-object -w /dev/null"));
+		$s_treepath = escapeshellarg(realpath('resources/base-tree'));
 		$commitpath = realpath('resources/initial-commit');
-		$hash = trim(shell_exec("cd $path ; cat $treepath | sed s/_HASH_/$hash/g | $bin mktree"));
-		$hash = trim(shell_exec("cd $path ; cat $commitpath | $bin commit-tree $hash"));
+		$s_commitpath = escapeshellarg($commitpath);
+		$s_hash = trim(shell_exec("cd $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
+		$hash = trim(shell_exec("cd $s_path ; cat $s_commitpath | $s_bin commit-tree $s_hash"));
 		return array($commitpath, $hash);
 	}
 
@@ -229,15 +234,14 @@ class GitRepository
 	public function log($oldCommit, $newCommit, $file=null)
 	{
 		$log = null;
-		$logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
-		if ($file == null)
+		$s_logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
+		if ($file != null)
 		{
-			$log = $this->gitExecute(false, $logCommand);
+			$s_logCommand .= ' -- '.escapeshellarg($file);
 		}
-		else
-		{
-			$log = $this->gitExecute(false, $logCommand.' -- '.escapeshellarg($file));
-		}
+
+		$log = $this->gitExecute(false, $s_logCommand);
+
 		$lines = explode("\n", $log);
 		$results = array();
 		foreach ($lines as $line)
@@ -298,19 +302,21 @@ class GitRepository
 	 */
 	private function checkoutRepo($revision)
 	{
-		$this->gitExecute(true, "checkout $revision");
+		$s_revision = escapeshellarg($revision);
+		$this->gitExecute(true, "checkout $s_revision");
 	}
 
-	public function checkoutFile($file,$revision=null)
+	public function checkoutFile($file, $revision=null)
 	{
-		$shellPath = escapeshellarg($file);
+		$s_path = escapeshellarg($file);
 		if ($revision == null)
 		{
-			$this->gitExecute(true, "checkout $shellPath");
+			$this->gitExecute(true, "checkout $s_path");
 		}
 		else
 		{
-			$this->gitExecute(true, "checkout $revision -- $shellPath");
+			$s_rev = escapeshellarg($revision);
+			$this->gitExecute(true, "checkout $s_rev -- $s_path");
 		}
 	}
 
@@ -338,7 +344,8 @@ class GitRepository
 	 */
 	private function stash($id)
 	{
-		$res = $this->gitExecute(true, 'stash save '.escapeshellarg($id));
+		$s_id = escapeshellarg($id);
+		$res = $this->gitExecute(true, 'stash save '.$s_id);
 		return $res != 'No local changes to save';
 	}
 
@@ -350,7 +357,8 @@ class GitRepository
 		$key = $this->gitExecute(true, 'stash list | grep '
 			.escapeshellarg('stash@{[[:digit:]]*}: On master: '.$id.'$')
 			.' | grep -o "stash@{[[:digit:]]*}"');
-		$this->gitExecute(true, 'stash pop '.$key);
+		$s_key = escapeshellarg($key);
+		$this->gitExecute(true, 'stash pop '.$s_key);
 	}
 
 	/**
@@ -472,7 +480,7 @@ class GitRepository
 	public function createFile($path)
 	{
 		touch($this->working_path . "/$path");
-		$shell_path = escapeshellarg($path);
+		$s_path = escapeshellarg($path);
 	}
 
 	/**
@@ -480,8 +488,8 @@ class GitRepository
 	 */
 	public function removeFile($path)
 	{
-		$shell_path = escapeshellarg($path);
-		$this->gitExecute(true, "rm -rf $shell_path");
+		$s_path = escapeshellarg($path);
+		$this->gitExecute(true, "rm -rf $s_path");
 	}
 
 	/**
@@ -543,8 +551,8 @@ class GitRepository
 	 */
 	public function stage($path)
 	{
-		$shell_path = escapeshellarg($path);
-		$this->gitExecute(true, "add $shell_path");
+		$s_path = escapeshellarg($path);
+		$this->gitExecute(true, "add $s_path");
 	}
 
 	/**
@@ -555,20 +563,21 @@ class GitRepository
 	 */
 	public function historyDiff($commitOld, $commitNew=null, $file=null)
 	{
+		$s_commitOld = escapeshellarg($commitOld);
 		if ($commitNew === null)
 		{
-			return $this->gitExecute(false, "log -p -1 $commitOld");
+			return $this->gitExecute(false, "log -p -1 $s_commitOld");
 		}
 
-		$command = 'diff -C -M '.$commitOld.'..'.$commitNew;
-		if ($file === null)
+		$s_commitNew = escapeshellarg($commitNew);
+
+		$s_command = 'diff -C -M '.$s_commitOld.'..'.$s_commitNew;
+		if ($file !== null)
 		{
-			return $this->gitExecute(false, $command);
+			$s_command .= escapeshellarg($file);
 		}
-		else
-		{
-			return $this->gitExecute(false, $command.' -- '.escapeshellarg($file));
-		}
+
+		return $this->gitExecute(false, $s_command);
 	}
 
 	/**
@@ -578,20 +587,18 @@ class GitRepository
 	 */
 	public function diff($file=null, $staged=false)
 	{
-		$command = 'diff';
+		$s_command = 'diff';
 		if($staged)
 		{
-			$command .= ' --cached';
+			$s_command .= ' --cached';
 		}
 
-		if ($file === null)
+		if ($file !== null)
 		{
-			return $this->gitExecute(true, $command);
+			$s_command .= ' '.escapeshellarg($file);
 		}
-		else
-		{
-			return $this->gitExecute(true, $command.' '.escapeshellarg($file));
-		}
+
+		return $this->gitExecute(true, $s_command);
 	}
 
 	/**
@@ -601,8 +608,9 @@ class GitRepository
 	{
 		touch($dest);
 		$dest = realpath($dest);
-		$shell_dest = escapeshellarg($dest);
-		$this->gitExecute(true, "archive --format=zip $commit -".COMPRESSION_LEVEL." > $shell_dest");
+		$s_dest = escapeshellarg($dest);
+		$s_commit = escapeshellarg($commit);
+		$this->gitExecute(true, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
 		if ($this->shouldAttachPyenv())
 			$this->attachPyenv($dest);
 	}
@@ -622,11 +630,11 @@ class GitRepository
 		$pyenvPath = $this->pyenvPath();
 		$dir       = dirname($pyenvPath);
 		$base      = basename($pyenvPath);
-		$zipPathSafe   = escapeshellarg($zipPath);
-		$dirSafe       = escapeshellarg($dir);
-		$baseSafe      = escapeshellarg($base);
+		$s_zipPath = escapeshellarg($zipPath);
+		$s_dir     = escapeshellarg($dir);
+		$s_base    = escapeshellarg($base);
 		ide_log("attaching $pyenvPath to $zipPath");
-		shell_exec("cd $dirSafe ; zip -0r $zipPathSafe $baseSafe");
+		shell_exec("cd $s_dir ; zip -0r $s_zipPath $s_base");
 	}
 
 	/**
@@ -634,7 +642,8 @@ class GitRepository
 	 */
 	public function revert($commit)
 	{
-		$this->gitExecute(false, "revert $commit");
+		$s_commit = escapeshellarg($commit);
+		$this->gitExecute(false, "revert $s_commit");
 	}
 
 }

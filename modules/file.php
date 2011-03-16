@@ -415,11 +415,12 @@ class FileModule extends Module
 			var_dump($base, $path, $tmpDir);
 
 			// Copy the user's files to the temp folder
-			$td_shell = escapeshellarg($tmpDir);
-			$base_shell = escapeshellarg($base);
+			$s_tmpDir = escapeshellarg($tmpDir);
+			$s_base = escapeshellarg($base);
 			echo "td, base, exec\n";
 			var_dump($td_shell, $base_shell);
-			var_dump(shell_exec('cp -r '.$base_shell.' '.$td_shell));
+			$res = shell_exec('cp -r '.$s_base.' '.$s_tmpDir);
+			var_dump($res);
 
 			// Copy the reference file to the tenp folder
 			$dummy_copy = $tmpDir.'/'.basename($base).'/'.basename($dummy);
