@@ -43,7 +43,7 @@ function delete_recursive($path)
 
 function mkdir_full($path, $mode = 0755)
 {
-	mkdir($path, $mode, true);
+	return mkdir($path, $mode, true);
 }
 
 function tmpdir($dir = null, $prefix = 'ide')
