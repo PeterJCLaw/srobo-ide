@@ -7,7 +7,7 @@ TEST basic/case-transform
 TEST basic/notifications
 TEST basic/compat-tree
 TEST basic/settings
-XFAIL basic/git
+TEST basic/git
 
 TEST utils/mkdir
 
