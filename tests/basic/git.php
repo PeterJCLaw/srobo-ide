@@ -30,3 +30,7 @@ $rev = $repo->getCurrentRevision();
 test_true(preg_match('/^[a-f0-9]{7,40}$/', $rev),
           "revision contained extraneous characters ($rev)");
 
+if (is_dir("/tmp/test-repos"))
+{
+	exec("rm -rf /tmp/test-repos");
+}
