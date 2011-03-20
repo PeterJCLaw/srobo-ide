@@ -285,7 +285,7 @@ class GitRepository
 			$lines = explode("\n", $message);
 			foreach ($lines as $line)
 			{
-				if (preg_match('/^CONFLICT \\(content\\): Merge conflict in (.+)$', $line, $death))
+				if (preg_match('/^CONFLICT \\(content\\): Merge conflict in (.+)$/', $line, $death))
 				{
 					$conflicted_files[] = $death;
 				}
