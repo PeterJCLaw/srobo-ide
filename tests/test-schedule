@@ -8,6 +8,7 @@ TEST basic/notifications
 TEST basic/compat-tree
 TEST basic/settings
 TEST basic/git
+TEST basic/proj-manager
 
 TEST utils/mkdir
 
