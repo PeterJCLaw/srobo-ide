@@ -68,13 +68,17 @@ class ProjectManager
 
     public function copyRepository($team, $project, $new)
     {
+		if (strpos($new, '/') !== FALSE)
+		{
+			return FALSE;
+		}
         //copy the master repository
         $masterPathOld = $this->getMasterRepoPath($team, $project);
         $masterPathNew = $this->getMasterRepoPath($team, $new);
         $shellOld = escapeshellarg($masterPathOld);
         $shellNew = escapeshellarg($masterPathNew);
-        shell_exec("cp -r $shellOld $shellNew");
-
+        $ret = shell_exec("cp -r $shellOld $shellNew");
+        return $ret;
     }
 
     public function getMasterRepoPath($team, $project) {
@@ -110,6 +114,8 @@ class ProjectManager
 		$userRepo = $this->getUserRepository($team, $project, $user);
 		// grab unstaged changes
 		$unstaged = $userRepo->unstagedChanges();
+		// grab a list of all the folders as this won't be included in the unstagedChanges
+		$folders = $userRepo->listFolders();
 		// read them all
 		$unstagedFiles = array();
 		foreach ($unstaged as $key)
@@ -122,6 +128,11 @@ class ProjectManager
 		$userRepo->fetch();
 		// merge
 		$conflicts = $userRepo->merge(array('origin/master'));
+		// rewrite folders
+		foreach ($folders as $path)
+		{
+			$userRepo->gitMKDir($path);
+		}
 		// rewrite files
 		foreach ($unstagedFiles as $path => $data)
 		{
@@ -141,9 +152,14 @@ class ProjectManager
 
 	public function createRepository($team, $project)
 	{
+		if (strpos($project, '/') !== FALSE)
+		{
+			return FALSE;
+		}
 		$path = $this->rootProjectPath . "/$team/master/$project.git";
-		GitRepository::createRepository($path, true);
+		$repo = GitRepository::createRepository($path, true);
 		ide_log("Created a project $project for team $team");
+		return $repo;
 	}
 
 	public function deleteRepository($team, $project)

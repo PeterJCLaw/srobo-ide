@@ -92,10 +92,11 @@ class FileModule extends Module
         $input = Input::getInstance();
         $output = Output::getInstance();
         $path = $input->getInput("path");
-        $this->repository()->gitMKDir($path);
-        $output->setOutput("success",1);
-        $output->setOutput("feedback", "successfully created folder $path");
-        return true;
+        $success = $this->repository()->gitMKDir($path);
+        $output->setOutput("success", $success ? 1 : 0);
+        $text = $success ? 'Successfully created' : 'Failed to create';
+        $output->setOutput("feedback", "$text folder '$path'");
+        return $success;
     }
 
 	/**
@@ -443,7 +444,7 @@ class FileModule extends Module
 			$status = proc_close($proc);
 
 			// remove the temporary folder
-			unlink($tmpDir);
+			delete_recursive($tmpDir);
 
 			// restore the autosaved version
 			if (!$useAutosave) {

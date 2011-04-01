@@ -1,3 +1,6 @@
 [submodule "lint-reference"]
 	path = lint-reference
 	url = git://srobo.org/pyenv-dummy.git
+[submodule "pyenv"]
+	path = pyenv
+	url = git://srobo.org/pyenv.git

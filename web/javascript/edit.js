@@ -469,8 +469,11 @@ function EditTab(iea, team, project, path, rev, mode) {
 		var cb = cb || null;
 		var errCb = errCb || bind(this._on_keydown, this, 'auto');
 		this._timeout = null;
-		//do an update and check to see if we need to autosave
-		this._capture_code();
+		// do an update (if we have focus) and check to see if we need to autosave
+		if(this.tab.has_focus())
+		{
+			this._capture_code();
+		}
 
 		// If there's no change and no callback then bail
 		if( (this.contents == this._original || this.contents == this._autosaved)

@@ -1,7 +1,8 @@
 <?php
 
 //define a compression level constant, must be between 0 and 9
-define('COMPRESSION_LEVEL', 6);
+// set to 0 since we have to re-zip it anyway
+define('COMPRESSION_LEVEL', 0);
 
 /**
  * A class to manage git repositories
@@ -95,7 +96,7 @@ class GitRepository
 		                                 $pipes,
 		                                 $base,
 		                                 $env);
-		$stdout = trim(stream_get_contents($pipes[1]));
+		$stdout = stream_get_contents($pipes[1]);
 		$stderr = stream_get_contents($pipes[2]);
 		$status = proc_close($proc);
 		if ($status != 0)
@@ -118,7 +119,7 @@ class GitRepository
 			if ($catchResult)
 				return array(true, $stdout);
 			else
-				return trim($stdout);
+				return $stdout;
 		}
 	}
 
@@ -205,7 +206,8 @@ class GitRepository
 	 */
 	public function getCurrentRevision()
 	{
-		return $this->gitExecute(true, 'describe --always');
+		$rawRevision = $this->gitExecute(true, 'describe --always');
+		return trim($rawRevision);
 	}
 
 	/**
@@ -220,7 +222,8 @@ class GitRepository
     public function gitMKDir($path)
     {
         $dir = $this->working_path . "/" . $path;
-        mkdir_full($dir);
+        $ret = mkdir_full($dir);
+        return $ret;
     }
 
 	/**
@@ -282,7 +285,7 @@ class GitRepository
 			$lines = explode("\n", $message);
 			foreach ($lines as $line)
 			{
-				if (preg_match('/^CONFLICT \\(content\\): Merge conflict in (.+)$', $line, $death))
+				if (preg_match('/^CONFLICT \\(content\\): Merge conflict in (.+)$/', $line, $death))
 				{
 					$conflicted_files[] = $death;
 				}
@@ -348,15 +351,46 @@ class GitRepository
 		$key = $this->gitExecute(true, 'stash list | grep '
 			.escapeshellarg('stash@{[[:digit:]]*}: On master: '.$id.'$')
 			.' | grep -o "stash@{[[:digit:]]*}"');
+		$key = trim($key);
 		$this->gitExecute(true, 'stash pop '.$key);
 	}
 
 	/**
 	 * Returns a list of files with un-staged changes.
+	 * @param {indexed_only} Whether or not to constrict the list only to files that are in the index.
 	 */
-	public function unstagedChanges()
+	public function unstagedChanges($indexed_only = FALSE)
 	{
-		return explode("\n", $this->gitExecute(true, 'diff --name-only'));
+		if ($indexed_only)
+		{
+			return explode("\n", $this->gitExecute(true, 'diff --name-only'));
+		}
+
+		$files = array();
+		$status = $this->gitExecute(true, 'status --porcelain');
+
+		$all_files = explode("\n", $status);
+		foreach ($all_files as $file)
+		{
+			$mod = substr($file, 1, 1);
+			// the file's been modified
+			if ($mod !== FALSE && $mod != ' ')
+			{
+				$files[] = substr($file, 3);
+			}
+		}
+		return $files;
+	}
+
+	/**
+	 * Returns a list of folders in the repo's file tree.
+	 */
+	public function listFolders()
+	{
+		$s_path = escapeshellarg($this->working_path);
+		$folders = trim(shell_exec("cd $s_path && find -type d | grep -v '\.git'"));
+		$folders = explode("\n", $folders);
+		return $folders;
 	}
 
 	/**
@@ -416,7 +450,7 @@ class GitRepository
 				$result[] = array('kind'     => 'FOLDER',
 				                  'name'     => $filename,
 				                  'path'     => "/$base/$realpath",
-				                  'children' => $this->fileTreeCompat($base, "$subpath/$realpath"),
+				                  'children' => $this->fileTreeCompat($base, $realpath),
 				                 );
 			}
 		}
@@ -601,6 +635,8 @@ class GitRepository
   public function writePyenvTo($dest)
   {
     $pyenv_zip = $this->pyenvPath();
+    $pyenv_zip = escapeshellarg($pyenv_zip);
+    $dest = escapeshellarg($dest);
     if ($this->shouldAttachPyenv())
     {
       ide_log("unzip $pyenv_zip -d $dest");
