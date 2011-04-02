@@ -54,3 +54,7 @@ submodules:
 
 sign: applet
 	jarsigner applet/build/checkout.jar prod-key
+
+
+check: all
+	./run-tests
