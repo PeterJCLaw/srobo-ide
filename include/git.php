@@ -276,7 +276,9 @@ class GitRepository
 		list($success, $message) = $this->gitExecute(true, 'merge '
 		                                             . implode(' ', $mergeOptions)
 		                                             . ' '
-		                                             . implode(' ', $branches));
+		                                             . implode(' ', $branches),
+		                                             array(),	// env
+		                                             true);  	// catchResult
 		if ($success)
 			return array();
 		else
