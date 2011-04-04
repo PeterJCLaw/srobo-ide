@@ -37,5 +37,10 @@ try {
 		readfile('web/login.html');
 	}
 } catch (Exception $e) {
-	echo 'The ide exploded, please tell the srobo team immediately';
+	header('HTTP/1.1 500 Internal Server Error');
+	header('Content-type: text/plain');
+	echo "The ide exploded, please tell the srobo team immediately.\n";
+	echo "Debugging information:\n";
+	echo $e->getMessage() . "\n";
+	echo $e->getTraceAsString() . "\n";
 }
