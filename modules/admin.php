@@ -55,7 +55,8 @@ class AdminModule extends Module
 		$team = $input->getInput('id');
 		$name = $input->getInput('name');
 
-		TeamNameStrategy::getDefaultInstance()->writeNameChangeRequest($team, $name);
+        TeamNameStrategy::getDefaultInstance()->writeNameChangeRequest($team,
+                                                                       $name);
 
 		$output->setOutput('success', true);
 	}
