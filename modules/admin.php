@@ -11,6 +11,9 @@ class AdminModule extends Module
 	 */
 	private $username;
 
+	/**
+	 * Standard constructor: installs commands.
+	 */
 	public function __construct()
 	{
 		$this->installCommand('team-name-put', array($this, 'saveTeamName'));
