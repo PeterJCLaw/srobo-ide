@@ -42,7 +42,11 @@ class AdminModule extends Module
 	}
 
 	/**
-	 * Save the change to the team name
+	 * Handles a request for a user team name change via the default strategy.
+	 *
+	 * This can be considered asynchronous: the actual name change is likely to
+	 * be affected manually, a significant amount of time after this call is
+	 * made.
 	 */
 	public function saveTeamName()
 	{
