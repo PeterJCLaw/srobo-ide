@@ -22,43 +22,17 @@ test_true($auth->authUser('bees','face'), "authentication failed");
 //setup the required input keys
 $input = Input::getInstance();
 $input->setInput("team", 1);
+$input->setInput("project", "monkies");
 
-function createAndAssertProject($projname)
-{
-	$config = Configuration::getInstance();
-	$input = Input::getInstance();
+$mm = ModuleManager::getInstance();
+$mm->importModules();
+test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
 
-	echo "Testing creatin of project '$projname' for team ", $input->getInput("team"), ".\n";
-	$input->setInput('project', $projname);
+$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
+$proj = $mm->getModule("proj");
+$proj->dispatchCommand("new");
 
-	// need to do this each time since the modules are single-shot
-	// that is, they only get one Input per instance, and may cache what it has to say.
-	$mm = ModuleManager::getInstance();
-	$mm->importModules();
-	test_true($mm->moduleExists("proj"), "proj module does not exist");
-
-
-	$repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
-	$proj = $mm->getModule("proj");
-	$proj->dispatchCommand("new");
-
-	test_true(is_dir($repopath), "repo for proj '$projname' did not exist");
-}
-
-createAndAssertProject('monkies');
-createAndAssertProject('spacey path');
-
-$chars = '$%@~{}][()';
-for($i=0; $i < strlen($chars); $i++)
-{
-	createAndAssertProject('char \''.$chars[$i].'\'.');
-}
-
-$unicodes = array('£', '❝', '♞');
-foreach($unicodes as $char)
-{
-	createAndAssertProject('char \''.$char.'\'.');
-}
+test_equal(is_dir($repopath), TRUE, "created repo did not exist");
 
 if (is_dir("/tmp/test-repos"))
 {
