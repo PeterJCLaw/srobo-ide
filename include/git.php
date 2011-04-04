@@ -423,7 +423,7 @@ class GitRepository
 	public function listFolders()
 	{
 		$s_path = escapeshellarg($this->working_path);
-		$folders = trim(shell_exec("cd $s_path && find -type d | grep -v '\.git'"));
+		$folders = trim(shell_exec("cd $s_path && find . -type d | grep -v '\.git'"));
 		$folders = explode("\n", $folders);
 		return $folders;
 	}
