@@ -5,6 +5,10 @@
  */
 class AdminModule extends Module
 {
+	/**
+	 * The username of the user currently using the module.
+	 * @todo Remove this, and use $auth->getCurrentUser() in all instances?
+	 */
 	private $username;
 
 	public function __construct()
