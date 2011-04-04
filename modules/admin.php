@@ -36,7 +36,8 @@ class AdminModule extends Module
 		}
 		if (!$auth->isCurrentUserAdmin())
 		{
-			throw new Exception('You do not have admin privileges', E_PERM_DENIED);
+			throw new Exception('You do not have admin privileges',
+			                    E_PERM_DENIED);
 		}
 	}
 
