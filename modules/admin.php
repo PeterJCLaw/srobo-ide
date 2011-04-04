@@ -26,7 +26,6 @@ class AdminModule extends Module
 	 * You can't do anything user related without being authed, but putting
 	 * this in the constructor causes issues, since construction occurs
 	 * before the auth cycle does.
-	 * Returns the AuthBackend instance for convenience.
 	 */
 	private function ensureAuthed()
 	{
@@ -39,7 +38,6 @@ class AdminModule extends Module
 		{
 			throw new Exception('You do not have admin privileges', E_PERM_DENIED);
 		}
-		return $auth;
 	}
 
 	/**
