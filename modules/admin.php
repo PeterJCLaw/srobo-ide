@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * This module covers 'administration' commands available only to blueshirts.
+ */
 class AdminModule extends Module
 {
 	private $username;
