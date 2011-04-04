@@ -47,7 +47,9 @@ class AdminModule extends Module
 	 */
 	public function saveTeamName()
 	{
-		$auth   = $this->ensureAuthed();
+		$this->ensureAuthed();
+
+		$auth   = AuthBackend::getInstance();
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 
