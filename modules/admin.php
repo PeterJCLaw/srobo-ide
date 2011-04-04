@@ -16,7 +16,7 @@ class AdminModule extends Module
 	 */
 	public function __construct()
 	{
-		$this->installCommand('team-name-put', array($this, 'saveTeamName'));
+		$this->installCommand('team-name-put',   array($this, 'saveTeamName'));
 		$this->installCommand('feed-status-get', array($this, 'getBlogFeeds'));
 		$this->installCommand('feed-status-put', array($this, 'setFeedStatus'));
 	}
