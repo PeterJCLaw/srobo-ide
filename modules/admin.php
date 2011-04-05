@@ -97,15 +97,10 @@ class AdminModule extends Module
         if ($userfeed != null)
         {
             // get the feed's flags by its status
-            $userfeed->checked = ($feedstatus != 'unchecked');
-            $userfeed->valid   = ($feedstatus == 'valid');
-
-            // append the new feed to the feeds list
-            $newFeedList = self::replaceFeedInFeedsList($userfeed,
-                                                        $feed->getFeeds());
+            self::updateFeedStatusFlagsByStatusString($userfeed, $feedstatus);
 
             // write out the new feeds list
-            $feeds->putFeeds($newFeedList);
+            self::rewriteMasterFeedsList();
             $success = true;
         }
         else
@@ -115,22 +110,27 @@ class AdminModule extends Module
         $output->setOutput('success', $success);
     }
 
+    /**
+     * Causes the Feeds object to re-write the master feeds list after updates.
+     */
+    private static function rewriteMasterFeedsList()
+    {
+        $feeds = Feeds::getInstance();
+        $feeds->putFeeds($feeds->getFeeds());
+    }
+
+    /**
+     * Updates a feed status by the status enumeration which has come from
+     * a blueshirt via the frontend. This can be one of three values:
+     *   "unchecked", meaning no checking has been done on the URL (the default)
+     *   "valid", meaning that the feed is a valid feed but no rigorous checking
+     *            has taken place;
+     *   "checked", meaning the feed has been checked by a blueshirt.
+     */
     private static function updateFeedStatusFlagsByStatusString($userfeed,
                                                                 $status)
     {
         $userfeed->checked = ($status != 'unchecked');
         $userfeed->valid   = ($status == 'valid');
-    }
-
-    private static function replaceFeedInFeedsList($userfeed, $previousList)
-    {
-        return array_map($previousList(),
-                         function($x) use ($userfeed) {
-                              if ($x->user == $userfeed->user) {
-                                  return $userfeed;
-                              } else {
-                                  return $x;
-                              }
-                            });
     }
 }
