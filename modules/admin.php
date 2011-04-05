@@ -101,14 +101,8 @@ class AdminModule extends Module
             $userfeed->valid   = ($feedstatus == 'valid');
 
             // append the new feed to the feeds list
-            $newFeedList = array_map($feeds->getFeeds(),
-                               function($x) use ($userfeed) {
-                                    if ($x->user == $userfeed->user) {
-                                        return $userfeed;
-                                    } else {
-                                        return $x;
-                                    }
-                                  });
+            $newFeedList = $this->replaceFeedInFeedsList($userfeed,
+                                                         $feed->getFeeds());
 
             // write out the new feeds list
             $feeds->putFeeds($newFeedList);
@@ -119,5 +113,17 @@ class AdminModule extends Module
             $success = false;
         }
         $output->setOutput('success', $success);
+    }
+
+    private function replaceFeedInFeedsList($userfeed, $previousList)
+    {
+        return array_map($previousList(),
+                         function($x) use ($userfeed) {
+                              if ($x->user == $userfeed->user) {
+                                  return $userfeed;
+                              } else {
+                                  return $x;
+                              }
+                            });
     }
 }
