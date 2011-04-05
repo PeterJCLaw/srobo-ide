@@ -91,26 +91,28 @@ class AdminModule extends Module
 
 		$userfeed = $feeds->findFeed('url', $feedurl);
 
-		if ($userfeed == null)
+		if ($userfeed != null)
 		{
-			$output->setOutput('success', false);
-			return;
-		}
+			$userfeed->checked = ($feedstatus != 'unchecked');
+			$userfeed->valid   = ($feedstatus == 'valid');
 
-		$userfeed->checked = ($feedstatus != 'unchecked');
-		$userfeed->valid   = ($feedstatus == 'valid');
-
-		$newfeeds[] = $userfeed;
-		$feedsList = $feeds->getFeeds();
-		foreach ($feedsList as $feed)
-		{
-			if ($feed->user != $userfeed->user)
+			$newfeeds[] = $userfeed;
+			$feedsList = $feeds->getFeeds();
+			foreach ($feedsList as $feed)
 			{
-				$newfeeds[] = $feed;
+				if ($feed->user != $userfeed->user)
+				{
+					$newfeeds[] = $feed;
+				}
 			}
-		}
 
-		$success = intval($feeds->putFeeds($newfeeds));
+			$feeds->putFeeds($newfeeds);
+			$success = true;
+		}
+		else
+		{
+			$success = false;
+		}
 		$output->setOutput('success', $success);
 	}
 }
