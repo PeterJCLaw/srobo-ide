@@ -115,6 +115,13 @@ class AdminModule extends Module
         $output->setOutput('success', $success);
     }
 
+    private static function updateFeedStatusFlagsByStatusString($userfeed,
+                                                                $status)
+    {
+        $userfeed->checked = ($status != 'unchecked');
+        $userfeed->valid   = ($status == 'valid');
+    }
+
     private static function replaceFeedInFeedsList($userfeed, $previousList)
     {
         return array_map($previousList(),
