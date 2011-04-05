@@ -77,7 +77,8 @@ class AdminModule extends Module
     }
 
     /**
-     * Sets the status of a blog feed
+     * Updates the status flags on a feed after confirmation by the user
+     * (a blueshirt).
      */
     public function setFeedStatus()
     {
