@@ -101,8 +101,8 @@ class AdminModule extends Module
             $userfeed->valid   = ($feedstatus == 'valid');
 
             // append the new feed to the feeds list
-            $newFeedList = $this->replaceFeedInFeedsList($userfeed,
-                                                         $feed->getFeeds());
+            $newFeedList = self::replaceFeedInFeedsList($userfeed,
+                                                        $feed->getFeeds());
 
             // write out the new feeds list
             $feeds->putFeeds($newFeedList);
@@ -115,7 +115,7 @@ class AdminModule extends Module
         $output->setOutput('success', $success);
     }
 
-    private function replaceFeedInFeedsList($userfeed, $previousList)
+    private static function replaceFeedInFeedsList($userfeed, $previousList)
     {
         return array_map($previousList(),
                          function($x) use ($userfeed) {
