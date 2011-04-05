@@ -86,27 +86,32 @@ class AdminModule extends Module
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 
+		// get the URL to update and its declared status from input
 		$feedurl    = $input->getInput('url');
 		$feedstatus = $input->getInput('status');
 
+		// gets the object for the feed associated with $feedurl
 		$userfeed = $feeds->findFeed('url', $feedurl);
 
+		// if the object returned is non-null (ie the feed is found)
 		if ($userfeed != null)
 		{
+			// get the feed's flags by its status
 			$userfeed->checked = ($feedstatus != 'unchecked');
 			$userfeed->valid   = ($feedstatus == 'valid');
 
-			$newfeeds[] = $userfeed;
-			$feedsList = $feeds->getFeeds();
-			foreach ($feedsList as $feed)
-			{
-				if ($feed->user != $userfeed->user)
-				{
-					$newfeeds[] = $feed;
-				}
-			}
+			// append the new feed to the feeds list
+			$newFeedList = array_map($feeds->getFeeds(),
+			                   function($x) use ($userfeed) {
+			                      	if ($x->user == $userfeed->user) {
+			                      		return $userfeed;
+			                      	} else {
+			                      		return $x;
+			                      	}
+			                      });
 
-			$feeds->putFeeds($newfeeds);
+			// write out the new feeds list
+			$feeds->putFeeds($newFeedList);
 			$success = true;
 		}
 		else
