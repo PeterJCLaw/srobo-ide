@@ -81,7 +81,12 @@ class Feeds
 	public function putFeeds($feeds)
 	{
 		$this->feedsList = $feeds;
-		return file_put_contents($this->feedsPath, json_encode($this->feedsList));
+		$encodedData = json_encode($this->feedsList);
+		if (file_put_contents($this->feedsPath, $encodedData)
+		        !== strlen($encodedData))
+		{
+			throw new Exception('unable to serialise feeds');
+		}
 	}
 
 	public function findFeed($key, $value)
