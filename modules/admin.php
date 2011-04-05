@@ -93,7 +93,7 @@ class AdminModule extends Module
 
 		if ($userfeed == null)
 		{
-			$output->setOuptut('success', false);
+			$output->setOutput('success', false);
 			return;
 		}
 
