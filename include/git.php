@@ -230,7 +230,8 @@ class GitRepository
 	 */
 	public function getCurrentRevision()
 	{
-		return $this->gitExecute(false, 'describe --always');
+		$rawRevision = $this->gitExecute(true, 'describe --always');
+		return trim($rawRevision);
 	}
 
 	/**
@@ -302,7 +303,9 @@ class GitRepository
 		list($success, $message) = $this->gitExecute(true, 'merge '
 		                                             . implode(' ', $mergeOptions)
 		                                             . ' '
-		                                             . implode(' ', $branches));
+		                                             . implode(' ', $branches),
+		                                             array(),	// env
+		                                             true);  	// catchResult
 		if ($success)
 		{
 			return array();
@@ -313,7 +316,7 @@ class GitRepository
 			$lines = explode("\n", $message);
 			foreach ($lines as $line)
 			{
-				if (preg_match('/^CONFLICT \\(content\\): Merge conflict in (.+)$', $line, $death))
+				if (preg_match('/^CONFLICT \\(content\\): Merge conflict in (.+)$/', $line, $death))
 				{
 					$conflicted_files[] = $death;
 				}

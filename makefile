@@ -4,7 +4,7 @@ _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
 _JAVE_KEYSTORE_USER = Test User
 
-.PHONY: all default dev docs clean applet folders config submodules
+.PHONY: all default dev docs check clean applet folders config submodules
 
 # Useful groupings
 default: dev
@@ -63,3 +63,6 @@ srobo-ide.deb: metapackages/deb/srobo-ide.deb
 
 metapackages/deb/srobo-ide.deb: metapackages/deb/srobo-ide/DEBIAN/control
 	dpkg --build metapackages/deb/srobo-ide
+
+check: all
+	./run-tests

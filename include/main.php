@@ -27,7 +27,7 @@ setlocale(LC_CTYPE, 'en_GB.UTF-8');
 
 if (!IN_TESTS)
 	set_error_handler(function ($errno, $error) {
-		if ($errno != 0)
+		if ($errno <= error_reporting())
 			ide_log("PHP error: $error");
 	});
 

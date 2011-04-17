@@ -2,7 +2,9 @@ package org.studentrobotics.ide.checkout;
 
 import java.applet.Applet;
 import java.awt.Graphics;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -61,9 +63,17 @@ public class CheckoutApplet extends Applet {
 			try {
 				URL url = new URL(zipUrl);
 				URLConnection conn = url.openConnection();
-				byte[] zipBytes = new byte[conn.getContentLength()];
-				conn.getInputStream().read(zipBytes);
 
+				int len = conn.getContentLength();
+				byte[] zipBytes = new byte[len];
+				InputStream in = new BufferedInputStream(conn.getInputStream());
+				int off = 0;
+				int count;
+				while (off < len) {
+					count = in.read(zipBytes, off, len-off);
+					if (count == -1) break;
+					off += count;
+				}
 
 				FutureValue<Boolean> result = mZwr.setZip(zipBytes);
 				System.err.println("dispatched");

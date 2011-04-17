@@ -229,7 +229,7 @@ class ProjModule extends Module
 			mkdir_full($servePath);
 		}
 
-		rename("$tmpDir/robot.zip", "$servePath/robot.zip");
+		$this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
 
 		$output->setOutput('url', "$servePath/robot.zip");
 
@@ -257,6 +257,21 @@ class ProjModule extends Module
     shell_exec("cd $projdir && zip -r robot_t.zip *");
     shell_exec("mv $projdir/robot_t.zip $projdir/robot.zip");
   }
+
+	private function fastwrap($oldname, $newname)
+	{
+		$config = Configuration::getInstance();
+		$fastwrapScript = $config->getConfig('fastwrap_script_path');
+		$fastwrapDir = $config->getConfig('fastwrap_dir_path');
+
+		$s_fastwrapScript = escapeshellarg($fastwrapScript);
+		$s_fastwrapDir    = escapeshellarg($fastwrapDir);
+		$s_oldname        = escapeshellarg($oldname);
+		$s_newname        = escapeshellarg($newname);
+
+		$ret = shell_exec("$s_fastwrapScript $s_oldname $s_newname $s_fastwrapDir/*");
+		return $ret;
+	}
 
 	public function redirectToZip()
 	{

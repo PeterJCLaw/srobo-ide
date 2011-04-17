@@ -147,8 +147,10 @@ Browser.prototype._badCommitMsg = function(msg) {
 
 Browser.prototype._badFname = function(name) {
 	//test for is-nothing or starts-with-whitespace or starts-with-a-dot
+	//      or contains-colon
 	//      or contains-double-quotes
-	return /^$|^\s|^[.]|:|"/.test(name);
+	//      or contains-forward-slash
+	return /^$|^\s|^[.]|:|"|\//.test(name);
 }
 
 //when user clicks save

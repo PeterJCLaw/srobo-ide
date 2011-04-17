@@ -68,12 +68,17 @@ class ProjectManager
 
 	public function copyRepository($team, $project, $new)
 	{
+		if (strpos($new, '/') !== FALSE)
+		{
+			return FALSE;
+		}
 		//copy the master repository
 		$masterPathOld = $this->getMasterRepoPath($team, $project);
 		$masterPathNew = $this->getMasterRepoPath($team, $new);
 		$s_old = escapeshellarg($masterPathOld);
 		$s_new = escapeshellarg($masterPathNew);
-		shell_exec("cp -r $s_old $s_new");
+		$ret = shell_exec("cp -r $s_old $s_new");
+		return $ret;
 	}
 
 	public function getMasterRepoPath($team, $project) {
@@ -147,9 +152,14 @@ class ProjectManager
 
 	public function createRepository($team, $project)
 	{
+		if (strpos($project, '/') !== FALSE)
+		{
+			return FALSE;
+		}
 		$path = $this->rootProjectPath . "/$team/master/$project.git";
-		GitRepository::createRepository($path, true);
+		$repo = GitRepository::createRepository($path, true);
 		ide_log("Created a project $project for team $team");
+		return $repo;
 	}
 
 	public function deleteRepository($team, $project)
