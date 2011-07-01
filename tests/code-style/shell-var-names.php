@@ -27,7 +27,7 @@ function get_cmd_line($match)
 	if ($pos === FALSE)
 	{
 		$pos = strpos($match, 'gitExecute');
-		if ($poa === FALSE)
+		if ($pos === FALSE)
 		{
 			// something seriously messed up here!
 			return $match;
