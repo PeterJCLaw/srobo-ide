@@ -415,7 +415,7 @@ class FileModule extends Module
 			$s_tmpDir = escapeshellarg($tmpDir);
 			$s_base = escapeshellarg($base);
 			echo "td, base, exec\n";
-			var_dump($td_shell, $base_shell);
+			var_dump($s_tmpDir, $s_base);
 			$res = shell_exec('cp -r '.$s_base.' '.$s_tmpDir);
 			var_dump($res);
 
