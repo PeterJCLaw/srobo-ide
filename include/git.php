@@ -99,7 +99,13 @@ class GitRepository
 	}
 
 	/**
-	 * Execute a command with the specified environment variables
+	 * Execute a git command with the specified environment variables.
+	 * @param working: Whether or not the command should be run from a working checkout.
+	 * @param s_command: The command to run, already escaped for the command line.
+	 * @parm env: An array with the environment variables for the command that will be run.
+	 * @parm catchResult: Whether or not to catch the result in the event of failure.
+	 * @returns: If not catching failures (see catchResult) then either the process's stdout if the call succeeds or False otherwise.
+	 *           If catching failures then an array whose first element is a boolean success indicator, and whose second contains the process's stdout.
 	 */
 	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
