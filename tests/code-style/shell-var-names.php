@@ -71,7 +71,7 @@ foreach($results as $result)
 		if (!startswith($arg, '$s_'))
 		{
 			$local_fail = TRUE;
-			$failures++;
+			$failures += 1;
 		}
 	}
 	if ($local_fail)
