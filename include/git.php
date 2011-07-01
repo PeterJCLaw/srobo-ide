@@ -101,13 +101,13 @@ class GitRepository
 	/**
 	 * Execute a command with the specified environment variables
 	 */
-	private function gitExecute($working, $command, $env = array(), $catchResult = false)
+	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$base = $working ? $this->working_path : $this->git_path;
 		ide_log("$s_bin $command [cwd = $base]");
-		$buildCommand = "$s_bin $command";
-		$proc = proc_open($buildCommand, array(0 => array('file', '/dev/null', 'r'),
+		$s_buildCommand = "$s_bin $s_command";
+		$proc = proc_open($s_buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
 		                                       2 => array('pipe', 'w')),
 		                                 $pipes,
@@ -683,12 +683,12 @@ class GitRepository
 	public function writePyenvTo($dest)
 	{
 		$pyenv_zip = $this->pyenvPath();
-		$pyenv_zip = escapeshellarg($pyenv_zip);
-		$dest = escapeshellarg($dest);
+		$s_pyenv_zip = escapeshellarg($pyenv_zip);
+		$s_dest = escapeshellarg($dest);
 		if ($this->shouldAttachPyenv())
 		{
 			ide_log("unzip $pyenv_zip -d $dest");
-			shell_exec("unzip $pyenv_zip -d $dest");
+			shell_exec("unzip $s_pyenv_zip -d $s_dest");
 		}
 	}
 

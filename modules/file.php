@@ -431,7 +431,9 @@ class FileModule extends Module
 				mkdir($dir);
 			}
 			putenv("PYLINTHOME=$dir");
-			$proc = proc_open("$binary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $path",
+			$s_path = escapeshellarg($path);
+			$s_pylintBinary = escapeshellarg($binary);
+			$proc = proc_open("$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_path",
 				array(0 => array("file", "/dev/null", "r"),
 				      1 => array("pipe", "w"),
 				      2 => array("pipe", "w")),
