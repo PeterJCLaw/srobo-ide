@@ -250,13 +250,13 @@ class ProjModule extends Module
 		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip $s_tmpname && rm * && mv $s_tmpname ./robot.zip");
 	}
 
-  public function completeArchive($projdir)
-  {
-    ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
-        $projdir = escapeshellarg($projdir);
-    shell_exec("cd $projdir && zip -r robot_t.zip *");
-    shell_exec("mv $projdir/robot_t.zip $projdir/robot.zip");
-  }
+	public function completeArchive($projdir)
+	{
+		ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
+		$projdir = escapeshellarg($projdir);
+		shell_exec("cd $projdir && zip -r robot_t.zip *");
+		shell_exec("mv $projdir/robot_t.zip $projdir/robot.zip");
+	}
 
 	private function fastwrap($oldname, $newname)
 	{
