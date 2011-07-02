@@ -54,7 +54,7 @@ class PyLint extends Lint
 			return array();
 		}
 
-		// otherwise, process stderr and stdout, then forward to the user
+		// otherwise, process stderr and stdout
 		$lines = explode("\n", $stdout);
 		$errors = array();
 		foreach ($lines as $line)
@@ -63,7 +63,6 @@ class PyLint extends Lint
 			{
 				continue;
 			}
-			// TODO this conversion should probably be in this class..
 			$lint = self::ConvertToMessage($line);
 			if ($lint !== null)
 			{
