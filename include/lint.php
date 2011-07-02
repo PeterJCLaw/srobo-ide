@@ -5,6 +5,7 @@ class LintMessage //extends JsonSerializable
 	private $level;	// one of $levels
 	private $message;
 	private $lineNumber;
+	private $locationHint;
 	private $file;
 
 	private static $levels = array(self::error, self::warning);
@@ -20,21 +21,23 @@ class LintMessage //extends JsonSerializable
 	 */
 	public static function FromPyLintLine($line)
 	{
-		$pattern = '/([^:]+):(\d+): \[(E|W) ?\d*\] (.*)/';
+		$pattern = '/([^:]+):(\d+): \[(E|W) ?\d*(, (?P<hint>[^\]]+))?\] (?P<msg>.*)/';
 		$matches = array();
 		if (preg_match($pattern, $line, $matches))
 		{
 			$level = ($matches[3] == 'W') ? self::warning : self::error;
-			$lint = new LintMessage($matches[1], $matches[2], $matches[4], $level);
+			$hint = isset($matches['hint']) ? $matches['hint'] : null;
+			$lint = new LintMessage($matches[1], $matches[2], $matches['msg'], $hint, $level);
 			return $lint;
 		}
 		return null;
 	}
 
-	public function __construct($file, $line, $message, $level = self::error)
+	public function __construct($file, $line, $message, $locationHint = null, $level = self::error)
 	{
 		$this->file = $file;
 		$this->lineNumber = $line;
+		$this->locationHint = $locationHint;
 		$this->message = $message;
 
 		if (in_array($level, self::$levels))
