@@ -88,3 +88,14 @@ class LintMessage //extends JsonSerializable
 		return array('level', 'message', 'lineNumber', 'file');
 	}
 }
+
+abstract class Lint
+{
+	/**
+	 * Runs code linting on a given file, in a given folder.
+	 * @param working: The path to the folder to work in.
+	 * @param file: The path (possibly relative to the given path) to the file to be linted.
+	 * @returns: An array of LintMessages representing the issues found.
+	 */
+	abstract function lintFile($working, $file);
+}
