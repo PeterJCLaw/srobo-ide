@@ -54,10 +54,7 @@ $repo->commit('message', 'test-name', 'test@email.tld');
 section("good file, committed");
 $input->setInput('autosave', null);
 $file->dispatchCommand('lint');
-test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
-test_equal($output->getOutput('path'), '.', 'Reported wrong path');
 test_equal($output->getOutput('errors'), array(), 'Reported false errors');
-test_equal($output->getOutput('messages'), array(), 'Reported extra messages');
 
 section("really bad file, committed");
 $input->setInput('data', 'bananas');
@@ -65,10 +62,12 @@ $file->dispatchCommand('put');
 $repo->stage($input->getInput('path'));
 $repo->commit('message', 'test-name', 'test@email.tld');
 $file->dispatchCommand('lint');
-test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
-test_equal($output->getOutput('path'), '.', 'Reported wrong path');
-test_equal($output->getOutput('errors'), array("robot.py:1: [E] Undefined variable 'bananas'"), 'Failed to report errors correctly');
-test_equal($output->getOutput('messages'), array("robot.py:1: [E] Undefined variable 'bananas'"), 'Failed to report messages correctly');
+$expectedError = new StdClass;
+$expectedError->file = 'robot.py';
+$expectedError->lineNumber = 1;
+$expectedError->message = "Undefined variable 'bananas'";
+$expectedError->level = 'error';
+test_equal($output->getOutput('errors'), array($expectedError), 'Failed to report errors correctly');
 
 section("other bad file, committed");
 $input->setInput('data', str_replace('query', 'qeury', $goodData));
@@ -76,16 +75,17 @@ $file->dispatchCommand('put');
 $repo->stage($input->getInput('path'));
 $repo->commit('message', 'test-name', 'test@email.tld');
 $file->dispatchCommand('lint');
-test_equal($output->getOutput('file'), 'robot.py', 'Reported wrong file');
-test_equal($output->getOutput('path'), '.', 'Reported wrong path');
-test_equal($output->getOutput('errors'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report errors correctly');
-test_equal($output->getOutput('messages'), array("robot.py:4: [E, main] Undefined variable 'qeury'"), 'Failed to report messages correctly');
+$expectedError = new StdClass;
+$expectedError->file = 'robot.py';
+$expectedError->lineNumber = 4;
+$expectedError->message = "Undefined variable 'qeury'";
+$expectedError->level = 'error';
+test_equal($output->getOutput('errors'), array($expectedError), 'Failed to report errors correctly');
 
 section("non-existent file");
 $input->setInput('path', 'face.py');
 $file->dispatchCommand('lint');
-test_equal($output->getOutput('errors'), array("file does not exist"), 'Failed to report missing file');
-test_equal($output->getOutput('messages'), array(), 'Reported extra messages');
+test_equal($output->getOutput('error'), 'file does not exist', 'Failed to report missing file');
 
 if (is_dir("/tmp/test-repos"))
 {
