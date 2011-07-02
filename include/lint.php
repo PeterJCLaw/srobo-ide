@@ -78,4 +78,12 @@ abstract class Lint
 	 * @returns: An array of LintMessages representing the issues found.
 	 */
 	abstract function lintFile($working, $file);
+
+	/**
+	 * Runs code linting on a selection of files, in a given folder.
+	 * @param working: The path to the folder to work in.
+	 * @param files: An array of paths (possibly relative to the given path) to the files to be linted.
+	 * @returns: An array of LintMessages representing the issues found.
+	 */
+	abstract function lintFiles($working, $files);
 }

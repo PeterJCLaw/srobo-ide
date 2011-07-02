@@ -27,9 +27,15 @@ class PyLint extends Lint
 
 	public function lintFile($working, $file)
 	{
-		$s_file = escapeshellarg($file);
+		return $this->lintFiles($working, array($file));
+	}
+
+	public function lintFiles($working, $files)
+	{
+		$s_filesArr = array_map('escapeshellarg', $files);
+		$s_files = implode(' ', $s_filesArr);
 		$s_pylintBinary = escapeshellarg($this->binary);
-		$proc = proc_open("$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_file",
+		$proc = proc_open("$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_files",
 			array(0 => array("file", "/dev/null", "r"),
 			      1 => array("pipe", "w"),
 			      2 => array("pipe", "w")),
