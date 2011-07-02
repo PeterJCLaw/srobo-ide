@@ -13,26 +13,6 @@ class LintMessage //extends JsonSerializable
 	const error = 'error';
 	const warning = 'warning';
 
-	/**
-	 * Attempts to parse the given line using the format of pylint messages.
-	 * If successful, it returns a new LintMessage representing the information.
-	 * @param line: The line to try to parse.
-	 * @returns: A LintMessage representing the error, or null if the parsing failed.
-	 */
-	public static function FromPyLintLine($line)
-	{
-		$pattern = '/([^:]+):(\d+): \[(E|W) ?\d*(, (?P<hint>[^\]]+))?\] (?P<msg>.*)/';
-		$matches = array();
-		if (preg_match($pattern, $line, $matches))
-		{
-			$level = ($matches[3] == 'W') ? self::warning : self::error;
-			$hint = isset($matches['hint']) ? $matches['hint'] : null;
-			$lint = new LintMessage($matches[1], $matches[2], $matches['msg'], $hint, $level);
-			return $lint;
-		}
-		return null;
-	}
-
 	public function __construct($file, $line, $message, $locationHint = null, $level = self::error)
 	{
 		$this->file = $file;

@@ -64,7 +64,7 @@ class PyLint extends Lint
 				continue;
 			}
 			// TODO this conversion should probably be in this class..
-			$lint = LintMessage::FromPyLintLine($line);
+			$lint = self::ConvertToMessage($line);
 			if ($lint !== null)
 			{
 				$errors[] = $lint;
@@ -74,5 +74,23 @@ class PyLint extends Lint
 		return $errors;
 	}
 
+	/**
+	 * Attempts to parse the given line using the format of pylint messages.
+	 * If successful, it returns a new LintMessage representing the information.
+	 * @param line: The line to try to parse.
+	 * @returns: A LintMessage representing the error, or null if the parsing failed.
+	 */
+	public static function ConvertToMessage($line)
+	{
+		$pattern = '/([^:]+):(\d+): \[(E|W) ?\d*(, (?P<hint>[^\]]+))?\] (?P<msg>.*)/';
+		$matches = array();
+		if (preg_match($pattern, $line, $matches))
+		{
+			$level = ($matches[3] == 'W') ? LintMessage::warning : LintMessage::error;
+			$hint = isset($matches['hint']) ? $matches['hint'] : null;
+			$lint = new LintMessage($matches[1], $matches[2], $matches['msg'], $hint, $level);
+			return $lint;
+		}
+		return null;
+	}
 }
-
