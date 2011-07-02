@@ -431,9 +431,14 @@ class FileModule extends Module
 				$this->repository()->putFile($path, $contents);
 			}
 
-			// convert to jsonables if needed. This step necessary currently since JSONSerializeable doesn't exist yet
+			// Sort & convert to jsonables if needed.
+			// This (latter) step necessary currently since JSONSerializeable doesn't exist yet.
 			if (count($errors) > 0)
 			{
+				usort($errors, function($a, $b) {
+						if ($a->lineNumber == $b->lineNumber) return 0;
+						return $a->lineNumber > $b->lineNumber ? 1 : -1;
+					});
 				$errors = array_map(function($lm) { return $lm->toJSONable(); }, $errors);
 			}
 
