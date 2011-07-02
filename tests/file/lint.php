@@ -52,11 +52,13 @@ $repo->stage($input->getInput('path'));
 $repo->commit('message', 'test-name', 'test@email.tld');
 
 section("good file, committed");
+$output->setOutput('errors', null);
 $input->setInput('autosave', null);
 $file->dispatchCommand('lint');
 test_equal($output->getOutput('errors'), array(), 'Reported false errors');
 
 section("really bad file, committed");
+$output->setOutput('errors', null);
 $input->setInput('data', 'bananas');
 $file->dispatchCommand('put');
 $repo->stage($input->getInput('path'));
@@ -70,6 +72,7 @@ $expectedError->level = 'error';
 test_equal($output->getOutput('errors'), array($expectedError), 'Failed to report errors correctly');
 
 section("other bad file, committed");
+$output->setOutput('errors', null);
 $input->setInput('data', str_replace('query', 'qeury', $goodData));
 $file->dispatchCommand('put');
 $repo->stage($input->getInput('path'));
@@ -83,6 +86,7 @@ $expectedError->level = 'error';
 test_equal($output->getOutput('errors'), array($expectedError), 'Failed to report errors correctly');
 
 section("non-existent file");
+$output->setOutput('error', null);
 $input->setInput('path', 'face.py');
 $file->dispatchCommand('lint');
 test_equal($output->getOutput('error'), 'file does not exist', 'Failed to report missing file');
