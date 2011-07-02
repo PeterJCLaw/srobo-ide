@@ -390,6 +390,7 @@ class FileModule extends Module
 		if (file_exists("$base/$path"))
 		{
 			$pylint = new PyLint();
+			$importlint = new ImportLint();
 
 			// copy the reference file in
 			$useAutosave = $input->getInput('autosave', true);
@@ -421,7 +422,28 @@ class FileModule extends Module
 			copy($dummy, $dummy_copy);
 
 			$working = $tmpDir.'/'.basename($base);
-			$errors = $pylint->lintFile($working, $path);
+			$errors = array();
+
+			$importErrors = $importlint->lintFile($working, $path);
+			if ($importErrors === False)
+			{
+				$pyErrors = $pylint->lintFile($working, $path);
+				if ($pyErrors !== False)
+				{
+					$errors = $pyErrors;
+				}
+			}
+			else
+			{
+				$errors = $importErrors;
+				$more_files = $importlint->getTouchedFiles();
+
+				$pyErrors = $pylint->lintFiles($working, $more_files);
+				if ($pyErrors !== False)
+				{
+					$errors = array_merge($errors, $pyErrors);
+				}
+			}
 
 			// remove the temporary folder
 			delete_recursive($tmpDir);
