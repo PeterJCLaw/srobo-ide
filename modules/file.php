@@ -458,10 +458,6 @@ class FileModule extends Module
 			if ($status == 0)
 			{
 				$output->setOutput("errors", array());
-				$output->setOutput("messages", array());
-				$output->setOutput("path", $dirName);
-				$output->setOutput("file", $fileName);
-				//$output->setOutput("errors", 0);
 				return true;
 
 			//otherwise, process stderr and stdout, then forward to the user
@@ -470,33 +466,28 @@ class FileModule extends Module
 			{
 				$lines = explode("\n", $stdout);
 				$errors = array();
-				$warnings = array();
 				foreach ($lines as $line)
 				{
-					if (stripos($line, "[E"))
+					if (empty($line))
 					{
-						$warnings[] = $line;
-						$errors[] = $line;
+						continue;
 					}
-					else if (stripos($line, "[W")) $warnings[] = $line;
+					$lint = LintMessage::FromPyLintLine($line);
+					if ($lint === null)
+					{
+						continue;
+					}
+					$errors[] = $jsonable = $lint->toJSONable();
 				}
 
-
 				$output->setOutput("errors", $errors);
-				$output->setOutput("messages", $warnings);
-				$output->setOutput("path", $dirName);
-				$output->setOutput("file", $fileName);
-				//$output->setOutput("errors", 1);
 				return true;
 			}
 		}
 		else
 		{
-			$output->setOutput('errors', array("file does not exist"));
-			$output->setOutput("messages", array());
-			$output->setOutput("path", $dirName);
-			$output->setOutput("file", $fileName);
-			//$output->setOutput("errors", 1);
+			$output->setOutput('error', 'file does not exist');
+			return false;
 		}
 		return true;
 	}

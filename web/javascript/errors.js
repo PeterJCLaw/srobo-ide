@@ -33,98 +33,35 @@ function ErrorsPage() {
 	}
 
 	//load a new set of errors
-	this.load = function(info, opts,project) {
+	this.load = function(info, opts, project) {
 		if(this._prompt != null) {
 			this._prompt.close();
 			this._prompt = null;
 		}
 		var path = '/' + project + '/';
 		var filelist = new Array();
-		var module_name = this._module_name(info.file);
 		this._init();
 		log('Loading the ErrorPage');
-		logDebug('module_name:'+module_name+'|');
 
-		//if we've simply got an import or syntax error, not a dud function etc
-		if(info.messages[0].split(':')[0] == module_name && info.messages[0].split(':')[2] == " NOT PROCESSED UNABLE TO IMPORT") {
-			//grab the error type
-			var type = info.err[0].split(':')[0].replace(new RegExp("^\\s*", 'g'),'').split(' ')[0];
-			var orig = info.err.join('\n\r');
-			logDebug('type:'+type+'|');
+		for(var i = 0; i < info.errors.length; i++) {
+			var item = info.errors[i];
+			var file = path + item.file;
 
-			//prep the variables
-			useful_line = null;
-			var code = null;
-			var marker = null;
-			var file = info.file;
-			var line = 0;
-
-			if( type == 'Caught' ) {	//an exception whlie loading module
-				var new_type = info.err[info.err.length-1].split(':')[0].substr(2);
-				if( new_type == 'IndentationError' )
-				type = new_type;
-			}
-
-			type = type.slice(0, -5);
-			logDebug('type:'+type+'|');
-			switch(type) {
-				case 'Syntax':
-					useful_line = info.err[info.err.length-3];
-					code	= info.err[1].substr(4);
-					marker	= info.err[2].substr(4);
-					line	= useful_line.split(', line ')[1].split(')')[0];
-					file	= useful_line.split('(')[1].split(', line ')[0];
-					break;
-				case 'Import':
-					useful_line = info.err[0];
-					code = useful_line.split(':')[1];
-					file = info.file;
-					break;
-				case 'Indentation':
-					useful_line = info.err[info.err.length-1];
-					file = useful_line.split('(')[1].split(', line')[0];
-					line = useful_line.split(', line ')[1].split(')')[0];
-					code = useful_line.split(':')[1].split(' (')[0];
-					break;
-				default:
-					type = info.err[info.err.length-1].split(':')[0].substr(2);
-					useful_line = info.err[info.err.length-3];
-					file = useful_line.split('File "')[1].split('", line ')[0];
-					line = useful_line.split(', line ')[1].split(', in ')[0];
-					code = info.err[info.err.length-2];
-					marker = info.err[info.err.length-1].split(':')[1];
-					break;
-			}
-
-			file = path+file;
-			type += ' Error:\n';
-
-			logDebug('file:'+file+'| line:'+line+'| code:'+code+'| marker:'+marker+'|');
-
-			if(this.eflist[file] == null)
+			//if we've not seen this file before, but it has a listing already, reset it
+			if(findValue(filelist, file) == -1 && this.eflist[file] != null) {
+				log('Resetting '+file);
+				this.eflist[file].reset();
+			} else if(this.eflist[file] == null) {	//if it's null the initialise it
 				this.eflist[file] = new ErrorFile(file);
-
-			this.eflist[file].load_error(type, line, code, marker, orig);
-
-		} else {
-			for(var i = 0; i < info.messages.length; i++) {
-				var msg = info.messages[i].split(':');
-				var file = path+msg[0];
-
-				//if we've not seen this file before, but it has a listing already, reset it
-				if(findValue(filelist, file) == -1 && this.eflist[file] != null) {
-					log('Resetting '+file);
-					this.eflist[file].reset();
-				} else if(this.eflist[file] == null) {	//if it's null the initialise it
-					this.eflist[file] = new ErrorFile(file);
-					log('file '+file+' has been added');
-				}
-				if(findValue(filelist, file) == -1)	//add it to our list if it's not there
-					filelist.push(file);
-
-				this.eflist[file].add_warn({ 'line' : msg[1], 'comment' : msg[2] });
+				log('file '+file+' has been added');
 			}
-			this.eflist[file].load_warns();
+			if(findValue(filelist, file) == -1)	//add it to our list if it's not there
+				filelist.push(file);
+
+			this.eflist[file].add_item(item);
+		}
+		for(var i = 0; i < filelist.length; i++) {
+			this.eflist[filelist[i]].load_items();
 		}
 
 		if(opts != null) {
@@ -134,12 +71,6 @@ function ErrorsPage() {
 				this._prompt = status_button( info.messages.length+" errors found!", LEVEL_WARN, 'view errors',
 					bind( tabbar.switch_to, tabbar, this.tab ) );
 		}
-	}
-
-	this._module_name = function(n) {
-		if(n.substr(n.length-3) == '.py')
-			return n.slice(0, -3);
-		return n;
 	}
 
 	this._expand_all = function() {
@@ -195,13 +126,13 @@ function ErrorsPage() {
 		IDE_backend_request("file/lint", {team: team,
 		                                  project: project,
 		                                  path: IDE_path_get_file(file),
-										  autosave: autosave
-										 },
-		                                  partial(bind(this._done_check, this), file, opts,project),
+		                                  autosave: autosave
+		                                 },
+		                                  partial(bind(this._done_check, this), file, opts, project),
 		                                  bind(this._fail_check, this, file, opts));
 	}
 
-	this._done_check = function(file, opts,project, info) {
+	this._done_check = function(file, opts, project, info) {
 		var cb = ( opts != null && opts.callback != null && typeof opts.callback == 'function' )
 		if( info.errors.length > 0 ) {
 			this.load(info, opts, project);
@@ -270,14 +201,12 @@ function ErrorFile(name) {
 	this.label = name;
 
 	//array for the warnings in a file
-	this._warns = new Array();
+	this._items = new Array();
 
 	//the HTML element for the title
 	this._name_elem = null;
 	//the HTML element for the warnings
-	this._warn_elem = null;
-	//the HTML element for the errors
-	this._err_elem = null;
+	this._items_elem = null;
 	//the HTML element for all messages (errors and warnings)
 	this._msgs_elem = null;
 	//are the errors shown
@@ -296,9 +225,8 @@ function ErrorFile(name) {
 		this._expand_elem = createDOM('button', {'file':this.label}, 'Collapse');
 		this._refresh_elem = createDOM('button', {'file':this.label, 'title':'Click to re-check the current saved version of the file'}, 'Check Again');
 		this._name_elem = createDOM('dt', null, this._view_link, this._refresh_elem, this._expand_elem );
-		this._warn_elem = UL(null, null);
-		this._err_elem = UL(null, null);
-		this._msgs_elem = createDOM('dd', {'file':this.label}, this._warn_elem, this._err_elem);
+		this._items_elem = UL(null, null);
+		this._msgs_elem = createDOM('dd', {'file':this.label}, this._items_elem, this._err_elem);
 
 		//add the html to the page
 		appendChildNodes("errors-listing", this._name_elem);
@@ -310,46 +238,20 @@ function ErrorFile(name) {
 		this._signals.push(connect( this._refresh_elem, 'onclick', bind(errorspage.check, errorspage, this.label, null, false) ));
 	}
 
-	this.add_warn = function(w) {
-		this._warns.push(w)
+	this.add_item = function(w) {
+		this._items.push(w)
 	}
 
-	this.load_warns = function() {
-		for( var i=0; i<this._warns.length; i++ ) {
-			var w = this._warns[i];
-			appendChildNodes( this._warn_elem, LI({"line" : w.line}, ''+w.line+':'+w.comment) );
+	this.load_items = function() {
+		for( var i=0; i<this._items.length; i++ ) {
+			var item = this._items[i];
+			appendChildNodes( this._items_elem, LI({'class' : item.level}, ''+item.lineNumber+':'+' ['+item.level[0].toUpperCase()+'] '+item.message) );
 		}
-		this.show_msgs();
-	}
-
-	this.load_error = function(type, line, code, marker, orig) {
-		if(code == null || code == '')
-			code = ' ';
-		//build up the html output
-		var title = SPAN(null, type);
-		var code_num = createDOM('dt', null, line);
-		var code_line = createDOM('dd', null, code);
-		code = createDOM('dl', null, code_num, code_line);
-
-		if(marker != null) {
-			var mark_num = createDOM('dt', null, '');
-			var mark_line = createDOM('dd', null, marker);
-			appendChildNodes(code, mark_num, mark_line);
-		}
-
-		var li = LI({'title':'click to show/hide original'}, title, code);
-
-		disconnect(this._err_orig_signal);
-		this._err_orig_signal = connect( li, 'onclick', bind(this._toggle_show_error_orig, this) );
-
-		//throw the html to the screen
-		replaceChildNodes( this._err_elem, li, LI( {'class' : 'orig hide'}, orig) );
 		this.show_msgs();
 	}
 
 	this.reset = function() {
-		this.clear_errors();
-		this.clear_warns();
+		this.clear_items();
 	}
 
 	this.remove = function() {
@@ -365,20 +267,10 @@ function ErrorFile(name) {
 		}
 	}
 
-	this.clear_warns = function() {
-		if(this._warn_elem != null)
-			replaceChildNodes(this._warn_elem, null);
-		this._warns = new Array();
-	}
-
-	this.clear_errors = function() {
-		if(this._err_elem != null)
-			replaceChildNodes(this._err_elem, null);
-		this.errors = new Array();
-	}
-
-	this._toggle_show_error_orig = function() {
-		toggleElementClass( 'hide', getFirstElementByTagAndClassName('li', 'orig',  this._err_elem));
+	this.clear_items = function() {
+		if(this._items_elem != null)
+			replaceChildNodes(this._items_elem, null);
+		this._items = new Array();
 	}
 
 	this._view_onclick = function() {
