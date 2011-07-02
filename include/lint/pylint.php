@@ -3,7 +3,6 @@
 class PyLint extends Lint
 {
 	private $binary = null;
-	private $dummy = null;
 	private $pylintHome = null;
 
 	public function __construct()
@@ -48,11 +47,6 @@ class PyLint extends Lint
 		$stdout = stream_get_contents($pipes[1]);
 		$stderr = stream_get_contents($pipes[2]);
 		$status = proc_close($proc);
-
-		echo 'err:';
-		var_dump($stderr);
-		echo 'out:';
-		var_dump($stdout);
 
 		// status code zero indicates success, so return empty errors
 		if ($status === 0)
