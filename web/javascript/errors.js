@@ -214,6 +214,8 @@ function ErrorFile(name) {
 
 	//hold the main signals for the file
 	this._signals = new Array();
+	//hold the signals for double-clicking on the items
+	this._item_signals = new Array();
 
 	this._init = function() {
 		logDebug('initing file: '+this.label);
@@ -231,7 +233,7 @@ function ErrorFile(name) {
 		appendChildNodes("errors-listing", this._msgs_elem);
 
 		//hook up the signal
-		this._signals.push(connect( this._view_link, 'onclick', bind(this._view_onclick, this) ));
+		this._signals.push(connect( this._view_link, 'onclick', bind(this._view_onclick, this, null) ));
 		this._signals.push(connect( this._expand_elem, 'onclick', bind(this._expand_onclick, this) ));
 		this._signals.push(connect( this._refresh_elem, 'onclick', bind(errorspage.check, errorspage, this.label, null, false) ));
 	}
@@ -243,7 +245,9 @@ function ErrorFile(name) {
 	this.load_items = function() {
 		for( var i=0; i<this._items.length; i++ ) {
 			var item = this._items[i];
-			appendChildNodes( this._items_elem, LI({'class' : item.level}, ''+item.lineNumber+':'+' ['+item.level[0].toUpperCase()+'] '+item.message) );
+			var li = LI({'class' : item.level}, ''+item.lineNumber+':'+' ['+item.level[0].toUpperCase()+'] '+item.message);
+			this._item_signals.push(connect( li, 'ondblclick', bind(this._view_onclick, this, item.lineNumber) ));
+			appendChildNodes( this._items_elem, li );
 		}
 		this.show_msgs();
 	}
@@ -269,10 +273,17 @@ function ErrorFile(name) {
 		if(this._items_elem != null)
 			replaceChildNodes(this._items_elem, null);
 		this._items = new Array();
+		for( var i=0; i<this._item_signals.length; i++ ) {
+			disconnect(this._item_signals[i]);
+		}
+		this._item_signals = new Array();
 	}
 
-	this._view_onclick = function() {
-		editpage.edit_file( team, IDE_path_get_project(this.label), this.label, 'HEAD', 'REPO' );
+	this._view_onclick = function(line) {
+		var etab = editpage.edit_file( team, IDE_path_get_project(this.label), this.label, 'HEAD', 'REPO' );
+		if (line != null) {
+			etab.setSelectionRange(line, 0, -1);
+		}
 	}
 
 	this._expand_onclick = function() {
