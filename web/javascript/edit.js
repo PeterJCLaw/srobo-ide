@@ -66,7 +66,7 @@ function EditPage() {
 
 	// Open the given file and switch to the tab
 	// or if the file is already open, just switch to the tab
-	this.edit_file = function( team, project, path, rev , mode) {
+	this.edit_file = function( team, project, path, rev, mode ) {
 		// TODO: We don't support files of the same path being open in
 		// different teams at the moment.
 		var etab = this._file_get_etab( path );
