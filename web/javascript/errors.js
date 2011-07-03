@@ -222,11 +222,11 @@ function ErrorFile(name) {
 
 		//make the html
 		this._view_link = A({"title":'click to view file', 'href':'#'} , this.label);
-		this._expand_elem = createDOM('button', {'file':this.label}, 'Collapse');
-		this._refresh_elem = createDOM('button', {'file':this.label, 'title':'Click to re-check the current saved version of the file'}, 'Check Again');
+		this._expand_elem = createDOM('button', null, 'Collapse');
+		this._refresh_elem = createDOM('button', {'title':'Click to re-check the current saved version of the file'}, 'Check Again');
 		this._name_elem = createDOM('dt', null, this._view_link, this._refresh_elem, this._expand_elem );
 		this._items_elem = UL(null, null);
-		this._msgs_elem = createDOM('dd', {'file':this.label}, this._items_elem, this._err_elem);
+		this._msgs_elem = createDOM('dd', null, this._items_elem);
 
 		//add the html to the page
 		appendChildNodes("errors-listing", this._name_elem);
