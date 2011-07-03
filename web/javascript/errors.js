@@ -164,7 +164,7 @@ function ErrorsPage() {
 
 	this._file_count = function() {
 		var count = 0;
-		for( f in this.eflist ) {
+		for( var f in this.eflist ) {
 			if(this.eflist[f] != null)
 				count++;
 		}
@@ -181,7 +181,7 @@ function ErrorsPage() {
 	}
 
 	this._check_all = function() {
-		for( f in this.eflist ) {
+		for( var f in this.eflist ) {
 			if(this.eflist[f] != null)
 				this.check(f);
 		}
