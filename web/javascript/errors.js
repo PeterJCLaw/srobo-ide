@@ -68,7 +68,7 @@ function ErrorsPage() {
 			if(opts.switch_to)
 				tabbar.switch_to(this.tab);
 			if(opts.alert)
-				this._prompt = status_button( info.messages.length+" errors found!", LEVEL_WARN, 'view errors',
+				this._prompt = status_button( info.errors.length+" errors found!", LEVEL_WARN, 'view errors',
 					bind( tabbar.switch_to, tabbar, this.tab ) );
 		}
 	}
