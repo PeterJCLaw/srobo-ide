@@ -382,7 +382,7 @@ function ErrorFile(name) {
 	}
 
 	this._view_onclick = function() {
-		editpage.edit_file( team, projpage.project, this.label, 'HEAD', 'REPO' );
+		editpage.edit_file( team, IDE_path_get_project(this.label), this.label, 'HEAD', 'REPO' );
 	}
 
 	this._expand_onclick = function() {
