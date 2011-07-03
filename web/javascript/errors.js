@@ -361,7 +361,7 @@ function ErrorFile(name) {
 		this._msgs_elem = null;
 		this._name_elem = null;
 		for( var i in this._signals ) {
-			disconnectAll(this._signals[i]);
+			disconnect(this._signals[i]);
 		}
 	}
 
