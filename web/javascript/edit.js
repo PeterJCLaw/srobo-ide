@@ -256,6 +256,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 	//the cursor selection
 	this._selection_start = 0;
 	this._selection_end = 0;
+	// whether or not we've loaded the file contents yet.
+	this._loaded = false;
+	this._pre_loaded_calls = [];
 
 	this._init = function() {
 		this.tab = new Tab( this.path );
@@ -277,11 +280,21 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this.contents = "";
 			this._original = "";
 			$("check-syntax").disabled = true;
+			this._loaded = false;
 		} else {
 			// Existing file
 			this._load_contents();
 			$("check-syntax").disabled = false;
 		}
+	}
+
+	// For each of the functions that tried to be called before we were loaded,
+	// but couldn't be, try calling them again now.
+	this._retry_pre_loaded_calls = function() {
+		for ( var i=0; i<this._pre_loaded_calls.length; i++ ) {
+			this._pre_loaded_calls[i]();
+		}
+		this._pre_loaded_calls = [];
 	}
 
 	// Start load the file contents
@@ -305,6 +318,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 		} else {
 			this.contents = this._original;
 		}
+
+		this._loaded = true;
+		this._retry_pre_loaded_calls();
 
 		this._update_contents();
 		this._show_modified();
