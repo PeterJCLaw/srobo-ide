@@ -212,10 +212,8 @@ function ErrorFile(name) {
 	//are the errors shown
 	this._msgs_shown = true;
 
-	//hold signals for the page
+	//hold the main signals for the file
 	this._signals = new Array();
-	//hold the signal for showing the error original
-	this._err_orig_signal = null;
 
 	this._init = function() {
 		logDebug('initing file: '+this.label);
