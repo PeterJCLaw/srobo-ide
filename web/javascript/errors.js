@@ -95,7 +95,7 @@ function ErrorsPage() {
 
 	this._file_count = function() {
 		var count = 0;
-		for( f in this.eflist ) {
+		for( var f in this.eflist ) {
 			if(this.eflist[f] != null)
 				count++;
 		}
@@ -112,7 +112,7 @@ function ErrorsPage() {
 	}
 
 	this._check_all = function() {
-		for( f in this.eflist ) {
+		for( var f in this.eflist ) {
 			if(this.eflist[f] != null)
 				this.check(f);
 		}
@@ -261,7 +261,7 @@ function ErrorFile(name) {
 		this._msgs_elem = null;
 		this._name_elem = null;
 		for( var i in this._signals ) {
-			disconnectAll(this._signals[i]);
+			disconnect(this._signals[i]);
 		}
 	}
 
@@ -272,7 +272,7 @@ function ErrorFile(name) {
 	}
 
 	this._view_onclick = function() {
-		editpage.edit_file( team, projpage.project, this.label, 'HEAD', 'REPO' );
+		editpage.edit_file( team, IDE_path_get_project(this.label), this.label, 'HEAD', 'REPO' );
 	}
 
 	this._expand_onclick = function() {
