@@ -24,17 +24,36 @@ class PyLint extends Lint
 		}
 	}
 
-	public function lintFile($working, $file)
-	{
-		return $this->lintFiles($working, array($file));
-	}
-
 	public function lintFiles($working, $files)
 	{
-		$s_filesArr = array_map('escapeshellarg', $files);
-		$s_files = implode(' ', $s_filesArr);
+		// Ideally we'd have pylint do the files all in one go, which
+		// would probably be faster, but it is known to fall over
+		// (http://www.logilab.org/70381) in the case where one of the
+		// imports has a syntax error.
+		// In such cases we don't get any info at all, which is rubbish.
+		// We should probably do something to handle such cases,
+		// at the moment we just return an empty array.
+		// This loop is a partial workaround for this issue.
+		$err = array();
+		$valid = False;
+		foreach ($files as $file)
+		{
+			$ret = $this->lintFile($working, $file);
+			if ($ret !== False)
+			{
+				// mark that we've actually got results
+				$valid = true;
+				$err = array_merge($err, $ret);
+			}
+		}
+		return $valid ? $err : False;
+	}
+
+	public function lintFile($working, $file)
+	{
+		$s_file = escapeshellarg($file);
 		$s_pylintBinary = escapeshellarg($this->binary);
-		$proc = proc_open("$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_files",
+		$proc = proc_open("$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_file",
 			array(0 => array("file", "/dev/null", "r"),
 			      1 => array("pipe", "w"),
 			      2 => array("pipe", "w")),
