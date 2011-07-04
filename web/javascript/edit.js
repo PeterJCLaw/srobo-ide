@@ -707,6 +707,11 @@ function EditTab(iea, team, project, path, rev, mode) {
 	// If length would push the selection onto multiple lines its value is truncated to the end of the current line.
 	// Note that lines are indexed from 1.
 	this.setSelectionRange = function(line, startIndex, length, retry) {
+		if (line < 1) {
+			log('Cannot set selection before start of file.');
+			logDebug('line: '+line);
+		}
+
 		// can't do anything if we're not loaded!
 		if (!this._loaded) {
 			logDebug('sSR: not loaded yet, setting up callback');
