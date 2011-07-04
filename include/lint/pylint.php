@@ -54,6 +54,14 @@ class PyLint extends Lint
 			return array();
 		}
 
+		// status code one indicates something went wrong with the linting
+		if ($status === 1)
+		{
+			// echo stderr for debug.
+			echo "PyLint fell over!\n", $stderr;
+				return False;
+		}
+
 		// otherwise, process stderr and stdout
 		$lines = explode("\n", $stdout);
 		$errors = array();
