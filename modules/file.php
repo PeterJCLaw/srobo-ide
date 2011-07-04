@@ -432,6 +432,11 @@ class FileModule extends Module
 				{
 					$errors = $pyErrors;
 				}
+				else
+				{
+					// Both sets of linting failed, so fail overall.
+					return False;
+				}
 			}
 			else
 			{
@@ -442,6 +447,11 @@ class FileModule extends Module
 				if ($pyErrors !== False)
 				{
 					$errors = array_merge($errors, $pyErrors);
+				}
+				else
+				{
+					// Both sets of linting failed, so fail overall.
+					return False;
 				}
 			}
 
