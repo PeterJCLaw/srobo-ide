@@ -78,7 +78,17 @@ class PyLint extends Lint
 		{
 			// echo stderr for debug.
 			echo "PyLint fell over!\n", $stderr;
+			if (strpos($stderr, 'IndentationError') === False)
+			{
 				return False;
+			}
+			// TODO: detect other types of interior fail?
+			$inner = 'expected an indented block';
+			$lines = explode("\n", $stderr);
+			$lineParts = explode(' ', $lines[count($lines)-5]);
+			$line = $lineParts[count($lineParts)-1];
+			$err = new LintMessage($file, 0, "One of the imports to $file had an error '$inner' on line $line.");
+			return array($err);
 		}
 
 		// otherwise, process stderr and stdout
