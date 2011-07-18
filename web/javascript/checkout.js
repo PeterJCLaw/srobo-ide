@@ -60,6 +60,7 @@ Checkout.prototype._use_java = function() {
 }
 
 Checkout.prototype._basic = function(url, successCallback, errorCallback) {
+	logDebug('Checking out code using basic file transfer');
 	$('robot-zip').src = url;
 	successCallback();
 }
@@ -70,6 +71,7 @@ Checkout.prototype._getLocation = function() {
 }
 
 Checkout.prototype._java = function(url, successCallback, errorCallback) {
+	logDebug('Checking out code using magic java file transfer');
 	var xhr = new XMLHttpRequest();
 	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + url));
 	//if downloading worked
