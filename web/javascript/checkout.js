@@ -36,22 +36,31 @@ Checkout.prototype.init = function() {
 
 	logDebug("Checkout: Initializing");
 
-	// If Java works, and the user wants it then load the applet
-	if (this._use_java()) {
-		this._applet = createDOM('applet',
-			{ archive: 'applet/build/checkout.jar',
-			     code: 'org.studentrobotics.ide.checkout.CheckoutApplet',
-			       id: 'checkout-applet',
-			     name: 'checkout-applet',
-			MAYSCRIPT: true,
-			    width: '128',
-			   height: '128'
-			});
-		appendChildNodes('applet', this._applet);
-	}
+	this._ensureApplet();
 
 	/* remember that we are initialised */
 	this._inited = true;
+}
+
+// On-demand create the applet.
+// This allows the user to change their setting while the page is live and it work
+Checkout.prototype._ensureApplet = function() {
+	// If Java works, and the user wants it, and the applet isn't already loaded
+	// then load the applet
+	if (!this._use_java() || this._applet != null) {
+		return;
+	}
+
+	this._applet = createDOM('applet',
+		{ archive: 'applet/build/checkout.jar',
+			 code: 'org.studentrobotics.ide.checkout.CheckoutApplet',
+			   id: 'checkout-applet',
+			 name: 'checkout-applet',
+		MAYSCRIPT: true,
+			width: '128',
+		   height: '128'
+		});
+	appendChildNodes('applet', this._applet);
 }
 
 // If Java works and the user wants it
@@ -72,6 +81,7 @@ Checkout.prototype._getLocation = function() {
 
 Checkout.prototype._java = function(url, successCallback, errorCallback) {
 	logDebug('Checking out code using magic java file transfer');
+	this._ensureApplet();
 	var xhr = new XMLHttpRequest();
 	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + url));
 	//if downloading worked
@@ -91,7 +101,7 @@ Checkout.prototype._java = function(url, successCallback, errorCallback) {
 
 Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
 	var url = nodes.url;
-	if (this._use_java() && this._applet != null) {
+	if (this._use_java()) {
 		this._java(url, successCallback, errorCallback);
 	} else {
 		this._basic(url, successCallback, errorCallback);
