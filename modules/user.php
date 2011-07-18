@@ -130,16 +130,25 @@ class UserModule extends Module
 	 */
 	public function blogPosts()
 	{
-		$this->ensureAuthed();
+		$auth = $this->ensureAuthed();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 
 		$urls = $feeds->getValidURLs();
 
 		$posts = array();
-		foreach ($urls as $url)
+		foreach ($urls as $url => $user)
 		{
-			$msgs = Feeds::getRecentPosts($url, 3);
+			$teams = $auth->getTeams($user);
+			if (count($teams) > 0)
+			{
+				$author = $auth->displayNameForTeam($teams[0]);
+			}
+			else
+			{
+				$author = $user;
+			}
+			$msgs = Feeds::getRecentPosts($url, 3, $author);
 			$posts = array_merge($posts, $msgs);
 		}
 		$output->setOutput('posts', $posts);

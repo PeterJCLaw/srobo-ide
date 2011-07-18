@@ -69,10 +69,10 @@ class Feeds
 		{
 			if($feed->checked && $feed->valid)
 			{
-				$urls[] = $feed->url;
+				$urls[$feed->url] = $feed->user;
 			}
 		}
-		return array_unique($urls);
+		return $urls;
 	}
 
 	/**
@@ -104,7 +104,7 @@ class Feeds
 	/**
 	 * Gets the most recent three post from an RSS feed
 	 */
-	public static function getRecentPosts($url, $howMany)
+	public static function getRecentPosts($url, $howMany, $author)
 	{
 		global $gotSimplePie;
 		if (!$gotSimplePie)
@@ -115,7 +115,7 @@ class Feeds
 		for($i=0; $i < $howMany && ($item = $items[$i]); $i++)
 		{
 			$posts[] = array(
-				'author' => $item->get_author(),
+				'author' => $author,
 				  'body' => $item->get_description(),
 				  'link' => $item->get_permalink(),
 				 'title' => $item->get_title()
