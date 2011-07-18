@@ -95,5 +95,4 @@ abstract class SecureTokenAuth extends AuthBackend
 	}
 
 	abstract public function checkAuthentication($username, $password);
-	abstract public function getTeams($username);
 }
