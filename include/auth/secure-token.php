@@ -52,6 +52,10 @@ abstract class SecureTokenAuth extends AuthBackend
 
 	public function authUser($username, $password)
 	{
+		// NB: This is a bit hacky!
+		// Don't allow usernames with whitespace
+		if (preg_match('/\s/', $username) !== 0)
+			return false;
 		if (!$this->checkAuthentication($username, $password))
 			return false;
 		$this->user = $username;
