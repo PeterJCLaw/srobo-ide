@@ -121,9 +121,8 @@ class UserModule extends Module
 			}
 		}
 
-		$error = intval(!$feeds->putFeeds($newfeeds));
+		$feeds->putFeeds($newfeeds);
 		$output->setOutput('feedurl', $feedurl);
-		$output->setOutput('error', $error);
 	}
 
 	/**
