@@ -271,6 +271,8 @@ Log.prototype._revert = function(override) {
 
 //find out which radio button is checked
 Log.prototype._find_selected = function() {
+	// ensure that the value doesn't cascade over.
+	this.selectedRevision = -1;
 	var radios = getElementsByTagAndClassName("input", "log-radio");
 	for(var x=0; x < radios.length; x++) {
 		if(radios[x].checked == true) {
