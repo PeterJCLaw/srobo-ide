@@ -174,6 +174,10 @@ Log.prototype._populateList = function() {
 	disconnectAll('log-diff');
 	connect('log-diff', 'onclick', bind(this._diff, this));
 
+	//connect up the 'View' button to event handler
+	disconnectAll('log-open');
+	connect('log-open', 'onclick', bind(this._open, this));
+
 	//connect up the close button on log menu
 	disconnectAll($("log-close"));
 	connect($("log-close"), 'onclick', bind(this.close, this));
@@ -291,6 +295,18 @@ Log.prototype._diff = function() {
 		status_msg("No revision selected !", LEVEL_WARN);
 	} else {
 		diffpage.diff(this.file, this.selectedRevision);
+	}
+}
+
+// Open the file at the selected revision.
+Log.prototype._open = function() {
+	this._find_selected();
+
+	if(this.selectedRevision < 0) {
+		//no revision selected
+		status_msg("No revision selected !", LEVEL_WARN);
+	} else {
+		editpage.edit_file(this.team, this.project, this.file, this.selectedRevision);
 	}
 }
 

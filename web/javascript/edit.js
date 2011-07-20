@@ -70,12 +70,20 @@ function EditPage() {
 		// TODO: We don't support files of the same path being open in
 		// different teams at the moment.
 		var etab = this._file_get_etab( path );
+		var newTab = false;
 
 		if( etab == null ) {
 			etab = this._new_etab( team, project, path, rev, mode );
+			newTab = true;
 		}
 
 		tabbar.switch_to( etab.tab );
+
+		// If they've specified a revision then change to it
+		// NB: we need to do this *after* switching to the tab so that it's shown, otherwise editarea explodes
+		if ( !newTab && rev != null ) {
+			etab.open_revision(rev, false);
+		}
 	}
 
 	// Create a new tab with a new file open in it
