@@ -172,7 +172,7 @@ Log.prototype._populateList = function() {
 
 	//connect up the 'Diff' button to event handler
 	disconnectAll('log-diff');
-	connect('log-diff', 'onclick', bind(this._diff, this, false));
+	connect('log-diff', 'onclick', bind(this._diff, this));
 
 	//connect up the close button on log menu
 	disconnectAll($("log-close"));
