@@ -622,7 +622,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this._capture_code();
 			if( override != true && this.contents != this._original ) {
 				status_button(this.path+" has been modified!", LEVEL_WARN,
-					"Go to Revision "+IDE_hash_shrink($("history").value)+" Anyway",
+					"Go to revision "+IDE_hash_shrink($("history").value)+" anyway",
 					bind(this._change_revision, this, true)
 				);
 			} else {
