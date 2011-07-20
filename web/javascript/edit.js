@@ -559,7 +559,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		// change revision handler
 		this._signals.push( connect( "history",
 					     "onclick",
-					     bind( this._change_revision, this, false ) ) );
+					     bind( this._change_revision, this ) ) );
 		// keyboard shortcuts when the cursor is inside editarea
 		this._signals.push( connect( window,
 					    "ea_keydown",
@@ -611,27 +611,31 @@ function EditTab(iea, team, project, path, rev, mode) {
 		this._selection_end = selection.end;
 	}
 
-	this._change_revision = function(override) {
-		switch($("history").value) {
+	this._change_revision = function() {
+		var rev = $("history").value;
+		switch(rev) {
 		case "-2":
 			var d = new Log(this.path);
 			break;
 		case "-1":
 			break;
 		default:
-			this._capture_code();
-			if( override != true && this.contents != this._original ) {
-				status_button(this.path+" has been modified!", LEVEL_WARN,
-					"Go to revision "+IDE_hash_shrink($("history").value)+" anyway",
-					bind(this._change_revision, this, true)
-				);
-			} else {
-				this._mode = 'REPO';
-				this.rev = $("history").value;
-				status_msg("Opening history .."+$("history").value, LEVEL_OK);
-				this._load_contents();
-				break;
-			}
+			this.open_revision(rev, false)
+		}
+	}
+
+	this.open_revision = function(rev, override) {
+		this._capture_code();
+		if( override != true && this.contents != this._original ) {
+			status_button(this.path + " has been modified!", LEVEL_WARN,
+				"Go to revision " + IDE_hash_shrink(rev) + " anyway",
+				bind(this.open_revision, this, rev, true)
+			);
+		} else {
+			this._mode = 'REPO';
+			this.rev = rev;
+			status_msg("Opening history .. " + rev, LEVEL_OK);
+			this._load_contents();
 		}
 	}
 
