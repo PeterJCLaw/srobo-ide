@@ -1,32 +1,32 @@
 [
 	{
 		"title":"KickStart",
-		"date":"2010-09-18",
+		"date":"2011-09-24",
 		"desc":"KickStart Happened. It Was Awesome!"
 	},
 	{
 		"title":"Southampton Tech Day 1",
-		"date":"2011-02-05",
-		"desc":"A chance to meet other competitors, the Student Robotics team, to get help and share ideas. You should have a mobile robot chassis and be developing your other mechanisms"
+		"date":"2011-12-03",
+		"desc":"A chance to meet other competitors, the Student Robotics team, to get help and share ideas. You should have a mobile robot chassis and be developing your other mechanisms."
 	},
 	{
-		"title":"Bristol Tech Day 1",
-		"date":"2011-02-12",
-		"desc":"A chance to meet other competitors, the Student Robotics team, to get help and share ideas. You should have a mobile robot chassis and be developing your other mechanisms"
+		"title":"Southampton Tech Day 2",
+		"date":"2012-02-04",
+		"desc":"Another opportunity to meet up with the other competitors and mentors. Your robot should be moving around on its own, and you should be developing both the code and mechanical parts to make it formidable."
 	},
 	{
-		"title":"Tech Day 2",
-		"date":"2011-03-19",
-		"desc":"Another opportunity to meet up with the other competitors and mentors. Your robot should be nearly finished, and you should have started writing code to drive it"
+		"title":"Tech Day 3",
+		"date":"2012-03-17",
+		"desc":"A further opportunity to meet up with the other competitors and mentors. Your robot should be a senoir member of SKYNET, able to move tokens and buckets with ease."
 	},
 	{
 		"title":"Competition Prep Day",
-		"date":"2011-04-09",
-		"desc":"One mad last hack opportunity in the competition arena"
+		"date":"2012-04-08",
+		"desc":"One mad last hack opportunity in the competition arena."
 	},
 	{
 		"title":"Competition",
-		"date":"2011-04-10",
-		"desc":"The culmination of all your hard work"
+		"date":"2012-04-09",
+		"desc":"The culmination of all your hard work."
 	}
 ]
