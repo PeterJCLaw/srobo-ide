@@ -21,12 +21,17 @@
 	},
 	{
 		"title":"Competition Prep Day",
-		"date":"2012-04-08",
+		"date":"2012-04-13",
 		"desc":"One mad last hack opportunity in the competition arena."
 	},
 	{
-		"title":"Competition",
-		"date":"2012-04-09",
+		"title":"Competition: Day 1",
+		"date":"2012-04-14",
+		"desc":"The culmination of all your hard work."
+	},
+	{
+		"title":"Competition: Day 2",
+		"date":"2012-04-15",
 		"desc":"The culmination of all your hard work."
 	}
 ]
