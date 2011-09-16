@@ -245,7 +245,7 @@ class GitRepository
 	 */
 	public function getFirstRevision()
 	{
-		$revisions = explode("\n", $this->gitExecute(false, 'rev-list --all'));
+		$revisions = explode("\n", trim($this->gitExecute(false, 'rev-list --all')));
 		return $revisions[count($revisions)-1];
 	}
 
