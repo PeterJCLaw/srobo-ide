@@ -66,8 +66,19 @@ class ModuleManager
 		{
 			require_once("modules/$module.php");
 			$class = $this->moduleNameToClass($module);
-			$this->modules[$module] = new $class();
+			$instance = new $class();
+			$this->addModule($module, $instance);
 		}
+	}
+
+	/**
+	 * Adds a single module
+	 */
+	public function addModule($name, $instance)
+	{
+		if (!$instance instanceof Module)
+			throw new Exception('adding a non-module as a module');
+		$this->modules[$name] = $instance;
 	}
 
 	/**
