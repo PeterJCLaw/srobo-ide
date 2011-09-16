@@ -284,18 +284,13 @@ class FileModule extends Module
 
 		$repo = $this->repository();
 
-		$currRev = $repo->getCurrentRevision();
-		$firstRev = $repo->getFirstRevision();
-
 		$number = $input->getInput('number', true);
 		$offset = $input->getInput('offset', true);
 
 		$number = ($number != null ? $number : 10);
-		$offset = ($offset != null ? $offset : 0);
+		$offset = ($offset != null ? $offset * $number : 0);
 
-		$log = $repo->log($firstRev, $currRev, $path);
-
-		var_dump($log);
+		$log = $repo->log(null, null, $path);
 
 		// if user has been passed we need to filter by author
 		$user = $input->getInput("user", true);

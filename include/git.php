@@ -262,11 +262,28 @@ class GitRepository
 
 	/**
 	 * Gets the log between the arguments
+	 * @param oldCommit: The commit to start at.
+	 * @param newCommit: The commit to end at.
+	 * @param file: The file to limit the revisions to.
+	 * @returns: An array of the revisions in the given range.
 	 */
 	public function log($oldCommit, $newCommit, $file=null)
 	{
 		$log = null;
 		$s_logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
+
+		if ($oldCommit !== null)
+		{
+			$s_oldCommit = escapeshellarg($oldCommit);
+			$s_logCommand .= ' '.$s_oldCommit;
+
+			if ($newCommit !== null)
+			{
+				$s_newCommit = escapeshellarg($newCommit);
+				$s_logCommand .= '..'.$s_newCommit;
+			}
+		}
+
 		if ($file != null)
 		{
 			$s_logCommand .= ' --follow -- '.escapeshellarg($file);
