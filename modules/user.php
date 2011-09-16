@@ -25,7 +25,7 @@ class UserModule extends Module
 		$auth = AuthBackend::getInstance();
 		if (!($this->username = $auth->getCurrentUser()))
 		{
-			throw new Exception('you are not logged in', E_PERM_DENIED);
+			throw new Exception('you are not logged in', E_AUTH_REQUIRED);
 		}
 		return $auth;
 	}

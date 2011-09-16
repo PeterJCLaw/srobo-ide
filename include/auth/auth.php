@@ -22,7 +22,7 @@ abstract class AuthBackend
 		$instance = self::getInstance();
 		if (!$instance->getCurrentUser())
 		{
-			throw new Exception('authentication required', E_PERM_DENIED);
+			throw new Exception('authentication required', E_AUTH_REQUIRED);
 		}
 	}
 

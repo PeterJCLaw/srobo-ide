@@ -12,7 +12,7 @@ class TeamModule extends Module
 	{
 		$authModule = AuthBackend::getInstance();
 		if ($authModule->getCurrentUser() == null)
-			throw new Exception('not authenticated', E_PERM_DENIED);
+			throw new Exception('not authenticated', E_AUTH_REQUIRED);
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$team = $input->getInput('team');
