@@ -77,7 +77,7 @@ class ModuleManager
 	public function addModule($name, $instance)
 	{
 		if (!$instance instanceof Module)
-			throw new Exception('adding a non-module as a module');
+			throw new Exception('adding a non-module as a module', E_INTERNAL_ERROR);
 		$this->modules[$name] = $instance;
 	}
 
