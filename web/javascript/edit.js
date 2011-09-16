@@ -84,6 +84,7 @@ function EditPage() {
 		if ( !newTab && rev != null ) {
 			etab.open_revision(rev, false);
 		}
+		return etab;
 	}
 
 	// Create a new tab with a new file open in it
@@ -264,6 +265,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 	//the cursor selection
 	this._selection_start = 0;
 	this._selection_end = 0;
+	// whether or not we've loaded the file contents yet.
+	this._loaded = false;
+	this._pre_loaded_calls = [];
 
 	this._init = function() {
 		this.tab = new Tab( this.path );
@@ -285,11 +289,21 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this.contents = "";
 			this._original = "";
 			$("check-syntax").disabled = true;
+			this._loaded = false;
 		} else {
 			// Existing file
 			this._load_contents();
 			$("check-syntax").disabled = false;
 		}
+	}
+
+	// For each of the functions that tried to be called before we were loaded,
+	// but couldn't be, try calling them again now.
+	this._retry_pre_loaded_calls = function() {
+		for ( var i=0; i<this._pre_loaded_calls.length; i++ ) {
+			this._pre_loaded_calls[i]();
+		}
+		this._pre_loaded_calls = [];
 	}
 
 	// Start load the file contents
@@ -313,6 +327,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 		} else {
 			this.contents = this._original;
 		}
+
+		this._loaded = true;
+		this._retry_pre_loaded_calls();
 
 		this._update_contents();
 		this._show_modified();
@@ -696,6 +713,65 @@ function EditTab(iea, team, project, path, rev, mode) {
             bind(this._error_receive_revisions, this)
         );
     }
+
+	// Sets the selection in the editarea as a line relative position.
+	// If length is -1 this is treated as the end of the line.
+	// If length would push the selection onto multiple lines its value is truncated to the end of the current line.
+	// Note that lines are indexed from 1.
+	this.setSelectionRange = function(line, startIndex, length, retry) {
+		if (line < 1) {
+			log('Cannot set selection before start of file.');
+			logDebug('line: '+line);
+		}
+
+		// can't do anything if we're not loaded!
+		if (!this._loaded) {
+			logDebug('sSR: not loaded yet, setting up callback');
+			this._pre_loaded_calls.push(bind(this.setSelectionRange, this, line, startIndex, length, true));
+			return;
+		}
+		if (this.tab.has_focus() && !retry) {
+			this._capture_code();
+		}
+		var c = this.contents;
+		// normalise newlines to \n, while preserving length
+		c = c.replace('\r\n', ' \n');
+		c = c.replace('\r', '\n');
+
+		// get an array of lines
+		var lines = c.split('\n');
+		if (line > lines.length) {
+			log('Cannot set selection beyond end of file');
+			logDebug('line: '+line);
+			logDebug('#lines: '+lines.length);
+		}
+
+		var start = 0;
+		for ( var i = 0; i < line - 1 && i < lines.length; i++ ) {
+			logDebug('line: '+i+', len: '+lines[i].length+', "'+lines[i]+'"');
+			start += lines[i].length + 1;
+		}
+		logDebug('line: '+i+', len: '+lines[i].length+', "'+lines[i]+'"');
+
+		this._selection_start = start + startIndex;
+
+		var end = this._selection_start;
+		if (length != null) {
+			var endOfLine = this._selection_start + lines[i].length;
+			if (length == -1 || end + length > endOfLine) {
+				end = endOfLine;
+			} else {
+				end += length;
+			}
+		}
+		this._selection_end = end;
+
+		// if we have focus action the selection
+		if (this.tab.has_focus() && !retry) {
+			this._iea.setSelectionRange( 0, 0 );
+			this._iea.setSelectionRange( this._selection_start, this._selection_end );
+		}
+	}
 
 	//initialisation
 	this._init();

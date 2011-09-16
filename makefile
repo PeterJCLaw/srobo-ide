@@ -35,6 +35,8 @@ lint-reference/sr.py: submodules
 config/automagic.ini:
 	/bin/echo -n "pylint.path = " > $@
 	which pylint >> $@
+	/bin/echo -n "python.path = " >> $@
+	which python >> $@
 
 applet/.keystore:
 	keytool -genkeypair -keyalg rsa -alias test-only-applet-key \
