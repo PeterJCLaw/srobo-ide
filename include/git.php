@@ -269,7 +269,7 @@ class GitRepository
 		$s_logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
 		if ($file != null)
 		{
-			$s_logCommand .= ' -- '.escapeshellarg($file);
+			$s_logCommand .= ' --follow -- '.escapeshellarg($file);
 		}
 
 		$log = $this->gitExecute(false, $s_logCommand);
