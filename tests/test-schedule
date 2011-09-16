@@ -12,7 +12,7 @@ TEST basic/proj-manager
 
 TEST utils/mkdir
 
-XFAIL modules/module
+TEST modules/module
 
 TEST auth/single
 SKIP auth/ldap

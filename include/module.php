@@ -6,7 +6,17 @@ abstract class Module
 
 	protected function installCommand($name, $handler)
 	{
-		$this->commandHandlers[$name] = $handler;
+		$baseFunction = $handler;
+		$preconditions = func_get_args();
+		array_splice($preconditions, 0, 2);
+		foreach ($preconditions as $precondition)
+		{
+			$baseFunction = function() use ($baseFunction, $precondition) {
+				call_user_func($precondition);
+				return call_user_func($baseFunction);
+			};
+		}
+		$this->commandHandlers[$name] = $baseFunction;
 	}
 
 	/**
