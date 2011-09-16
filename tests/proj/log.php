@@ -53,13 +53,13 @@ test_nonnull($log, "the log in output was null");
 test_equal(count($log), 3, "the log did not contain exactly three commits");
 
 //check that the log was parsed properly
-$first = $log[1];
-test_equal($first['author'], $expectedCommitter, 'Log used wrong committer');
-test_equal($first['message'], $firstMessage, 'Log contained wrong first message');
+function assertRev($log, $i, $expectedCommitter, $expectedMessage) {
+	test_equal($log[$i]['author'], $expectedCommitter, "Log contained wrong ${i}th committer");
+	test_equal($log[$i]['message'], $expectedMessage, "Log contained wrong ${i}th message");
+}
 
-$second = $log[0];
-test_equal($second['author'], $expectedCommitter, 'Log used wrong committer');
-test_equal($second['message'], $secondMessage, 'Log contained wrong second message');
+assertRev($log, 1, $expectedCommitter, $firstMessage);
+assertRev($log, 0, $expectedCommitter, $secondMessage);
 
 if (is_dir("/tmp/test-repos"))
 {
