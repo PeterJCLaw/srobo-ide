@@ -4,9 +4,9 @@ abstract class Module
 {
 	private $commandHandlers = array();
 
-	protected function installCommand($name, $fn)
+	protected function installCommand($name, $handler)
 	{
-		$this->commandHandlers[$name] = $fn;
+		$this->commandHandlers[$name] = $handler;
 	}
 
 	/**
