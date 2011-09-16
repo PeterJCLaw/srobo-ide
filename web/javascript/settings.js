@@ -452,6 +452,16 @@ SettingsPage.Settings = {
 			optionsCallback: function(){ return projpage._list.projects }
 		}
 	},
+	'save.autoerrorcheck' : {
+		name: 'Syntax check on save',
+		description: 'Whether or not to automatically syntax check a file after you save it.',
+		options: {
+			'default': 'Enabled',
+			type: Setting.Type.single,
+			result: Setting.Options.bool,
+			options: { 'true': 'Enabled', 'false': "Disabled" }
+		}
+	},
 	'team.autoload' : {
 		name: 'Team Autoload',
 		description: 'Whether or not to automatically select a team when you login to the IDE.',
