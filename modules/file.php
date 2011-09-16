@@ -312,6 +312,7 @@ class FileModule extends Module
 		}
 
 		$output->setOutput('log', array_slice($log, $offset, $number));
+		$output->setOutput('pages', ceil(count($log) / $number));
 
 		$authors = array();
 		foreach($originalLog as $rev)

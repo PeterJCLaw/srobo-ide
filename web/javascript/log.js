@@ -10,7 +10,7 @@ function Log(file, project) {
 	this.history = new Array();	//array of log entries returned by server
 	this.file = file;		//the file/directory for which we are interested
 	this.offset = 0;		//which results page we want to retrieve from the server
-	this.overflow = 0;		//stores  total number of results pages (retrieved from server)
+	this.pageCount = 0;		//stores the total number of results pages (retrieved from server)
 
 	//do this only once: add a new tab to the tabbar and link it to this log page
 	this.tab = new Tab("Log: "+this.file.toString());
@@ -61,7 +61,7 @@ Log.prototype._receiveHistory = function(opt, revisions) {
 	//extract data from query response
 	update(this.history, revisions.log);
 	update(this.userList, revisions.authors);
-	this.overflow = 0;
+	this.pageCount = revisions.pages;
 	if(opt == null || opt != 'quiet')
 		status_msg("File history loaded successfully", LEVEL_OK);
 	//present data
@@ -83,7 +83,7 @@ Log.prototype._retrieveHistory = function(opt) {
 		  //this key is to filter by author
 		  user : this.user,
 		  offset : this.offset,
-		  number : 4096
+		  number : 10
 		},
 		bind(this._receiveHistory, this, opt),
 		bind(this._errorReceiveHistory, this)
@@ -106,7 +106,9 @@ Log.prototype._populateList = function() {
 	if(entries <= 0) {
 		$("log-summary").innerHTML = "There are no revisions available for file(s): "+this.file;
 	} else {
-		$("log-summary").innerHTML = "Displaying "+entries+" revision(s) between "+this._histDate(this.history.length-1)+" & "+this._histDate(0)+" Page "+(this.offset+1)+" of "+(this.overflow+1);
+		$("log-summary").innerHTML = "Displaying "+entries+" revision(s) between "
+			+this._histDate(this.history.length-1)+" & "+this._histDate(0)
+			+" Page "+(this.offset+1)+" of "+(this.pageCount);
 	}
 
 	//fill drop down box with authors attributed to file(s)
@@ -153,7 +155,7 @@ Log.prototype._populateList = function() {
 	disconnectAll($("newer"));
 
 	//if older results are available, enable the 'older' button and hook it up
-	if(this.offset < (this.overflow-1)) {
+	if(this.offset < (this.pageCount-1)) {
 		$("older").disabled = false;
 		connect($("older"), 'onclick', bind(this._nextview, this, +1));
 	} else
