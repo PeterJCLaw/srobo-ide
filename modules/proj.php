@@ -169,19 +169,9 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 		$currRev = $input->getInput('start-commit', true);
-
-		if ($currRev == null)
-		{
-			$currRev = $this->projectRepository->getCurrentRevision();
-		}
-
 		$firstRev = $input->getInput('end-commit', true);
 
-		if ($firstRev == null)
-		{
-			$firstRev = $this->projectRepository->getFirstRevision();
-		}
-
+		// if the revisions are null then it just grabs the whole log
 		$output->setOutput('log', $this->projectRepository->log($firstRev, $currRev));
 		return true;
 	}
