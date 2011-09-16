@@ -17,6 +17,24 @@ abstract class AuthBackend
 		return self::$singleton;
 	}
 
+	public static function requireAuthenticated()
+	{
+		$instance = self::getInstance();
+		if (!$instance->getCurrentUser())
+		{
+			throw new Exception('authentication required', E_PERM_DENIED);
+		}
+	}
+
+	public static function requireAdministrator()
+	{
+		$instance = self::getInstance();
+		if (!$instance->isCurrentUserAdmin())
+		{
+			throw new Exception('administrator access required', E_PERM_DENIED);
+		}
+	}
+
 	abstract public function getCurrentUser();
 	abstract public function getCurrentUserTeams();
 	abstract public function isCurrentUserAdmin();
