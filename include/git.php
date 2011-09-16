@@ -241,7 +241,7 @@ class GitRepository
 	}
 
 	/**
-	 * Gets the hash of the most recent revision
+	 * Gets the hash of the oldest revision
 	 */
 	public function getFirstRevision()
 	{
