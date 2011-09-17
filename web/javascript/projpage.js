@@ -85,9 +85,12 @@ ProjPage.prototype._init = function() {
 }
 
 ProjPage.prototype._pollChanged = function(nodes) {
+	logDebug('projpage: Poll changed');
+
 	var projects = keys(nodes.projects);
 	if (projects.length != this._list.projects.length)
 	{
+		// TODO: don't assume that this is a good enough check.
 		this._list.projects = projects;
 		signal(this._list, 'onchange', team);
 	}
