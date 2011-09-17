@@ -236,7 +236,7 @@ class GitRepository
 	 */
 	public function getCurrentRevision()
 	{
-		$rawRevision = $this->gitExecute(true, 'describe --always');
+		$rawRevision = $this->gitExecute(false, 'describe --always');
 		return trim($rawRevision);
 	}
 
