@@ -22,6 +22,9 @@ function ProjPage() {
 	this.flist = null;
 	this.project = "";
 
+	// records the current revision of the project we're looking at
+	this._projectRev = "";
+
 	this.last_updated	= new Date();
 
 	// Member functions (declared below)
@@ -89,7 +92,14 @@ ProjPage.prototype._pollChanged = function(nodes) {
 		signal(this._list, 'onchange', team);
 	}
 
-	// TODO: update the calendar
+	var nodesRev = nodes.projects[this.project];
+	// The project we're looking at has been changed on the server
+	if (nodesRev != this._projectRev) {
+		this._projectRev = nodesRev;
+		// Update the calendar
+		this._calendar.getDates();
+	}
+
 	// TODO: use this to avoid polling for the filelist.
 }
 
