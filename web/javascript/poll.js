@@ -4,15 +4,19 @@
  *  listening for when the data it returns changes.
  * Construction:
  * @param command: The endpoint to poll.
+ * @param args: The arguments to use for the poll.
  * @param delay: The time to wait between polls (default = 7) in seconds.
  * @param retry: How many times to retry a failed poll (default = floor(delay / 10)).
  * Signals:
  *  onchange: The data received from the poll is different to the last time it was received without error.
  *            The data received is included as the first argument to the signal.
  */
-function Poll(command, delay, retry) {
+function Poll(command, args, delay, retry) {
 	// The command to poll
 	this._command = command;
+
+	// The arguments to poll with
+	this._args = args;
 
 	// How long to wait between polls
 	this._delay = delay || 7;
@@ -50,7 +54,7 @@ Poll.prototype._pollResponseError = function(retryNum, nodes) {
 }
 
 Poll.prototype._doPoll = function(retryNum) {
-	IDE_backend_request(this._command, {},
+	IDE_backend_request(this._command, this._args,
 		bind(this._pollResponse, this),
 		bind(this._pollResponseError, this, retryNum)
 	);
