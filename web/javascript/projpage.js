@@ -98,9 +98,8 @@ ProjPage.prototype._pollChanged = function(nodes) {
 		this._projectRev = nodesRev;
 		// Update the calendar
 		this._calendar.getDates();
+		this.flist.mark_dirty();
 	}
-
-	// TODO: use this to avoid polling for the filelist.
 }
 
 ProjPage.prototype.show = function() {
@@ -313,12 +312,10 @@ function ProjFileList() {
 
 	//allow for an auto refresh
 	this._timeout = null;
-	//how often to check to see if it's needed, in seconds
-	this._refresh_delay = 7;
+	//how often to retry an auto update -- this only occurs if an update failed, in seconds
+	this._refresh_delay = 3;
 	//when was it 'born', milliseconds since epoch
 	this._birth = new Date().valueOf();
-	//how old do we let it get before updating
-	this._refresh_freq = 25 * 1000;	//milliseconds
 
 	//prompt when it errors during an update
 	this._err_prompt = null;
@@ -344,6 +341,11 @@ function ProjFileList() {
 	//  - _onclick: The onclick handler for a line in the listing
 	//  - _hide: Hide the filelist
 	//  - _show: Show the filelist
+}
+
+/// Tell the file list that it's out of date.
+ProjFileList.prototype.mark_dirty = function() {
+	this._auto_refresh();
 }
 
 ProjFileList.prototype.change_rev = function(revision) {
@@ -398,7 +400,6 @@ ProjFileList.prototype._auto_refresh = function() {
 
 	//do we want to setup another one?
 	if( projtab.has_focus() && this.selection.length > 0	//on projpage and something's selected
-		|| this._birth + this._refresh_freq > new Date().valueOf()	//already new enough
 		|| 'no_proj' == projpage.flist.refresh(true)	//no project set, direct failure sets another anyway
 	)
 		this._prepare_auto_refresh();
@@ -451,7 +452,6 @@ ProjFileList.prototype._received = function(nodes) {
 	this.selection = new Array();
 	this._birth = new Date().valueOf();
 	log( "filelist received" );
-	this._prepare_auto_refresh();
 	this.robot = false;	//test for robot.py: reset before a new filelist is loaded
 
 	swapDOM( "proj-filelist",
