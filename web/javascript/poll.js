@@ -18,7 +18,7 @@ function Poll(command, delay, retry) {
 	this._delay = delay || 7;
 
 	// How many times to retry if a poll fails
-	this._retryCount = retry || Math.Floor(this._delay / 10);
+	this._retryCount = retry || Math.floor(this._delay / 10);
 
 	// Store the previous data from this poll so we can detect changes
 	this._prevData = null;
