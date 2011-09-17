@@ -17,6 +17,8 @@ function ProjPage() {
 
 	this._iframe = null;
 
+	this._poll = null;
+
 	this.flist = null;
 	this.project = "";
 
@@ -73,7 +75,22 @@ ProjPage.prototype._init = function() {
 	this._on_proj_change( this._selector.project );
 	this.flist.update( this._selector.project, this._selector._team );
 
+	this._poll = new Poll('poll/poll', { team: team });
+	connect(this._poll, 'onchange', bind(this._pollChanged, this));
+
 	this._initted = true;
+}
+
+ProjPage.prototype._pollChanged = function(nodes) {
+	var projects = keys(nodes.projects);
+	if (projects.length != this._list.projects.length)
+	{
+		this._list.projects = projects;
+		signal(this._list, 'onchange', team);
+	}
+
+	// TODO: update the calendar
+	// TODO: use this to avoid polling for the filelist.
 }
 
 ProjPage.prototype.show = function() {
