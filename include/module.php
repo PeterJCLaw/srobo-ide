@@ -4,11 +4,31 @@ abstract class Module
 {
 	private $commandHandlers = array();
 
+	/**
+	 * Installs a command to be run against an enpoint.
+	 * @param name: The endpoint to register against.
+	 * @param handler: The callback to use for the given endpoint.
+	 * @param preconditions...: Additional arguments are taken, in order,
+	 *           as a set of condition callbacks to run before dispatching
+	 *           the handler.
+	 */
 	protected function installCommand($name, $handler)
 	{
-		$baseFunction = $handler;
 		$preconditions = func_get_args();
 		array_splice($preconditions, 0, 2);
+		$this->installCommandArray($name, $handler, $preconditions);
+	}
+
+	/**
+	 * Installs a command to be run against an enpoint.
+	 * @param name: The endpoint to register against.
+	 * @param handler: The callback to use for the given endpoint.
+	 * @param preconditions: A set of condition callbacks to run before dispatching the handler.
+	 *           The callbacks are executed in the order from the array.
+	 */
+	protected function installCommandArray($name, $handler, $preconditions)
+	{
+		$baseFunction = $handler;
 		foreach ($preconditions as $precondition)
 		{
 			$baseFunction = function() use ($baseFunction, $precondition) {
