@@ -61,7 +61,8 @@ ProjPage.prototype._init = function() {
 
 	// Connect up the project management buttons
 	connect("new-project",		'onclick', bind(this.clickNewProject, this));
-	connect("archive-project",	'onclick', bind(this.clickArchiveProject, this));
+//	Archive doesn't do anything yet!
+//	connect("archive-project",	'onclick', bind(this.clickArchiveProject, this));
 	connect("copy-project",		'onclick', bind(this.clickCopyProject, this));
 	connect("check-code",		'onclick', bind(this.clickCheckCode, this));
 //	The simulator isn't ready yet, and this fails anyway:
