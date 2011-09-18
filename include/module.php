@@ -29,6 +29,7 @@ abstract class Module
 	protected function installCommandArray($name, $handler, $preconditions)
 	{
 		$baseFunction = $handler;
+		$preconditions = array_reverse($preconditions);
 		foreach ($preconditions as $precondition)
 		{
 			$baseFunction = function() use ($baseFunction, $precondition) {
