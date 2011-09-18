@@ -107,7 +107,7 @@ function test_exception($callback, $code, $message)
 	try
 	{
 		call_user_func($callback);
-		__test(false, $message . " (did not throw)");
+		__test(false, $message . " (did not throw: $code)");
 	}
 	catch (Exception $e)
 	{
