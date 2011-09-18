@@ -11,14 +11,15 @@ class TestModule extends Module
 		                      array($this, 'precondition'));
 	}
 
-	private function precondition()
+	public function precondition()
 	{
 		$this->preconditionPassed = true;
 	}
 
-	private function body()
+	public function body()
 	{
 		test_true($this->preconditionPassed, 'precondition was not evaluated');
+		return true;
 	}
 }
 
@@ -30,5 +31,5 @@ test_true($mm->moduleExists('test'), "test module was not found");
 
 $module = $mm->getModule('test');
 
-$module->dispatchCommand('test');
+test_true($module->dispatchCommand('test'), 'Command not dispatched!');
 
