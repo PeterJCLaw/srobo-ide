@@ -219,7 +219,14 @@ class ProjModule extends Module
 			mkdir_full($servePath);
 		}
 
-		$this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
+		if ($config->getConfig("fastwrap_enabled")) 
+		{
+			$this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
+		} 
+		else 
+		{
+			rename("$tmpDir/robot.zip", "$servePath/robot.zip");
+		}
 
 		$output->setOutput('url', "$servePath/robot.zip");
 
