@@ -27,5 +27,7 @@ TEST file/simulate/unimplemented
 
 TEST ping/ping
 
+XFAIL switchboard/milestones-data
+
 TEST code-style/shell-var-names
 TEST code-style/no-selenium
