@@ -219,25 +219,26 @@ class ProjModule extends Module
 		$this->completeArchive($tmpDir);
 
 		// ensure that the serve folder exists
-		if (!file_exists($servePath))
+		if (!file_exists($servePath) && !mkdir_full($servePath))
 		{
-			mkdir_full($servePath);
+			// can't do anything if there's no folder for us to use
+			return false;
 		}
 
 		if ($config->getConfig("fastwrap_enabled"))
 		{
-			$this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
+			$ret = $this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
 		}
 		else
 		{
-			rename("$tmpDir/robot.zip", "$servePath/robot.zip");
+			$ret = rename("$tmpDir/robot.zip", "$servePath/robot.zip");
 		}
 
 		$output->setOutput('url', "$servePath/robot.zip");
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
-		return true;
+		return $ret;
 	}
 
 	/**
