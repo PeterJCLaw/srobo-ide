@@ -352,6 +352,7 @@ class FileModule extends Module
 		}
 
 		$output->setOutput("diff", $diff);
+		return true;
 	}
 
 	/**

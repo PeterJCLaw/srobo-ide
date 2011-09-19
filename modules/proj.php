@@ -76,6 +76,7 @@ class ProjModule extends Module
 		$this->projectManager->updateRepository($this->team,
 		                                        $this->projectName,
 		                                        $currentUser);
+		return true;
 	}
 
 	private function verifyTeam()
@@ -94,12 +95,14 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$this->openProject($this->team, $this->projectName, true);
+		return true;
 	}
 
 	public function copyProject()
 	{
 		$input = Input::getInstance();
 		$this->projectManager->copyRepository($this->team, $this->projectName, $input->getInput("new-name"));
+		return true;
 	}
 
 	/**
@@ -117,6 +120,7 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$this->verifyTeam();
 		$output->setOutput('project-info', array());
+		return true;
 	}
 
 	public function commitProject()
@@ -154,6 +158,7 @@ class ProjModule extends Module
 		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
 		$output->setOutput('success', true);
+		return true;
 	}
 
 	public function projectLog()
@@ -232,6 +237,7 @@ class ProjModule extends Module
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
+		return true;
 	}
 
 	/**

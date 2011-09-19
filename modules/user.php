@@ -52,6 +52,7 @@ class UserModule extends Module
 		$settingsManager = Settings::getInstance();
 		$settings = $settingsManager->getSettings($this->username);
 		$output->setOutput('settings', $settings);
+		return true;
 	}
 
 	/**
@@ -64,6 +65,7 @@ class UserModule extends Module
 		$settings = $input->getInput('settings');
 		$settingsManager = Settings::getInstance();
 		$settingsManager->setSettings($this->username, $settings);
+		return true;
 	}
 
 	/**
@@ -85,6 +87,7 @@ class UserModule extends Module
 		{
 			$output->setOutput($k, $v);
 		}
+		return true;
 	}
 
 	/**
@@ -123,6 +126,7 @@ class UserModule extends Module
 
 		$feeds->putFeeds($newfeeds);
 		$output->setOutput('feedurl', $feedurl);
+		return true;
 	}
 
 	/**
@@ -152,6 +156,7 @@ class UserModule extends Module
 			$posts = array_merge($posts, $msgs);
 		}
 		$output->setOutput('posts', $posts);
+		return true;
 	}
 
 }
