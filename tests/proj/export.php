@@ -46,7 +46,8 @@ test_true($proj->dispatchCommand('new'), 'failed to create project');
 
 
 // put
-$robot_data = "from sr import *\n\ndef main():\n	pass\n";
+$robot_print = 'llama';
+$robot_data = "def main():\n	print '$robot_print'\n";
 $input->setInput('path', 'robot.py');
 $input->setInput('data', $robot_data);
 test_true($mm->moduleExists('file'), 'file module does not exist');
@@ -79,4 +80,17 @@ shell_exec('cd /tmp/proj-export/wd/ && unzip foo.zip');
 $beesPath = '/tmp/proj-export/wd/bees';
 test_true(file_exists($beesPath), "Bees ('pyenv' file) doesn't exist at '$beesPath' after unzip.");
 $s = file_get_contents($beesPath);
-test_equal($s, $pyenv_bees_contents, 'file from zip did not match expected file');
+test_equal($s, $pyenv_bees_contents, 'File from outer (pyenv) zip did not match expected file.');
+
+$python = <<<PYTHON
+import os, sys
+if os.path.exists( "robot.zip" ):
+	# robot.zip exists, everyone's happy
+	sys.path.insert(0, os.path.join(os.curdir, "robot.zip"))
+else:
+	raise Exception( "No robot code found." )
+import robot
+robot.main()
+PYTHON;
+$python_ret = shell_exec('cd /tmp/proj-export/wd/ && python -c '.escapeshellarg($python));
+test_equal($robot_print."\n", $python_ret, 'Running the robot code produced the wrong output.');
