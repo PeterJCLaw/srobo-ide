@@ -89,8 +89,7 @@ DiffPage.prototype._diffReady = function () {
 DiffPage.prototype.diff = function (file, rev, code) {
 	this.file = file;
 	this.revhash = rev;
-	this._diff = new Diff($('diff-page-diff'), file, rev);
-	this._diff.makeDiff(code);
+	this._diff = Diff.Create('diff-page-diff', file, rev, code);
 	this._signals.push(connect( this._diff, "ready", bind( this._diffReady, this ) ));
 }
 /* *****	End Facade the Diff objects	**** */
@@ -108,6 +107,21 @@ function Diff(elem, file, rev) {
 
 	// whether or not this is a patch from the log
 	this.logpatch = null;
+}
+
+/**
+ * Static helper for creating diffs in arbitrary locations.
+ * @param elem: The id or element to use as a parent for the diff. Must be a <pre>.
+ * @param file: The file to request the diff of.
+ * @param rev: The revision of the file to get the diff against.
+ * @param code: The code to diff against the revision.
+ *              If null the diff introduced by the revision is shown instead.
+ * @returns: The created diff object.
+ */
+Diff.Create = function(elem, file, rev, code) {
+	var diff = new Diff($(elem), file, rev);
+	diff.makeDiff(code);
+	return diff;
 }
 
 /* *****	Diff loading Code	***** */
