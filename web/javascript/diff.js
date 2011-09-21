@@ -108,7 +108,6 @@ DiffPage.prototype._recieveDiff = function(nodes) {
 
 DiffPage.prototype._errDiff = function(rev, code, nodes) {
 	status_button("Error retrieving diff", LEVEL_WARN, "Retry", bind(this.diff, this, this.file, rev, code));
-	return;
 }
 
 DiffPage.prototype.diff = function(file, rev, code) {
