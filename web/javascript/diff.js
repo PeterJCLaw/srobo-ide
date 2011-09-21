@@ -71,7 +71,7 @@ DiffPage.prototype._close = function() {
 }
 /* *****	End Tab events	***** */
 
-/* *****	Team editing Code	***** */
+/* *****	Diff loading Code	***** */
 DiffPage.prototype._recieveDiff = function(nodes) {
 	replaceChildNodes('diff-page-diff');
 	var difflines = (nodes.diff.replace('\r','')+'\n').split('\n');
@@ -132,4 +132,4 @@ DiffPage.prototype.diff = function(file, rev, code) {
 
 	IDE_backend_request("file/diff", args, recieve, err);
 }
-/* *****	End Diff loading Code 	***** */
+/* *****	End Diff loading Code	***** */
