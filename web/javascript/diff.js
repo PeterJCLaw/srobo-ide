@@ -1,3 +1,4 @@
+/// Diff page that handles showing diffs to users
 function DiffPage() {
 	//hold the tab object
 	this.tab = null;
