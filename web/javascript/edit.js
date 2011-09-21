@@ -413,7 +413,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this._original = this.contents;
 			this.tab.set_label(this.path);
 			this._autosaved = "";
-			if (user.get_setting('save.autoerrorcheck'))
+			if (user.get_setting('save.autoerrorcheck') != false)
 			{
 				errorspage.check(this.path, { alert: true, quietpass: true }, false);
 			}
