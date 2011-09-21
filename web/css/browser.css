@@ -89,13 +89,25 @@
 	margin: 10px;
 	float: left;
 }
-#new-commit-msg {
+#new-commit-msg, #browser-diff {
 	display: block;
 	width: 87.5%;
-	height: 50px;
 	background-color: #DFDBD8;
 	color: #000;
 	margin: 10px 2.5%;
 	border: 5px solid #ffffff;
 	float: left;
+}
+#new-commit-msg {
+	height: 50px;
+}
+#browser-diff {
+	clear: both;
+	margin-bottom: 15px;
+	max-height: 220px;
+	overflow: auto;
+	padding-bottom: 15px;
+}
+#browser-diff > div {
+	margin: 0 12px;
 }
