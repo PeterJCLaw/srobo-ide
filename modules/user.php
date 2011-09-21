@@ -52,6 +52,7 @@ class UserModule extends Module
 		$settingsManager = Settings::getInstance();
 		$settings = $settingsManager->getSettings($this->username);
 		$output->setOutput('settings', $settings);
+		return true;
 	}
 
 	/**
@@ -64,6 +65,7 @@ class UserModule extends Module
 		$settings = $input->getInput('settings');
 		$settingsManager = Settings::getInstance();
 		$settingsManager->setSettings($this->username, $settings);
+		return true;
 	}
 
 	/**
@@ -85,6 +87,7 @@ class UserModule extends Module
 		{
 			$output->setOutput($k, $v);
 		}
+		return true;
 	}
 
 	/**
@@ -121,9 +124,9 @@ class UserModule extends Module
 			}
 		}
 
-		$error = intval(!$feeds->putFeeds($newfeeds));
+		$feeds->putFeeds($newfeeds);
 		$output->setOutput('feedurl', $feedurl);
-		$output->setOutput('error', $error);
+		return true;
 	}
 
 	/**
@@ -131,19 +134,29 @@ class UserModule extends Module
 	 */
 	public function blogPosts()
 	{
-		$this->ensureAuthed();
+		$auth = $this->ensureAuthed();
 		$output = Output::getInstance();
 		$feeds  = Feeds::getInstance();
 
 		$urls = $feeds->getValidURLs();
 
 		$posts = array();
-		foreach ($urls as $url)
+		foreach ($urls as $url => $user)
 		{
-			$msgs = Feeds::getRecentPosts($url, 3);
+			$teams = $auth->getTeams($user);
+			if (count($teams) > 0)
+			{
+				$author = $auth->displayNameForTeam($teams[0]);
+			}
+			else
+			{
+				$author = $user;
+			}
+			$msgs = Feeds::getRecentPosts($url, 3, $author);
 			$posts = array_merge($posts, $msgs);
 		}
 		$output->setOutput('posts', $posts);
+		return true;
 	}
 
 }

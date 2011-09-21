@@ -274,6 +274,7 @@ Switchboard.prototype.receiveMilestones = function(nodes)
 
 
 	/* Add the events */
+	replaceChildNodes("timeline-bar-in");
 	for(var m=0; m < nodes.events.length; m++)
 	{	/* create and position a new <div> for each timeline event */
 		var offset = getOffset(nodes.events[m].date);

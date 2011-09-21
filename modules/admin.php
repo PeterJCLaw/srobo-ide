@@ -63,6 +63,7 @@ class AdminModule extends Module
                                                                        $name);
 
         $output->setOutput('success', true);
+        return true;
     }
 
     /**
@@ -74,6 +75,7 @@ class AdminModule extends Module
         $output = Output::getInstance();
         $feeds  = Feeds::getInstance()->getFeeds();
         $output->setOutput('feeds', $feeds);
+        return true;
     }
 
     /**
@@ -109,6 +111,7 @@ class AdminModule extends Module
             $success = false;
         }
         $output->setOutput('success', $success);
+        return true;
     }
 
     /**

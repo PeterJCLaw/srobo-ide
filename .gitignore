@@ -11,4 +11,4 @@ config/automagic.ini
 notifications
 srobo-ide.deb
 metapackages/deb/srobo-ide.deb
-
+*.pyc

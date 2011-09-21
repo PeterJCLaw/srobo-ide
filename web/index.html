@@ -138,9 +138,10 @@
 			<!-- Log Viewer -->
 			<div class="menu-bar">
 				<ul id="logmenu">
-					<li><button id="revert" title="Click to revert to the selected revision">Revert</button></li>
-					<li><button id="log-diff">View Diff</button></li>
-					<li><button id="log-close">Close</button></li>
+					<li><button id="revert" title="Revert to the selected revision.">Revert To</button></li>
+					<li><button id="log-diff" title="View the changes the selected revision introduces.">View Diff</button></li>
+					<li><button id="log-open" title="View the file at the selected revision.">View</button></li>
+					<li><button id="log-close" title="Close this log view.">Close</button></li>
 					<li class="log-navigate">
 						<button id="older">&lt;&lt;&lt; Older</button>
 						<button id="newer">Newer &gt;&gt;&gt;</button>
@@ -174,10 +175,10 @@
 				<div id="proj-options">
 					<div>Project:<select id="project-select"><option>loading...</option></select></div>
 					<button id="new-project">New Project</button>
-					<button id="archive-project" disabled="disabled">Archive Project</button>
+					<!-- button id="archive-project" disabled="disabled">Archive Project</button -->
 					<button id="copy-project">Copy Project</button>
 					<button id="check-code">Check Code</button>
-					<button id="simulate-project" disabled="disabled">Simulate Project</button>
+					<!-- button id="simulate-project" disabled="disabled">Simulate Project</button -->
 					<button id="export-project">Export Project</button>
 				</div>
 
@@ -248,7 +249,7 @@
 				</ul>
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
-			<em>Click a filename to view the file, click the error output to view more details (advanced)</em>
+			<em>Click a filename to view the file, double click an error to view it in the file.</em>
 			<dl id="errors-listing">
 				<dt class="dummy"></dt>
 				<dd class="dummy"></dd>
@@ -275,7 +276,7 @@
 				</ul>
 			</div>
 			<div id="timeline-window" class="switchboard-window">
-				<strong>Student Robotics Milestones 2010</strong>
+				<strong>Student Robotics Milestones 2012</strong>
 				<div id="timeline-bar-out">
 					<div id="timeline-bar-in">
 					</div>

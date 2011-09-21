@@ -18,6 +18,7 @@ SKIP auth/ldap
 TEST proj/create
 TEST proj/log
 TEST proj/del
+TEST proj/export
 
 TEST file/basic
 TEST file/create
@@ -26,6 +27,8 @@ TEST file/lint
 TEST file/simulate/unimplemented
 
 TEST ping/ping
+
+TEST switchboard/milestones-data
 
 TEST code-style/shell-var-names
 TEST code-style/no-selenium

@@ -12,9 +12,12 @@
 #proj-options {
   text-align: center;
 }
-
 #proj-options div {
-  text-align: left;
+	margin-left: 22px;
+	text-align: left;
+}
+#proj-options button {
+	width: 130px;
 }
 
 #proj-revselect {

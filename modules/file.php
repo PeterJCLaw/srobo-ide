@@ -284,18 +284,13 @@ class FileModule extends Module
 
 		$repo = $this->repository();
 
-		$currRev = $repo->getCurrentRevision();
-		$firstRev = $repo->getFirstRevision();
-
 		$number = $input->getInput('number', true);
 		$offset = $input->getInput('offset', true);
 
 		$number = ($number != null ? $number : 10);
-		$offset = ($offset != null ? $offset : 0);
+		$offset = ($offset != null ? $offset * $number : 0);
 
-		$log = $repo->log($firstRev, $currRev, $path);
-
-		var_dump($log);
+		$log = $repo->log(null, null, $path);
 
 		// if user has been passed we need to filter by author
 		$user = $input->getInput("user", true);
@@ -317,6 +312,7 @@ class FileModule extends Module
 		}
 
 		$output->setOutput('log', array_slice($log, $offset, $number));
+		$output->setOutput('pages', ceil(count($log) / $number));
 
 		$authors = array();
 		foreach($originalLog as $rev)
@@ -344,7 +340,7 @@ class FileModule extends Module
 		$newCode = $input->getInput('code', true);
 
 		// patch from log
-		if ($newCode == null)
+		if ($newCode === null)
 		{
 			$diff = $this->repository()->historyDiff($hash);
 		}
@@ -356,6 +352,7 @@ class FileModule extends Module
 		}
 
 		$output->setOutput("diff", $diff);
+		return true;
 	}
 
 	/**
@@ -377,13 +374,6 @@ class FileModule extends Module
 		$dirName = $splitPath["dirname"];
 		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
 
-		//get the pylint binary
-		$binary = $config->getConfig('pylint.path');
-		if (!$binary)
-		{
-			throw new Exception("pylint is not installed", E_NOT_IMPL);
-		}
-
 		// check for the reference file
 		$dummy = $config->getConfig('pylint.referenceFile');
 		if (!file_exists($dummy))
@@ -396,6 +386,9 @@ class FileModule extends Module
 		//with software because check syntax button always points at an existing file
 		if (file_exists("$base/$path"))
 		{
+			$pylint = new PyLint();
+			$importlint = new ImportLint();
+
 			// copy the reference file in
 			$useAutosave = $input->getInput('autosave', true);
 			$contents = null;
@@ -415,7 +408,7 @@ class FileModule extends Module
 			$s_tmpDir = escapeshellarg($tmpDir);
 			$s_base = escapeshellarg($base);
 			echo "td, base, exec\n";
-			var_dump($td_shell, $base_shell);
+			var_dump($s_tmpDir, $s_base);
 			$res = shell_exec('cp -r '.$s_base.' '.$s_tmpDir);
 			var_dump($res);
 
@@ -425,24 +418,39 @@ class FileModule extends Module
 			var_dump($dummy_copy);
 			copy($dummy, $dummy_copy);
 
-			//setup linting process
-			$dir = $config->getConfig("pylint.dir");
-			if (!is_dir($dir)) {
-				mkdir($dir);
-			}
-			putenv("PYLINTHOME=$dir");
-			$proc = proc_open("$binary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $path",
-				array(0 => array("file", "/dev/null", "r"),
-				      1 => array("pipe", "w"),
-				      2 => array("pipe", "w")),
-				$pipes,
-				$tmpDir.'/'.basename($base)
-			);
+			$working = $tmpDir.'/'.basename($base);
+			$errors = array();
 
-			//get stdout and stderr, then we're done with the process, so close it
-			$stdout = stream_get_contents($pipes[1]);
-			$stderr = stream_get_contents($pipes[2]);
-			$status = proc_close($proc);
+			$importErrors = $importlint->lintFile($working, $path);
+			if ($importErrors === False)
+			{
+				$pyErrors = $pylint->lintFile($working, $path);
+				if ($pyErrors !== False)
+				{
+					$errors = $pyErrors;
+				}
+				else
+				{
+					// Both sets of linting failed, so fail overall.
+					return False;
+				}
+			}
+			else
+			{
+				$errors = $importErrors;
+				$more_files = $importlint->getTouchedFiles();
+
+				$pyErrors = $pylint->lintFiles($working, $more_files);
+				if ($pyErrors !== False)
+				{
+					$errors = array_merge($errors, $pyErrors);
+				}
+				else
+				{
+					// Both sets of linting failed, so fail overall.
+					return False;
+				}
+			}
 
 			// remove the temporary folder
 			delete_recursive($tmpDir);
@@ -452,50 +460,24 @@ class FileModule extends Module
 				$this->repository()->putFile($path, $contents);
 			}
 
-			//status code zero indicates success, so return empty errors
-			if ($status == 0)
+			// Sort & convert to jsonables if needed.
+			// This (latter) step necessary currently since JSONSerializeable doesn't exist yet.
+			if (count($errors) > 0)
 			{
-				$output->setOutput("errors", array());
-				$output->setOutput("messages", array());
-				$output->setOutput("path", $dirName);
-				$output->setOutput("file", $fileName);
-				//$output->setOutput("errors", 0);
-				return true;
-
-			//otherwise, process stderr and stdout, then forward to the user
+				usort($errors, function($a, $b) {
+						if ($a->lineNumber == $b->lineNumber) return 0;
+						return $a->lineNumber > $b->lineNumber ? 1 : -1;
+					});
+				$errors = array_map(function($lm) { return $lm->toJSONable(); }, $errors);
 			}
-			else
-			{
-				$lines = explode("\n", $stdout);
-				$errors = array();
-				$warnings = array();
-				foreach ($lines as $line)
-				{
-					if (stripos($line, "[E"))
-					{
-						$warnings[] = $line;
-						$errors[] = $line;
-					}
-					else if (stripos($line, "[W")) $warnings[] = $line;
-				}
 
-
-				$output->setOutput("errors", $errors);
-				$output->setOutput("messages", $warnings);
-				$output->setOutput("path", $dirName);
-				$output->setOutput("file", $fileName);
-				//$output->setOutput("errors", 1);
-				return true;
-			}
+			$output->setOutput("errors", $errors);
+			return true;
 		}
 		else
 		{
-			$output->setOutput('errors', array("file does not exist"));
-			$output->setOutput("messages", array());
-			$output->setOutput("path", $dirName);
-			$output->setOutput("file", $fileName);
-			//$output->setOutput("errors", 1);
+			$output->setOutput('error', 'file does not exist');
+			return false;
 		}
-		return true;
 	}
 }

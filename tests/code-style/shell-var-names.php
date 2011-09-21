@@ -3,7 +3,8 @@
 $failures = false;
 $fial_lines = 0;
 
-$pattern = '(gitExecute|shell_exec)\s*\(.*\\$.*\)';
+$shellCommands = array('gitExecute', 'shell_exec', 'proc_open');
+$pattern = '('.implode('|', $shellCommands).')\s*\(.*\\$.*\)';
 $s_pattern = escapeshellarg($pattern);
 
 $raw_results = shell_exec('grep -rnE --include=*.php '.$s_pattern.' .');
@@ -21,20 +22,25 @@ function get_parts($line)
 	return array($file, $num, $match);
 }
 
-function get_cmd_line($match)
+function get_cmd_line($match, $commands)
 {
-	$pos = strpos($match, 'shell_exec');
-	if ($pos === FALSE)
+	$pos = FALSE;
+	foreach ($commands as $command)
 	{
-		$pos = strpos($match, 'gitExecute');
-		if ($poa === FALSE)
+		$pos = strpos($match, $command);
+		if ($pos !== FALSE)
 		{
-			// something seriously messed up here!
-			return $match;
+			// match
+			break;
 		}
 	}
+	if ($pos === FALSE)
+	{
+		// something seriously messed up here!
+		return $match;
+	}
 	// add length of the search terms
-	$pos += 10;
+	$pos += strlen($command);
 
 	return substr($match, $pos);
 }
@@ -59,7 +65,7 @@ foreach($results as $result)
 		continue;
 	}
 
-	$args = get_cmd_line($full_match);
+	$args = get_cmd_line($full_match, $shellCommands);
 //	var_dump($args);
 
 	$matches = array();
@@ -71,7 +77,7 @@ foreach($results as $result)
 		if (!startswith($arg, '$s_'))
 		{
 			$local_fail = TRUE;
-			$failures++;
+			$failures += 1;
 		}
 	}
 	if ($local_fail)

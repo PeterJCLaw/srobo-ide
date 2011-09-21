@@ -76,6 +76,7 @@ class ProjModule extends Module
 		$this->projectManager->updateRepository($this->team,
 		                                        $this->projectName,
 		                                        $currentUser);
+		return true;
 	}
 
 	private function verifyTeam()
@@ -94,12 +95,14 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$this->openProject($this->team, $this->projectName, true);
+		return true;
 	}
 
 	public function copyProject()
 	{
 		$input = Input::getInstance();
 		$this->projectManager->copyRepository($this->team, $this->projectName, $input->getInput("new-name"));
+		return true;
 	}
 
 	/**
@@ -117,6 +120,7 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$this->verifyTeam();
 		$output->setOutput('project-info', array());
+		return true;
 	}
 
 	public function commitProject()
@@ -154,6 +158,7 @@ class ProjModule extends Module
 		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
 		$output->setOutput('success', true);
+		return true;
 	}
 
 	public function projectLog()
@@ -169,19 +174,9 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$input = Input::getInstance();
 		$currRev = $input->getInput('start-commit', true);
-
-		if ($currRev == null)
-		{
-			$currRev = $this->projectRepository->getCurrentRevision();
-		}
-
 		$firstRev = $input->getInput('end-commit', true);
 
-		if ($firstRev == null)
-		{
-			$firstRev = $this->projectRepository->getFirstRevision();
-		}
-
+		// if the revisions are null then it just grabs the whole log
 		$output->setOutput('log', $this->projectRepository->log($firstRev, $currRev));
 		return true;
 	}
@@ -224,17 +219,26 @@ class ProjModule extends Module
 		$this->completeArchive($tmpDir);
 
 		// ensure that the serve folder exists
-		if (!file_exists($servePath))
+		if (!file_exists($servePath) && !mkdir_full($servePath))
 		{
-			mkdir_full($servePath);
+			// can't do anything if there's no folder for us to use
+			return false;
 		}
 
-		$this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
+		if ($config->getConfig("fastwrap_enabled"))
+		{
+			$ret = $this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
+		}
+		else
+		{
+			$ret = rename("$tmpDir/robot.zip", "$servePath/robot.zip");
+		}
 
 		$output->setOutput('url', "$servePath/robot.zip");
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
+		return $ret;
 	}
 
 	/**
@@ -250,13 +254,13 @@ class ProjModule extends Module
 		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip $s_tmpname && rm * && mv $s_tmpname ./robot.zip");
 	}
 
-  public function completeArchive($projdir)
-  {
-    ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
-        $projdir = escapeshellarg($projdir);
-    shell_exec("cd $projdir && zip -r robot_t.zip *");
-    shell_exec("mv $projdir/robot_t.zip $projdir/robot.zip");
-  }
+	public function completeArchive($projdir)
+	{
+		ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
+		$s_projdir = escapeshellarg($projdir);
+		shell_exec("cd $s_projdir && zip -r robot_t.zip *");
+		shell_exec("mv $s_projdir/robot_t.zip $s_projdir/robot.zip");
+	}
 
 	private function fastwrap($oldname, $newname)
 	{

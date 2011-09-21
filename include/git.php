@@ -99,15 +99,21 @@ class GitRepository
 	}
 
 	/**
-	 * Execute a command with the specified environment variables
+	 * Execute a git command with the specified environment variables.
+	 * @param working: Whether or not the command should be run from a working checkout.
+	 * @param s_command: The command to run, already escaped for the command line.
+	 * @parm env: An array with the environment variables for the command that will be run.
+	 * @parm catchResult: Whether or not to catch the result in the event of failure.
+	 * @returns: If not catching failures (see catchResult) then either the process's stdout if the call succeeds or False otherwise.
+	 *           If catching failures then an array whose first element is a boolean success indicator, and whose second contains the process's stdout.
 	 */
-	private function gitExecute($working, $command, $env = array(), $catchResult = false)
+	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$base = $working ? $this->working_path : $this->git_path;
-		ide_log("$s_bin $command [cwd = $base]");
-		$buildCommand = "$s_bin $command";
-		$proc = proc_open($buildCommand, array(0 => array('file', '/dev/null', 'r'),
+		ide_log("$s_bin $s_command [cwd = $base]");
+		$s_buildCommand = "$s_bin $s_command";
+		$proc = proc_open($s_buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
 		                                       2 => array('pipe', 'w')),
 		                                 $pipes,
@@ -235,11 +241,11 @@ class GitRepository
 	}
 
 	/**
-	 * Gets the hash of the most recent revision
+	 * Gets the hash of the oldest revision
 	 */
 	public function getFirstRevision()
 	{
-		$revisions = explode("\n", $this->gitExecute(false, 'rev-list --all'));
+		$revisions = explode("\n", trim($this->gitExecute(false, 'rev-list --all')));
 		return $revisions[count($revisions)-1];
 	}
 
@@ -256,14 +262,31 @@ class GitRepository
 
 	/**
 	 * Gets the log between the arguments
+	 * @param oldCommit: The commit to start at.
+	 * @param newCommit: The commit to end at.
+	 * @param file: The file to limit the revisions to.
+	 * @returns: An array of the revisions in the given range.
 	 */
 	public function log($oldCommit, $newCommit, $file=null)
 	{
 		$log = null;
 		$s_logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
+
+		if ($oldCommit !== null)
+		{
+			$s_oldCommit = escapeshellarg($oldCommit);
+			$s_logCommand .= ' '.$s_oldCommit;
+
+			if ($newCommit !== null)
+			{
+				$s_newCommit = escapeshellarg($newCommit);
+				$s_logCommand .= '..'.$s_newCommit;
+			}
+		}
+
 		if ($file != null)
 		{
-			$s_logCommand .= ' -- '.escapeshellarg($file);
+			$s_logCommand .= ' --follow -- '.escapeshellarg($file);
 		}
 
 		$log = $this->gitExecute(false, $s_logCommand);
@@ -680,17 +703,17 @@ class GitRepository
 		$this->gitExecute(true, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
 	}
 
-  public function writePyenvTo($dest)
-  {
-    $pyenv_zip = $this->pyenvPath();
-    $pyenv_zip = escapeshellarg($pyenv_zip);
-    $dest = escapeshellarg($dest);
-    if ($this->shouldAttachPyenv())
-    {
-      ide_log("unzip $pyenv_zip -d $dest");
-      shell_exec("unzip $pyenv_zip -d $dest");
-    }
-  }
+	public function writePyenvTo($dest)
+	{
+		$pyenv_zip = $this->pyenvPath();
+		$s_pyenv_zip = escapeshellarg($pyenv_zip);
+		$s_dest = escapeshellarg($dest);
+		if ($this->shouldAttachPyenv())
+		{
+			ide_log("unzip $pyenv_zip -d $dest");
+			shell_exec("unzip $s_pyenv_zip -d $s_dest");
+		}
+	}
 
 	private function pyenvPath()
 	{
