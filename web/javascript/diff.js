@@ -14,6 +14,12 @@ function DiffPage() {
 
 	//store the diff object that's doing the rendering
 	this._diff = null;
+
+	// store file path
+	this.file = null;
+
+	// store (newer) file revision
+	this.revhash = null;
 }
 
 /* *****	Initialization code	***** */
@@ -81,6 +87,8 @@ DiffPage.prototype._diffReady = function () {
 }
 
 DiffPage.prototype.diff = function (file, rev, code) {
+	this.file = file;
+	this.revhash = rev;
 	this._diff = new Diff($('diff-page-diff'), file, rev);
 	this._diff.makeDiff(code);
 	this._signals.push(connect( this._diff, "ready", bind( this._diffReady, this ) ));
@@ -95,7 +103,7 @@ function Diff(elem, file, rev) {
 	// store file path
 	this.file = file;
 
-	// store newer file revision
+	// store (newer) file revision
 	this.revhash = rev;
 
 	// whether or not this is a patch from the log
