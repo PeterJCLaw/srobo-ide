@@ -4,15 +4,15 @@
 	padding-left: 10px;
 }
 
-#diff-page-diff {
+pre.diff-box {
 	margin: 12px;
 }
-#diff-page-diff .at {
+pre.diff-box .at {
 	color: orange;
 }
-#diff-page-diff .add {
+pre.diff-box .add {
 	color: green;
 }
-#diff-page-diff .remove {
+pre.diff-box .remove {
 	color: red;
 }
