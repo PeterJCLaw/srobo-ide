@@ -102,6 +102,9 @@ Browser.prototype._init = function() {
 // show the diff as part of the commit
 // should only be called for isCommit
 Browser.prototype.showDiff = function(path, rev, code) {
+	if (user.get_setting('save.showdiff') == false) {
+		return null;
+	}
 	var diff = Diff.Create('browser-diff', path, rev, code);
 	this._show_diff = connect(diff, 'ready', partial(showElement, 'browser-diff'));
 	return diff;
