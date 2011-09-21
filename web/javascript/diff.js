@@ -12,14 +12,8 @@ function DiffPage() {
 	//store inited state
 	this._inited = false;
 
-	//store file path
-	this.file = '';
-
-	//store newer file revision
-	this.revhash = -1;
-
-	// whether or not this is a patch from the log
-	this.revhash = null;
+	//store the diff object that's doing the rendering
+	this._diff = null;
 }
 
 /* *****	Initialization code	***** */
@@ -72,9 +66,45 @@ DiffPage.prototype._close = function() {
 }
 /* *****	End Tab events	***** */
 
+/* *****	Facade the Diff objects	**** */
+DiffPage.prototype._diffReady = function () {
+	var description;
+	if (this._diff.logpatch) {
+		description = 'applied by log revision';
+	} else {
+		description = 'from your modifications, based on';
+	}
+	description += ' '+IDE_hash_shrink(this.revhash);
+	$('diff-page-summary').innerHTML = 'Displaying differences on '
+			+this.file+' '+description;
+	this.init();
+}
+
+DiffPage.prototype.diff = function (file, rev, code) {
+	this._diff = new Diff($('diff-page-diff'), file, rev);
+	this._diff.makeDiff(code);
+	this._signals.push(connect( this._diff, "ready", bind( this._diffReady, this ) ));
+}
+/* *****	End Facade the Diff objects	**** */
+
+/// Diff object that handles drawing the diffs in a given location
+function Diff(elem, file, rev) {
+	// the element we're going to put the diff into
+	this._elem = elem;
+
+	// store file path
+	this.file = file;
+
+	// store newer file revision
+	this.revhash = rev;
+
+	// whether or not this is a patch from the log
+	this.logpatch = null;
+}
+
 /* *****	Diff loading Code	***** */
-DiffPage.prototype._recieveDiff = function(nodes) {
-	replaceChildNodes('diff-page-diff');
+Diff.prototype._recieveDiff = function(nodes) {
+	replaceChildNodes(this._elem);
 	var difflines = (nodes.diff.replace('\r','')+'\n').split('\n');
 	var modeclasses = {
 		' ' : '',
@@ -90,38 +120,28 @@ DiffPage.prototype._recieveDiff = function(nodes) {
 		if(line.substring(0,1) == mode) {
 			group += line+'\n';
 		} else {
-			appendChildNodes('diff-page-diff', DIV({'class': modeclasses[mode]}, group));
+			appendChildNodes(this._elem, DIV({'class': modeclasses[mode]}, group));
 			mode = line.substring(0,1);
 			group = line+'\n';
 		}
 	}
-	var description;
-	if (this.logpatch) {
-		description = 'applied by log revision';
-	} else {
-		description = 'from your modifications, based on';
-	}
-	description += ' '+IDE_hash_shrink(this.revhash);
-	$('diff-page-summary').innerHTML = 'Displaying differences on '
-			+this.file+' '+description;
-	this.init();
+	logDebug('diff ready, signalling');
+	signal(this, 'ready');
 }
 
-DiffPage.prototype._errDiff = function(rev, code, nodes) {
-	status_button("Error retrieving diff", LEVEL_WARN, "Retry", bind(this.diff, this, this.file, rev, code));
+Diff.prototype._errDiff = function(code) {
+	status_button("Error retrieving diff", LEVEL_WARN, "Retry", bind(this.diff, this, code));
 }
 
-DiffPage.prototype.diff = function(file, rev, code) {
-	this.file = file;
-	this.revhash = rev;
+Diff.prototype.makeDiff = function(code) {
 	var recieve = bind( this._recieveDiff, this );
-	var err = bind( this._errDiff, this, rev, code );
+	var err = bind( this._errDiff, this, code );
 
 	var args = {
 		   team: team,
-		project: IDE_path_get_project(file),
-		   path: IDE_path_get_file(file),
-		   hash: rev
+		project: IDE_path_get_project(this.file),
+		   path: IDE_path_get_file(this.file),
+		   hash: this.revhash
 	};
 
 	if( code == undefined ) {
