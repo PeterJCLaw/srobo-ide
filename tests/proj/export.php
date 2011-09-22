@@ -30,7 +30,8 @@ $config->override('pyenv_zip', "$test_zip_path/pyenv.zip");
 
 $pyenv_bees_contents = "test string\n";
 file_put_contents($test_zip_path . '/bees', $pyenv_bees_contents);
-shell_exec("cd $test_zip_path && zip pyenv.zip *");
+$s_test_zip_path = escapeshellarg($test_zip_path);
+shell_exec("cd $s_test_zip_path && zip pyenv.zip *");
 
 $auth = AuthBackend::getInstance();
 test_true($auth->authUser('death','face'), 'authentication failed');
@@ -92,5 +93,6 @@ else:
 import robot
 robot.main()
 PYTHON;
-$python_ret = shell_exec('cd /tmp/proj-export/wd/ && python -c '.escapeshellarg($python));
+$s_python = escapeshellarg($python);
+$python_ret = shell_exec('cd /tmp/proj-export/wd/ && python -c '.$s_python);
 test_equal($robot_print."\n", $python_ret, 'Running the robot code produced the wrong output.');
