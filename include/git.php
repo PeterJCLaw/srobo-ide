@@ -298,6 +298,11 @@ class GitRepository
 			$exp     = explode(';', $line);
 			$hash    = array_shift($exp);
 			$author  = array_shift($exp);
+			// begins with the apache user
+			if (strpos($author, getenv('APACHE_RUN_USER')) === 0)
+			{
+				continue;
+			}
 			$time    = (int)array_shift($exp);
 			$message = implode(';', $exp);
 			$results[] = array('hash'    => $hash,
