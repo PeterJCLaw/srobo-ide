@@ -281,7 +281,10 @@ function ErrorFile(name) {
 	}
 
 	this._view_onclick = function(line) {
-		var etab = editpage.edit_file( team, IDE_path_get_project(this.label), this.label, 'HEAD', 'REPO' );
+		var etab = editpage.edit_file( team, IDE_path_get_project(this.label), this.label, null, 'REPO' );
+		if (etab.rev != 'HEAD') {
+			etab.open_revision('HEAD');
+		}
 		if (line != null) {
 			etab.setSelectionRange(line, 0, -1);
 		}
