@@ -204,17 +204,18 @@ class ProjModule extends Module
 			$hash = $this->projectRepository->getCurrentRevision();
 		}
 
-		$servePath = $config->getConfig('zipurl') . "/$this->team/$this->projectName/$hash";
 
-		// get a fresh tmpdir so there can't possibly be clashes.
+		$servePath = $config->getConfig('zipurl') . "/$this->team/$this->projectName/$hash";
+    if (!file_exists($servePath))
+    {
+      mkdir_full($servePath);
+    }
+    // get a fresh tmpdir so there can't possibly be clashes.
 		$tmpDir = tmpdir();
 
 		$this->projectRepository->archiveSourceZip("$tmpDir/robot.zip", $hash);
 
 		$this->unzip($tmpDir);
-		print_r("cows1\n");
-		print_r(is_dir($tmpDir));
-		print_r("cows1\n");
 		$this->pyenvZip($tmpDir, $servePath);
 		$output->setOutput('url', "$servePath/robot.zip");
 
@@ -248,8 +249,7 @@ class ProjModule extends Module
     private function pyenvZip($path, $servePath)
     {
         $s_path = $path;
-        $pyenv = "pyenv/make-zip";
-        print_r("$pyenv $s_path $servePath/robot.zip");
+        $pyenv = "python2.7 pyenv/make-zip";
         shell_exec("$pyenv $s_path $servePath/robot.zip");
     }
 
