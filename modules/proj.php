@@ -206,11 +206,11 @@ class ProjModule extends Module
 
 
 		$servePath = $config->getConfig('zipurl') . "/$this->team/$this->projectName/$hash";
-    if (!file_exists($servePath))
-    {
-      mkdir_full($servePath);
-    }
-    // get a fresh tmpdir so there can't possibly be clashes.
+		if (!file_exists($servePath))
+    		{
+      			mkdir_full($servePath);
+    		}
+   		 // get a fresh tmpdir so there can't possibly be clashes.
 		$tmpDir = tmpdir();
 
 		$this->projectRepository->archiveSourceZip("$tmpDir/robot.zip", $hash);
@@ -237,21 +237,21 @@ class ProjModule extends Module
 		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip $s_tmpname && rm * && mv $s_tmpname ./robot.zip");
 	}
     
-    private function unzip($path)
-    {
-	$s_path = escapeshellarg($path);
-	$tmpname = tempnam(sys_get_temp_dir(), 'robot-');
-	$s_tmpname = escapeshellarg($tmpname);
-	shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip");
-	return $s_path;
-    }
+	private function unzip($path)
+	{
+		$s_path = escapeshellarg($path);
+		$tmpname = tempnam(sys_get_temp_dir(), 'robot-');
+		$s_tmpname = escapeshellarg($tmpname);
+		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip");
+		return $s_path;
+    	}
     
-    private function pyenvZip($path, $servePath)
-    {
-        $s_path = $path;
-        $pyenv = "python2.7 pyenv/make-zip";
-        shell_exec("$pyenv $s_path $servePath/robot.zip");
-    }
+	private function pyenvZip($path, $servePath)
+    	{
+		$s_path = $path;
+		$pyenv = "python2.7 pyenv/make-zip";
+        	shell_exec("$pyenv $s_path $servePath/robot.zip");
+    	}
 
 	public function completeArchive($projdir)
 	{
