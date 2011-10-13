@@ -29,6 +29,7 @@ class SwitchboardModule extends Module
 		$messages = Feeds::getRecentPosts($messagesURL, $messagesLimit);
 		$output->setOutput('feedurl', $messagesURL);
 		$output->setOutput('messages', $messages);
+		return true;
 	}
 
 	/**
@@ -56,5 +57,6 @@ class SwitchboardModule extends Module
 		$output->setOutput('start', $start);
 		$output->setOutput('end', $end);
 		$output->setOutput('events', $events);
+		return true;
 	}
 }

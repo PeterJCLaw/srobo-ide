@@ -18,6 +18,7 @@ SKIP auth/ldap
 TEST proj/create
 TEST proj/log
 TEST proj/del
+TEST proj/export
 
 TEST file/basic
 TEST file/create

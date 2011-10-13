@@ -22,5 +22,6 @@ class InfoModule extends Module
 		}
 
 		Output::getInstance()->setOutput('info', $info);
+		return true;
 	}
 }

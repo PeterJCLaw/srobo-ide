@@ -340,7 +340,7 @@ class FileModule extends Module
 		$newCode = $input->getInput('code', true);
 
 		// patch from log
-		if ($newCode == null)
+		if ($newCode === null)
 		{
 			$diff = $this->repository()->historyDiff($hash);
 		}
@@ -352,6 +352,7 @@ class FileModule extends Module
 		}
 
 		$output->setOutput("diff", $diff);
+		return true;
 	}
 
 	/**

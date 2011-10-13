@@ -136,7 +136,7 @@ Log.prototype._populateList = function() {
 	replaceChildNodes($("log-list"), null);
 	//now populate log list
 	for(var x=0; x <this.history.length; x++) {
-		var logtxt = SPAN(this.history[x].hash+" | "+this.history[x].author+" | "+this._histDate(x));
+		var logtxt = SPAN(IDE_hash_shrink(this.history[x].hash)+" | "+this.history[x].author+" | "+this._histDate(x));
 		var radio = INPUT({'type' : 'radio', 'name' : 'log', 'class' : 'log-radio', 'value' : this.history[x].hash });
 		var label = LABEL( null, radio, logtxt );
 		var commitMsg = DIV({'class' : 'commit-msg'}, this.history[x].message);

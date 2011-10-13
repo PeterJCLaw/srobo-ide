@@ -23,6 +23,7 @@ class TeamModule extends Module
 		else
 			throw new Exception('you are not a member of that team', E_PERM_DENIED);
 		$output->setOutput('team-members', $members);
+		return true;
 	}
 
 	public function listProjects()
@@ -39,5 +40,6 @@ class TeamModule extends Module
 		else
 			throw new Exception('you are not a member of that team', E_PERM_DENIED);
 		$output->setOutput('team-projects', $projects);
+		return true;
 	}
 }

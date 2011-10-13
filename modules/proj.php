@@ -76,6 +76,7 @@ class ProjModule extends Module
 		$this->projectManager->updateRepository($this->team,
 		                                        $this->projectName,
 		                                        $currentUser);
+		return true;
 	}
 
 	private function verifyTeam()
@@ -94,12 +95,14 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		$this->openProject($this->team, $this->projectName, true);
+		return true;
 	}
 
 	public function copyProject()
 	{
 		$input = Input::getInstance();
 		$this->projectManager->copyRepository($this->team, $this->projectName, $input->getInput("new-name"));
+		return true;
 	}
 
 	/**
@@ -117,6 +120,7 @@ class ProjModule extends Module
 		$output = Output::getInstance();
 		$this->verifyTeam();
 		$output->setOutput('project-info', array());
+		return true;
 	}
 
 	public function commitProject()
@@ -154,6 +158,7 @@ class ProjModule extends Module
 		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
 		$output->setOutput('success', true);
+		return true;
 	}
 
 	public function projectLog()
@@ -214,24 +219,26 @@ class ProjModule extends Module
 		$this->completeArchive($tmpDir);
 
 		// ensure that the serve folder exists
-		if (!file_exists($servePath))
+		if (!file_exists($servePath) && !mkdir_full($servePath))
 		{
-			mkdir_full($servePath);
+			// can't do anything if there's no folder for us to use
+			return false;
 		}
 
 		if ($config->getConfig("fastwrap_enabled"))
 		{
-			$this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
+			$ret = $this->fastwrap("$tmpDir/robot.zip", "$servePath/robot.zip");
 		}
 		else
 		{
-			rename("$tmpDir/robot.zip", "$servePath/robot.zip");
+			$ret = rename("$tmpDir/robot.zip", "$servePath/robot.zip");
 		}
 
 		$output->setOutput('url', "$servePath/robot.zip");
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
+		return $ret;
 	}
 
 	/**
