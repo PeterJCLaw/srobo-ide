@@ -239,7 +239,8 @@ ProjPage.prototype.clickExportProject = function() {
 		return false;
 	}
 
-	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true, 'alert':true, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)}, false);
+	var options = {'switch_to':true, 'alert':false, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)};
+	errorspage.check("/"+this.project+"/robot.py", options, false);
 }
 
 ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
@@ -248,13 +249,21 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 		return;
 	}
 
-	//check has failed
+	var exportAnyway = {text:"export anyway", callback:bind( this._exportProject, this )};
+
+	// check has failed
 	if(result == 'checkfail') {
 		var message = "Failed to check code";
 		status_options( message, LEVEL_WARN,
 				[{text:"retry", callback:bind( this.clickExportProject, this )},
-				 {text:"export anyway", callback:bind( this._exportProject, this )}]
+				 exportAnyway]
 		);
+	}
+
+	// user's code has failed
+	if(result == 'codefail') {
+		var message = num_errors + " errors found!";
+		status_options( message, LEVEL_WARN, [exportAnyway]);
 	}
 
 	log('_exportProjectCheckResult:'+message);
