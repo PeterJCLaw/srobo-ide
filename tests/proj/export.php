@@ -28,11 +28,6 @@ $config->override('auth_module', 'single');
 $config->override('modules', array('proj', 'file'));
 $config->override('pyenv_zip', "$test_zip_path/pyenv.zip");
 
-$pyenv_bees_contents = "test string\n";
-file_put_contents($test_zip_path . '/bees', $pyenv_bees_contents);
-$s_test_zip_path = escapeshellarg($test_zip_path);
-shell_exec("cd $s_test_zip_path && zip pyenv.zip *");
-
 $auth = AuthBackend::getInstance();
 test_true($auth->authUser('death','face'), 'authentication failed');
 
@@ -48,7 +43,7 @@ test_true($proj->dispatchCommand('new'), 'failed to create project');
 
 // put
 $robot_print = 'llama';
-$robot_data = "def main():\n	print '$robot_print'\n";
+$robot_data = "print '$robot_print'\n";
 $input->setInput('path', 'robot.py');
 $input->setInput('data', $robot_data);
 test_true($mm->moduleExists('file'), 'file module does not exist');
@@ -78,21 +73,6 @@ var_dump($zip_path);
 test_true(file_exists($zip_path), "Zip doesn't exist at '$zip_path'.");
 test_true(rename($zip_path, '/tmp/proj-export/wd/foo.zip'), "Failed to rename the zip from '$zip_path'.");
 shell_exec('cd /tmp/proj-export/wd/ && unzip foo.zip');
-$beesPath = '/tmp/proj-export/wd/bees';
-test_true(file_exists($beesPath), "Bees ('pyenv' file) doesn't exist at '$beesPath' after unzip.");
-$s = file_get_contents($beesPath);
-test_equal($s, $pyenv_bees_contents, 'File from outer (pyenv) zip did not match expected file.');
 
-$python = <<<PYTHON
-import os, sys
-if os.path.exists( "robot.zip" ):
-	# robot.zip exists, everyone's happy
-	sys.path.insert(0, os.path.join(os.curdir, "robot.zip"))
-else:
-	raise Exception( "No robot code found." )
-import robot
-robot.main()
-PYTHON;
-$s_python = escapeshellarg($python);
-$python_ret = shell_exec('cd /tmp/proj-export/wd/ && python -c '.$s_python);
-test_equal($robot_print."\n", $python_ret, 'Running the robot code produced the wrong output.');
+$python_ret = shell_exec('cd /tmp/proj-export/wd/ && python user/robot.py');
+test_equal($python_ret, $robot_print."\n", 'Running the robot code produced the wrong output.');
