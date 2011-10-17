@@ -204,12 +204,15 @@ class ProjModule extends Module
 			$hash = $this->projectRepository->getCurrentRevision();
 		}
 
-
 		$servePath = $config->getConfig('zipurl') . "/$this->team/$this->projectName/$hash";
-		if (!file_exists($servePath))
+
+		// ensure that the serve folder exists
+		if (!file_exists($servePath) && !mkdir_full($servePath))
 		{
-			mkdir_full($servePath);
+			// can't do anything if there's no folder for us to use
+			return false;
 		}
+
 		// get a fresh tmpdir so there can't possibly be clashes.
 		$tmpDir = tmpdir();
 
