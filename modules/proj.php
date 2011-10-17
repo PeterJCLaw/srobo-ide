@@ -236,9 +236,9 @@ class ProjModule extends Module
 
 	private function pyenvZip($path, $servePath)
 	{
-		$s_path = $path;
-		$pyenv = "python2.7 pyenv/make-zip";
-		shell_exec("$pyenv $s_path $servePath/robot.zip");
+		$s_path = escapeshellarg($path);
+		$s_servePath = escapeshellarg($servePath);
+		shell_exec("python2.7 pyenv/make-zip $s_path $s_servePath/robot.zip");
 	}
 
 	public function completeArchive($projdir)
