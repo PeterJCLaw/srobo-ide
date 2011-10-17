@@ -7,7 +7,7 @@ $shellCommands = array('gitExecute', 'shell_exec', 'proc_open');
 $pattern = '('.implode('|', $shellCommands).')\s*\(.*\\$.*\)';
 $s_pattern = escapeshellarg($pattern);
 
-$raw_results = shell_exec('grep -rnE --include=*.php '.$s_pattern.' .');
+$raw_results = shell_exec('grep -rnE --exclude=*.git* --include=*.php '.$s_pattern.' .');
 
 function get_parts($line)
 {
