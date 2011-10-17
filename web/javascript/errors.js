@@ -137,7 +137,7 @@ function ErrorsPage() {
 		if( info.errors.length > 0 ) {
 			this.load(info, opts, project);
 			if(cb) {
-				opts.callback('codefail', info.errors);
+				opts.callback('codefail', info.errors.length);
 			}
 		} else {
 			if(cb) {
