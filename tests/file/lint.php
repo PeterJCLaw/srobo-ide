@@ -38,11 +38,13 @@ $projectManager->createRepository($input->getInput("team"), $input->getInput("pr
 $repo = $projectManager->getUserRepository(1, 'monkies', 'bees');
 test_true(is_dir($repopath), "created repo did not exist");
 
-$goodData = 'from sr import *
+$goodData = 'import sr
 
-def main():
-	yield query.io[1].input[1].d
-	#beans
+R = sr.Robot()
+print R.usbkey
+print R.startfifo
+print R.mode
+print R.zone
 ';
 
 $input->setInput('path', 'robot.py');
@@ -73,15 +75,15 @@ test_equal($output->getOutput('errors'), array($expectedError), 'Failed to repor
 
 section("other bad file, committed");
 $output->setOutput('errors', null);
-$input->setInput('data', str_replace('query', 'qeury', $goodData));
+$input->setInput('data', str_replace('zone', 'zoen', $goodData));
 $file->dispatchCommand('put');
 $repo->stage($input->getInput('path'));
 $repo->commit('message', 'test-name', 'test@email.tld');
 $file->dispatchCommand('lint');
 $expectedError = new StdClass;
 $expectedError->file = 'robot.py';
-$expectedError->lineNumber = 4;
-$expectedError->message = "Undefined variable 'qeury'";
+$expectedError->lineNumber = 7;
+$expectedError->message = "Instance of 'Robot' has no 'zoen' member";
 $expectedError->level = 'error';
 test_equal($output->getOutput('errors'), array($expectedError), 'Failed to report errors correctly');
 
