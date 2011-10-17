@@ -223,7 +223,7 @@ class ProjModule extends Module
 		$output->setOutput('url', "$servePath/robot.zip");
 
 		// remove our temporary folder so that we don't fill up /tmp
-		//delete_recursive($tmpDir);
+		delete_recursive($tmpDir);
 		return $ret;
 	}
 
