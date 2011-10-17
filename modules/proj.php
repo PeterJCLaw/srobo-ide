@@ -224,21 +224,22 @@ class ProjModule extends Module
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
-		return $ret;
+		return true;
 	}
 
 	private function unzip($path)
 	{
 		$s_path = escapeshellarg($path);
-		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip");
-		return $s_path;
+		$ret = shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip");
+		return $ret;
 	}
 
 	private function pyenvZip($path, $servePath)
 	{
 		$s_path = escapeshellarg($path);
 		$s_servePath = escapeshellarg($servePath);
-		shell_exec("python2.7 pyenv/make-zip $s_path $s_servePath/robot.zip");
+		$ret = shell_exec("python2.7 pyenv/make-zip $s_path $s_servePath/robot.zip");
+		return $ret;
 	}
 
 	public function completeArchive($projdir)
