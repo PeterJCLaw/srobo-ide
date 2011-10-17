@@ -227,24 +227,9 @@ class ProjModule extends Module
 		return $ret;
 	}
 
-	/**
-	 * Extract and then re-zip the git archive.
-	 * For some reason python can't import git's zips.
-	 * @param {path} the path that contains the robot.zip
-	 */
-	private function rezip($path)
-	{
-		$s_path = escapeshellarg($path);
-		$tmpname = tempnam(sys_get_temp_dir(), 'robot-');
-		$s_tmpname = escapeshellarg($tmpname);
-		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip && zip robot.zip * && mv robot.zip $s_tmpname && rm * && mv $s_tmpname ./robot.zip");
-	}
-
 	private function unzip($path)
 	{
 		$s_path = escapeshellarg($path);
-		$tmpname = tempnam(sys_get_temp_dir(), 'robot-');
-		$s_tmpname = escapeshellarg($tmpname);
 		shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip");
 		return $s_path;
 	}
