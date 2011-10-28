@@ -24,7 +24,7 @@ In the mean time here's some basic info about the make targets:
 
 You can run tests on CyanIDE by running `./run-tests`.
 
-Dependancies:
+Dependencies:
  * A web server
  * PHP 5.3
  * SimplePie
