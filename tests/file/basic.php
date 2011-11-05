@@ -89,9 +89,9 @@ test_true(file_exists("$repopath/wut"), 'target did not exist after move');
 test_false(file_exists("$repopath/huh"), 'old file still exists after move');
 $input->setInput('path', '.');
 $file->dispatchCommand('list');
-test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'), 'incorrect file list');
+test_equal($output->getOutput('files'), array('robot.py', 'wut'), 'incorrect file list');
 $file->dispatchCommand('compat-tree');
-test_equal($output->getOutput('files'), array('__init__.py', 'robot.py', 'wut'), 'incorrect file tree');
+test_equal($output->getOutput('files'), array('robot.py', 'wut'), 'incorrect file tree');
 
 if (is_dir("/tmp/test-repos"))
 {

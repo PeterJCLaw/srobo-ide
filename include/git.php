@@ -497,8 +497,7 @@ class GitRepository
 			$fileinfo = $iterator->current();
 
 			if ($filename    == '' ||
-			    $filename[0] == '.' ||
-			    $filename    == '__init__.py')
+			    $filename[0] == '.')
 			{
 				continue;
 			}

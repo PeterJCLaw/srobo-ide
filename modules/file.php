@@ -124,12 +124,12 @@ class FileModule extends Module
 	}
 
 	/**
-	 * Removes __init__.py from the given array
+	 * Removes unwanted files from the given array.
+	 * Previously, this was used to hide __init__.py, but we now show this.
 	 */
 	private function sanitiseFileList($unclean)
 	{
-		$clean = array_filter($unclean, function($var) {return $var['name'] != '__init__.py';});
-		return array_values($clean);
+		return array_values($unclean);
 	}
 
 	/**
