@@ -125,7 +125,7 @@ class FileModule extends Module
 
 	/**
 	 * Removes unwanted files from the given array.
-	 * Previously, this was used to hide __init__.py, but we now show this.
+	 * Previously, this was used to hide __init__.py, but this file is now shown.
 	 */
 	private function sanitiseFileList($unclean)
 	{
