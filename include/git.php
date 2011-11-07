@@ -290,6 +290,7 @@ class GitRepository
 		}
 
 		$log = $this->gitExecute(false, $s_logCommand);
+		$server_user = trim(shell_exec('whoami'));
 
 		$lines = explode("\n", $log);
 		$results = array();
@@ -299,7 +300,7 @@ class GitRepository
 			$hash    = array_shift($exp);
 			$author  = array_shift($exp);
 			// begins with the apache user
-			if (strpos($author, getenv('APACHE_RUN_USER')) === 0)
+			if (strpos($author, $server_user) === 0)
 			{
 				continue;
 			}
