@@ -50,7 +50,7 @@ function createAndAssertFile($path)
 	$config = Configuration::getInstance();
 	$input = Input::getInstance();
 
-	echo "Testing creatin of file '$path' for team ", $input->getInput('team'), ', project ', $input->getInput('project'), ".\n";
+	echo "Testing creation of file '$path' for team ", $input->getInput('team'), ', project ', $input->getInput('project'), ".\n";
 	$input->setInput('path', $path);
 	$repopath = getRepoPath();
 
