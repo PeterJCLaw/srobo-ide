@@ -23,6 +23,7 @@ TEST proj/export
 TEST file/basic
 TEST file/create
 TEST file/create-dirs
+TEST file/del
 TEST file/lint
 TEST file/simulate/unimplemented
 
