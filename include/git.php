@@ -432,9 +432,10 @@ class GitRepository
 		}
 
 		$files = array();
-		$status = $this->gitExecute(true, 'status --porcelain');
+		$status = $this->gitExecute(true, 'status -z --porcelain');
 
-		$all_files = explode("\n", $status);
+		$all_files = explode("\0", $status);
+	//	var_dump($all_files);
 		foreach ($all_files as $file)
 		{
 			$mod = substr($file, 1, 1);
