@@ -114,6 +114,8 @@ class ProjectManager
 		$userRepo = $this->getUserRepository($team, $project, $user);
 		// grab unstaged changes
 		$unstaged = $userRepo->unstagedChanges();
+	//	echo 'unstaged: ';
+	//	var_dump($unstaged);
 		// grab a list of all the folders as this won't be included in the unstagedChanges
 		$folders = $userRepo->listFolders();
 		// read them all
@@ -122,6 +124,8 @@ class ProjectManager
 		{
 			$unstagedFiles[$key] = $userRepo->getFile($key);
 		}
+	//	echo 'unstagedFiles: ';
+	//	var_dump($unstagedFiles);
 		// reset --hard
 		$userRepo->reset();
 		// fetch
@@ -136,7 +140,14 @@ class ProjectManager
 		// rewrite files
 		foreach ($unstagedFiles as $path => $data)
 		{
-			$userRepo->putFile($path, $data);
+			if ($data === FALSE)
+			{
+				$userRepo->removeFile($path);
+			}
+			else
+			{
+				$userRepo->putFile($path, $data);
+			}
 		}
 		// check for conflicts
 		if (empty($conflicts))
