@@ -95,7 +95,7 @@ class GitRepository
 
 	public function unstageAll()
 	{
-		$this->gitExecute("reset");
+		$this->gitExecute(true, "reset");
 	}
 
 	/**
