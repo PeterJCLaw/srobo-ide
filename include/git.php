@@ -179,6 +179,7 @@ class GitRepository
 			shell_exec("cd $s_path ; $s_bin init" . $s_bare);
 			list($commitpath, $hash) = self::populateRepoObejects($path);
 			$s_commitpath = escapeshellarg($commitpath);
+			$s_hash = escapeshellarg($hash);
 			shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
 		}
 		list($commitpath, $hash) = self::populateRepoObejects($path);
