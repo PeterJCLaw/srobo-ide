@@ -405,6 +405,7 @@ class GitRepository
 	{
 		$s_id = escapeshellarg($id);
 		$res = $this->gitExecute(true, 'stash save '.$s_id);
+		$res = trim($res);
 		return $res != 'No local changes to save';
 	}
 
