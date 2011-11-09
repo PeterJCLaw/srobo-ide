@@ -68,25 +68,33 @@ $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read checkouted original file incorrectly');
 test_null($output->getOutput('autosaved'), 'read checkouted autosaved file incorrectly');
 
-section("Move the file and test the result");
+section("Copy the file and test the result");
 $input->setInput('old-path', 'wut');
 $input->setInput('new-path', 'huh');
 $file->dispatchCommand('cp');
 test_true(file_exists("$repopath/wut"), 'old file was deleted during cp');
 test_true(file_exists("$repopath/huh"), 'new file not created during cp');
 test_equal(file_get_contents("$repopath/huh"), 'deathcakes', 'new file had wrong content after cp');
+// commit the result to clean the tree
+$repo->stage('huh');
+$repo->commit("bees","bees","bees@example.com");
+
+section("Remove the original the file and test the result");
 $input->setInput("files", array("wut"));
-$repo->stage("wut");
 $file->dispatchCommand('del');
 test_false(file_exists("$repopath/wut"), 'file not deleted during del');
+// commit the result to clean the tree
+$repo->commit("bees","bees","bees@example.com");
+
+section("Move the copied file back onto the original and test the result");
 $input->setInput('old-path', 'huh');
 $input->setInput('new-path', 'wut');
-$repo->stage("huh");
 $file->dispatchCommand('mv');
-
-$repo->commit("bees","bees","bees@example.com");
 test_true(file_exists("$repopath/wut"), 'target did not exist after move');
 test_false(file_exists("$repopath/huh"), 'old file still exists after move');
+// commit the result to clean the tree
+$repo->commit("bees","bees","bees@example.com");
+
 $input->setInput('path', '.');
 $file->dispatchCommand('list');
 test_equal($output->getOutput('files'), array('robot.py', 'wut'), 'incorrect file list');
