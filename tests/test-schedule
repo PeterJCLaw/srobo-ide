@@ -15,6 +15,7 @@ TEST utils/mkdir
 TEST auth/single
 SKIP auth/ldap
 
+TEST proj/commit
 TEST proj/create
 TEST proj/log
 TEST proj/del
