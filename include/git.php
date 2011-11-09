@@ -173,6 +173,7 @@ class GitRepository
 			$s_source = escapeshellarg($source);
 			shell_exec($s_bin.' clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
 			shell_exec("cd $s_path ; $s_bin config core.sharedRepository all");
+			shell_exec("cd $s_path ; $s_bin config receive.denyNonFastForwards true");
 		}
 		// Make a shiny new master repo
 		else
