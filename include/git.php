@@ -646,12 +646,21 @@ class GitRepository
 	}
 
 	/**
-	 * Stages a file
+	 * Stages changes to a file.
+	 * If the file exists, it is added, otherwise it is removed.
 	 */
 	public function stage($path)
 	{
-		$s_path = escapeshellarg($path);
-		$this->gitExecute(true, "add $s_path");
+		$absPath = $this->working_path . '/' . $path;
+		if (file_exists($absPath))
+		{
+			$s_path = escapeshellarg($path);
+			$this->gitExecute(true, "add $s_path");
+		}
+		else
+		{
+			$this->removeFile($path);
+		}
 	}
 
 	/**
