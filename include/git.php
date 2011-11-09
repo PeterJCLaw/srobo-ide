@@ -172,17 +172,18 @@ class GitRepository
 
 			$s_source = escapeshellarg($source);
 			shell_exec($s_bin.' clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
+			shell_exec("cd $s_path ; $s_bin config core.sharedRepository all");
 		}
 		// Make a shiny new master repo
 		else
 		{
-			shell_exec("cd $s_path ; $s_bin init" . $s_bare);
-			list($commitpath, $hash) = self::populateRepoObejects($path);
+			shell_exec("cd $s_path ; $s_bin init --shared=all" . $s_bare);
+			list($commitpath, $hash) = self::populateRepoObjects($path);
 			$s_commitpath = escapeshellarg($commitpath);
 			$s_hash = escapeshellarg($hash);
 			shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
 		}
-		list($commitpath, $hash) = self::populateRepoObejects($path);
+		list($commitpath, $hash) = self::populateRepoObjects($path);
 		$s_commitpath = escapeshellarg($commitpath);
 		$s_hash = escapeshellarg($hash);
 		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
@@ -219,7 +220,7 @@ class GitRepository
 	/**
 	 * Construct some of the internals of the git repo we're going to use.
 	 */
-	private static function populateRepoObejects($path)
+	private static function populateRepoObjects($path)
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$s_path = escapeshellarg($path);
