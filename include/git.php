@@ -130,7 +130,7 @@ class GitRepository
 			}
 			else
 			{
-				ide_log("\tfailed miserably!");
+				ide_log("\tfailed miserably with exit code $status!");
 				ide_log("-- LOG --");
 				ide_log("$stderr");
 				ide_log("-- END LOG --");
