@@ -172,11 +172,12 @@ class GitRepository
 
 			$s_source = escapeshellarg($source);
 			shell_exec($s_bin.' clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
+			shell_exec("cd $s_path ; $s_bin config core.sharedRepository all");
 		}
 		// Make a shiny new master repo
 		else
 		{
-			shell_exec("cd $s_path ; $s_bin init" . $s_bare);
+			shell_exec("cd $s_path ; $s_bin init --shared=all" . $s_bare);
 			list($commitpath, $hash) = self::populateRepoObjects($path);
 			$s_commitpath = escapeshellarg($commitpath);
 			$s_hash = escapeshellarg($hash);
