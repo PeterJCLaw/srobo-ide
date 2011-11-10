@@ -11,6 +11,7 @@ class GitRepository
 {
 	private $working_path;
 	private $git_path;
+	private $lock_fd;
 
 	public function workingPath()
 	{
@@ -75,6 +76,17 @@ class GitRepository
 			$this->working_path = $path;
 			$this->git_path = "$path/.git";
 		}
+
+		/* Acquire an exclusive lock on the git repository */
+		$lockfile = "$path/.git/cyanide-lock";
+		$this->lock_fd = fopen( $lockfile, "w" );
+		flock( $this->lock_fd, LOCK_EX );
+	}
+
+	public function __destruct()
+	{
+		/* Free our lock on the repository */
+		fclose( $this->lock_fd );
 	}
 
 	/**
