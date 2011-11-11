@@ -63,6 +63,9 @@ test_true($proj->dispatchCommand('commit'), 'Failed commit on top of remote comm
 $newRev = $output->getOutput('commit');
 test_nonequal($currRev, $newRev, 'Failed to create a new commit');
 
+subsection('Empty commit');
+test_false($proj->dispatchCommand('commit'), 'Empty commits should fail');;
+
 $log = $beesRepo->log();
 var_dump($log);
 test_equal(5, count($log), 'Wrong number of commits in the log');

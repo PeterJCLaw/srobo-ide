@@ -478,8 +478,9 @@ class GitRepository
 		                      'GIT_AUTHOR_EMAIL'   => $email,
 		                      'GIT_COMMITER_NAME'  => $name,
 		                      'GIT_COMMITER_EMAIL' => $email);
-		$this->gitExecute(true, "commit -F $s_tmp", $s_committerEnv, true);
+		list($result, $out) = $this->gitExecute(true, "commit -F $s_tmp", $s_committerEnv, true);
 		unlink($tmp);
+		return $result;
 	}
 
 	/**

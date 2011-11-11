@@ -149,15 +149,19 @@ class ProjModule extends Module
 			$this->projectRepository->stage($file);
 		}
 
-		$this->projectRepository->commit($message,
-		                                 $currentUser,
-		                                 "$currentUser@srobo.org");
+		$commitResult = $this->projectRepository->commit($message,
+		                                                 $currentUser,
+		                                                 "$currentUser@srobo.org");
+		// couldn't make the commit
+		if (!$commitResult)
+		{
+			return false;
+		}
 		$conflicts = $this->projectManager->updateRepository($this->team,
 		                                                     $this->projectName,
 		                                                     $currentUser);
 		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
-		$output->setOutput('success', true);
 		return true;
 	}
 
