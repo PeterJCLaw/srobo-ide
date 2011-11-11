@@ -463,7 +463,8 @@ class GitRepository
 	}
 
 	/**
-	 * performs a git commit
+	 * Commits the currently staged changes into the git tree.
+	 * @returns (boolean) whether or not the commit succeeded.
 	 */
 	public function commit($message, $name, $email)
 	{
