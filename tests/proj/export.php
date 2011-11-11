@@ -26,7 +26,6 @@ $config->override('user.default', 'death');
 $config->override('user.default.teams', array(1, 2));
 $config->override('auth_module', 'single');
 $config->override('modules', array('proj', 'file'));
-$config->override('pyenv_zip', "$test_zip_path/pyenv.zip");
 
 $auth = AuthBackend::getInstance();
 test_true($auth->authUser('death','face'), 'authentication failed');
