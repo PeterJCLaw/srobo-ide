@@ -49,9 +49,23 @@ class GitRepository
 	}
 
 	/**
+	 * Constructs a git repo object on the path, will fail if the path isn't a git repository.
+	 * This factory method manages caching of the handles such that threads can't deadlock.
+	 */
+	public static function GetOrCreate($path)
+	{
+		static $handles = array();
+		if (!isset($handles[$path]))
+		{
+			$handles[$path] = new GitRepository($path);
+		}
+		return $handles[$path];
+	}
+
+	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
-	public function __construct($path)
+	private function __construct($path)
 	{
 		if (!file_exists("$path/.git") || !is_dir("$path/.git"))
 		{
@@ -202,7 +216,7 @@ class GitRepository
 		$s_hash = escapeshellarg($hash);
 		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
 		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
-		return new GitRepository($path);
+		return self::GetOrCreate($path);
 	}
 
 	/**
@@ -228,7 +242,7 @@ class GitRepository
 
 		shell_exec("$s_bin clone $s_from $s_to");
 
-		return new GitRepository($to);
+		return self::GetOrCreate($to);
 	}
 
 	/**
