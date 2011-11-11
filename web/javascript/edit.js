@@ -429,7 +429,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	//ajax event handler for saving to server
 	this._error_receive_repo_save = function() {
-		status_button("Error contacting server", LEVEL_ERROR, "retry", bind(this._repo_save, this));
+		status_button("Could not save file", LEVEL_ERROR, "retry", bind(this._repo_save, this));
 	}
 
 	//save file contents to server as new revision
