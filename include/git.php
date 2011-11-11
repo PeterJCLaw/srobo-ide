@@ -85,7 +85,8 @@ class GitRepository
 
 	public function __destruct()
 	{
-		/* Free our lock on the repository */
+		/* Free our lock on the repository - manually since PHP 5.3.2 */
+		flock($this->lock_fd, LOCK_UN);
 		fclose( $this->lock_fd );
 	}
 
