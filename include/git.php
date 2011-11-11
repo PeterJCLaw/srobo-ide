@@ -213,12 +213,12 @@ class GitRepository
 	 */
 	public static function cloneRepository($from, $to)
 	{
-		self::checkPath($path);
+		self::checkPath($to);
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 
 		ide_log("Cloning a repository at $from to $to.");
 
-		if (file_exists($path))
+		if (file_exists($to))
 		{
 			throw new Exception('Path already exists!', E_INTERNAL_ERROR);
 		}
