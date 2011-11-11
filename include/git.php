@@ -472,10 +472,13 @@ class GitRepository
 			$message = ' ';
 		$tmp = tempnam('/tmp', 'ide-');
 		file_put_contents($tmp, $message);
-		$this->gitExecute(true, "commit -F $tmp", array('GIT_AUTHOR_NAME'    => $name,
-		                                                'GIT_AUTHOR_EMAIL'   => $email,
-		                                                'GIT_COMMITER_NAME'  => $name,
-		                                                'GIT_COMMITER_EMAIL' => $email));
+		$s_tmp = escapeshellarg($tmp);
+		// environment variables are safe anyway.
+		$s_committerEnv = array('GIT_AUTHOR_NAME'    => $name,
+		                      'GIT_AUTHOR_EMAIL'   => $email,
+		                      'GIT_COMMITER_NAME'  => $name,
+		                      'GIT_COMMITER_EMAIL' => $email);
+		$this->gitExecute(true, "commit -F $s_tmp", $s_committerEnv, true);
 		unlink($tmp);
 	}
 
