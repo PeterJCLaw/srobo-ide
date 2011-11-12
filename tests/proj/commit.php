@@ -68,7 +68,7 @@ test_false($proj->dispatchCommand('commit'), 'Empty commits should fail');;
 
 $log = $beesRepo->log();
 var_dump($log);
-test_equal(5, count($log), 'Wrong number of commits in the log');
+test_equal(count($log), 5, 'Wrong number of commits in the log');
 
 if (is_dir("/tmp/test-repos"))
 {
