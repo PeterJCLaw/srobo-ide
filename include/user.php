@@ -25,6 +25,10 @@ class UserInfo
 		return self::$instance;
 	}
 
+	public static function makeCommitterEmail($username)
+	{
+		return "$username@srobo.org";
+	}
 
 	public function getInfo($info)
 	{

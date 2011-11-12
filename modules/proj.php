@@ -149,9 +149,10 @@ class ProjModule extends Module
 			$this->projectRepository->stage($file);
 		}
 
+		$currentUserEmail = UserInfo::makeCommitterEmail($currentUser);
 		$commitResult = $this->projectRepository->commit($message,
 		                                                 $currentUser,
-		                                                 "$currentUser@srobo.org");
+		                                                 $currentUserEmail);
 		// couldn't make the commit
 		if (!$commitResult)
 		{
