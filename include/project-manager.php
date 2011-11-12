@@ -131,7 +131,8 @@ class ProjectManager
 		// fetch
 		$userRepo->fetch();
 		// merge
-		$conflicts = $userRepo->merge(array('origin/master'));
+		$email = UserInfo::makeCommitterEmail($user);
+		$conflicts = $userRepo->merge(array('origin/master'), $user, $email);
 		// rewrite folders
 		foreach ($folders as $path)
 		{

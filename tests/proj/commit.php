@@ -69,6 +69,9 @@ test_false($proj->dispatchCommand('commit'), 'Empty commits should fail');;
 $log = $beesRepo->log();
 var_dump($log);
 test_equal(count($log), 5, 'Wrong number of commits in the log');
+$expAuthor = 'bees';
+$expAuthor = $expAuthor.' <'.UserInfo::makeCommitterEmail($expAuthor).'>';
+test_equal($log[0]['author'], $expAuthor, 'Merge commit has wrong author');
 
 if (is_dir("/tmp/test-repos"))
 {

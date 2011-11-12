@@ -327,16 +327,24 @@ class GitRepository
 
 	/**
 	 * Does an n-way merge.
+	 * @param branches: An array of branches to merge.
+	 * @param name: The name of user to use for the merge commit.
+	 * @param email: The email of user to use for the merge commit.
 	 */
-	public function merge($branches)
+	public function merge($branches, $name, $email)
 	{
 		$mergeOptions = array('--no-stat',
 		                      '--quiet');
+		// environment variables are safe anyway.
+		$s_committerEnv = array('GIT_AUTHOR_NAME'    => $name,
+		                      'GIT_AUTHOR_EMAIL'   => $email,
+		                      'GIT_COMMITER_NAME'  => $name,
+		                      'GIT_COMMITER_EMAIL' => $email);
 		list($success, $message) = $this->gitExecute(true, 'merge '
 		                                             . implode(' ', $mergeOptions)
 		                                             . ' '
 		                                             . implode(' ', $branches),
-		                                             array(),	// env
+		                                             $s_committerEnv,	// env
 		                                             true);  	// catchResult
 		if ($success)
 		{
