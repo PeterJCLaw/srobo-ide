@@ -20,6 +20,7 @@ TEST proj/create
 TEST proj/log
 TEST proj/del
 TEST proj/export
+TEST proj/export2
 
 TEST file/basic
 TEST file/create
