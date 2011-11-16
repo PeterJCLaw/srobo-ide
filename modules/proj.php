@@ -209,7 +209,9 @@ class ProjModule extends Module
 			$hash = $this->projectRepository->getCurrentRevision();
 		}
 
+		$projNameEscaped = urlencode($this->projectName);
 		$servePath = $config->getConfig('zipurl') . "/$this->team/$this->projectName/$hash";
+		$serveUrl = $config->getConfig('zipurl') . "/$this->team/$projNameEscaped/$hash";
 
 		// ensure that the serve folder exists
 		if (!file_exists($servePath) && !mkdir_full($servePath))
@@ -225,7 +227,7 @@ class ProjModule extends Module
 
 		$this->unzip($tmpDir);
 		$this->pyenvZip($tmpDir, $servePath);
-		$output->setOutput('url', "$servePath/robot.zip");
+		$output->setOutput('url', "$serveUrl/robot.zip");
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
