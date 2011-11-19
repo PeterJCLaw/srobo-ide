@@ -88,7 +88,7 @@ class ProjectManager
 	public function getMasterRepository($team, $project)
 	{
 		$path = $this->getMasterRepoPath($team, $project);
-		return new GitRepository($path);
+		return GitRepository::GetOrCreate($path);
 	}
 
 	public function getUserRepository($team, $project, $user)
@@ -97,7 +97,7 @@ class ProjectManager
 		// return a handle to an existing checkout
 		if (file_exists($path))
 		{
-			return new GitRepository($path);
+			return GitRepository::GetOrCreate($path);
 		}
 		// the user needs a clone of an existing master
 		else

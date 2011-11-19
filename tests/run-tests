@@ -15,6 +15,19 @@ $line = 0;
 
 $helper = realpath('tests/test-helper.php');
 
+function sig_handler($signo)
+{
+	global $output;
+	if ($signo == SIGINT) // Ctrl+C
+	{
+		echo $output, PHP_EOL;
+		exit();
+	}
+}
+// tick use required as of PHP 4.3.0
+declare(ticks = 1);
+pcntl_signal(SIGINT,  "sig_handler");
+
 foreach ($sched as $value)
 {
 	++$line;
