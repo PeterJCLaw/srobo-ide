@@ -414,18 +414,18 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this._original = this.contents;
 			this.tab.set_label(this.path);
 			this._autosaved = "";
-			this._isNew = false;
-			this.rev = nodes.commit;
-			$("check-syntax").disabled = false;
-			this._update_contents();
+			if (user.get_setting('save.autoerrorcheck') != false)
+			{
+				errorspage.check(this.path, { alert: true, quietpass: true }, false);
+			}
 		} else {
 			status_msg("File "+this.path+" Merge required, please check and try again (Now at "+nodes.commit+")", LEVEL_ERROR);
 			this.contents = nodes.code;
-			this._isNew = false;
-			this.rev = nodes.commit;
-			$("check-syntax").disabled = false;
-			this._update_contents();
 		}
+		this._isNew = false;
+		this.rev = nodes.commit;
+		$("check-syntax").disabled = false;
+		this._update_contents();
 	}
 
 	//ajax event handler for saving to server
