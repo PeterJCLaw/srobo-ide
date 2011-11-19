@@ -912,12 +912,8 @@ function ProjOps() {
 
 	this._mv_success = function(nodes) {
 		logDebug("_mv_success()");
-		if(nodes.success) {
-			status_msg("Move successful!", LEVEL_OK);
-			projpage.flist.refresh();
-		} else {
-			status_msg(nodes.message, LEVEL_ERROR);
-		}
+		status_msg("Move successful!", LEVEL_OK);
+		projpage.flist.refresh();
 	}
 
 	this._mv_cback = function(dest, cmsg) {
