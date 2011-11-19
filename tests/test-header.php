@@ -90,6 +90,16 @@ function test_nonequal($a, $b, $message)
 	__test($a != $b, $message);
 }
 
+function test_existent($path, $message)
+{
+	__test(file_exists($path), "Path '$path' should exist: $message");
+}
+
+function test_nonexistent($path, $message)
+{
+	__test(!file_exists($path), "Path '$path' shouldn't exist: $message");
+}
+
 function test_type($a, $t, $message)
 {
 	$type = gettype($a);
