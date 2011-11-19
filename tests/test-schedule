@@ -27,6 +27,7 @@ TEST file/create
 TEST file/create-dirs
 TEST file/del
 TEST file/lint
+TEST file/mv
 TEST file/simulate/unimplemented
 
 TEST ping/ping
