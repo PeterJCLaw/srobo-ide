@@ -5,7 +5,7 @@
 // 		- "type" 	'isFile' 	- renders file browser with file name box
 // 				'isDir' 	- renders file browser with folder name box
 // 				'isCommit' 	- renders file browser without file view, just commit box
-// 				'isProj' 	- renders file browser without file view, just commit box
+// 				'isProj' 	- renders file browser without file view, just project name box
 
 function Browser(cback, options) {
 	// Public functions:
@@ -38,6 +38,9 @@ function Browser(cback, options) {
 
 	//hold the ident for the escape catcher
 	this._esc_press = null;
+
+	//hold the ident for showing the diff box
+	this._show_diff = null;
 
 	this.fileTree = null;
 	this.callback = cback;
@@ -94,6 +97,17 @@ Browser.prototype._init = function() {
 	} else {
 		$("new-commit-msg").focus();
 	}
+}
+
+// show the diff as part of the commit
+// should only be called for isCommit
+Browser.prototype.showDiff = function(path, rev, code) {
+	if (user.get_setting('save.showdiff') == false) {
+		return null;
+	}
+	var diff = Diff.Create('browser-diff', path, rev, code);
+	this._show_diff = connect(diff, 'ready', partial(showElement, 'browser-diff'));
+	return diff;
 }
 
 Browser.prototype._new_file_keypress = function(ev) {
@@ -297,6 +311,7 @@ Browser.prototype.dirSelected = function(directory, thingsInside, ev) {
 Browser.prototype.display = function() {
 	showElement($("file-browser"));
 	showElement($("grey-out"));
+	hideElement('browser-diff');
 
 	switch(this.type) {
 		case 'isFile':
@@ -319,7 +334,7 @@ Browser.prototype.display = function() {
 			break;
 		case 'isCommit' :
 			$("browser-status").innerHTML = "Please add a commit message before saving";
-			$("browser-title").innerHTML = "Commit Message:";
+			$("browser-title").innerHTML = "Commit Changes:";
 			hideElement("save-path");
 			hideElement("right-pane");
 			hideElement("left-pane");
@@ -354,6 +369,7 @@ Browser.prototype.hide = function() {
 	disconnectAll("new-file-name");
 	disconnectAll("left-pane");
 	disconnectAll("browser-status");
+	disconnect(this._show_diff);
 	disconnect(this._esc_press);
 	hideElement($("file-browser"));
 	hideElement($("grey-out"));

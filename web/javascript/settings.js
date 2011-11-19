@@ -452,6 +452,16 @@ SettingsPage.Settings = {
 			optionsCallback: function(){ return projpage._list.projects }
 		}
 	},
+	'save.showdiff' : {
+			name: 'Show a diff in the commit window',
+			description: 'Whether or not to show a diff in the commit window so you can review your changes before committing them.',
+			options: {
+				'default': 'Enabled',
+				type: Setting.Type.single,
+				result: Setting.Options.bool,
+				options: { 'true': 'Enabled', 'false': "Disabled" }
+			}
+	},
 	'team.autoload' : {
 		name: 'Team Autoload',
 		description: 'Whether or not to automatically select a team when you login to the IDE.',

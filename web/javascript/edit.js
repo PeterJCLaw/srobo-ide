@@ -401,6 +401,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 			var fileBrowser = new Browser(bind(this._receive_new_fname, this), {'type' : 'isFile'});
 		} else {
 			var fileBrowser = new Browser(bind(this._receive_commit_msg, this), {'type' : 'isCommit'});
+			fileBrowser.showDiff(this.path, this.rev, this.contents);
 		}
 	}
 
