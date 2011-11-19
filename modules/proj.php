@@ -251,7 +251,7 @@ class ProjModule extends Module
 
 	public function completeArchive($projdir)
 	{
-		ide_log("archiving: zip -r $projdir/robot.zip $projdir/");
+		ide_log(LOG_INFO, "archiving: zip -r $projdir/robot.zip $projdir/");
 		$s_projdir = escapeshellarg($projdir);
 		shell_exec("cd $s_projdir && zip -r robot_t.zip *");
 		shell_exec("mv $s_projdir/robot_t.zip $s_projdir/robot.zip");
@@ -313,7 +313,7 @@ class ProjModule extends Module
 		{
 			if ($createOnDemand)
 			{
-				ide_log("On-demand creation of project $project for team $team");
+				ide_log(LOG_INFO, "On-demand creation of project $project for team $team");
 				$this->projectManager->createRepository($team, $project);
 			}
 			else

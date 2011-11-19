@@ -138,7 +138,7 @@ class GitRepository
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$base = $working ? $this->working_path : $this->git_path;
-		ide_log("$s_bin $s_command [cwd = $base]");
+		ide_log(LOG_DEBUG, "$s_bin $s_command [cwd = $base]");
 		$s_buildCommand = "$s_bin $s_command";
 		$proc = proc_open($s_buildCommand, array(0 => array('file', '/dev/null', 'r'),
 		                                       1 => array('pipe', 'w'),
@@ -157,10 +157,11 @@ class GitRepository
 			}
 			else
 			{
-				ide_log("\tfailed miserably with exit code $status!");
-				ide_log("-- LOG --");
-				ide_log("$stderr");
-				ide_log("-- END LOG --");
+				ide_log(LOG_ERR, "$s_bin $s_command [cwd = $base]");
+				ide_log(LOG_ERR, "\tfailed miserably with exit code $status!");
+				ide_log(LOG_ERR, "-- LOG --");
+				ide_log(LOG_ERR, "$stderr");
+				ide_log(LOG_ERR, "-- END LOG --");
 			}
 			return false;
 		}
@@ -180,7 +181,7 @@ class GitRepository
 	{
 		self::checkPath($path);
 		$s_bin = escapeshellarg(self::gitBinaryPath());
-		ide_log("Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
+		ide_log(LOG_INFO, "Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
 		if (!is_dir($path))
 		{
 			mkdir_full($path);
@@ -230,7 +231,7 @@ class GitRepository
 		self::checkPath($to);
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 
-		ide_log("Cloning a repository at $from to $to.");
+		ide_log(LOG_INFO, "Cloning a repository at $from to $to.");
 
 		if (file_exists($to))
 		{

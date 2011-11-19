@@ -1,6 +1,7 @@
 TEST basic/sanity
 TEST basic/test-skip
 TEST basic/input
+TEST basic/log
 TEST basic/output
 TEST basic/user
 TEST basic/case-transform

@@ -170,7 +170,7 @@ class ProjectManager
 		}
 		$path = $this->rootProjectPath . "/$team/master/$project.git";
 		$repo = GitRepository::createRepository($path, true);
-		ide_log("Created a project $project for team $team");
+		ide_log(LOG_INFO, "Created a project $project for team $team");
 		return $repo;
 	}
 

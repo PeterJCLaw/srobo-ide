@@ -4,23 +4,14 @@ if (!defined('IN_TESTS'))
 	define('IN_TESTS', 0);
 
 require_once('include/input.php');
+require_once('include/logger.php');
 
-function ide_log($message)
+function ide_log($level, $message)
 {
 	if (IN_TESTS)
-		echo "$message\n";
+		echo "$level|$message\n";
 	else
-	{
-		static $file = null;
-		if ($file === null)
-			$file = fopen('/tmp/ide-log', 'a');
-		$input = Input::getInstance();
-		$rq = $input->getRequestCommand();
-		if (!$rq)
-			$rq = 'none';
-		fwrite($file, "[RQ = $rq] $message\n");
-		fflush($file);
-	}
+		Logger::log($level, $message);
 }
 
 setlocale(LC_CTYPE, 'en_GB.UTF-8');
@@ -28,7 +19,7 @@ setlocale(LC_CTYPE, 'en_GB.UTF-8');
 if (!IN_TESTS)
 	set_error_handler(function ($errno, $error) {
 		if ($errno <= error_reporting())
-			ide_log("PHP error: $error");
+			ide_log(LOG_ERR, "PHP error: $error");
 	});
 
 require_once('include/feeds.php');
