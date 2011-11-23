@@ -31,6 +31,6 @@ class Logger
 	public static function isLogging($level)
 	{
 		$loggingLevel = Configuration::getInstance()->getConfig('log_level');
-		return $loggingLevel >=	 $level;
+		return $loggingLevel >= $level;
 	}
 }
