@@ -209,7 +209,7 @@ class ProjModule extends Module
 			$hash = $this->projectRepository->getCurrentRevision();
 		}
 
-		$projNameEscaped = urlencode($this->projectName);
+		$projNameEscaped = rawurlencode($this->projectName);
 		$servePath = $config->getConfig('zipurl') . "/$this->team/$this->projectName/$hash";
 		$serveUrl = $config->getConfig('zipurl') . "/$this->team/$projNameEscaped/$hash";
 

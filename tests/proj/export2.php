@@ -59,7 +59,7 @@ function createAndExportProject($name)
 	var_dump($zip_path);
 	test_false(strpos($zip_path, '?'), 'Zip path must not contain \'?\' to be exported successfully');
 	$parsed = parse_url($zip_path);
-	$path = urldecode($parsed['path']);
+	$path = rawurldecode($parsed['path']);
 	test_true(file_exists($path), "Zip path must survive being parsed by a webserver, and then exist. Original: '$zip_path', Parsed: '$path'.");
 	// TODO: actually try http-GET-ing the file?
 }
