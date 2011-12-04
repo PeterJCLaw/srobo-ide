@@ -669,10 +669,7 @@ ProjList.prototype.update = function(team) {
 }
 
 ProjList.prototype._grab_list = function(team) {
-	if(typeof team == 'string')
-		team = parseInt(team);
-	if(typeof team == 'number')
-		this._team = team;
+	this._team = team;
 
 	//kill the error message, if it exists
 	if( this._err_prompt != null ) {

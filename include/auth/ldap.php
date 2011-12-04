@@ -35,7 +35,7 @@ class LDAPAuth extends SecureTokenAuth
 			$groupNamePrefix = $config->getConfig("ldap.team.prefix");
 			if (stripos($group["cn"], $groupNamePrefix) === 0)
 			{
-				$teams[] = (int)substr($group["cn"], strlen($groupNamePrefix));
+				$teams[] = substr($group["cn"], strlen($groupNamePrefix));
 			}
 		}
 
