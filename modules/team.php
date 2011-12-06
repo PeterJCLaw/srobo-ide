@@ -8,37 +8,40 @@ class TeamModule extends Module
 		$this->installCommand('list-projects', array($this, 'listProjects'));
 	}
 
-	public function listMembers()
+	/**
+	 * Gets the requested team ID, or throws a suitable exception if something went wrong.
+	 */
+	private static function getRequestTeamID()
 	{
 		$authModule = AuthBackend::getInstance();
 		if ($authModule->getCurrentUser() == null)
 			throw new Exception('not authenticated', E_PERM_DENIED);
 		$input  = Input::getInstance();
-		$output = Output::getInstance();
 		$team = $input->getInput('team');
 		if ($team == null)
 			throw new Exception('need a team', E_MALFORMED_REQUEST);
 		if (in_array($team, $authModule->getCurrentUserTeams()))
-			$members = array($team);
+			return $team;
 		else
 			throw new Exception('you are not a member of that team', E_PERM_DENIED);
+	}
+
+	public function listMembers()
+	{
+		$team = self::getRequestTeamID();
+		// TODO: implement this!
+		$members = array($team);
+		$output = Output::getInstance();
 		$output->setOutput('team-members', $members);
 		return true;
 	}
 
 	public function listProjects()
 	{
-		$authModule = AuthBackend::getInstance();
+		$team = self::getRequestTeamID();
 		$manager    = ProjectManager::getInstance();
-		$input      = Input::getInstance();
 		$output     = Output::getInstance();
-		$team = $input->getInput('team');
-		if ($team == null)
-			throw new Exception('need a team', E_MALFORMED_REQUEST);
-		if (in_array($team, $authModule->getCurrentUserTeams()))
-			$projects = $manager->listRepositories($team);
-		else
-			throw new Exception('you are not a member of that team', E_PERM_DENIED);
+		$projects = $manager->listRepositories($team);
 		$output->setOutput('team-projects', $projects);
 		return true;
 	}
