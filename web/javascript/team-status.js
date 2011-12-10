@@ -145,16 +145,15 @@ TeamStatus.prototype._receivePutStatus = function(nodes)
 {
 	if (nodes.error)
 	{
-		this._errorGetStatus();
+		this._errorPutStatus();
 		return;
 	}
-	this._setFields(nodes);
+	this._prompt = status_msg("Saved team status successfully", LEVEL_OK);
 }
 TeamStatus.prototype._errorPutStatus = function()
 {
-	this._setFields({});
 	this._prompt = status_msg("Unable to save team status", LEVEL_ERROR);
-	logDebug("TeamStatus: Failed to retrieve info");
+	logDebug("TeamStatus: Failed to put info");
 	return;
 }
 TeamStatus.prototype._putStatus = function()
