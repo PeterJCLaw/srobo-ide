@@ -68,7 +68,7 @@ class TeamModule extends Module
 		foreach (self::$statusTextFields as $field)
 		{
 			$value = $status->getDraftOrLive($field);
-			$output->setOutput($field, $v);
+			$output->setOutput($field, $value);
 		}
 		return true;
 	}
