@@ -79,6 +79,7 @@ class TeamModule extends Module
 	private function saveStatus($status)
 	{
 		$user = AuthBackend::getInstance()->getCurrentUser();
+		$saved = $status->save($user);
 		if (!$saved)
 		{
 			$output = Output::getInstance();
