@@ -132,8 +132,8 @@ TeamStatus.prototype._errorGetStatus = function()
 }
 TeamStatus.prototype.GetStatus = function()
 {
-	logDebug("TeamStatus: Retrieving blog feed");
-	IDE_backend_request("team/status", {},
+	logDebug("TeamStatus: Retrieving team status");
+	IDE_backend_request("team/status-get", { team: team },
 	                    bind(this._receiveGetStatus, this),
 	                    bind(this._errorGetStatus, this));
 }

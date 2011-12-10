@@ -6,6 +6,9 @@ class TeamModule extends Module
 	{
 		$this->installCommand('list-members', array($this, 'listMembers'));
 		$this->installCommand('list-projects', array($this, 'listProjects'));
+		$this->installCommand('status-get', array($this, 'getStatus'));
+		$this->installCommand('status-put', array($this, 'putStatus'));
+		$this->installCommand('status-put-image', array($this, 'putStatusImage'));
 	}
 
 	/**
@@ -44,5 +47,93 @@ class TeamModule extends Module
 		$projects = $manager->listRepositories($team);
 		$output->setOutput('team-projects', $projects);
 		return true;
+	}
+
+	private static function loadStatus($team)
+	{
+		$settingspath = Configuration::getIsntance()->getConfig('settingspath');
+		$statusPath = "$settingspath/$team-status.json";
+		$status = json_decode(file_get_contents($statusPath));
+		return $status;
+	}
+
+	public function getStatus()
+	{
+		$output = Output::getInstance();
+		$team = self::getRequestTeamID();
+		$status = new TeamStatus($team);
+
+		$textFields = array('blog', 'description');
+		foreach ($textFields as $field)
+		{
+			$value = $status->getDraftOrLive($field);
+			$output->setOutput($field, $v);
+		}
+		return true;
+	}
+
+	/**
+	 * Helper method for saving the status as the current user,
+	 *  and outputting a suitable message if it fails.
+	 */
+	private function saveStatus($status)
+	{
+		$user = AuthBackend::getInstance()->getCurrentUser();
+		if (!$saved)
+		{
+			$output = Output::getInstance();
+			$output->setOutput('error', 'Unable to save team status');
+		}
+		return $saved;
+	}
+
+	/**
+	 * Handle the users upload of a new image for the dashboard.
+	 * This needs to be a separate method since file uploads are a pain.
+	 */
+	public function putStatusImage()
+	{
+		$input = Input::getInstance();
+		$team = self::getRequestTeamID();
+
+		$uploadLocation = Configuration::getIsntance()->getConfig('team.status_image_dir');
+		if (!is_dir($uploadLocation))
+		{
+			mkdir_full($uploadLocation);
+		}
+
+		$uploadPath = "$uploadLocation/$team-image";
+		$moved = move_uploaded_file_id('team-status-image', $uploadPath);
+
+		if (!$moved)
+		{
+			$output = Output::getIsntance();
+			$output->setOutput('error', 'Unable to save uploaded image');
+			return false;
+		}
+
+		$status = new TeamStatus($team);
+		$status->newImage();
+		return $this->saveStatus($status);
+	}
+
+	public function putStatus()
+	{
+		$input = Input::getInstance();
+		$team = self::getRequestTeamID();
+		$status = new TeamStatus($team);
+
+		// Handle the simple fields
+		$textFields = array('feed', 'description', 'name');
+		foreach ($textFields as $field)
+		{
+			$value = $input->getInput($field, true);
+			if ($value !== null)
+			{
+				$status->setDraft($field, $value);
+			}
+		}
+
+		return $this->saveStatus($status);
 	}
 }
