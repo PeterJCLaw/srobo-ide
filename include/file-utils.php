@@ -66,19 +66,18 @@ function move_uploaded_file_id($id, $move_to_base)
 {
 	if (!isset($_FILES[$id]))
 	{
-		return FALSE;
+		throw new Exception("File '$id' was not uploaded.", E_MALFORMED_REQUEST);
 	}
 
 	$file = $_FILES[$id];
 	if ($file['size'] === 0)
 	{
-		return FALSE;
+		throw new Exception("File '$id' was empty.", E_MALFORMED_REQUEST);
 	}
 
 	if (($error = $file['error']) != UPLOAD_ERR_OK)
 	{
-		return FALSE;
-//		throw new Exception("Error in file $id: $error.");
+		throw new Exception("Error in file '$id': $error.", E_MALFORMED_REQUEST);
 	}
 
 	$name = $file['name'];
@@ -91,8 +90,7 @@ function move_uploaded_file_id($id, $move_to_base)
 	$tmp_name = $file['tmp_name'];
 	if (!move_uploaded_file($tmp_name, $move_to_base))
 	{
-		return FALSE;
-//		throw new Exception("Failed to move uploaded file $tmp_name to $move_to_base");
+		throw new Exception("Failed to move uploaded file '$tmp_name' to '$move_to_base'", E_INTERNAL_ERROR);
 	}
 	return true;
 }
