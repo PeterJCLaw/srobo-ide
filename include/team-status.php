@@ -16,6 +16,7 @@ class TeamStatus
 		}
 		$this->statusPath = "$basePath/$team-status.json";
 		$this->load();
+//		echo '$this->statusData: '; var_dump($this->statusData);
 	}
 
 	public function load()
@@ -23,7 +24,7 @@ class TeamStatus
 		if (file_exists($this->statusPath))
 		{
 			$raw = file_get_contents($this->statusPath);
-			$this->statusData = json_decode($data);
+			$this->statusData = json_decode($raw);
 		}
 		else
 		{
@@ -33,7 +34,7 @@ class TeamStatus
 
 	public function getDraftOrLive($name)
 	{
-		if (isset($this->statusData->$name) && isset($this->statusData->$name->draft))
+		if (isset($this->statusData->$name))
 		{
 			if (isset($this->statusData->$name->draft))
 			{
