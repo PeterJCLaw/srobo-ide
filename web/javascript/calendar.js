@@ -133,6 +133,10 @@ Calendar.prototype._errorReceiveDates = function() {
 
 //get month of logs messages from server
 Calendar.prototype.getDates = function() {
+	if (IDE_string_empty(this.proj)) {
+		return;
+	}
+
 	IDE_backend_request("proj/log", {team: this.team,
 	                                 project: this.proj},
 	                                 bind(this._receiveDates, this),
