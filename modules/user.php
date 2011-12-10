@@ -8,9 +8,6 @@ class UserModule extends Module
 	{
 		$this->installCommand('info', array($this, 'getInfo'));
 		$this->installCommand('settings-put', array($this, 'saveSettings'));
-		$this->installCommand('blog-feed', array($this, 'getBlogFeed'));
-		$this->installCommand('blog-feed-put', array($this, 'setBlogFeed'));
-		$this->installCommand('blog-posts', array($this, 'blogPosts'));
 	}
 
 	/**
@@ -67,96 +64,4 @@ class UserModule extends Module
 		$settingsManager->setSettings($this->username, $settings);
 		return true;
 	}
-
-	/**
-	 * Gets the user's blog feed, set on the switchboard page
-	 */
-	public function getBlogFeed()
-	{
-		$this->ensureAuthed();
-		$output = Output::getInstance();
-		$feeds  = Feeds::getInstance();
-
-		$userfeed  = $feeds->findFeed('user', $this->username);
-		if ($userfeed == null)
-		{
-			return;
-		}
-
-		foreach ($userfeed as $k => $v)
-		{
-			$output->setOutput($k, $v);
-		}
-		return true;
-	}
-
-	/**
-	 * Sets the user's blog feed, for the switchboard page
-	 */
-	public function setBlogFeed()
-	{
-		$this->ensureAuthed();
-		$input  = Input::getInstance();
-		$output = Output::getInstance();
-		$feeds  = Feeds::getInstance();
-
-		$feedurl = $input->getInput('feedurl');
-
-		$userfeed  = $feeds->findFeed('user', $this->username);
-
-		if ($userfeed == null)
-		{
-			$userfeed = new StdClass();
-		}
-
-		$userfeed->url     = $feedurl;
-		$userfeed->user    = $this->username;
-		$userfeed->valid   = false;
-		$userfeed->checked = false;
-
-		$newfeeds[] = $userfeed;
-		$feedsList = $feeds->getFeeds();
-		foreach ($feedsList as $feed)
-		{
-			if ($feed->user != $this->username)
-			{
-				$newfeeds[] = $feed;
-			}
-		}
-
-		$feeds->putFeeds($newfeeds);
-		$output->setOutput('feedurl', $feedurl);
-		return true;
-	}
-
-	/**
-	 * Get all the recent blog posts from the validated user blog feeds
-	 */
-	public function blogPosts()
-	{
-		$auth = $this->ensureAuthed();
-		$output = Output::getInstance();
-		$feeds  = Feeds::getInstance();
-
-		$urls = $feeds->getValidURLs();
-
-		$posts = array();
-		foreach ($urls as $url => $user)
-		{
-			$teams = $auth->getTeams($user);
-			if (count($teams) > 0)
-			{
-				$author = $auth->displayNameForTeam($teams[0]);
-			}
-			else
-			{
-				$author = $user;
-			}
-			$msgs = Feeds::getRecentPosts($url, 3, $author);
-			$posts = array_merge($posts, $msgs);
-		}
-		$output->setOutput('posts', $posts);
-		return true;
-	}
-
 }

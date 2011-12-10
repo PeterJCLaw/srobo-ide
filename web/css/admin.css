@@ -39,3 +39,15 @@
 .invalid-feed-url {
 	background-color: #FF6666 !important;
 }
+
+.switchboard-window {
+	border-width: 1px;
+	border-color: #BBBBBB;
+	border-style: none none solid none;
+	padding: 5px;
+	overflow: hidden;
+	margin-bottom: 5px;
+}
+.switchboard-window > strong {
+	font-size: 2em;
+}

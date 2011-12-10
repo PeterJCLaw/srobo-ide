@@ -23,7 +23,6 @@ if (!IN_TESTS)
 			ide_log(LOG_ERR, "PHP error: $error");
 	});
 
-require_once('include/feeds.php');
 require_once('include/errors.php');
 require_once('include/auth/tokenstrategy/cookiestrategy.php');
 require_once('include/auth/tokenstrategy/iostrategy.php');
