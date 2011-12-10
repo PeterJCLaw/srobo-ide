@@ -54,3 +54,45 @@ function tmpdir($dir = null, $prefix = 'ide')
 	mkdir($file);
 	return $file;
 }
+
+/**
+ * Helper that moves an uploaded file, preserving the original extension.
+ * @param id: The id to look for in the $_FILES array.
+ * @param move_to_base: The base path to move the uploaded file to.
+ *                      The original file extension (including a dot) will be appended.
+ * @returns: The resulting name of the file, or FALSE if it failed.
+ */
+function move_uploaded_file_id($id, $move_to_base)
+{
+	if (!isset($_FILES[$id]))
+	{
+		return FALSE;
+	}
+
+	$file = $_FILES[$id];
+	if ($file['size'] === 0)
+	{
+		return FALSE;
+	}
+
+	if (($error = $file['error']) != UPLOAD_ERR_OK)
+	{
+		return FALSE;
+//		throw new Exception("Error in file $id: $error.");
+	}
+
+	$name = $file['name'];
+	if (($pos = strrpos($name, '.')) !== FALSE)
+	{
+		$ext = substr($name, $pos);
+		$move_to_base .= $ext;
+	}
+
+	$tmp_name = $file['tmp_name'];
+	if (!move_uploaded_file($tmp_name, $move_to_base))
+	{
+		return FALSE;
+//		throw new Exception("Failed to move uploaded file $tmp_name to $move_to_base");
+	}
+	return true;
+}
