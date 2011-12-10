@@ -98,15 +98,33 @@ class TeamModule extends Module
 		$input = Input::getInstance();
 		$team = self::getRequestTeamID();
 
-		$uploadLocation = Configuration::getInstance()->getConfig('team.status_image_dir');
+		$uploadLocation = Configuration::getInstance()->getConfig('team.status_images.dir');
 		if (!is_dir($uploadLocation))
 		{
 			mkdir_full($uploadLocation);
 		}
 
 		$uploadPath = "$uploadLocation/$team-image";
-		move_uploaded_file_id('team-status-image-input', $uploadPath);
+		$path = move_uploaded_file_id('team-status-image-input', $uploadPath);
 
+		$height = Configuration::getInstance()->getConfig('team.status_images.height');
+		$width = Configuration::getInstance()->getConfig('team.status_images.width');
+
+		// grab a resource of the image resized
+		$image = new ResizableImage($path);
+		$newImageResource = $image->createResizedImage($width, $height);
+
+		// remove the original
+		unlink($path);
+
+		// save, with .png extension
+		$path = path_change_extension($path, 'png');
+		imagepng($newImageResource, $path);
+
+		// free up the resource.
+		imagedestroy($newImageResource);
+
+		// update the status store
 		$status = new TeamStatus($team);
 		$status->newImage();
 		return $this->saveStatus($status);

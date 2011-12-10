@@ -84,7 +84,7 @@ function path_change_extension($path, $ext)
  * @param id: The id to look for in the $_FILES array.
  * @param move_to_base: The base path to move the uploaded file to.
  *                      The original file extension (including a dot) will be appended.
- * @returns: The resulting name of the file, or FALSE if it failed.
+ * @returns: The resulting name of the file.
  */
 function move_uploaded_file_id($id, $move_to_base)
 {
@@ -116,5 +116,5 @@ function move_uploaded_file_id($id, $move_to_base)
 	{
 		throw new Exception("Failed to move uploaded file '$tmp_name' to '$move_to_base'", E_INTERNAL_ERROR);
 	}
-	return true;
+	return $move_to_base;
 }
