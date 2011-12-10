@@ -124,7 +124,7 @@ class TeamModule extends Module
 		$status = new TeamStatus($team);
 
 		// Handle the simple fields
-		$textFields = array('feed', 'description', 'name');
+		$textFields = array('feed', 'url', 'description', 'name');
 		foreach ($textFields as $field)
 		{
 			$value = $input->getInput($field, true);

@@ -16,7 +16,7 @@ function TeamStatus()
 	this._signals.push(connect( 'team-status-save', 'onclick', bind(this.saveStatus, this)));
 
 	// list of text fields
-	this._fields = ['name', 'description', 'feed'];
+	this._fields = ['name', 'description', 'feed', 'url'];
 }
 
 /* *****	Initialization code	***** */
