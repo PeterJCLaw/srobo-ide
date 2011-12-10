@@ -2,6 +2,8 @@
 
 class TeamModule extends Module
 {
+	static $statusTextFields = array('feed', 'url', 'description', 'name');
+
 	public function __construct()
 	{
 		$this->installCommand('list-members', array($this, 'listMembers'));
@@ -63,8 +65,7 @@ class TeamModule extends Module
 		$team = self::getRequestTeamID();
 		$status = new TeamStatus($team);
 
-		$textFields = array('blog', 'description');
-		foreach ($textFields as $field)
+		foreach (self::$statusTextFields as $field)
 		{
 			$value = $status->getDraftOrLive($field);
 			$output->setOutput($field, $v);
@@ -125,8 +126,7 @@ class TeamModule extends Module
 		$status = new TeamStatus($team);
 
 		// Handle the simple fields
-		$textFields = array('feed', 'url', 'description', 'name');
-		foreach ($textFields as $field)
+		foreach (self::$statusTextFields as $field)
 		{
 			$value = $input->getInput($field, true);
 			if ($value !== null)
