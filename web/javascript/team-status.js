@@ -14,6 +14,9 @@ function TeamStatus()
 
 	// connect up the submit event for the form
 	this._signals.push(connect( 'team-status-save', 'onclick', bind(this.saveStatus, this)));
+
+	// list of text fields
+	this._fields = ['name', 'description', 'feed'];
 }
 
 /* *****	Initialization code	***** */
@@ -84,80 +87,45 @@ TeamStatus.prototype._close = function()
 }
 /* *****	End Tab events		***** */
 
-/* *****    RSS feed url submit code	***** */
-TeamStatus.prototype._receiveSubmitFeed = function(nodes)
+/* *****	Field Handling		***** */
+TeamStatus.prototype._setFields = function(data)
 {
-	if(nodes.error > 0 )
+	for (var i=0; i < this._fields.length; i++)
 	{
-		this._errorSubmitFeed();
+		var field = this._fields[i];
+		$('team-status-'+field+'-input').value = data[field] || '';
 	}
-	else
-	{
-		this._prompt = status_msg("Blog feed updated", LEVEL_OK);
-		document.user_feed_form.user_feed_input.value = nodes.feedurl;
-	}
+}
 
-	if(nodes.valid > 0)
-	{
-		setStyle("team-feed-url", {'background-color': '#98FF4F'});
-		this.GetBlogPosts();
-	}
-	else
-	{
-		setStyle("team-feed-url", {'background-color': '#FFFFFF'});
-	}
-}
-TeamStatus.prototype._errorSubmitFeed = function()
+TeamStatus.prototype._getFields = function()
 {
-	this._prompt = status_msg("Unable to update blog feed", LEVEL_ERROR);
-	document.user_feed_form.user_feed_input.value = "";
+	var data = {};
+	for (var i=0; i < this._fields.length; i++)
+	{
+		var field = this._fields[i];
+		var value = $('team-status-'+field+'-input').value;
+		if (value != null && !/^\s*$/.test(value))	// not null or whitespace
+		{
+			data[field] = value;
+		}
+	}
+	return data;
 }
-TeamStatus.prototype.SubmitFeed = function()
-{
-	logDebug("TeamStatus: Setting blog feed");
-	setStyle("team-feed-url", {'background-color': '#FFFFFF'});
-	IDE_backend_request(
-		'user/blog-feed-put',
-		{'feedurl':document.user_feed_form.user_feed_input.value},
-		bind( this._receiveSubmitFeed, this),
-		bind( this._errorSubmitFeed, this)
-	);
-	return false;
-}
-/* *****   End RSS feed url submit code ***** */
+/* *****	End Field Handling		***** */
 
 /* *****	Team status fetch code	***** */
-
 TeamStatus.prototype._receiveGetStatus = function(nodes)
 {
-	//test for error - bail
-	if(nodes.error > 0)
+	if (nodes.error)
 	{
 		this._errorGetStatus();
 		return;
 	}
-	else
-	{
-		//update url on page
-		$('team-feed-url').value = nodes.feed.url || '';
-	}
-
-	if(nodes.feed.checked > 0 && nodes.valid > 0)	//it's been checked and found valid
-	{
-		setStyle("team-feed-url", {'background-color': '#98FF4F'});
-	}
-	else if(nodes.feed.checked > 0)	//if it's been found invalid: mark it red
-	{
-		setStyle("team-feed-url", {'background-color': '#FF6666'});
-	}
-	else	//if it's not been checked: leave it white
-	{
-		setStyle("team-feed-url", {'background-color': '#FFFFFF'});
-	}
+	this._setFields(nodes);
 }
 TeamStatus.prototype._errorGetStatus = function()
 {
-	$('team-feed-url').value = '';
+	this._setFields({});
 	this._prompt = status_msg("Unable to get team status", LEVEL_ERROR);
 	logDebug("TeamStatus: Failed to retrieve info");
 	return;
@@ -173,7 +141,34 @@ TeamStatus.prototype.GetStatus = function()
 
 /* *****    Team Status save code	***** */
 
+TeamStatus.prototype._receivePutStatus = function(nodes)
+{
+	if (nodes.error)
+	{
+		this._errorGetStatus();
+		return;
+	}
+	this._setFields(nodes);
+}
+TeamStatus.prototype._errorPutStatus = function()
+{
+	this._setFields({});
+	this._prompt = status_msg("Unable to get team status", LEVEL_ERROR);
+	logDebug("TeamStatus: Failed to retrieve info");
+	return;
+}
+TeamStatus.prototype._putStatus = function()
+{
+	var data = this._getFields();
+	data.team = team;
+	logDebug("TeamStatus: saving team status");
+	IDE_backend_request("team/status-put", data,
+	                    bind(this._receivePutStatus, this),
+	                    bind(this._errorPutStatus, this));
+}
 TeamStatus.prototype.saveStatus = function()
 {
+	// TODO: up-to-date checking?
+	this._putStatus();
 }
 /* *****    End Team Status save code	***** */
