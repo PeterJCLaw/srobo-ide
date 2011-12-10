@@ -53,7 +53,7 @@ class TeamModule extends Module
 
 	private static function loadStatus($team)
 	{
-		$settingspath = Configuration::getIsntance()->getConfig('settingspath');
+		$settingspath = Configuration::getInstance()->getConfig('settingspath');
 		$statusPath = "$settingspath/$team-status.json";
 		$status = json_decode(file_get_contents($statusPath));
 		return $status;
@@ -98,7 +98,7 @@ class TeamModule extends Module
 		$input = Input::getInstance();
 		$team = self::getRequestTeamID();
 
-		$uploadLocation = Configuration::getIsntance()->getConfig('team.status_image_dir');
+		$uploadLocation = Configuration::getInstance()->getConfig('team.status_image_dir');
 		if (!is_dir($uploadLocation))
 		{
 			mkdir_full($uploadLocation);
@@ -109,7 +109,7 @@ class TeamModule extends Module
 
 		if (!$moved)
 		{
-			$output = Output::getIsntance();
+			$output = Output::getInstance();
 			$output->setOutput('error', 'Unable to save uploaded image');
 			return false;
 		}
