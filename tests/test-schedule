@@ -12,6 +12,7 @@ TEST basic/git
 TEST basic/proj-manager
 
 TEST utils/mkdir
+TEST utils/path
 
 TEST auth/single
 SKIP auth/ldap

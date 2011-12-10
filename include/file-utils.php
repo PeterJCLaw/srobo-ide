@@ -55,6 +55,30 @@ function tmpdir($dir = null, $prefix = 'ide')
 	return $file;
 }
 
+function path_get_extension($path)
+{
+	if (($pos = strrpos($path, '.')) !== FALSE)
+	{
+		$ext = substr($path, $pos + 1);
+		return $ext;
+	}
+	return null;
+}
+
+function path_change_extension($path, $ext)
+{
+	if (($curExt = path_get_extension($path)) !== null)
+	{
+		$path = substr($path, 0, -1 * strlen($curExt));
+	}
+	else
+	{
+		$path .= '.';
+	}
+	$path .= $ext;
+	return $path;
+}
+
 /**
  * Helper that moves an uploaded file, preserving the original extension.
  * @param id: The id to look for in the $_FILES array.
