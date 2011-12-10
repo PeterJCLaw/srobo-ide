@@ -88,22 +88,25 @@ TeamStatus.prototype._close = function()
 /* *****	End Tab events		***** */
 
 /* *****	Field Handling		***** */
+TeamStatus.prototype._getField = function(name)
+{
+	return $('team-status-'+name+'-input');
+}
 TeamStatus.prototype._setFields = function(data)
 {
 	for (var i=0; i < this._fields.length; i++)
 	{
 		var field = this._fields[i];
-		$('team-status-'+field+'-input').value = data[field] || '';
+		this._getField(field).value = data[field] || '';
 	}
 }
-
 TeamStatus.prototype._getFields = function()
 {
 	var data = {};
 	for (var i=0; i < this._fields.length; i++)
 	{
 		var field = this._fields[i];
-		var value = $('team-status-'+field+'-input').value;
+		var value = this._getField(field).value;
 		if (!IDE_string_empty(value))	// not null or whitespace
 		{
 			data[field] = value;
