@@ -299,8 +299,10 @@
 				<tr id="team-status-image">
 					<th>Robot Image:</th>
 					<td>
-						<form target="upload-helper" id="team-status-image-upload-form" method="post" enctype="multipart/form-data">
-							<input type="file" name="team-status-image" />
+						<form action="./upload.php" target="upload-helper" id="team-status-image-upload-form" method="POST" enctype="multipart/form-data">
+							<input type="file" name="team-status-image-input" id="team-status-image-input" />
+							<input type="hidden" name="_command" id="team-status-image-command" value="" />
+							<input type="hidden" name="team" id="team-status-image-team" value="" />
 						</form>
 					</td>
 				</tr>
@@ -353,7 +355,7 @@
 
 	</div> <!-- end of "page" div -->
 
-	<iframe id="upload-helper" src="./upload.php" style="display: none;"></iframe>
+	<iframe id="upload-helper" name="upload-helper" style="display:none;"></iframe>
 
 	<iframe id="robot-zip" style="display:none;"></iframe>
 

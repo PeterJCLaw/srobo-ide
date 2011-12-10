@@ -105,7 +105,7 @@ class TeamModule extends Module
 		}
 
 		$uploadPath = "$uploadLocation/$team-image";
-		move_uploaded_file_id('team-status-image', $uploadPath);
+		move_uploaded_file_id('team-status-image-input', $uploadPath);
 
 		$status = new TeamStatus($team);
 		$status->newImage();

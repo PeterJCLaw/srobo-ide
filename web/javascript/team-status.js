@@ -31,6 +31,7 @@ TeamStatus.prototype.init = function()
 		this._signals.push(connect( this.tab, "onfocus", bind( this._onfocus, this ) ));
 		this._signals.push(connect( this.tab, "onblur", bind( this._onblur, this ) ));
 		this._signals.push(connect( this.tab, "onclickclose", bind( this._close, this ) ));
+		this._signals.push(connect( 'upload-helper', "onload", bind( this._uploadHelperLoad, this ) ));
 		tabbar.add_tab( this.tab );
 
 		/* Initialise indiviual page elements */
@@ -142,6 +143,35 @@ TeamStatus.prototype.GetStatus = function()
 }
 /* *****    End Team Status fetch code	***** */
 
+/* *****    Hidden iframe Wrapping	***** */
+TeamStatus.prototype._uploadHelperLoad = function(ev)
+{
+	var frame = ev.src();
+	// If you serve json to Firefox then it shows you a download box, so we need to serve it as text.
+	// This means that it then wraps it in <pre>, which we need to get the contents of.
+	var content = frame.contentWindow.document.body.textContent;
+	logDebug('iframe content: '+content);
+	IDE_handle_backend_response(content, {},
+	                            bind(this._receivePutStatusImage, this),
+	                            bind(this._errorPutStatusImage, this));
+}
+TeamStatus.prototype._receivePutStatusImage = function(nodes)
+{
+	if (nodes.error)
+	{
+		this._errorPutStatus();
+		return;
+	}
+	this._prompt = status_msg("Saved robot image successfully", LEVEL_OK);
+}
+TeamStatus.prototype._errorPutStatusImage = function()
+{
+	this._prompt = status_msg("Unable to save robot image", LEVEL_ERROR);
+	logDebug("TeamStatus: Failed to upload robot image");
+	return;
+}
+/* *****    End Hidden iframe Wrapping	***** */
+
 /* *****    Team Status save code	***** */
 
 TeamStatus.prototype._receivePutStatus = function(nodes)
@@ -172,5 +202,14 @@ TeamStatus.prototype.saveStatus = function()
 {
 	// TODO: up-to-date checking?
 	this._putStatus();
+
+	var imageInput = this._getField('image');
+	if (!IDE_string_empty(imageInput.value))	// not null or whitespace
+	{
+		// TODO: verify that it looks like an image
+		$('team-status-image-command').value = 'team/status-put-image';
+		$('team-status-image-team').value = team;
+		$('team-status-image-upload-form').submit();
+	}
 }
 /* *****    End Team Status save code	***** */
