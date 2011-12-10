@@ -104,7 +104,7 @@ TeamStatus.prototype._getFields = function()
 	{
 		var field = this._fields[i];
 		var value = $('team-status-'+field+'-input').value;
-		if (value != null && !/^\s*$/.test(value))	// not null or whitespace
+		if (!IDE_string_empty(value))	// not null or whitespace
 		{
 			data[field] = value;
 		}
