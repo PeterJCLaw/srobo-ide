@@ -105,14 +105,7 @@ class TeamModule extends Module
 		}
 
 		$uploadPath = "$uploadLocation/$team-image";
-		$moved = move_uploaded_file_id('team-status-image', $uploadPath);
-
-		if (!$moved)
-		{
-			$output = Output::getInstance();
-			$output->setOutput('error', 'Unable to save uploaded image');
-			return false;
-		}
+		move_uploaded_file_id('team-status-image', $uploadPath);
 
 		$status = new TeamStatus($team);
 		$status->newImage();
