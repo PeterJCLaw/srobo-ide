@@ -50,7 +50,7 @@ class TeamStatus
 
 	public function newImage()
 	{
-		$dirty['image'] = true;
+		$this->dirty['image'] = true;
 	}
 
 	/**
@@ -63,7 +63,7 @@ class TeamStatus
 		if (!isset($this->statusData->$name->draft) || $this->statusData->$name->draft != $value)
 		{
 			$this->statusData->$name->draft = $value;
-			$dirty[$name] = true;
+			$this->dirty[$name] = true;
 		}
 	}
 
@@ -71,10 +71,10 @@ class TeamStatus
 	{
 		foreach ($this->statusData as $item => $values)
 		{
-			if (isset($dirty[$item]) && $dirty[$item])
+			if (isset($this->dirty[$item]) && $this->dirty[$item])
 			{
-				$values['uid'] = $user;
-				$values['date'] = date('Y-m-d');
+				$values->uid = $user;
+				$values->date = date('Y-m-d');
 			}
 		}
 
