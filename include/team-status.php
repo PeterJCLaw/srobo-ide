@@ -6,10 +6,16 @@ class TeamStatus
 	private $statusData;
 	private $dirty = array();
 
-	public function __construct($team)
+	private static function getStatusDir()
 	{
 		$config = Configuration::getInstance();
-		$basePath = $config->getConfig('team.status_dir');
+		$statusDir = $config->getConfig('team.status_dir');
+		return $statusDir;
+	}
+
+	public function __construct($team)
+	{
+		$basePath = self::getStatusDir();
 		if (!is_dir($basePath))
 		{
 			mkdir_full($basePath);
@@ -76,6 +82,18 @@ class TeamStatus
 		$data = json_encode($this->statusData);
 		$ret = file_put_contents($this->statusPath, $data);
 		return (bool)$ret;
+	}
+
+	public static function listAllTeams()
+	{
+		$basePath = self::getStatusDir();
+		$names = glob($basePath.'/*-status.json');
+		$baseLen = strlen($basePath);
+		$names = array_map(function($name) use($baseLen) {
+			return substr($name, $baseLen + 1, -12);
+		}, $names);
+
+		return $names;
 	}
 
 	/**

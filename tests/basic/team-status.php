@@ -57,5 +57,23 @@ test_equal($data->$field->draft, $content, 'Wrong content in first draft field')
 test_equal($data->$field->uid, $user, 'Wrong user set for first saved field');
 test_equal($data->$field->date, $field1Date, 'No date set for first saved field');
 
+section('All teams listing');
+$teams = array($team, 'bacon', 'foo ?');
+
+foreach ($teams as $team) {
+	// create the file
+	$status = new TeamStatus($team);
+	$status->setDraft('bees', 'bees');
+	$status->save('no-one');
+}
+
+$teamsListed = TeamStatus::listAllTeams();
+
+// need to sort them else they don't compare the same
+sort($teams);
+sort($teamsListed);
+
+test_equal($teamsListed, $teams, "Returned the wrong list of teams");
+
 // teardown.
 delete_recursive($workDir);
