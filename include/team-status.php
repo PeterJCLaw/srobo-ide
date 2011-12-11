@@ -36,11 +36,11 @@ class TeamStatus
 	{
 		if (isset($this->statusData->$name))
 		{
-			if (isset($this->statusData->$name->draft))
+			if (!empty($this->statusData->$name->draft))
 			{
 				return $this->statusData->$name->draft;
 			}
-			elseif (isset($this->statusData->$name->live))
+			elseif (!empty($this->statusData->$name->live))
 			{
 				return $this->statusData->$name->live;
 			}
