@@ -83,6 +83,15 @@ class TeamStatus
 		return (bool)$ret;
 	}
 
+	/**
+	 * Gets the path to the file that we're using.
+	 * Intended only for use by the tests.
+	 */
+	public function getStatusPath()
+	{
+		return $this->statusPath;
+	}
+
 	public function clearStatus()
 	{
 		@unlink($this->statusPath);
