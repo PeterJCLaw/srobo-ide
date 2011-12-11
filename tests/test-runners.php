@@ -19,6 +19,7 @@ abstract class BaseRunner implements ITestRunner
 	 */
 	protected function runCommand($s_command, $s_inFile)
 	{
+//		echo 'About to run: '; var_dump($s_command);
 		$process = proc_open("$s_command 2>&1", array(0 => array('file', $s_inFile, 'r'),
 	                                                  1 => array('pipe', 'w'),
 	                                                  2 => array('file', '/dev/null', 'w')),
@@ -35,7 +36,7 @@ abstract class BaseRunner implements ITestRunner
 
 	static $runners = array('php' => 'PHPRunner', 'py' => 'PythonRunner');
 
-	private static function realpath($name)
+	protected static function realpath($name)
 	{
 		return realpath('tests/'.$name);
 	}
@@ -44,9 +45,9 @@ abstract class BaseRunner implements ITestRunner
 	{
 		foreach (self::$runners as $ext => $runnerClass)
 		{
-			if ($realpath = self::realpath($name.'.'.$ext))
+			if (self::realpath($name.'.'.$ext))
 			{
-				return new $runnerClass($realpath);
+				return new $runnerClass($name);
 			}
 		}
 		return new FailRunner($name);
@@ -58,7 +59,17 @@ class PHPRunner extends BaseRunner
 	public function run($inFile)
 	{
 		$helper = realpath('tests/test-helper.php');
-		return parent::runCommand("php $helper $this->name", $inFile);
+		$name = parent::realpath($this->name);
+		return parent::runCommand("php $helper $name", $inFile);
+	}
+}
+
+class PythonRunner extends BaseRunner
+{
+	public function run($inFile)
+	{
+		$name = str_replace('/', '.', $this->name);
+		return parent::runCommand("python -m unittest --buffer tests.$name", $inFile);
 	}
 }
 
