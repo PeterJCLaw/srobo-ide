@@ -57,6 +57,44 @@ test_equal($data->$field->draft, $content, 'Wrong content in first draft field')
 test_equal($data->$field->uid, $user, 'Wrong user set for first saved field');
 test_equal($data->$field->date, $field1Date, 'No date set for first saved field');
 
+section('Items for review');
+
+$items = $status->itemsForReview();
+$expectedItems = array($field => $content, $field2 => $content2);
+
+test_equal($items, $expectedItems, "Wrong items in list of things to review");
+
+subsection('No review of things already live');
+
+$data->$field->live = $data->$field->draft;
+// save modified data
+file_put_contents($status->getStatusPath(), json_encode($data));
+
+// relaod
+$status->load();
+$items = $status->itemsForReview();
+$expectedItems = array($field2 => $content2);
+
+test_equal($items, $expectedItems, "Wrong items in list of things to review after making one live");
+
+subsection('Needs review');
+
+$needsReview = $status->needsReview();
+test_true($needsReview, "When not all items are live should claim to need review");
+
+$data->$field2->draft = null;
+// save modified data
+file_put_contents($status->getStatusPath(), json_encode($data));
+
+// relaod
+$status->load();
+$items = $status->itemsForReview();
+
+test_equal($items, array(), "When all items are live should be nothing to review");
+
+$needsReview = $status->needsReview();
+test_false($needsReview, "When all items are live should not claim to need review");
+
 section('All teams listing');
 $teams = array($team, 'bacon', 'foo ?');
 

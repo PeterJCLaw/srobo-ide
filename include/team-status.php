@@ -84,6 +84,34 @@ class TeamStatus
 		return (bool)$ret;
 	}
 
+	/**
+	 * Gets a dictionary of the items that need reviewing against their
+	 *  current draft value.
+	 * Returns an empty array if the team's content is fully reviewed.
+	 */
+	public function itemsForReview()
+	{
+		$items = array();
+		foreach ($this->statusData as $item => $values)
+		{
+			// TODO: should this also && !empty($values->draft) ?
+			if ($values->live != $values->draft)
+			{
+				$items[$item] = $values->draft;
+			}
+		}
+		return $items;
+	}
+
+	/**
+	 * Convenience function, wrapping itemsForReview.
+	 */
+	public function needsReview()
+	{
+		$items = $this->itemsForReview();
+		return !empty($items);
+	}
+
 	public static function listAllTeams()
 	{
 		$basePath = self::getStatusDir();
