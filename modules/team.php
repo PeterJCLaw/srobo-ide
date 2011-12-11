@@ -126,7 +126,8 @@ class TeamModule extends Module
 
 		// update the status store
 		$status = new TeamStatus($team);
-		$status->newImage();
+		$md5 = md5_file($path);
+		$status->setDraft('image', $md5);
 		return $this->saveStatus($status);
 	}
 

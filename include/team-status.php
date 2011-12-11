@@ -48,11 +48,6 @@ class TeamStatus
 		return null;
 	}
 
-	public function newImage()
-	{
-		$this->dirty['image'] = true;
-	}
-
 	/**
 	 * Updates one of the draft values in the team status.
 	 * @param name: The name of the property to update.
