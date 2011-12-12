@@ -64,6 +64,7 @@ class TeamStatus
 		if (!isset($this->statusData->$name->draft) || $this->statusData->$name->draft != $value)
 		{
 			$this->statusData->$name->draft = $value;
+			$this->statusData->$name->reviewed = false;
 			$this->dirty[$name] = true;
 		}
 	}
@@ -85,6 +86,52 @@ class TeamStatus
 	}
 
 	/**
+	 * Gets the review state for a given item.
+	 * @param item: The object containing the item to get the state for.
+	 * @returns: (bool?) True if the item is valid, False if not valid, null if unknown.
+	 */
+	private static function _getReviewState($item)
+	{
+		if (empty($item) || empty($item->reviewed))
+		{
+			return null;
+		}
+
+		return isset($item->live) && $item->live === $item->draft;
+	}
+
+	/**
+	 * Gets the review state for a given item.
+	 * @param name: The name of the item to get the state for.
+	 * @returns: (bool?) True if the item is valid, False if not valid, null if unknown.
+	 */
+	public function getReviewState($name)
+	{
+		$state = self::_getReviewState($this->statusData->$name);
+		return $state;
+	}
+
+	/**
+	 * Sets the review state for a given item.
+	 * Will produce errors if the item doesn't match up with the given value.
+	 */
+	public function setReviewState($name, $reviewedValue, $isValid)
+	{
+		$item = $this->statusData->$name;
+		if ($item->draft != $reviewedValue)
+		{
+			throw new Exception('Cannot set review for non-existent draft', E_MALFORMED_REQUEST);
+		}
+
+		$item->reviewed = true;
+
+		if ($isValid === true)
+		{
+			$item->live = $item->draft;
+		}
+	}
+
+	/**
 	 * Gets a dictionary of the items that need reviewing against their
 	 *  current draft value.
 	 * Returns an empty array if the team's content is fully reviewed.
@@ -94,8 +141,8 @@ class TeamStatus
 		$items = array();
 		foreach ($this->statusData as $item => $values)
 		{
-			// TODO: should this also && !empty($values->draft) ?
-			if ($values->live != $values->draft)
+			// null means not yet reviewed (else bool)
+			if (self::_getReviewState($values) === null)
 			{
 				$items[$item] = $values->draft;
 			}

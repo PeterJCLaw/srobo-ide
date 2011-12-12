@@ -67,6 +67,7 @@ test_equal($items, $expectedItems, "Wrong items in list of things to review");
 subsection('No review of things already live');
 
 $data->$field->live = $data->$field->draft;
+$data->$field->reviewed = true;
 // save modified data
 file_put_contents($status->getStatusPath(), json_encode($data));
 
@@ -82,7 +83,8 @@ subsection('Needs review');
 $needsReview = $status->needsReview();
 test_true($needsReview, "When not all items are live should claim to need review");
 
-$data->$field2->draft = null;
+// remove the other field so they're all live
+unset($data->$field2);
 // save modified data
 file_put_contents($status->getStatusPath(), json_encode($data));
 
@@ -94,6 +96,40 @@ test_equal($items, array(), "When all items are live should be nothing to review
 
 $needsReview = $status->needsReview();
 test_false($needsReview, "When all items are live should not claim to need review");
+
+subsection('saving reviewing state');
+
+// set different content & save - should now need review
+$status->setDraft($field2, $content);
+$status->save($user);
+
+$reviewState = $status->getReviewState($field2);
+test_null($reviewState, "Unreviewed items should claim as much");
+
+$status->setReviewState($field2, $content, true);
+
+$reviewState = $status->getReviewState($field2);
+test_true($reviewState, "Reviewed items should return boolean status indicator");
+
+$status->save($user);
+$data = json_decode(file_get_contents($status->getStatusPath()));
+test_equal($data->$field2->live, $content, "Valid review should set the live value");
+
+// set different content & save - should now need review
+$status->setDraft($field2, $content2);
+$status->save($user);
+
+$reviewState = $status->getReviewState($field2);
+test_null($reviewState, "Unreviewed items should claim as much");
+
+$status->setReviewState($field2, $content2, false);
+
+$reviewState = $status->getReviewState($field2);
+test_false($reviewState, "Reviewed items should return boolean status indicator");
+
+$status->save($user);
+$data = json_decode(file_get_contents($status->getStatusPath()));
+test_equal($data->$field2->live, $content, "Valid review should not set the live value");
 
 section('All teams listing');
 $teams = array($team, 'bacon', 'foo ?');
