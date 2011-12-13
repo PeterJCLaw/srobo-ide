@@ -117,10 +117,13 @@ class TeamModule extends Module
 
 		$height = Configuration::getInstance()->getConfig('team.status_images.height');
 		$width = Configuration::getInstance()->getConfig('team.status_images.width');
+		$thumbHeight = Configuration::getInstance()->getConfig('team.status_thumbs.height');
+		$thumbWidth = Configuration::getInstance()->getConfig('team.status_thumbs.width');
 
 		// grab a resource of the image resized
 		$image = new ResizableImage($path);
 		$newImageResource = $image->createResizedImage($width, $height);
+		$newThumbResource = $image->createResizedImage($thumbWidth, $thumbHeight);
 
 		// remove the original
 		unlink($path);
@@ -128,9 +131,12 @@ class TeamModule extends Module
 		// save, with .png extension
 		$path = path_change_extension($path, 'png');
 		imagepng($newImageResource, $path);
+		$thumbPath = str_insert($path, '_thumb', -4);
+		imagepng($newThumbResource, $thumbPath);
 
 		// free up the resource.
 		imagedestroy($newImageResource);
+		imagedestroy($newThumbResource);
 
 		// update the status store
 		$status = new TeamStatus($team);
