@@ -83,6 +83,9 @@ subsection('Needs review');
 $needsReview = $status->needsReview();
 test_true($needsReview, "When not all items are live should claim to need review");
 
+$needsReview = $status->needsReview($field2);
+test_false($needsReview, "When specify an ignore, and all other items are live, should not claim to need review");
+
 // remove the other field so they're all live
 unset($data->$field2);
 // save modified data

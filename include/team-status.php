@@ -152,10 +152,15 @@ class TeamStatus
 
 	/**
 	 * Convenience function, wrapping itemsForReview.
+	 * @param ignore: a field to ignore
 	 */
-	public function needsReview()
+	public function needsReview($ignore = null)
 	{
 		$items = $this->itemsForReview();
+		if ($ignore !== null)
+		{
+			unset($items[$ignore]);
+		}
 		return !empty($items);
 	}
 
