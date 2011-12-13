@@ -167,7 +167,7 @@ Admin.prototype.GetItemsToReview = function(team) {
 
 /* *****    Review saving code	***** */
 Admin.prototype._receive_setReview = function(tr, nodes) {
-	swapDOM(tr);
+	removeElement(tr);
 }
 Admin.prototype._error_setReview = function(tr) {
 	// enable the row so they can re-submit
