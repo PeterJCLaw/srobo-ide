@@ -29,10 +29,13 @@
 	text-align: center;
 }
 
-.valid-feed-url {
+.disabled {
+	color: grey;
+}
+.valid {
 	background-color: #98FF4F !important;
 }
-.invalid-feed-url {
+.rejected {
 	background-color: #FF6666 !important;
 }
 

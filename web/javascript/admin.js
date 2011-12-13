@@ -80,6 +80,11 @@ Admin.prototype._receiveGetTeamsToReview = function(nodes) {
 		this._prompt = status_msg("There are no teams to review.", LEVEL_OK);
 		swapDOM(selectId, SPAN({id: selectId}, 'None'));
 		return;
+	} else if (nodes.teams.length == 1) {
+		var team = nodes.teams[0];
+		this.GetItemsToReview(team);
+		swapDOM(selectId, SPAN({id: selectId}, team));
+		return;
 	}
 
 	this._prompt = status_msg("Please select a team to review.", LEVEL_OK);
@@ -164,17 +169,32 @@ Admin.prototype.GetItemsToReview = function(team) {
 Admin.prototype._receive_setReview = function(tr, nodes) {
 	swapDOM(tr);
 }
-Admin.prototype._error_setReview = function() {
-		this._prompt = status_msg("Unable to save review", LEVEL_ERROR);
-		log("Admin: Failed to retrieve items to review");
-		return;
+Admin.prototype._error_setReview = function(tr) {
+	// enable the row so they can re-submit
+	removeElementClass(tr, 'disabled');
+	removeElementClass(tr, 'valid');
+	removeElementClass(tr, 'rejected');
+
+	map(function(button) {
+		button.disabled = false;
+	}, getElementsByTagAndClassName('button', null, tr));
+
+	this._prompt = status_msg("Unable to save review", LEVEL_ERROR);
+	log("Admin: Failed to save review");
 }
 Admin.prototype._setReview = function(tr, team, field, value, valid) {
+	// disable the row until the response comes back
+	addElementClass(tr, 'disabled');
+	addElementClass(tr, valid ? 'valid' : 'rejected');
+	map(function(button) {
+		button.disabled = true;
+	}, getElementsByTagAndClassName('button', null, tr));
+
 	log("Admin: Setting review for " + field + ' of team ' + team);
 	IDE_backend_request("admin/review-item-set",
 		{ team: team, item: field, value: value, valid: valid },
 		bind(this._receive_setReview, this, tr),
-		bind(this._error_setReview, this)
+		bind(this._error_setReview, this, tr)
 	);
 }
 /* *****    End Review saving code	***** */
