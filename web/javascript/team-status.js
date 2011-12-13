@@ -182,6 +182,7 @@ TeamStatus.prototype._receivePutStatusImage = function(nodes)
 		return;
 	}
 	this._prompt = status_msg("Saved robot image successfully", LEVEL_OK);
+	this._getField('image').value = '';
 }
 TeamStatus.prototype._errorPutStatusImage = function()
 {
