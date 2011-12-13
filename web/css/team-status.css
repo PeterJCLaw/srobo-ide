@@ -23,13 +23,11 @@
 	margin: 0 auto;
 	width: 80%;
 }
-
 #team-status-page table th {
 	text-align: right;
 	vertical-align: top;
 	white-space: nowrap;
 }
-
 #team-status-page table td p {
 	margin: 0;
 }
