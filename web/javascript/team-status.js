@@ -12,9 +12,6 @@ function TeamStatus()
 	//keep track of whether object is initialised
 	this._inited = false;
 
-	// connect up the submit event for the form
-	this._signals.push(connect( 'team-status-save', 'onclick', bind(this.saveStatus, this)));
-
 	// list of text fields
 	this._fields = ['name', 'description', 'feed', 'url'];
 }
@@ -31,6 +28,7 @@ TeamStatus.prototype.init = function()
 		this._signals.push(connect( this.tab, "onfocus", bind( this._onfocus, this ) ));
 		this._signals.push(connect( this.tab, "onblur", bind( this._onblur, this ) ));
 		this._signals.push(connect( this.tab, "onclickclose", bind( this._close, this ) ));
+		this._signals.push(connect( 'team-status-save', 'onclick', bind( this.saveStatus, this ) ));
 		this._signals.push(connect( 'upload-helper', "onload", bind( this._uploadHelperLoad, this ) ));
 		tabbar.add_tab( this.tab );
 
@@ -75,7 +73,7 @@ TeamStatus.prototype._close = function()
 	this.events = null;
 
 	/* Disconnect all signals */
-	for(var i = 0; i < this._signals; i++) {
+	for(var i = 0; i < this._signals.length; i++) {
 		disconnect(this._signals[i]);
 	}
 	this._signals = new Array();
