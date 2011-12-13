@@ -35,6 +35,7 @@ TeamStatus.prototype.init = function()
 		tabbar.add_tab( this.tab );
 
 		/* Initialise indiviual page elements */
+		this._clearFields();
 		this.GetStatus();
 
 		/* remember that we are initialised */
@@ -93,6 +94,18 @@ TeamStatus.prototype._getField = function(name)
 {
 	return $('team-status-'+name+'-input');
 }
+TeamStatus.prototype._setReviewState = function(reviewed)
+{
+	for (var i=0; i < this._fields.length; i++) {
+		var field = this._fields[i];
+		if ( field in reviewed ) {
+			addElementClass(this._getField(field), reviewed[field] ? 'valid' : 'rejected');
+		} else {
+			removeElementClass(this._getField(field), 'valid');
+			removeElementClass(this._getField(field), 'rejected');
+		}
+	}
+}
 TeamStatus.prototype._setFields = function(data)
 {
 	for (var i=0; i < this._fields.length; i++)
@@ -100,6 +113,11 @@ TeamStatus.prototype._setFields = function(data)
 		var field = this._fields[i];
 		this._getField(field).value = data[field] || '';
 	}
+}
+TeamStatus.prototype._clearFields = function()
+{
+	this._setFields({});
+	this._setReviewState({});
 }
 TeamStatus.prototype._getFields = function()
 {
@@ -125,11 +143,12 @@ TeamStatus.prototype._receiveGetStatus = function(nodes)
 		this._errorGetStatus();
 		return;
 	}
-	this._setFields(nodes);
+	this._setFields(nodes.items);
+	this._setReviewState(nodes.reviewed);
 }
 TeamStatus.prototype._errorGetStatus = function()
 {
-	this._setFields({});
+	this._clearFields();
 	this._prompt = status_msg("Unable to get team status", LEVEL_ERROR);
 	logDebug("TeamStatus: Failed to retrieve info");
 	return;
@@ -182,6 +201,7 @@ TeamStatus.prototype._receivePutStatus = function(nodes)
 		return;
 	}
 	this._prompt = status_msg("Saved team status successfully", LEVEL_OK);
+	this.GetStatus();
 }
 TeamStatus.prototype._errorPutStatus = function()
 {
@@ -197,6 +217,7 @@ TeamStatus.prototype._putStatus = function()
 	IDE_backend_request("team/status-put", data,
 	                    bind(this._receivePutStatus, this),
 	                    bind(this._errorPutStatus, this));
+	this._setReviewState({});
 }
 TeamStatus.prototype.saveStatus = function()
 {

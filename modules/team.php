@@ -65,11 +65,19 @@ class TeamModule extends Module
 		$team = self::getRequestTeamID();
 		$status = new TeamStatus($team);
 
+		$reviewStates = array();
+		$items = array();
 		foreach (self::$statusTextFields as $field)
 		{
-			$value = $status->getDraftOrLive($field);
-			$output->setOutput($field, $value);
+			$items[$field] = $status->getDraftOrLive($field);
+			$reviewState = $status->getReviewState($field);
+			if ($reviewState !== null)
+			{
+				$reviewStates[$field] = $reviewState;
+			}
 		}
+		$output->setOutput('items', $items);
+		$output->setOutput('reviewed', $reviewStates);
 		return true;
 	}
 
