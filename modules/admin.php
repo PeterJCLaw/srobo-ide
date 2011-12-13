@@ -100,7 +100,7 @@ class AdminModule extends Module
         $saved = $status->save($user);
         if (!$saved)
         {
-            throw new Exception('Failed to save review', E_INERNAL_ERROR);
+            throw new Exception('Failed to save review', E_INTERNAL_ERROR);
         }
         return true;
     }
