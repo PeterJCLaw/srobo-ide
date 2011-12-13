@@ -105,8 +105,9 @@ class TeamModule extends Module
 	{
 		$input = Input::getInstance();
 		$team = self::getRequestTeamID();
+		$config = Configuration::getInstance();
 
-		$uploadLocation = Configuration::getInstance()->getConfig('team.status_images.dir');
+		$uploadLocation = $config->getConfig('team.status_images.dir');
 		if (!is_dir($uploadLocation))
 		{
 			mkdir_full($uploadLocation);
@@ -115,10 +116,10 @@ class TeamModule extends Module
 		$uploadPath = "$uploadLocation/$team";
 		$path = move_uploaded_file_id('team-status-image-input', $uploadPath);
 
-		$height = Configuration::getInstance()->getConfig('team.status_images.height');
-		$width = Configuration::getInstance()->getConfig('team.status_images.width');
-		$thumbHeight = Configuration::getInstance()->getConfig('team.status_thumbs.height');
-		$thumbWidth = Configuration::getInstance()->getConfig('team.status_thumbs.width');
+		$height = $config->getConfig('team.status_images.height');
+		$width = $config->getConfig('team.status_images.width');
+		$thumbHeight = $config->getConfig('team.status_thumbs.height');
+		$thumbWidth = $config->getConfig('team.status_thumbs.width');
 
 		// grab a resource of the image resized
 		$image = new ResizableImage($path);
