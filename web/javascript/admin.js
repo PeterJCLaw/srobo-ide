@@ -78,7 +78,7 @@ Admin.prototype._receiveGetTeamsToReview = function(nodes) {
 
 	if (nodes.teams.length == 0) {
 		this._prompt = status_msg("There are no teams to review.", LEVEL_OK);
-		swapDOM(selectId, SPAN(null, 'None'));
+		swapDOM(selectId, SPAN({id: selectId}, 'None'));
 		return;
 	}
 
