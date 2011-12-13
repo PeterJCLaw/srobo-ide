@@ -112,7 +112,7 @@ class TeamModule extends Module
 			mkdir_full($uploadLocation);
 		}
 
-		$uploadPath = "$uploadLocation/$team-image";
+		$uploadPath = "$uploadLocation/$team";
 		$path = move_uploaded_file_id('team-status-image-input', $uploadPath);
 
 		$height = Configuration::getInstance()->getConfig('team.status_images.height');
