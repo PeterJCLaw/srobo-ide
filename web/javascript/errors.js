@@ -176,7 +176,7 @@ function ErrorsPage() {
 			this._prompt = null;
 		}
 
-		for(var i = 0; i < this._signals; i++) {
+		for(var i = 0; i < this._signals.length; i++) {
 			disconnect(this._signals[i]);
 		}
 		this._signals = new Array();

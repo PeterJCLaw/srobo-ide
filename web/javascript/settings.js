@@ -16,9 +16,6 @@ function SettingsPage() {
 	// keep track of whether object is initialised
 	this._inited = false;
 
-	// connect up the submit event for the 'submit-your-blogs-rss' form
-	this._signals.push(connect( 'settings-save', 'onclick', bind(this.saveSettings, this)));
-
 	// store a copy of our instance!
 	SettingsPage.Instance = this;
 }
@@ -41,6 +38,7 @@ SettingsPage.prototype.init = function() {
 		this._signals.push(connect( this.tab, "onfocus", bind( this._onfocus, this ) ));
 		this._signals.push(connect( this.tab, "onblur", bind( this._onblur, this ) ));
 		this._signals.push(connect( this.tab, "onclickclose", bind( this._close, this ) ));
+		this._signals.push(connect( 'settings-save', 'onclick', bind( this.saveSettings, this ) ));
 		tabbar.add_tab( this.tab );
 
 		// Init each of the Settings
@@ -89,13 +87,13 @@ SettingsPage.prototype._close = function() {
 	this.events = null;
 
 	/* Disconnect all signals */
-	for(var i = 0; i < this._signals; i++) {
+	for(var i = 0; i < this._signals.length; i++) {
 		disconnect(this._signals[i]);
 	}
 	this._signals = new Array();
 
 	/* Destroy all settings objects */
-	for(var i = 0; i < this._settings; i++) {
+	for(var i = 0; i < this._settings.length; i++) {
 		this._settings[i].remove();
 	}
 	this._settings = {};
@@ -185,7 +183,7 @@ Setting.prototype.remove = function() {
 	}
 
 	/* Disconnect all signals */
-	for(var i = 0; i < this._signals; i++) {
+	for(var i = 0; i < this._signals.length; i++) {
 		disconnect(this._signals[i]);
 	}
 
