@@ -59,7 +59,7 @@ class PHPRunner extends BaseRunner
 	public function run($inFile)
 	{
 		$helper = realpath('tests/test-helper.php');
-		$name = parent::realpath($this->name);
+		$name = parent::realpath($this->name.'.php');
 		return parent::runCommand("php $helper $name", $inFile);
 	}
 }
