@@ -101,7 +101,11 @@ Admin.prototype._receiveGetTeamsToReview = function(nodes) {
 		if (s.value == -1) {
 			return;
 		}
-		swapDOM(pleaseSelect, null);
+		// avoid removing it if it's already gone.
+		if (isChildNode(pleaseSelect, document))
+		{
+			removeElement(pleaseSelect);
+		}
 		this.GetItemsToReview(s.value);
 	}, this));
 
