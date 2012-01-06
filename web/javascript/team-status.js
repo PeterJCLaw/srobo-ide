@@ -176,7 +176,7 @@ TeamStatus.prototype._receivePutStatusImage = function(nodes)
 {
 	if (nodes.error)
 	{
-		this._errorPutStatus();
+		this._errorPutStatusImage();
 		return;
 	}
 	this._prompt = status_msg("Saved robot image successfully", LEVEL_OK);
