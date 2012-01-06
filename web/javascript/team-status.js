@@ -12,6 +12,9 @@ function TeamStatus()
 	//keep track of whether object is initialised
 	this._inited = false;
 
+	// whether or not the attempt to save things failed
+	this._saveError = false;
+
 	// list of text fields
 	this._fields = ['name', 'description', 'feed', 'url'];
 }
@@ -174,6 +177,11 @@ TeamStatus.prototype._uploadHelperLoad = function(ev)
 }
 TeamStatus.prototype._receivePutStatusImage = function(nodes)
 {
+	if (this._saveError)
+	{
+		return;
+	}
+
 	if (nodes.error)
 	{
 		this._errorPutStatusImage();
@@ -184,6 +192,7 @@ TeamStatus.prototype._receivePutStatusImage = function(nodes)
 }
 TeamStatus.prototype._errorPutStatusImage = function()
 {
+	this._saveError = true;
 	this._prompt = status_msg("Unable to save robot image", LEVEL_ERROR);
 	logDebug("TeamStatus: Failed to upload robot image");
 	return;
@@ -194,7 +203,7 @@ TeamStatus.prototype._errorPutStatusImage = function()
 
 TeamStatus.prototype._receivePutStatus = function(nodes)
 {
-	if (nodes.error)
+	if (nodes.error || this._saveError)
 	{
 		this._errorPutStatus();
 		return;
@@ -204,6 +213,7 @@ TeamStatus.prototype._receivePutStatus = function(nodes)
 }
 TeamStatus.prototype._errorPutStatus = function()
 {
+	this._saveError = true;
 	this._prompt = status_msg("Unable to save team status", LEVEL_ERROR);
 	logDebug("TeamStatus: Failed to put info");
 	return;
@@ -220,6 +230,8 @@ TeamStatus.prototype._putStatus = function()
 }
 TeamStatus.prototype.saveStatus = function()
 {
+	this._saveError = false;
+
 	// TODO: up-to-date checking?
 	this._putStatus();
 
