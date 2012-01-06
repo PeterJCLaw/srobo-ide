@@ -1,4 +1,4 @@
-_FOLDERS = settings repos zips /tmp/ide-feed-cache notifications
+_FOLDERS = settings repos zips notifications
 
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass

@@ -33,8 +33,8 @@ var team_selector;
 // The user settings page
 var settingspage = null;
 
-// The switchboard page
-var switchboardpage = null;
+// The Team Status page
+var teamstatuspage = null;
 
 // The Admin page
 var adminpage = null;
@@ -94,8 +94,8 @@ function load_gui() {
 	// About Box
 	about = new AboutBox();
 
-	//The switchboard page - this must happen before populate_shortcuts_box is called
-	switchboardpage = new Switchboard();
+	//The Team Status page - this must happen before populate_shortcuts_box is called
+	teamstatuspage = new TeamStatus();
 
 	//The settings page - this must happen before populate_shortcuts_box is called
 	settingspage = SettingsPage.GetInstance();
@@ -131,9 +131,6 @@ function load_gui() {
 
 	// Errors Tab
 	errorspage = new ErrorsPage();
-
-	// Switchboard tab
-	switchboardpage.init()
 
 	robolog = new RoboLog();
 
@@ -213,9 +210,9 @@ function populate_shortcuts_box() {
 		bind(settingspage.init, settingspage)
 	));
 
-	shortcuts.push(newShortcut( "View Switchboard",
-		"Messages, docs and helpful information",
-		bind(switchboardpage.init, switchboardpage)
+	shortcuts.push(newShortcut( "Team Status",
+		"Information about your team",
+		bind(teamstatuspage.init, teamstatuspage)
 	));
 
 	shortcuts.push(newShortcut( "About",

@@ -1,0 +1,39 @@
+
+#team-status-page #team-status-title {
+	display: block;
+	padding: 0.4em 1em;
+}
+
+#team-status-page .save-button {
+	float: right;
+	margin: 0 1em;
+}
+
+#team-status-page p.info {
+	font-size: 0.95em;
+}
+
+#team-status-page > p {
+	margin: 5px auto;
+	text-align: center;
+	width: 80%;
+}
+
+#team-status-page table {
+	margin: 0 auto;
+	width: 80%;
+}
+#team-status-page table th {
+	text-align: right;
+	vertical-align: top;
+	white-space: nowrap;
+}
+#team-status-page table td p {
+	margin: 0;
+}
+
+#team-status-page input[type="text"], #team-status-page textarea {
+	color: #0000FF;
+	width: 100%;
+	border: 2px solid #DDDDDD;
+}

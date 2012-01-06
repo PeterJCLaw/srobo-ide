@@ -16,9 +16,9 @@ class AdminModule extends Module
      */
     public function __construct()
     {
-        $this->installCommand('team-name-put',   array($this, 'saveTeamName'));
-        $this->installCommand('feed-status-get', array($this, 'getBlogFeeds'));
-        $this->installCommand('feed-status-put', array($this, 'setFeedStatus'));
+        $this->installCommand('review-teams-get',   array($this, 'getTeamsWithStuffToReview'));
+        $this->installCommand('review-items-get', array($this, 'getItemsToReview'));
+        $this->installCommand('review-item-set', array($this, 'setItemReviewState'));
     }
 
     /**
@@ -42,99 +42,66 @@ class AdminModule extends Module
     }
 
     /**
-     * Handles a request for a user team name change via the default strategy.
-     *
-     * This can be considered asynchronous: the actual name change is likely to
-     * be affected manually, a significant amount of time after this call is
-     * made.
+     * Handles a request for the list of teams that need things reviewing.
      */
-    public function saveTeamName()
+    public function getTeamsWithStuffToReview()
     {
         $this->ensureAuthed();
 
-        $auth   = AuthBackend::getInstance();
-        $input  = Input::getInstance();
+        $allTeams = TeamStatus::listAllTeams();
+        $teams = array_filter($allTeams, function($team) {
+            $status = new TeamStatus($team);
+            return $status->needsReview();
+        });
+
         $output = Output::getInstance();
 
-        $team = $input->getInput('id');
-        $name = $input->getInput('name');
-
-        TeamNameStrategy::getDefaultInstance()->writeNameChangeRequest($team,
-                                                                       $name);
-
-        $output->setOutput('success', true);
+        $output->setOutput('teams', $teams);
         return true;
     }
 
     /**
-     * Get all the info for all user blog feeds we know about
+     * Get all the items that need review for a given team.
      */
-    public function getBlogFeeds()
+    public function getItemsToReview()
     {
         $this->ensureAuthed();
+        $input = Input::getInstance();
+
+        $team = $input->getInput('team');
+        $status = new TeamStatus($team);
+
+        $itemsToReview = $status->itemsForReview();
+
+        unset($itemsToReview['image']);
+
         $output = Output::getInstance();
-        $feeds  = Feeds::getInstance()->getFeeds();
-        $output->setOutput('feeds', $feeds);
+        $output->setOutput('items', $itemsToReview);
         return true;
     }
 
     /**
-     * Updates the status flags on a feed after confirmation by the user
-     * (a blueshirt).
+     * Get all the items that need review for a given team.
      */
-    public function setFeedStatus()
+    public function setItemReviewState()
     {
         $this->ensureAuthed();
-        $input  = Input::getInstance();
-        $output = Output::getInstance();
-        $feeds  = Feeds::getInstance();
+        $input = Input::getInstance();
 
-        // get the URL to update and its declared status from input
-        $feedurl    = $input->getInput('url');
-        $feedstatus = $input->getInput('status');
+        $team = $input->getInput('team');
+        $status = new TeamStatus($team);
 
-        // gets the object for the feed associated with $feedurl
-        $userfeed = $feeds->findFeed('url', $feedurl);
+        $isValid = $input->getInput('valid');
+        $value = $input->getInput('value');
+        $item = $input->getInput('item');
 
-        // if the object returned is non-null (ie the feed is found)
-        if ($userfeed != null)
+        $status->setReviewState($item, $value, $isValid);
+        $user = AuthBackend::getInstance()->getCurrentUser();
+        $saved = $status->save($user);
+        if (!$saved)
         {
-            // get the feed's flags by its status
-            self::updateFeedStatusFlagsByStatusString($userfeed, $feedstatus);
-
-            // write out the new feeds list
-            self::rewriteMasterFeedsList();
-            $success = true;
+            throw new Exception('Failed to save review', E_INTERNAL_ERROR);
         }
-        else
-        {
-            $success = false;
-        }
-        $output->setOutput('success', $success);
         return true;
-    }
-
-    /**
-     * Causes the Feeds object to re-write the master feeds list after updates.
-     */
-    private static function rewriteMasterFeedsList()
-    {
-        $feeds = Feeds::getInstance();
-        $feeds->putFeeds($feeds->getFeeds());
-    }
-
-    /**
-     * Updates a feed status by the status enumeration which has come from
-     * a blueshirt via the frontend. This can be one of three values:
-     *   "unchecked", meaning no checking has been done on the URL (the default)
-     *   "valid", meaning that the feed is a valid feed but no rigorous checking
-     *            has taken place;
-     *   "checked", meaning the feed has been checked by a blueshirt.
-     */
-    private static function updateFeedStatusFlagsByStatusString($userfeed,
-                                                                $status)
-    {
-        $userfeed->checked = ($status != 'unchecked');
-        $userfeed->valid   = ($status == 'valid');
     }
 }
