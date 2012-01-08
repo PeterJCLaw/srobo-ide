@@ -224,6 +224,9 @@ class ProjModule extends Module
 		$helper->buildZipFile("$servePath/robot.zip", $hash);
 
 		$output->setOutput('url', "$serveUrl/robot.zip");
+		// NB: this is intentionally also returned -- if they ask for HEAD,
+		// this will contain the actual hash.
+		$output->setOutput('rev', $hash);
 
 		return true;
 	}

@@ -68,6 +68,9 @@ test_false(file_exists($zipPathBase), "$zipPathBase Must not exist after failure
 section('Success testing');
 test_true($proj->dispatchCommand('co'), 'export command should succeed');
 
+$rev = $output->getOutput('rev');
+test_nonempty($rev, 'Revision should not be empty - the user wants to know which version they\'re being served');
+
 $zip_path = $output->getOutput('url');
 echo 'zip_path: '; var_dump($zip_path);
 test_true(file_exists($zip_path), "Zip doesn't exist at '$zip_path'.");
