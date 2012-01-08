@@ -69,7 +69,7 @@ section('Success testing');
 test_true($proj->dispatchCommand('co'), 'export command should succeed');
 
 $zip_path = $output->getOutput('url');
-var_dump($zip_path);
+echo 'zip_path: '; var_dump($zip_path);
 test_true(file_exists($zip_path), "Zip doesn't exist at '$zip_path'.");
 test_true(rename($zip_path, '/tmp/proj-export/wd/foo.zip'), "Failed to rename the zip from '$zip_path'.");
 shell_exec('cd /tmp/proj-export/wd/ && unzip foo.zip');
