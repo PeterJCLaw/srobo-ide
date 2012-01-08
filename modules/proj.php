@@ -220,56 +220,12 @@ class ProjModule extends Module
 			return false;
 		}
 
-		// get a fresh tmpdir so there can't possibly be clashes.
-		$tmpDir = tmpdir();
+		$helper = new CheckoutHelper($this->projectRepository);
+		$helper->buildZipFile("$servePath/robot.zip", $hash);
 
-		$this->projectRepository->archiveSourceZip("$tmpDir/robot.zip", $hash);
-
-		$this->unzip($tmpDir);
-		$this->pyenvZip($tmpDir, $servePath);
 		$output->setOutput('url', "$serveUrl/robot.zip");
 
-		// remove our temporary folder so that we don't fill up /tmp
-		delete_recursive($tmpDir);
 		return true;
-	}
-
-	private function unzip($path)
-	{
-		$s_path = escapeshellarg($path);
-		$ret = shell_exec("cd $s_path && unzip robot.zip && rm -f robot.zip");
-		return $ret;
-	}
-
-	private function pyenvZip($path, $servePath)
-	{
-		$s_path = escapeshellarg($path);
-		$s_servePath = escapeshellarg($servePath);
-		$ret = shell_exec("python2.7 pyenv/make-zip $s_path $s_servePath/robot.zip");
-		return $ret;
-	}
-
-	public function completeArchive($projdir)
-	{
-		ide_log(LOG_INFO, "archiving: zip -r $projdir/robot.zip $projdir/");
-		$s_projdir = escapeshellarg($projdir);
-		shell_exec("cd $s_projdir && zip -r robot_t.zip *");
-		shell_exec("mv $s_projdir/robot_t.zip $s_projdir/robot.zip");
-	}
-
-	private function fastwrap($oldname, $newname)
-	{
-		$config = Configuration::getInstance();
-		$fastwrapScript = $config->getConfig('fastwrap_script_path');
-		$fastwrapDir = $config->getConfig('fastwrap_dir_path');
-
-		$s_fastwrapScript = escapeshellarg($fastwrapScript);
-		$s_fastwrapDir    = escapeshellarg($fastwrapDir);
-		$s_oldname        = escapeshellarg($oldname);
-		$s_newname        = escapeshellarg($newname);
-
-		$ret = shell_exec("$s_fastwrapScript $s_oldname $s_newname $s_fastwrapDir/*");
-		return $ret;
 	}
 
 	public function redirectToZip()

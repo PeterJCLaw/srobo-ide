@@ -31,6 +31,7 @@ require_once('include/auth/tokenstrategy/tokenstrategy.php');
 require_once('include/file-utils.php');
 require_once('include/auth/auth.php');
 require_once('include/case-transform.php');
+require_once('include/checkout-helper.php');
 require_once('include/git.php');
 require_once('include/lint.php');
 require_once('include/lint/pylint.php');
