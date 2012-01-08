@@ -25,6 +25,9 @@ class CheckoutHelper
 		self::unzip($intermediateFile);
 		// we've now got a copy of the user's code in the tmpDir folder
 
+		// store the revision of the user's code that's been checked out
+		file_put_contents($tmpDir.'/.user-rev', $revision);
+
 		self::createZip($tmpDir, $destFile);
 
 		// remove our temporary folder so that we don't fill up /tmp
