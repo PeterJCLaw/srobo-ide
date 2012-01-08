@@ -94,6 +94,7 @@ class GitRepository
 		/* Acquire an exclusive lock on the git repository */
 		$lockfile = "$this->git_path/cyanide-lock";
 		$this->lock_fd = fopen( $lockfile, "w" );
+		fwrite( $this->lock_fd, getmypid() );
 		flock( $this->lock_fd, LOCK_EX );
 	}
 
