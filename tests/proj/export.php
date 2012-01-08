@@ -9,6 +9,7 @@ function cleanCreate($path) {
 	mkdir_full($path);
 }
 
+section('setup');
 cleanCreate('/tmp/proj-export/wd');
 cleanCreate('/tmp/proj-export/test-repos');
 $test_zip_path = '/tmp/proj-export/ide-test-zip';
@@ -39,8 +40,7 @@ test_true($mm->moduleExists('proj'), 'proj module does not exist');
 $proj = $mm->getModule('proj');
 test_true($proj->dispatchCommand('new'), 'failed to create project');
 
-
-// put
+subsection('put');
 $robot_print = 'llama';
 $robot_data = "print '$robot_print'\n";
 $input->setInput('path', 'robot.py');
@@ -49,12 +49,12 @@ test_true($mm->moduleExists('file'), 'file module does not exist');
 $file = $mm->getModule('file');
 test_true($file->dispatchCommand('put'), 'put command failed');
 
-// commit
+subsection('commit');
 $input->setInput('message', 'give robot some data');
 $input->setInput('paths', array('robot.py'));
 test_true($proj->dispatchCommand('commit'), 'commit command failed');
 
-// co
+section('Failure mode');
 $input->setInput('rev', 'HEAD');
 // create a file where it's going to try to put a folder.
 // we can't actually create the situation where the webserver doesn't have write access,
@@ -65,6 +65,7 @@ test_false($proj->dispatchCommand('co'), 'export command should have failed when
 unlink($zipPathBase);
 test_false(file_exists($zipPathBase), "$zipPathBase Must not exist after failure mode testing complete.");
 
+section('Success testing');
 test_true($proj->dispatchCommand('co'), 'export command should succeed');
 
 $zip_path = $output->getOutput('url');
