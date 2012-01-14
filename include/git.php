@@ -692,6 +692,22 @@ class GitRepository
 	}
 
 	/**
+	 * Gets the modification time of a file
+	 */
+	public function fileMTime($path)
+	{
+		return filemtime($this->working_path . '/' . $path);
+	}
+
+	/**
+	 * Sets the modification time of a file
+	 */
+	public function touchFile($path, $time)
+	{
+		return touch($this->working_path . '/' . $path, $time);
+	}
+
+	/**
 	 * Stages changes to a file.
 	 * If the file exists, it is added, otherwise it is removed.
 	 */
