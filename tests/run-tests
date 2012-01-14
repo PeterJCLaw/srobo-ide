@@ -103,11 +103,15 @@ foreach ($sched as $value)
 		{
 			++$fails;
 			echo "FAIL    $tn\n";
-			if (count(explode("\n", $output)) > 10)
+			$lines = explode("\n", $output);
+			if (count($lines) > 10)
 			{
 				$tmpfile = tempnam("/tmp", "ide-test-");
 				file_put_contents($tmpfile, "$output\n");
-				echo "\tSee $tmpfile for output.\n";
+				echo "=== BEGIN OUTPUT TAIL ===\n";
+				echo implode(PHP_EOL, array_slice($lines, -10)), PHP_EOL;
+				echo "===  END OUTPUT TAIL  ===\n";
+				echo "\tSee $tmpfile for further output.\n";
 			}
 			else
 			{
