@@ -1,6 +1,9 @@
 #!/usr/bin/env php
 <?php
 
+// delete_recursive, mkdir_full, tmpdir
+require_once('include/file-utils.php');
+
 array_shift($argv);
 $test_restrict = empty($argv) ? null : $argv;
 $sched = file('tests/test-schedule');
@@ -27,6 +30,9 @@ function sig_handler($signo)
 // tick use required as of PHP 4.3.0
 declare(ticks = 1);
 pcntl_signal(SIGINT,  "sig_handler");
+
+// Get a working folder for this run of tests
+$workPath = tmpdir(null, 'ide-test-');
 
 foreach ($sched as $value)
 {
@@ -58,6 +64,12 @@ foreach ($sched as $value)
 		if ($skip)
 			continue;
 	}
+
+	// Create a temp folder for this test, and store it somewhere the test can see it too.
+	$testWorkPath = "$workPath/$tn/";
+	mkdir_full($testWorkPath);
+	putenv("ide-test-work-path=$testWorkPath");
+
 	$test   = realpath('tests/' . $tn . '.php');
 	$infile = isset($exp[2]) ? $exp[2] : '/dev/null';
 	$process = proc_open("php $helper $test 2>&1", array(0 => array('file', $infile, 'r'),
@@ -68,6 +80,7 @@ foreach ($sched as $value)
 	$rc = proc_close($process);
 	if ($rc == 0)
 	{
+		delete_recursive($testWorkPath);
 		if (strpos($output, '___SKIP_TEST') !== false)
 		{
 			++$skips;
@@ -88,6 +101,7 @@ foreach ($sched as $value)
 	{
 		if ($xfail)
 		{
+			delete_recursive($testWorkPath);
 			++$xfails;
 			echo "XFAIL   $tn\n";
 		}
@@ -113,7 +127,14 @@ foreach ($sched as $value)
 
 printf("%4d tests passed.\n", $passes);
 if ($fails > 0)
+{
 	printf("%4d tests failed.\n", $fails);
+	echo "\tSee working directory '$workPath'.\n";
+}
+else
+{
+	delete_recursive($workPath);
+}
 if ($xfails > 0)
 	printf("%4d xfails.\n", $xfails);
 if ($fixes > 0)
