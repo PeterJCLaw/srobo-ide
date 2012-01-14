@@ -4,11 +4,6 @@ $input = Input::getInstance();
 $output = Output::getInstance();
 $config = Configuration::getInstance();
 
-function cleanCreate($path) {
-	delete_recursive($path);
-	mkdir_full($path);
-}
-
 cleanCreate('/tmp/proj-export/wd');
 cleanCreate('/tmp/proj-export/test-repos');
 $test_zip_path = '/tmp/proj-export/ide-test-zip';
