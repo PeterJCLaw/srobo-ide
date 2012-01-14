@@ -95,11 +95,11 @@ foreach ($sched as $value)
 		{
 			++$fails;
 			echo "FAIL    $tn\n";
-			if (count(explode('\n', $output)) > 6)
+			if (count(explode("\n", $output)) > 6)
 			{
 				$tmpfile = tempnam("/tmp", "ide-test-");
 				file_put_contents($tmpfile, "$output\n");
-				echo "\tSee $outfile for output.\n";
+				echo "\tSee $tmpfile for output.\n";
 			}
 			else
 			{
