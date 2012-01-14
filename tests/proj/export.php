@@ -4,16 +4,16 @@ $input = Input::getInstance();
 $output = Output::getInstance();
 $config = Configuration::getInstance();
 
-cleanCreate('/tmp/proj-export/wd');
-cleanCreate('/tmp/proj-export/test-repos');
-$test_zip_path = '/tmp/proj-export/ide-test-zip';
+cleanCreate($testWorkPath.'/wd');
+cleanCreate($testWorkPath.'/test-repos');
+$test_zip_path = $testWorkPath.'/ide-test-zip';
 cleanCreate($test_zip_path);
 
 // remove the folder so that we can test the failure mode
-$zipPathBase = '/tmp/proj-export/ide-zips';
+$zipPathBase = $testWorkPath.'/ide-zips';
 delete_recursive($zipPathBase);
 
-$config->override('repopath', '/tmp/proj-export/test-repos');
+$config->override('repopath', $testWorkPath.'/test-repos');
 
 $config->override('zippath', $zipPathBase);
 $config->override('zipurl', $zipPathBase);
@@ -65,8 +65,9 @@ test_true($proj->dispatchCommand('co'), 'export command should succeed');
 $zip_path = $output->getOutput('url');
 var_dump($zip_path);
 test_true(file_exists($zip_path), "Zip doesn't exist at '$zip_path'.");
-test_true(rename($zip_path, '/tmp/proj-export/wd/foo.zip'), "Failed to rename the zip from '$zip_path'.");
-shell_exec('cd /tmp/proj-export/wd/ && unzip foo.zip');
+test_true(rename($zip_path, $testWorkPath.'wd/foo.zip'), "Failed to rename the zip from '$zip_path'.");
+$s_wd = escapeshellarg($testWorkPath.'wd');
+shell_exec("cd $s_wd && unzip foo.zip");
 
-$python_ret = shell_exec('cd /tmp/proj-export/wd/ && python user/robot.py');
+$python_ret = shell_exec("cd $s_wd && python user/robot.py");
 test_equal($python_ret, $robot_print."\n", 'Running the robot code produced the wrong output.');
