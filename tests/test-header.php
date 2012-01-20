@@ -150,3 +150,9 @@ function subsection($label)
 {
 	echo "\n$label\n";
 }
+
+function cleanCreate($path)
+{
+	delete_recursive($path);
+	mkdir_full($path);
+}

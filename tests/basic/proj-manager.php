@@ -1,13 +1,7 @@
 <?php
 
-if (is_dir("/tmp/test-repos"))
-{
-	exec("rm -rf /tmp/test-repos");
-}
-exec("mkdir -p /tmp/test-repos");
-
 $config = Configuration::getInstance();
-$config->override("repopath", "/tmp/test-repos");
+$config->override("repopath", $testWorkPath);
 $config->override("user.default", "bees");
 $config->override("user.default.teams", array(1, 2));
 $config->override("auth_module", "single");
@@ -37,8 +31,3 @@ $ret = $projectManager->copyRepository('cake', $projName);
 
 test_false($ret, 'did not block copying of a project with / in the name');
 test_false(is_dir($repopath), 'copied repo with / in the name!');
-
-if (is_dir("/tmp/test-repos"))
-{
-	exec("rm -rf /tmp/test-repos");
-}
