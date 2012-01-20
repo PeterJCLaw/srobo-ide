@@ -529,7 +529,7 @@ function TeamSelector() {
 		if( tmpitem != null && src != tmpitem )
 			removeElement( tmpitem );
 
-		team = parseInt(src.value, 10);
+		team = src.value;
 		logDebug( "team changed to " + team );
 		this._update_name();
 

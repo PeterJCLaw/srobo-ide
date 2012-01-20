@@ -96,6 +96,10 @@ ProjPage.prototype._pollChanged = function(nodes) {
 		signal(this._list, 'onchange', team);
 	}
 
+	if ( IDE_string_empty(this.project) ) {
+		return;
+	}
+
 	var nodesRev = nodes.projects[this.project];
 	// The project we're looking at has been changed on the server
 	if (nodesRev != this._projectRev) {
@@ -411,16 +415,24 @@ ProjFileList.prototype._auto_refresh = function() {
 	if( this.rev != "HEAD" && this.rev != 0 && this.rev != null )	//not showing HEAD
 		return;
 
-	//do we want to setup another one?
-	if( projtab.has_focus() && this.selection.length > 0	//on projpage and something's selected
-		|| 'no_proj' == projpage.flist.refresh(true)	//no project set, direct failure sets another anyway
-	)
+	// Should we not do an update?
+	// ie, are we on projpage and something's selected?
+	if( projtab.has_focus() && this.selection.length > 0 )
+	{
 		this._prepare_auto_refresh();
+	}
+	else
+	{
+		// this will bail if there's no project selected,
+		// but that's not something we need to worry about,
+		// because we'll get setup again if the user selects a project.
+		this.refresh(true);
+	}
 }
 
 ProjFileList.prototype.refresh = function(auto) {
 	log('Doing a file list refresh');
-	if( this._project == "" )
+	if( IDE_string_empty(this._project) )
 		return 'no_proj';
 
 	//kill the error message, if it exists
@@ -669,10 +681,7 @@ ProjList.prototype.update = function(team) {
 }
 
 ProjList.prototype._grab_list = function(team) {
-	if(typeof team == 'string')
-		team = parseInt(team);
-	if(typeof team == 'number')
-		this._team = team;
+	this._team = team;
 
 	//kill the error message, if it exists
 	if( this._err_prompt != null ) {

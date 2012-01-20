@@ -284,13 +284,9 @@ class ProjModule extends Module
 
 		$config = Configuration::getInstance();
 		$output = Output::getInstance();
-		$input = Input::getInstance();
 
-		$zipPath = $config->getConfig('zippath').'/'.$this->team.'/'.$this->projectName.'/robot.zip';
-		if (!is_file($zipPath))
-		{
-			$this->checkoutProject();
-		}
+		$this->checkoutProject();
+		$zipPath = $output->getOutput('url');
 		$basepath = str_replace('//', '/', dirname($_SERVER['SCRIPT_NAME']).'/');
 		header('Location: '.$basepath.$zipPath);
 	}

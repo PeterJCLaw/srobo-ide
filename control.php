@@ -24,6 +24,12 @@ if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))
 	exit();
 }
 
+// A dummy delay when debugging so that you can see things happening in the UI
+if (($delay = $config->getConfig('debug.delay')))
+{
+	usleep($delay * 1000);
+}
+
 // decode input
 $request = substr($_SERVER['PATH_INFO'], 1);
 $data = json_decode(file_get_contents('php://input'));

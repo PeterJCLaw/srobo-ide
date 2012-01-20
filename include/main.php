@@ -3,6 +3,7 @@
 if (!defined('IN_TESTS'))
 	define('IN_TESTS', 0);
 
+require_once('include/config.php');
 require_once('include/input.php');
 require_once('include/logger.php');
 
@@ -30,7 +31,6 @@ require_once('include/auth/tokenstrategy/tokenstrategy.php');
 require_once('include/file-utils.php');
 require_once('include/auth/auth.php');
 require_once('include/case-transform.php');
-require_once('include/config.php');
 require_once('include/git.php');
 require_once('include/lint.php');
 require_once('include/lint/pylint.php');

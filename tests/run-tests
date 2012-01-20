@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+require_once('tests/test-runners.php');
 // delete_recursive, mkdir_full, tmpdir
 require_once('include/file-utils.php');
 
@@ -15,8 +16,6 @@ $skips  = 0;
 $fixes  = 0;
 
 $line = 0;
-
-$helper = realpath('tests/test-helper.php');
 
 function sig_handler($signo)
 {
@@ -70,14 +69,9 @@ foreach ($sched as $value)
 	mkdir_full($testWorkPath);
 	putenv("ide-test-work-path=$testWorkPath");
 
-	$test   = realpath('tests/' . $tn . '.php');
+	$runner = BaseRunner::createRunner($tn);
 	$infile = isset($exp[2]) ? $exp[2] : '/dev/null';
-	$process = proc_open("php $helper $test 2>&1", array(0 => array('file', $infile, 'r'),
-	                                                     1 => array('pipe', 'w'),
-	                                                     2 => array('file', '/dev/null', 'w')),
-	                                               $pipes);
-	$output = trim(stream_get_contents($pipes[1]));
-	$rc = proc_close($process);
+	list($rc, $output) = $runner->run($infile);
 	if ($rc == 0)
 	{
 		delete_recursive($testWorkPath);

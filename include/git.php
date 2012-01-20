@@ -93,16 +93,20 @@ class GitRepository
 
 		/* Acquire an exclusive lock on the git repository */
 		$lockfile = "$this->git_path/cyanide-lock";
+		ide_log(LOG_DEBUG, "Creating a lock on '$lockfile'.");
 		$this->lock_fd = fopen( $lockfile, "w" );
 		fwrite( $this->lock_fd, getmypid() );
 		flock( $this->lock_fd, LOCK_EX );
+		ide_log(LOG_DEBUG, "Got a lock on '$lockfile': '$this->lock_fd'.");
 	}
 
 	public function __destruct()
 	{
 		/* Free our lock on the repository - manually since PHP 5.3.2 */
+		ide_log(LOG_DEBUG, "Dropping lock on '$this->lock_fd'.");
 		flock($this->lock_fd, LOCK_UN);
 		fclose( $this->lock_fd );
+		ide_log(LOG_DEBUG, "Closed '$this->lock_fd'.");
 	}
 
 	/**

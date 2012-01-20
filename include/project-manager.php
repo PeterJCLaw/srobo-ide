@@ -168,7 +168,7 @@ class ProjectManager
 		{
 			return FALSE;
 		}
-		$path = $this->rootProjectPath . "/$team/master/$project.git";
+		$path = $this->getMasterRepoPath($team, $project);
 		$repo = GitRepository::createRepository($path, true);
 		ide_log(LOG_INFO, "Created a project $project for team $team");
 		return $repo;
@@ -176,7 +176,8 @@ class ProjectManager
 
 	public function deleteRepository($team, $project)
 	{
-		delete_recursive($this->rootProjectPath . "/$team/master/$project.git");
+		$master_path = $this->getMasterRepoPath($team, $project);
+		delete_recursive($master_path);
 		$users = scandir($this->rootProjectPath . "/$team/users");
 		foreach ($users as $user)
 		{
