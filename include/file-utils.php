@@ -54,3 +54,42 @@ function tmpdir($dir = null, $prefix = 'ide')
 	mkdir($file);
 	return $file;
 }
+
+function file_lock($lockfile)
+{
+	ide_log(LOG_INFO, "Creating a lock on '$lockfile'.");
+	$resource = fopen( $lockfile, "w" );
+
+	$ret = flock( $resource, LOCK_EX );
+	ide_log(LOG_DEBUG, "flock(LOCK_EX) returned: $ret.");
+	if ($ret !== true)
+	{
+		ide_log(LOG_ERROR, "flock(LOCK_EX) failed to get lock on '$resource'.");
+		throw new Exception("Failed to get a lock on '$lockfile'.", E_INTERNAL_ERROR);
+	}
+
+	$ret = fwrite( $resource, getmypid() );
+	ide_log(LOG_DEBUG, "fwrite(pid) returned: $ret.");
+
+	ide_log(LOG_INFO, "Got a lock on '$lockfile': '$resource'.");
+	return $resource;
+}
+
+function file_unlock($resource)
+{
+	/* Free our lock on the file - manually since PHP 5.3.2 */
+	ide_log(LOG_INFO, "Dropping lock on '$resource'.");
+
+	$ret = flock($resource, LOCK_UN);
+	ide_log(LOG_DEBUG, "flock(LOCK_UN) returned: $ret.");
+	if ($ret !== true)
+	{
+		ide_log(LOG_ERROR, "flock(LOCK_UN) failed to release lock on '$resource'.");
+	}
+
+	$ret = fclose( $resource );
+	ide_log(LOG_DEBUG, "fclose returned: $ret.");
+
+	ide_log(LOG_INFO, "Closed '$resource'.");
+	return $ret;
+}
