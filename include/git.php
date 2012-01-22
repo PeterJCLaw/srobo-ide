@@ -93,20 +93,39 @@ class GitRepository
 
 		/* Acquire an exclusive lock on the git repository */
 		$lockfile = "$this->git_path/cyanide-lock";
-		ide_log(LOG_DEBUG, "Creating a lock on '$lockfile'.");
+		ide_log(LOG_INFO, "Creating a lock on '$lockfile'.");
 		$this->lock_fd = fopen( $lockfile, "w" );
-		fwrite( $this->lock_fd, getmypid() );
-		flock( $this->lock_fd, LOCK_EX );
-		ide_log(LOG_DEBUG, "Got a lock on '$lockfile': '$this->lock_fd'.");
+
+		$ret = flock( $this->lock_fd, LOCK_EX );
+		ide_log(LOG_DEBUG, "flock(LOCK_EX) returned: $ret.");
+		if ($ret !== true)
+		{
+			ide_log(LOG_ERROR, "flock(LOCK_EX) failed to get lock on '$this->lock_fd'.");
+			throw new Exception("failed to get a lock on git repository at $path.", E_INTERNAL_ERROR);
+		}
+
+		$ret = fwrite( $this->lock_fd, getmypid() );
+		ide_log(LOG_DEBUG, "fwrite(pid) returned: $ret.");
+
+		ide_log(LOG_INFO, "Got a lock on '$lockfile': '$this->lock_fd'.");
 	}
 
 	public function __destruct()
 	{
 		/* Free our lock on the repository - manually since PHP 5.3.2 */
-		ide_log(LOG_DEBUG, "Dropping lock on '$this->lock_fd'.");
-		flock($this->lock_fd, LOCK_UN);
-		fclose( $this->lock_fd );
-		ide_log(LOG_DEBUG, "Closed '$this->lock_fd'.");
+		ide_log(LOG_INFO, "Dropping lock on '$this->lock_fd'.");
+
+		$ret = flock($this->lock_fd, LOCK_UN);
+		ide_log(LOG_DEBUG, "flock(LOCK_UN) returned: $ret.");
+		if ($ret !== true)
+		{
+			ide_log(LOG_ERROR, "flock(LOCK_UN) failed to release lock on '$this->lock_fd'.");
+		}
+
+		$ret = fclose( $this->lock_fd );
+		ide_log(LOG_DEBUG, "fclose returned: $ret.");
+
+		ide_log(LOG_INFO, "Closed '$this->lock_fd'.");
 	}
 
 	/**
