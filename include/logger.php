@@ -32,7 +32,7 @@ class Logger
 		$data['L'] = $level;
 
 		$input = Input::getInstance();
-		$rq = $input->getRequestCommand();
+		$rq = $input->getRequestModule().'/'.$input->getRequestCommand();
 		if (!$rq)
 			$rq = 'none';
 		$data['RQ'] = $rq;
