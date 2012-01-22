@@ -8,6 +8,7 @@ TEST basic/case-transform
 TEST basic/notifications
 TEST basic/compat-tree
 TEST basic/settings
+TEST basic/file-locks
 TEST basic/git
 TEST basic/lock-hanlder
 TEST basic/proj-manager

@@ -59,9 +59,22 @@ function file_lock($lockfile)
 {
 	ide_log(LOG_INFO, "Creating a lock on '$lockfile'.");
 	$resource = fopen( $lockfile, "w" );
+	$ret = true;
 
-	$ret = flock( $resource, LOCK_EX );
-	ide_log(LOG_DEBUG, "flock(LOCK_EX) returned: $ret.");
+	$maxWait = Configuration::getInstance()->getConfig('lock.max_wait');
+	$maxWait /= 1000; // convert to micro-seconds
+
+	$end = microtime(true) + $maxWait;
+
+	// loop until we get a lock or maxWait time has passed
+	do
+	{
+		$ret = flock( $resource, LOCK_EX | LOCK_NB );
+		ide_log(LOG_DEBUG, "flock(LOCK_EX | LOCK_NB) returned: $ret.");
+		usleep(10);
+	}
+	while ( microtime(true) < $end && !$ret );
+
 	if ($ret !== true)
 	{
 		ide_log(LOG_ERROR, "flock(LOCK_EX) failed to get lock on '$resource'.");
