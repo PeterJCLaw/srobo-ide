@@ -54,12 +54,8 @@ class GitRepository
 	 */
 	public static function GetOrCreate($path)
 	{
-		static $handles = array();
-		if (!isset($handles[$path]))
-		{
-			$handles[$path] = new GitRepository($path);
-		}
-		return $handles[$path];
+		$repo = new GitRepository($path);
+		return $repo;
 	}
 
 	/**
@@ -93,13 +89,13 @@ class GitRepository
 
 		/* Acquire an exclusive lock on the git repository */
 		$lockfile = "$this->git_path/cyanide-lock";
-		$this->lock_fd = file_lock( $lockfile, "w" );
+		$this->lock_fd = LockHandler::getInstance()->lock( $lockfile, "w" );
 	}
 
 	public function __destruct()
 	{
-		$ret = file_unlock($this->lock_fd);
-		ide_log(LOG_DEBUG, "file_unlock returned: $ret.");
+		$ret = LockHandler::getInstance()->unlock($this->lock_fd);
+		ide_log(LOG_DEBUG, "LockHandler->unlock returned: $ret.");
 	}
 
 	/**
