@@ -142,6 +142,12 @@ class ResizableImage
 			$h = $boxWidth / $origRatio;
 		}
 
+		if ($w > $origWidth || $h > $origHeight) {
+			// Don't make images bigger than they already are
+			$h = $origHeight;
+			$w = $origWidth;
+		}
+
 		assert($w <= $boxWidth); // width too large
 		assert($h <= $boxHeight); // height too large
 
