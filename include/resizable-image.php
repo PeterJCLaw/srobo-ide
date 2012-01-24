@@ -32,6 +32,8 @@ class ResizableImage
 		}
 
 		$newImage = imagecreatetruecolor($width, $height);
+		imagealphablending($newImage, false);
+		imagesavealpha($newImage, true);
 		$curImage = $this->loadFromFile();
 
 		// can go no further if we don't have the resources.
