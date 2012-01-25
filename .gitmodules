@@ -4,3 +4,6 @@
 [submodule "pyenv"]
 	path = pyenv
 	url = git://srobo.org/pyenv.git
+[submodule "include/pipebot"]
+	path = include/pipebot
+	url = git://srobo.org/pipebot.git
