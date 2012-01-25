@@ -52,3 +52,7 @@
 	-ms-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
+
+#team-status-page textarea {
+	height: 8em;
+}
