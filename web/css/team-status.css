@@ -39,6 +39,9 @@
 	vertical-align: top;
 	white-space: nowrap;
 }
+#team-status-page table td {
+	padding-bottom: 10px;
+}
 #team-status-page table td p {
 	margin: 0;
 }

@@ -288,9 +288,7 @@
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
 			<p class="info">
-				The following information will be publicly available on the SR website in the <a href="http://www.studentrobotics.org/teams">teams section</a>. You can enter the name of your team along with a description/biography of the team. You may also wish to upload an image, preferably of your robot, to show your progress. Keep the image up to date to let other teams know how you're doing and what they have to fear! Please avoid faces appearing in the image.
-			</p>
-			<p class="info">
+				The following information will be publicly available on the SR website, in the <a href="http://www.studentrobotics.org/teams">Teams Area</a>.
 				Be sensible with the information you add on this page, avoid anything objectionable/obscene. All content is moderated before appearing on the website and the following icons will appear to the right of the field after moderation:
 			</p>
 			<ul class="info">
@@ -303,33 +301,46 @@
 					<td><input type="text" id="team-status-name-input" /></td>
 				</tr>
 				<tr id="team-status-image">
-					<th>Robot Image:</th>
+					<th>Image:</th>
 					<td>
 						<form action="./upload.php" target="upload-helper" id="team-status-image-upload-form" method="POST" enctype="multipart/form-data">
-							<input type="file" name="team-status-image-input" id="team-status-image-input" /> <p class="info">Max. file size: 4MB. PNG, JPEG and GIF are supported. The image will be resized to fit within 480x320.</p>
+							<input type="file" name="team-status-image-input" id="team-status-image-input" />
+							<p class="info">
+								Upload an image to show on your Team page. It can be of anything you wish, within reason. Ideally it'd show the current state of your robot to keep the other teams on their toes! Please avoid faces appearing in the image.
+							</p>
+							<p class="info">
+								Max. file size: 4MB. PNG, JPEG and GIF are supported. The image will be resized to fit within 480x320.
+							</p>
 							<input type="hidden" name="_command" id="team-status-image-command" value="" />
 							<input type="hidden" name="team" id="team-status-image-team" value="" />
 						</form>
 					</td>
 				</tr>
 				<tr id="team-status-description">
-					<th>Team Description:</th>
-					<td><textarea id="team-status-description-input"></textarea></td>
+					<th>About the team:</th>
+					<td>
+						<textarea id="team-status-description-input"></textarea>
+						<p class="info">
+							Tell the world about your team! Who are you? How did you form? Got any interesting facts?
+						</p>
+					</td>
 				</tr>
 				<tr id="team-status-url">
-					<th>Team Website:</th>
+					<th>Website:</th>
 					<td>
 						<input type="text" name="team-status-url-input" id="team-status-url-input" />
+						<p class="info">
+							If you have a website please give us the full URL to it (including the http://)
+						</p>
 					</td>
 				</tr>
 				<tr id="team-status-feed">
-					<th>Team Blog Feed:</th>
+					<th>Blog Feed:</th>
 					<td>
 						<input type="text" name="team-status-feed-input" id="team-status-feed-input" />
 						<p class="info">
-							If you enter the URL of your blog's RSS/Atom feed here, then other teams can read about your progress.
-							You can enter a maximum of 1 blog feed but can change it using the box above.
-							If you do not have a blog you can set one up for free at <a href="http://www.blogger.com" target="_blank">Blogger</a> or <a href="http://wordpress.com/" target="_blank">Wordpress</a> amongst many other sites.
+							Enter the URL of your blog's RSS/Atom feed here to make it easier for other teams to find out about your progress.
+							If you do not have a blog there are many free sites where you can create one, such as <a href="http://www.blogger.com" target="_blank">Blogger</a> and <a href="http://wordpress.com/" target="_blank">Wordpress</a>.
 						</p>
 					</td>
 				</tr>
