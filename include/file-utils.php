@@ -72,7 +72,7 @@ function file_lock($lockfile)
 	{
 		$ret = flock( $resource, LOCK_EX | LOCK_NB );
 		ide_log(LOG_DEBUG, "flock(LOCK_EX | LOCK_NB) returned: $ret.");
-		usleep(10);
+		usleep(10000); // 10 milliseconds
 	}
 	while ( microtime(true) < $end && !$ret );
 
