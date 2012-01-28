@@ -98,7 +98,7 @@ class AdminModule extends Module
 
         if ($item == 'image')
         {
-            throw new Exception('Cannot review image through the IDE', E_MALFORMED_REQUEST);
+            throw new Exception('Cannot review images through the IDE', E_MALFORMED_REQUEST);
         }
 
         $status->setReviewState($item, $value, $isValid);
