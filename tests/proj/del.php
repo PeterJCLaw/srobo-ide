@@ -1,16 +1,8 @@
 <?php
-//delete any existing repos
-if (is_dir("/tmp/test-repos"))
-{
-	exec("rm -rf /tmp/test-repos");
-}
-
-//create the tld and manufacture a git repo
-exec("mkdir -p /tmp/test-repos/beedogs");
 
 //override the configuration
 $config = Configuration::getInstance();
-$config->override("repopath", "/tmp/test-repos");
+$config->override("repopath", $testWorkPath);
 $config->override("user.default", "death");
 $config->override("user.default.teams", array(1, 2));
 $config->override("auth_module", "single");
@@ -35,8 +27,3 @@ $proj = $mm->getModule("proj");
 $proj->dispatchCommand("del");
 
 test_false(is_dir($repopath), "deleted repo existed");
-
-if (is_dir("/tmp/test-repos"))
-{
-	exec("rm -rf /tmp/test-repos");
-}
