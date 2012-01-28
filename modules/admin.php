@@ -96,6 +96,11 @@ class AdminModule extends Module
         $value = $input->getInput('value');
         $item = $input->getInput('item');
 
+        if ($item == 'image')
+        {
+            throw new Exception('Cannot review image through the IDE', E_MALFORMED_REQUEST);
+        }
+
         $status->setReviewState($item, $value, $isValid);
         $user = AuthBackend::getInstance()->getCurrentUser();
         $saved = $status->save($user);
