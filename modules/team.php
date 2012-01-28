@@ -84,8 +84,9 @@ class TeamModule extends Module
 	/**
 	 * Helper method for saving the status as the current user,
 	 *  and outputting a suitable message if it fails.
+	 * This also outputs the news to the world.
 	 */
-	private function saveStatus($status)
+	private function saveStatus($status, $extra = null)
 	{
 		$user = AuthBackend::getInstance()->getCurrentUser();
 		$saved = $status->save($user);
@@ -93,6 +94,11 @@ class TeamModule extends Module
 		{
 			$output = Output::getInstance();
 			$output->setOutput('error', 'Unable to save team status');
+		}
+		else
+		{
+			$team = Input::getInstance()->getInput('team');
+			Announce::that("Team \x033$team\x0f updated their status$extra.");
 		}
 		return $saved;
 	}
@@ -143,7 +149,7 @@ class TeamModule extends Module
 		$status = new TeamStatus($team);
 		$md5 = md5_file($path);
 		$status->setDraft('image', $md5);
-		return $this->saveStatus($status);
+		return $this->saveStatus($status, ' image');
 	}
 
 	public function putStatus()

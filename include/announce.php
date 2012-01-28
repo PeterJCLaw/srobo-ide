@@ -15,7 +15,7 @@ class Announce
 	public static function that($message)
 	{
 		$enabled = Configuration::getInstance()->getConfig('announce.enabled');
-		if ($enabled !== true)
+		if (!$enabled)
 		{
 			return;
 		}
