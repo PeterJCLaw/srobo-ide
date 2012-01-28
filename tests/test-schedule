@@ -16,6 +16,8 @@ TEST basic/team-status
 TEST utils/mkdir
 TEST utils/path
 
+TEST admin/list-teams
+
 TEST auth/single
 SKIP auth/ldap
 

@@ -51,11 +51,12 @@ class AdminModule extends Module
         $allTeams = TeamStatus::listAllTeams();
         $teams = array_filter($allTeams, function($team) {
             $status = new TeamStatus($team);
-            return $status->needsReview();
+            return $status->needsReview('image');
         });
 
         $output = Output::getInstance();
 
+        $teams = array_values($teams);
         $output->setOutput('teams', $teams);
         return true;
     }
