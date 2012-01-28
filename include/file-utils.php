@@ -62,8 +62,9 @@ function file_lock($lockfile)
 	$ret = true;
 
 	$maxWait = Configuration::getInstance()->getConfig('lock.max_wait');
-	$maxWait /= 1000; // convert to micro-seconds
+	$maxWait /= 1000; // convert milliseconds to seconds
 
+	// microtime(true) returns a float in seconds
 	$end = microtime(true) + $maxWait;
 
 	// loop until we get a lock or maxWait time has passed
