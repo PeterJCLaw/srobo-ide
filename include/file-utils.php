@@ -77,7 +77,7 @@ function file_lock($lockfile)
 
 	if ($ret !== true)
 	{
-		ide_log(LOG_ERROR, "flock(LOCK_EX) failed to get lock on '$resource'.");
+		ide_log(LOG_ERR, "flock(LOCK_EX) failed to get lock on '$resource'.");
 		throw new Exception("Failed to get a lock on '$lockfile'.", E_INTERNAL_ERROR);
 	}
 
@@ -97,7 +97,7 @@ function file_unlock($resource)
 	ide_log(LOG_DEBUG, "flock(LOCK_UN) returned: $ret.");
 	if ($ret !== true)
 	{
-		ide_log(LOG_ERROR, "flock(LOCK_UN) failed to release lock on '$resource'.");
+		ide_log(LOG_ERR, "flock(LOCK_UN) failed to release lock on '$resource'.");
 	}
 
 	$ret = fclose( $resource );
