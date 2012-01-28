@@ -12,12 +12,6 @@ $config->override("modules", array("admin"));
 $auth = AuthBackend::getInstance();
 test_true($auth->authUser('bees','face'), "authentication failed");
 
-//setup the required input keys
-$input = Input::getInstance();
-$input->setInput("team", $team);
-
-$output = Output::getInstance();
-
 $mm = ModuleManager::getInstance();
 $mm->importModules();
 test_equal($mm->moduleExists("admin"), true, "admin module does not exist");
