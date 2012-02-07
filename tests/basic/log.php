@@ -3,7 +3,7 @@
 function test_level($logLevel, $data)
 {
 	$config = Configuration::getInstance();
-	$config->override('log_level', $logLevel);
+	$config->override('log.level', $logLevel);
 	foreach ($data as $level => $shouldLog)
 	{
 		$levelName = Logger::$names[$level];

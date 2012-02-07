@@ -13,7 +13,10 @@ class Logger
 			return;
 		static $file = null;
 		if ($file === null)
-			$file = fopen('/tmp/ide-log', 'a');
+		{
+			$path = Configuration::getInstance()->getConfig('log.location');
+			$file = fopen($path, 'a');
+		}
 		$prefix = self::locationData($level);
 		fwrite($file, "[$prefix] $message\n");
 		fflush($file);
@@ -53,7 +56,7 @@ class Logger
 	 */
 	public static function isLogging($level)
 	{
-		$loggingLevel = Configuration::getInstance()->getConfig('log_level');
+		$loggingLevel = Configuration::getInstance()->getConfig('log.level');
 		return $loggingLevel >= $level;
 	}
 }
