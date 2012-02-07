@@ -176,7 +176,7 @@ function ErrorsPage() {
 			this._prompt = null;
 		}
 
-		for(var i = 0; i < this._signals; i++) {
+		for(var i = 0; i < this._signals.length; i++) {
 			disconnect(this._signals[i]);
 		}
 		this._signals = new Array();
@@ -245,7 +245,7 @@ function ErrorFile(name) {
 	this.load_items = function() {
 		for( var i=0; i<this._items.length; i++ ) {
 			var item = this._items[i];
-			var li = LI({'class' : item.level}, ''+item.lineNumber+':'+' ['+item.level[0].toUpperCase()+'] '+item.message);
+			var li = LI({'class' : item.level}, ''+item.lineNumber+':'+' ['+item.level.charAt(0).toUpperCase()+'] '+item.message);
 			li.title = 'Double click to view the error in the file.';
 			this._item_signals.push(connect( li, 'ondblclick', bind(this._view_onclick, this, item.lineNumber) ));
 			appendChildNodes( this._items_elem, li );

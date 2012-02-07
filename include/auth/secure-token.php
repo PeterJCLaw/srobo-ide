@@ -5,10 +5,12 @@ abstract class SecureTokenAuth extends AuthBackend
 	private $user     = null;
 	private $teams    = array();
 	private $key      = null;
+	private $iv       = null;
 	private $tok_next = null;
 
 	const METHOD = 'AES128';
 	const TIMEOUT = 600.0;
+	const RAW_OUTPUT = false;
 
 	public function __construct()
 	{
@@ -19,11 +21,14 @@ abstract class SecureTokenAuth extends AuthBackend
 		if (!file_exists($keyfile))
 		{
 			$this->key = openssl_random_pseudo_bytes(16);
-			file_put_contents($keyfile, base64_encode($this->key));
+			$this->iv = openssl_random_pseudo_bytes(16);
+			file_put_contents($keyfile, base64_encode($this->key.$this->iv));
 		}
 		else
 		{
-			$this->key = base64_decode(file_get_contents($keyfile));
+			$decoded = base64_decode(file_get_contents($keyfile));
+			$this->key = substr($decoded, 0, 16);
+			$this->iv = substr($decoded, 16);
 		}
 	}
 
@@ -47,7 +52,7 @@ abstract class SecureTokenAuth extends AuthBackend
 		$parts[3] = $teams;
 		$parts[4] = openssl_random_pseudo_bytes(mt_rand(2, 8));
 		$data = implode(chr(0), $parts);
-		return openssl_encrypt($data, self::METHOD, $this->key);
+		return openssl_encrypt($data, self::METHOD, $this->key, self::RAW_OUTPUT, $this->iv);
 	}
 
 	public function authUser($username, $password)
@@ -79,7 +84,7 @@ abstract class SecureTokenAuth extends AuthBackend
 
 	public function validateAuthToken($token)
 	{
-		$decrypted = openssl_decrypt($token, self::METHOD, $this->key);
+		$decrypted = openssl_decrypt($token, self::METHOD, $this->key, self::RAW_OUTPUT, $this->iv);
 		$parts = explode(chr(0), $decrypted);
 		$time = (float)$parts[0];
 		if ($time - microtime(true) > self::TIMEOUT*1000000.0)

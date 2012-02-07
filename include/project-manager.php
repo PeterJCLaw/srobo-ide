@@ -120,12 +120,16 @@ class ProjectManager
 		$folders = $userRepo->listFolders();
 		// read them all
 		$unstagedFiles = array();
+		$fileTimes = array();
 		foreach ($unstaged as $key)
 		{
 			$unstagedFiles[$key] = $userRepo->getFile($key);
+			$fileTimes[$key] = $userRepo->fileMTime($key);
 		}
 	//	echo 'unstagedFiles: ';
 	//	var_dump($unstagedFiles);
+	//	echo 'fileTimes: ';
+	//	var_dump($fileTimes);
 		// reset --hard
 		$userRepo->reset();
 		// fetch
@@ -148,6 +152,7 @@ class ProjectManager
 			else
 			{
 				$userRepo->putFile($path, $data);
+				$userRepo->touchFile($path, $fileTimes[$path]);
 			}
 		}
 		// check for conflicts
