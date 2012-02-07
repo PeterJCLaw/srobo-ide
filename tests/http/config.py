@@ -12,4 +12,4 @@ password = 'py-test'
 try:
 	from localconfig import *
 except ImportError:
-	pass
+	skip()
