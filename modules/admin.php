@@ -51,11 +51,12 @@ class AdminModule extends Module
         $allTeams = TeamStatus::listAllTeams();
         $teams = array_filter($allTeams, function($team) {
             $status = new TeamStatus($team);
-            return $status->needsReview();
+            return $status->needsReview('image');
         });
 
         $output = Output::getInstance();
 
+        $teams = array_values($teams);
         $output->setOutput('teams', $teams);
         return true;
     }
@@ -94,6 +95,11 @@ class AdminModule extends Module
         $isValid = $input->getInput('valid');
         $value = $input->getInput('value');
         $item = $input->getInput('item');
+
+        if ($item == 'image')
+        {
+            throw new Exception('Cannot review images through the IDE', E_MALFORMED_REQUEST);
+        }
 
         $status->setReviewState($item, $value, $isValid);
         $user = AuthBackend::getInstance()->getCurrentUser();

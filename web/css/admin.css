@@ -33,10 +33,10 @@
 	color: grey;
 }
 .valid {
-	background-color: #98FF4F !important;
+	background: url(../images/icons/tick.png) right no-repeat !important;
 }
 .rejected {
-	background-color: #FF6666 !important;
+	background: url(../images/icons/cross.png) right no-repeat !important;
 }
 
 .switchboard-window {

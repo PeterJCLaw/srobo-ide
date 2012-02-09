@@ -1,11 +1,9 @@
 <?php
 
-$workDir = tmpdir();
-
-echo "Working in $workDir\n";
+echo "Working in $testWorkPath\n";
 
 $config = Configuration::getInstance();
-$config->override('team.status_dir', $workDir);
+$config->override('team.status_dir', $testWorkPath);
 
 $team = 'XYZ';
 $user = 'first-user';
@@ -151,6 +149,3 @@ sort($teams);
 sort($teamsListed);
 
 test_equal($teamsListed, $teams, "Returned the wrong list of teams");
-
-// teardown.
-delete_recursive($workDir);

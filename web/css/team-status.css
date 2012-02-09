@@ -9,13 +9,24 @@
 	margin: 0 1em;
 }
 
-#team-status-page p.info {
+#team-status-page .info {
 	font-size: 0.95em;
 }
 
-#team-status-page > p {
-	margin: 5px auto;
-	text-align: center;
+#team-status-page ul.info {
+	list-style-type: none;
+}
+
+#team-status-page ul.info li {
+	margin: 5px 0;
+}
+
+#team-status-page ul.info img {
+	vertical-align: text-top;
+}
+
+#team-status-page > p, #team-status-page > ul {
+	margin: 15px auto;
 	width: 80%;
 }
 
@@ -28,12 +39,23 @@
 	vertical-align: top;
 	white-space: nowrap;
 }
+#team-status-page table td {
+	padding-bottom: 10px;
+}
 #team-status-page table td p {
 	margin: 0;
 }
 
 #team-status-page input[type="text"], #team-status-page textarea {
-	color: #0000FF;
 	width: 100%;
 	border: 2px solid #DDDDDD;
+	padding: 2px 18px 2px 2px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+#team-status-page textarea {
+	height: 8em;
 }
