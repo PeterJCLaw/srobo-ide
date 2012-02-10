@@ -2,6 +2,8 @@
 <?php
 
 require_once('tests/test-runners.php');
+// delete_recursive, mkdir_full, tmpdir
+require_once('include/file-utils.php');
 
 array_shift($argv);
 $test_restrict = empty($argv) ? null : $argv;
@@ -27,6 +29,9 @@ function sig_handler($signo)
 // tick use required as of PHP 4.3.0
 declare(ticks = 1);
 pcntl_signal(SIGINT,  "sig_handler");
+
+// Get a working folder for this run of tests
+$workPath = tmpdir(null, 'ide-test-');
 
 foreach ($sched as $value)
 {
@@ -58,11 +63,18 @@ foreach ($sched as $value)
 		if ($skip)
 			continue;
 	}
+
+	// Create a temp folder for this test, and store it somewhere the test can see it too.
+	$testWorkPath = "$workPath/$tn/";
+	mkdir_full($testWorkPath);
+	putenv("ide-test-work-path=$testWorkPath");
+
 	$runner = BaseRunner::createRunner($tn);
 	$infile = isset($exp[2]) ? $exp[2] : '/dev/null';
 	list($rc, $output) = $runner->run($infile);
 	if ($rc == 0)
 	{
+		delete_recursive($testWorkPath);
 		if (strpos($output, '___SKIP_TEST') !== false)
 		{
 			++$skips;
@@ -83,6 +95,7 @@ foreach ($sched as $value)
 	{
 		if ($xfail)
 		{
+			delete_recursive($testWorkPath);
 			++$xfails;
 			echo "XFAIL   $tn\n";
 		}
@@ -90,11 +103,15 @@ foreach ($sched as $value)
 		{
 			++$fails;
 			echo "FAIL    $tn\n";
-			if (count(explode('\n', $output)) > 6)
+			$lines = explode("\n", $output);
+			if (count($lines) > 10)
 			{
 				$tmpfile = tempnam("/tmp", "ide-test-");
 				file_put_contents($tmpfile, "$output\n");
-				echo "\tSee $outfile for output.\n";
+				echo "=== BEGIN OUTPUT TAIL ===\n";
+				echo implode(PHP_EOL, array_slice($lines, -10)), PHP_EOL;
+				echo "===  END OUTPUT TAIL  ===\n";
+				echo "\tSee $tmpfile for further output.\n";
 			}
 			else
 			{
@@ -108,7 +125,14 @@ foreach ($sched as $value)
 
 printf("%4d tests passed.\n", $passes);
 if ($fails > 0)
+{
 	printf("%4d tests failed.\n", $fails);
+	echo "\tSee working directory '$workPath'.\n";
+}
+else
+{
+	delete_recursive($workPath);
+}
 if ($xfails > 0)
 	printf("%4d xfails.\n", $xfails);
 if ($fixes > 0)

@@ -39,6 +39,21 @@ IDE_notification_callback = function(note) {
 	status_rich_show(object, LEVEL_WARN);
 };
 
+function IDE_handle_backend_response(responseText, args, successCallback, errorCallback) {
+	var rp = JSON.parse(responseText);
+	if (rp.debug) {
+		IDE_backend_debug = rp.debug;
+	}
+	if (rp.notifications) {
+		forEach(rp.notifications, IDE_notification_callback);
+	}
+	if (rp.error) {
+		errorCallback(rp.error[0], rp.error[1], args);
+	} else {
+		successCallback(rp, args);
+	}
+}
+
 function IDE_backend_request(command, args, successCallback, errorCallback) {
 	var rq = JSON.stringify(args);
 	var xhr = new XMLHttpRequest();
@@ -55,18 +70,7 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 				return;
 			}
 			var rt = xhr.responseText;
-			var rp = JSON.parse(rt);
-			if (rp.debug) {
-				IDE_backend_debug = rp.debug;
-			}
-			if (rp.notifications) {
-				forEach(rp.notifications, IDE_notification_callback);
-			}
-			if (rp.error) {
-				errorCallback(rp.error[0], rp.error[1], args);
-			} else {
-				successCallback(rp, args);
-			}
+			IDE_handle_backend_response(rt, args, successCallback, errorCallback);
 		} else {
 			errorCallback(-xhr.status, xhr.statusText, args);
 		}

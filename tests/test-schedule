@@ -8,10 +8,20 @@ TEST basic/case-transform
 TEST basic/notifications
 TEST basic/compat-tree
 TEST basic/settings
+TEST basic/file-locks
 TEST basic/git
+TEST basic/lock-hanlder
 TEST basic/proj-manager
+TEST basic/str-utils
+TEST basic/team-status
 
 TEST utils/mkdir
+TEST utils/path
+
+TEST admin/basic
+TEST admin/list-teams
+TEST admin/list-items
+TEST admin/set-review-state
 
 TEST auth/single
 SKIP auth/ldap
@@ -32,8 +42,6 @@ TEST file/mv
 TEST file/simulate/unimplemented
 
 TEST ping/ping
-
-TEST switchboard/milestones-data
 
 # Some python tests!
 TEST http/auth

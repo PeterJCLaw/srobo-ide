@@ -3,21 +3,16 @@
 $input = Input::getInstance();
 $config = Configuration::getInstance();
 
-function cleanCreate($path) {
-	delete_recursive($path);
-	mkdir_full($path);
-}
-
-cleanCreate('/tmp/proj-export/wd');
-cleanCreate('/tmp/proj-export/test-repos');
-$test_zip_path = '/tmp/proj-export/ide-test-zip';
+cleanCreate($testWorkPath.'wd');
+cleanCreate($testWorkPath.'test-repos');
+$test_zip_path = $testWorkPath.'ide-test-zip';
 cleanCreate($test_zip_path);
 
 // remove the folder so that we can test the failure mode
-$zipPathBase = '/tmp/proj-export/ide-zips';
+$zipPathBase = $testWorkPath.'ide-zips';
 delete_recursive($zipPathBase);
 
-$config->override('repopath', '/tmp/proj-export/test-repos');
+$config->override('repopath', $testWorkPath.'test-repos');
 
 $config->override('zippath', $zipPathBase);
 $config->override('zipurl', $zipPathBase);

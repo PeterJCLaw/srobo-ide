@@ -34,6 +34,7 @@ class CookieStrategy extends TokenStrategy
 	public function setNextAuthToken($token)
 	{
 		$expiry = Configuration::getInstance()->getConfig("cookie_expiry_time");
+		$secure = (bool)Configuration::getInstance()->getConfig("require_ssl");
 		if ($expiry == null)
 		{
 			throw new Exception("no cookie expiry time found in config file", E_NO_EXPIRY_TIME);
@@ -42,7 +43,10 @@ class CookieStrategy extends TokenStrategy
 		          self::COOKIENAME,
 		          $token,
 		          time() + (int)$expiry,
-		          $this->path
+		          $this->path,
+		          '',	// domain - don't set.
+		          $secure,
+		          true	// HTTPOnly
 		         );
 	}
 

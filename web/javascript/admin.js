@@ -7,6 +7,9 @@ function Admin() {
 
 	//hold status message for the page
 	this._prompt = null;
+
+	// Id for the table that contains the items to review
+	this._tableId = 'admin-page-review';
 }
 
 /* *****	Initialization code	***** */
@@ -26,8 +29,7 @@ Admin.prototype.init = function() {
 		tabbar.add_tab( this.tab );
 
 		/* Initialise indiviual page elements */
-		this.ShowTeams();
-		this.GetBlogFeeds();
+		this.GetTeamsToReview();
 
 		/* remember that we are initialised */
 		this._inited = true;
@@ -67,161 +69,136 @@ Admin.prototype._close = function() {
 }
 /* *****	End Tab events	***** */
 
-/* *****	Team editing Code	***** */
-Admin.prototype.ShowTeams = function() {
-	var i = 0;
-	var td_id = TH(null, 'Team ID');
-	var td_name = TH({'class':'name'}, 'Team Name');
-	var td_button = TH(null);
-	var oddeven = i++ % 2 == 0 ? 'even' : 'odd';
-	replaceChildNodes('admin-teams-table');
-	appendChildNodes('admin-teams-table', TR({'class':oddeven}, td_id, td_name, td_button));
+/* *****	Teams with stuff to review listing code	***** */
+Admin.prototype._receiveGetTeamsToReview = function(nodes) {
 
-	for( var id in user.team_names ) {
-		td_id = TD(null, id);
-		td_name = TD({'class':'name'}, user.team_names[id]);
-		var button = BUTTON(null, 'Request name change');
-		this._signals.push(connect(button, 'onclick', bind(this._editTeam, this, {id:id,name:user.team_names[id]})));
-		td_button = TD(null, button);
-		oddeven = i++ % 2 == 0 ? 'even' : 'odd';
-		appendChildNodes('admin-teams-table',
-			TR({'class':oddeven,id:'admin-teams-table-'+id}, td_id, td_name, td_button)
-		);
+	replaceChildNodes(this._tableId);
+
+	var selectId = 'admin-page-team-select';
+
+	if (nodes.teams.length == 0) {
+		this._prompt = status_msg("There are no teams to review.", LEVEL_OK);
+		swapDOM(selectId, SPAN({id: selectId}, 'None'));
+		return;
+	} else if (nodes.teams.length == 1) {
+		var team = nodes.teams[0];
+		this.GetItemsToReview(team);
+		swapDOM(selectId, SPAN({id: selectId}, team));
+		return;
 	}
-}
 
-Admin.prototype._editTeam = function(ref) {
-	var row = $('admin-teams-table-'+ref.id);
-	var cell = getFirstElementByTagAndClassName('td', 'name', row);
-	var button = getFirstElementByTagAndClassName('button', null, row);
-	if(button.innerHTML == 'Request name change') {
-		var input = INPUT({value:cell.innerHTML});
-		replaceChildNodes(cell, input);
-		button.innerHTML = 'Save';
-	} else {	//save it
-		IDE_backend_request("admin/team-name-put",
-			{
-			   'id': ref.id,
-			 'name': cell.firstChild.value
-			},
-			bind( this._receiveEditTeam, this, ref ),
-			bind( this._errorEditTeam, this, ref )
-		);
-		cell.firstChild.disabled = true;
-		button.disabled = true;
+	this._prompt = status_msg("Please select a team to review.", LEVEL_OK);
+
+	var pleaseSelect = OPTION({value: -1}, "Please select..");
+	var s = SELECT({id: selectId}, pleaseSelect);
+	for( var i=0; i<nodes.teams.length; i++ ) {
+		var team = nodes.teams[i];
+		var opt = OPTION({value:team}, team);
+		appendChildNodes(s, opt);
 	}
-}
-Admin.prototype._receiveEditTeam = function(ref, nodes) {
-	var row = $('admin-teams-table-'+ref.id);
-	if(nodes.success) {
-		this._prompt = status_msg("Team name change request succeeded, team name will be changed when a mentor has approved it", LEVEL_OK);
-		var cell = getFirstElementByTagAndClassName('td', 'name', row);
-		cell.innerHTML = ref.name;
-		var button = getFirstElementByTagAndClassName('button', null, row);
-		button.innerHTML = 'Request name change';
-		button.disabled = false;
-	} else {
-		this._errorEditTeam(ref, nodes);
-	}
-}
-Admin.prototype._errorEditTeam = function(ref, nodes) {
-	this._prompt = status_msg("Failed to update team name", LEVEL_ERROR);
-	var row = $('admin-teams-table-'+ref.id);
-	var cell = getFirstElementByTagAndClassName('td', 'name', row);
-	var button = getFirstElementByTagAndClassName('button', null, row);
-	cell.firstChild.disabled = false;
-	button.disabled = false;
-}
-/* *****	End Team editing Code 	***** */
 
-/* *****	Student blog feed listing code	***** */
-Admin.prototype._receiveGetBlogFeeds = function(nodes) {
-	var td_user = TH({'class':'user'}, 'User ID');
-	var td_url = TH({'class':'url'}, 'URL');
-	var td_status = TH({'class':'status'}, 'Status');
-	replaceChildNodes('admin-feeds-table');
-	appendChildNodes('admin-feeds-table', TR({'class':'even'}, td_user, td_url, td_status));
-
-	var make_selectbox = function(properties, options, def) {
-		var s = SELECT(properties);
-		for( value in options ) {
-			var opt = OPTION({value:value}, options[value]);
-			if(value == def)
-				opt.selected = true;
-			appendChildNodes(s, opt);
+	connect(s, 'onchange', bind(function() {
+		if (s.value == -1) {
+			return;
 		}
-		return s;
-	};
+		// avoid removing it if it's already gone.
+		if (isChildNode(pleaseSelect, document))
+		{
+			removeElement(pleaseSelect);
+		}
+		this.GetItemsToReview(s.value);
+	}, this));
 
-	var options = {unchecked:'Unchecked',valid:'Valid',invalid:'Invalid'};
-	//iterate over all feeds and append them to the table
-	for( var i=0; i<nodes.feeds.length; i++ ) {
-		// Add an id to each field to ensure that they're unique.
-		// These used to be the DB ids, but there's no DB any more...
-		nodes.feeds[i].id = i;
-		var feed = nodes.feeds[i];
-		td_user = TD({'class':'user'}, feed.user);
-		td_url = TD({'class':'url'}, A({href:feed.url},feed.url));
-
-		var status = (feed.checked ? (feed.valid ? 'valid' : 'invalid') : 'unchecked');
-		var selectbox = make_selectbox({id:'admin-feeds-'+feed.id}, options, status);
-		var ref = {id:feed.id, url:feed.url, status:status, selectbox:selectbox};
-		this._signals.push(connect(selectbox, 'onchange', bind(this.setBlogStatus, this, ref)));
-		td_status = TD({'class':'status'}, selectbox);
-
-		var oddeven = i % 2 == 0 ? 'odd' : 'even';
-		appendChildNodes('admin-feeds-table', TR({'class':oddeven}, td_user, td_url, td_status));
-		this.showBlogStatus(ref);
-	}
+	swapDOM(selectId, s);
 }
-Admin.prototype._errorGetBlogFeeds = function() {
-		this._prompt = status_msg("Unable to load blog feeds", LEVEL_ERROR);
-		log("Admin: Failed to retrieve feed blog urls");
+Admin.prototype._errorGetTeamsToReview = function() {
+		this._prompt = status_msg("Unable to load teams to review", LEVEL_ERROR);
+		log("Admin: Failed to retrieve items to review");
 		return;
 }
-Admin.prototype.GetBlogFeeds = function() {
-	log("Admin: Retrieving blog feeds");
-	IDE_backend_request("admin/feed-status-get", {},
-		bind(this._receiveGetBlogFeeds, this),
-		bind(this._errorGetBlogFeeds, this)
+Admin.prototype.GetTeamsToReview = function() {
+	log("Admin: Retrieving teams to review");
+	IDE_backend_request("admin/review-teams-get", {},
+		bind(this._receiveGetTeamsToReview, this),
+		bind(this._errorGetTeamsToReview, this)
 	);
 }
-/* *****    End Student blog feed listing code	***** */
+/* *****    End Teams with stuff to review listing code	***** */
 
-/* *****	RSS feed validation code	***** */
-Admin.prototype._receiveBlogStatus = function(ref, nodes) {
-	if(nodes.success) {
-		this._prompt = status_msg("Blog feed updated", LEVEL_OK);
-	} else {
-		this._errorBlogStatus(ref, nodes);
+/* *****	Items to review display code	***** */
+Admin.prototype._receiveGetItemsToReview = function(nodes) {
+
+	// Clear the table
+	replaceChildNodes(this._tableId);
+
+	var linkable = ['feed', 'url'];
+
+	for ( var field in nodes.items ) {
+		var th = TH(null, 'Team '+field+':');
+		// rely on the backend escaping the content for display.
+		var content = nodes.items[field];
+		if ( findValue( linkable, field ) != -1 ) {	// contains
+			content = A({href: content}, content);
+		}
+		content = TD(null, content);
+
+		var accept = BUTTON(null, 'Accept');
+		var reject = BUTTON(null, 'Reject');
+
+		var buttons = TD({'class': 'buttons'}, accept, reject);
+		var tr = TR(null, th, content, buttons)
+
+		var setReview = bind(this._setReview, this, tr, team, field, nodes.items[field]);
+		connect(accept, 'onclick', partial(setReview, true));
+		connect(reject, 'onclick', partial(setReview, false));
+
+		appendChildNodes(this._tableId, tr);
 	}
 }
-Admin.prototype._errorBlogStatus = function(ref, nodes) {
-	this._prompt = status_msg("Unable to update blog feed", LEVEL_ERROR);
-	$('admin-feeds-'+ref.id).value = ref.status;
-	this.showBlogStatus(ref);
+Admin.prototype._errorGetItemsToReview = function() {
+		this._prompt = status_msg("Unable to load items to review", LEVEL_ERROR);
+		log("Admin: Failed to retrieve items to review");
+		return;
 }
-Admin.prototype.setBlogStatus = function(ref) {
-	log("Admin: Setting blog feed status");
-	var status = $('admin-feeds-'+ref.id).value;
-	IDE_backend_request("admin/feed-status-put",
-		{
-		    url: ref.url,
-		 status: status
-		},
-		bind( this._receiveBlogStatus, this, ref ),
-		bind( this._errorBlogStatus, this, ref )
+Admin.prototype.GetItemsToReview = function(team) {
+	log("Admin: Retrieving items to review for team " + team);
+	IDE_backend_request("admin/review-items-get", { team: team },
+		bind(this._receiveGetItemsToReview, this),
+		bind(this._errorGetItemsToReview, this)
 	);
+}
+/* *****    End Items to review display code	***** */
 
-	ref.status = status;
-	this.showBlogStatus(ref);
+/* *****    Review saving code	***** */
+Admin.prototype._receive_setReview = function(tr, nodes) {
+	removeElement(tr);
 }
-Admin.prototype.showBlogStatus = function(ref) {
-	log("Admin: Showing blog feed status");
-	var tr = getFirstParentByTagAndClassName('admin-feeds-'+ref.id, 'tr', null);
-	removeElementClass(tr, 'unchecked-feed-url');
-	removeElementClass(tr, 'valid-feed-url');
-	removeElementClass(tr, 'invalid-feed-url');
-	addElementClass(tr, ref.status+'-feed-url');
+Admin.prototype._error_setReview = function(tr) {
+	// enable the row so they can re-submit
+	removeElementClass(tr, 'disabled');
+	removeElementClass(tr, 'valid');
+	removeElementClass(tr, 'rejected');
+
+	map(function(button) {
+		button.disabled = false;
+	}, getElementsByTagAndClassName('button', null, tr));
+
+	this._prompt = status_msg("Unable to save review", LEVEL_ERROR);
+	log("Admin: Failed to save review");
 }
-/* *****	End RSS feed validation code	***** */
+Admin.prototype._setReview = function(tr, team, field, value, valid) {
+	// disable the row until the response comes back
+	addElementClass(tr, 'disabled');
+	addElementClass(tr, valid ? 'valid' : 'rejected');
+	map(function(button) {
+		button.disabled = true;
+	}, getElementsByTagAndClassName('button', null, tr));
+
+	log("Admin: Setting review for " + field + ' of team ' + team);
+	IDE_backend_request("admin/review-item-set",
+		{ team: team, item: field, value: value, valid: valid },
+		bind(this._receive_setReview, this, tr),
+		bind(this._error_setReview, this, tr)
+	);
+}
+/* *****    End Review saving code	***** */

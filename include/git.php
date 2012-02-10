@@ -54,12 +54,8 @@ class GitRepository
 	 */
 	public static function GetOrCreate($path)
 	{
-		static $handles = array();
-		if (!isset($handles[$path]))
-		{
-			$handles[$path] = new GitRepository($path);
-		}
-		return $handles[$path];
+		$repo = new GitRepository($path);
+		return $repo;
 	}
 
 	/**
@@ -93,19 +89,13 @@ class GitRepository
 
 		/* Acquire an exclusive lock on the git repository */
 		$lockfile = "$this->git_path/cyanide-lock";
-		ide_log(LOG_DEBUG, "Creating a lock on '$lockfile'.");
-		$this->lock_fd = fopen( $lockfile, "w" );
-		flock( $this->lock_fd, LOCK_EX );
-		ide_log(LOG_DEBUG, "Got a lock on '$lockfile': '$this->lock_fd'.");
+		$this->lock_fd = LockHandler::getInstance()->lock( $lockfile, "w" );
 	}
 
 	public function __destruct()
 	{
-		/* Free our lock on the repository - manually since PHP 5.3.2 */
-		ide_log(LOG_DEBUG, "Dropping lock on '$this->lock_fd'.");
-		flock($this->lock_fd, LOCK_UN);
-		fclose( $this->lock_fd );
-		ide_log(LOG_DEBUG, "Closed '$this->lock_fd'.");
+		$ret = LockHandler::getInstance()->unlock($this->lock_fd);
+		ide_log(LOG_DEBUG, "LockHandler->unlock returned: $ret.");
 	}
 
 	/**
@@ -689,6 +679,22 @@ class GitRepository
 		// ensure that the file exists before writing to it.
 		$ret = $this->createFile($path);
 		return $ret && file_put_contents($this->working_path . "/$path", $content);
+	}
+
+	/**
+	 * Gets the modification time of a file
+	 */
+	public function fileMTime($path)
+	{
+		return filemtime($this->working_path . '/' . $path);
+	}
+
+	/**
+	 * Sets the modification time of a file
+	 */
+	public function touchFile($path, $time)
+	{
+		return touch($this->working_path . '/' . $path, $time);
 	}
 
 	/**

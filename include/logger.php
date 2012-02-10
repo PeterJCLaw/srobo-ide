@@ -11,16 +11,42 @@ class Logger
 	{
 		if (!self::isLogging($level))
 			return;
-		$level = self::$names[$level];
 		static $file = null;
 		if ($file === null)
-			$file = fopen('/tmp/ide-log', 'a');
+		{
+			$path = Configuration::getInstance()->getConfig('log.location');
+			$file = fopen($path, 'a');
+		}
+		$prefix = self::locationData($level);
+		fwrite($file, "[$prefix] $message\n");
+		fflush($file);
+	}
+
+	private static function locationData($level)
+	{
+		static $pid;
+		if ($pid === null)
+			$pid = getmypid();
+
+		$level = self::$names[$level];
+		$data = array();
+		$data['D'] = date('Y-m-d H:i:s:u');
+		$data['P'] = $pid;
+		$data['L'] = $level;
+
 		$input = Input::getInstance();
-		$rq = $input->getRequestCommand();
+		$rq = $input->getRequestModule().'/'.$input->getRequestCommand();
 		if (!$rq)
 			$rq = 'none';
-		fwrite($file, "[RQ = $rq, L = $level] $message\n");
-		fflush($file);
+		$data['RQ'] = $rq;
+
+		$prefix = array();
+		foreach ($data as $k => $v)
+		{
+			$prefix[] = "$k = $v";
+		}
+		$prefix = implode(', ', $prefix);
+		return $prefix;
 	}
 
 	/**
@@ -30,7 +56,7 @@ class Logger
 	 */
 	public static function isLogging($level)
 	{
-		$loggingLevel = Configuration::getInstance()->getConfig('log_level');
+		$loggingLevel = Configuration::getInstance()->getConfig('log.level');
 		return $loggingLevel >= $level;
 	}
 }

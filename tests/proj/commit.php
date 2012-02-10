@@ -1,15 +1,8 @@
 <?php
 
-if (is_dir("/tmp/test-repos"))
-{
-	exec("rm -rf /tmp/test-repos");
-}
-
-exec("mkdir -p /tmp/test-repos/1");
-
 //override the configuration
 $config = Configuration::getInstance();
-$config->override("repopath", "/tmp/test-repos");
+$config->override("repopath", $testWorkPath);
 $config->override("user.default", "bees");
 $config->override("user.default.teams", array(1, 2));
 $config->override("auth_module", "single");
@@ -72,8 +65,3 @@ test_equal(count($log), 5, 'Wrong number of commits in the log');
 $expAuthor = 'bees';
 $expAuthor = $expAuthor.' <'.UserInfo::makeCommitterEmail($expAuthor).'>';
 test_equal($log[0]['author'], $expAuthor, 'Merge commit has wrong author');
-
-if (is_dir("/tmp/test-repos"))
-{
-	exec("rm -rf /tmp/test-repos");
-}

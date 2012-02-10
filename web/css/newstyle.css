@@ -28,11 +28,11 @@ iframe { display: none; }
 	height: 1.5em;
 	float: left;
 }
+
 #top ul {
 	margin: 21px;
 	padding: 0;
 }
-
 #top ul li {
 	display: inline;
 	background-color: #253571;
@@ -50,6 +50,14 @@ iframe { display: none; }
 	background-color: #ffffff;
 	color: #253571;
 }
+#top ul#top-links {
+	text-align: right;
+	margin-right: 90px;
+}
+#top ul#top-links li {
+	font-size: 1.2em;
+}
+
 #tabs {
 	padding: 0;
 	width: 100%;
