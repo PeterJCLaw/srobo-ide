@@ -400,8 +400,9 @@ class GitRepository
 
 	/**
 	 * Checkout the entire repository to a revision.
+	 * This is not intended for general use.
 	 */
-	private function checkoutRepo($revision)
+	public function checkoutRepo($revision)
 	{
 		$s_revision = escapeshellarg($revision);
 		$this->gitExecute(true, "checkout $s_revision");

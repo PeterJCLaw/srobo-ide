@@ -1,12 +1,16 @@
 <?php
 
+require_once('include/git.php');
+
 class CheckoutHelper
 {
 	private $repo;
+	private $team;
 
-	public function __construct(GitRepository $repo)
+	public function __construct(GitRepository $repo, $team)
 	{
 		$this->repo = $repo;
+		$this->team = $team;
 	}
 
 	/**
@@ -18,7 +22,9 @@ class CheckoutHelper
 	{
 		// get a fresh tmpdir so there can't possibly be clashes.
 		$tmpDir = tmpdir();
-		$intermediateFile = $tmpDir.'/'.basename($destFile);
+		$userTmpDir = $tmpDir.'/user';
+		mkdir_full($userTmpDir);
+		$intermediateFile = $userTmpDir.'/'.basename($destFile);
 
 		// TODO: use plain copy rather than this nasty zip/unzip combo
 		$this->repo->archiveSourceZip($intermediateFile, $revision);
@@ -26,12 +32,27 @@ class CheckoutHelper
 		// we've now got a copy of the user's code in the tmpDir folder
 
 		// store the revision of the user's code that's been checked out
-		file_put_contents($tmpDir.'/.user-rev', $revision);
+		file_put_contents($userTmpDir.'/.user-rev', $revision);
 
-		self::createZip($tmpDir, $destFile);
+		$libRobotHash = self::getLibRobotRevisionFor($this->team);
+		$zipBuilder = self::getArchiveBuilder($libRobotHash, $tmpDir);
+
+		self::createZip($zipBuilder, $userTmpDir, $destFile);
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
+	}
+
+	/**
+	 * Gets the revision of libRobot that the team in question should be
+	 * served inside their zip.
+	 * @param team: The team to find the revision for.
+	 * @returns: A hash, or null if the default should be used.
+	 */
+	public static function getLibRobotRevisionFor($team)
+	{
+		$teams = Configuration::getInstance()->getConfig('lib_robot.team');
+		return @$teams[$team];
 	}
 
 
@@ -50,12 +71,30 @@ class CheckoutHelper
 		return $ret;
 	}
 
-	private static function getArchiveBuilderLocation()
+	/**
+	 * Utility to setup the right archive builder for the given hash.
+	 * @param hash: The libRobot hash to use.
+	 * @param tmpDir: The temporary folder to copy the builder into, if needed.
+	 * @returns: The path to the archive builder.
+	 */
+	private static function getArchiveBuilder($hash, $tmpDir)
 	{
 		$config = Configuration::getInstance();
 		$libRobotPath = $config->getConfig('lib_robot.dir');
 		$archiveScript = $config->getConfig('lib_robot.archive_script');
-		$path = $libRobotPath.'/'.$archiveScript;
+
+		echo 'hash: '; var_dump($hash);
+		if ($hash === null)
+		{
+			$path = $libRobotPath;
+		}
+		else
+		{
+			$path = $tmpDir.'/libRobot';
+			$libRobotRepo = GitRepository::cloneRepository($libRobotPath.'/.git', $path);
+			$libRobotRepo->checkoutRepo($hash);
+		}
+		$path .= '/'.$archiveScript;
 		return $path;
 	}
 
@@ -64,10 +103,8 @@ class CheckoutHelper
 	 * @param userCodeDir: the location of the users code to include in the zip.
 	 * @param destFile: the location to save the resulting zip in.
 	 */
-	private static function createZip($userCodeDir, $destFile)
+	private static function createZip($zipBuilder, $userCodeDir, $destFile)
 	{
-		$zipBuilder = self::getArchiveBuilderLocation();
-
 		$s_userCodeDir = escapeshellarg($userCodeDir);
 		$s_destFile = escapeshellarg($destFile);
 		$s_builder = escapeshellarg($zipBuilder);

@@ -220,7 +220,7 @@ class ProjModule extends Module
 			return false;
 		}
 
-		$helper = new CheckoutHelper($this->projectRepository);
+		$helper = new CheckoutHelper($this->projectRepository, $this->team);
 		$helper->buildZipFile("$servePath/robot.zip", $hash);
 
 		$output->setOutput('url', "$serveUrl/robot.zip");
