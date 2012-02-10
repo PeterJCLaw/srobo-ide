@@ -46,7 +46,7 @@ function mkdir_full($path, $mode = 0755)
 	return mkdir($path, $mode, true);
 }
 
-function tmpdir($dir = null, $prefix = 'ide')
+function tmpdir($dir = null, $prefix = 'ide-tmp-')
 {
 	$dir = $dir != null ? $dir : sys_get_temp_dir();
 	$file = tempnam($dir, $prefix);
