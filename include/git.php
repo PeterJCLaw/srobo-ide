@@ -399,7 +399,7 @@ class GitRepository
 	}
 
 	/**
-	 * Checkout the entire repository to a revision
+	 * Checkout the entire repository to a revision.
 	 */
 	private function checkoutRepo($revision)
 	{
