@@ -72,5 +72,7 @@ test_true(rename($zip_path, $testWorkPath.'wd/foo.zip'), "Failed to rename the z
 $s_wd = escapeshellarg($testWorkPath.'wd');
 shell_exec("cd $s_wd && unzip foo.zip");
 
+test_existent($testWorkPath.'wd/user/robot.py', 'Zip failed to contain user code!');
+
 $python_ret = shell_exec("cd $s_wd && python user/robot.py");
 test_equal($python_ret, $robot_print."\n", 'Running the robot code produced the wrong output.');
