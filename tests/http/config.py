@@ -12,4 +12,6 @@ password = 'py-test'
 try:
 	from localconfig import *
 except ImportError:
-	skip()
+	# Duplicate the skip code here, because util imports skip.
+	print '___SKIP_TEST'
+	exit(0)
