@@ -23,3 +23,7 @@ $repo->putFile('ninjas/z-ninjaChildren/pirates', 'Captain Jack');
 $rev = $repo->getCurrentRevision();
 test_true(preg_match('/^[a-f0-9]{7,40}$/', $rev),
           "revision contained extraneous characters ($rev)");
+
+test_true($repo->commitExists($rev), "Commit given as the current HEAD ($rev) should exist!");
+test_false($repo->commitExists('bacon'), "Commit 'bacon' should not exist!");
+test_false($repo->commitExists('ninjas/nuns'), "Commit whose name matches a file (ninjas/nuns) should not exist!");

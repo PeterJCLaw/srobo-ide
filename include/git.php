@@ -285,6 +285,20 @@ class GitRepository
 		return trim($rawRevision);
 	}
 
+	/**
+	 * Verify that a given revision exists in the repo.
+	 */
+	public function commitExists($hash)
+	{
+		$s_hash = escapeshellarg($hash);
+		list($res, $out) = $this->gitExecute(false,
+		                                     "rev-list --abbrev-commit --max-count=1 $s_hash --",
+		                                     array(),	// env
+		                                     true		// catch result
+		                                    );
+		return $res;
+	}
+
 	public function gitMKDir($path)
 	{
 		$dir = $this->working_path . "/" . $path;
