@@ -84,14 +84,10 @@ class CheckoutHelper
 		$archiveScript = $config->getConfig('lib_robot.archive_script');
 
 		echo 'hash: '; var_dump($hash);
-		if ($hash === null)
+		$path = $tmpDir.'/libRobot';
+		$libRobotRepo = GitRepository::cloneRepository($libRobotPath.'/.git', $path);
+		if ($hash !== null)
 		{
-			$path = $libRobotPath;
-		}
-		else
-		{
-			$path = $tmpDir.'/libRobot';
-			$libRobotRepo = GitRepository::cloneRepository($libRobotPath.'/.git', $path);
 			$libRobotRepo->checkoutRepo($hash);
 		}
 		$path .= '/'.$archiveScript;

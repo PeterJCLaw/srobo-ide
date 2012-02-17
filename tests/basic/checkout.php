@@ -49,8 +49,6 @@ $makeZipData = <<<MAKEZIP
 #!/bin/sh
 echo $0 $1 $2
 cd `dirname $0`     # TODO: remove this requirement -- we should run from the right folder
-# remove any left-over user folders. TODO: also remove this requirement -- we should always run in a temp dir
-rm -rf user
 cp -r $1 user
 zip -r $2 *
 MAKEZIP;
