@@ -113,9 +113,9 @@ $config->override('lib_robot.team', array('ABC' => $oldLibRobotHash));
 $helper = new CheckoutHelper($teamRepo, 'ABC');
 
 $zipPath = $test_zip_path.'/per-team-libRobot-test.zip';
-$helper->buildZipFile($zipPath, $hash);
+$helper->buildZipFile($zipPath, $hash1);
 
-$zip = validateZip($zipPath, $hash, $robotData);
+$zip = validateZip($zipPath, $hash1, $robotData1);
 // validate that this the old revision by ensuring that the second file isn't there.
 test_true($zip->locateName('b-file') === false, "Should not find second file 'b-file' in the archive when it's based on the older libRobot.");
 
@@ -126,8 +126,8 @@ $config->override('lib_robot.team', array('ABC' => 'bacon'));
 $helper = new CheckoutHelper($teamRepo, 'ABC');
 
 $zipPath = $test_zip_path.'/per-team-libRobot-bad-rev.zip';
-$helper->buildZipFile($zipPath, $hash);
+$helper->buildZipFile($zipPath, $hash1);
 
-$zip = validateZip($zipPath, $hash, $robotData);
+$zip = validateZip($zipPath, $hash1, $robotData1);
 // validate that this the old revision by ensuring that the second file isn't there.
 test_true($zip->locateName('b-file') !== false, "Failed to find file 'b-file' in the archive -- bad revisions should fall back to the default.");
