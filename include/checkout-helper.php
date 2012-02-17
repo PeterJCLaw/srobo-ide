@@ -86,7 +86,7 @@ class CheckoutHelper
 		echo 'hash: '; var_dump($hash);
 		$path = $tmpDir.'/libRobot';
 		$libRobotRepo = GitRepository::cloneRepository($libRobotPath.'/.git', $path);
-		if ($hash !== null)
+		if ($hash !== null && $libRobotRepo->commitExists($hash))
 		{
 			$libRobotRepo->checkoutRepo($hash);
 		}
