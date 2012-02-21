@@ -107,7 +107,7 @@ class TeamModule extends Module
 		else
 		{
 			$team = Input::getInstance()->getInput('team');
-			Announce::that("Team \x033$team\x0f updated their status$extra.");
+			Announce::that("Team\x033 $team\x0f updated their status$extra.");
 		}
 		return $saved;
 	}
