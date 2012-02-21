@@ -2,6 +2,7 @@
 
 class TeamModule extends Module
 {
+	const IMAGE = 'image';
 	static $statusTextFields = array('feed', 'url', 'description', 'name');
 
 	public function __construct()
@@ -76,6 +77,14 @@ class TeamModule extends Module
 				$reviewStates[$field] = $reviewState;
 			}
 		}
+
+		// Handle the image entry separately, since it doesn't get a draft value
+		$reviewState = $status->getReviewState(self::IMAGE);
+		if ($reviewState !== null)
+		{
+			$reviewStates[self::IMAGE] = $reviewState;
+		}
+
 		$output->setOutput('items', $items);
 		$output->setOutput('reviewed', $reviewStates);
 		return true;
@@ -148,7 +157,7 @@ class TeamModule extends Module
 		// update the status store
 		$status = new TeamStatus($team);
 		$md5 = md5_file($path);
-		$status->setDraft('image', $md5);
+		$status->setDraft(self::IMAGE, $md5);
 		return $this->saveStatus($status, ' image');
 	}
 

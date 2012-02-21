@@ -59,3 +59,8 @@
 #team-status-page textarea {
 	height: 8em;
 }
+
+#team-status-page form#team-status-image-upload-form {
+	/* Width of the valid/not image */
+	padding-right: 16px;
+}

@@ -91,19 +91,32 @@ TeamStatus.prototype._close = function()
 /* *****	End Tab events		***** */
 
 /* *****	Field Handling		***** */
+// Gets the input field the user may have edited
 TeamStatus.prototype._getField = function(name)
 {
 	return $('team-status-'+name+'-input');
 }
+// Gets the element that the review state class will be set on.
+TeamStatus.prototype._getField2 = function(name)
+{
+	logDebug('getting field: '+name);
+	if (name == 'image')
+	{
+		return $('team-status-image-upload-form');
+	}
+	return this._getField(name);
+}
 TeamStatus.prototype._setReviewState = function(reviewed)
 {
-	for (var i=0; i < this._fields.length; i++) {
-		var field = this._fields[i];
+	var fields = this._fields;
+	fields.push('image');
+	for (var i=0; i < fields.length; i++) {
+		var field = fields[i];
 		if ( field in reviewed ) {
-			addElementClass(this._getField(field), reviewed[field] ? 'valid' : 'rejected');
+			addElementClass(this._getField2(field), reviewed[field] ? 'valid' : 'rejected');
 		} else {
-			removeElementClass(this._getField(field), 'valid');
-			removeElementClass(this._getField(field), 'rejected');
+			removeElementClass(this._getField2(field), 'valid');
+			removeElementClass(this._getField2(field), 'rejected');
 		}
 	}
 }
