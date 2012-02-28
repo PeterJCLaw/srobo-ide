@@ -52,14 +52,6 @@ class TeamModule extends Module
 		return true;
 	}
 
-	private static function loadStatus($team)
-	{
-		$settingspath = Configuration::getInstance()->getConfig('settingspath');
-		$statusPath = "$settingspath/$team-status.json";
-		$status = json_decode(file_get_contents($statusPath));
-		return $status;
-	}
-
 	public function getStatus()
 	{
 		$output = Output::getInstance();
