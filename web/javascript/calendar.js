@@ -240,6 +240,7 @@ Calendar.prototype._load_new_rev = function() {
 
 Calendar.prototype._load_rev = function(rev) {
 	projpage.flist.change_rev(rev);
+	rev = IDE_hash_shrink(rev);
 	status_msg("Now showing project at revision: "+rev, LEVEL_OK);
 }
 
