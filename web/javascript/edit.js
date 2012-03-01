@@ -612,8 +612,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 	}
 
 	this._update_contents = function() {
-		//if we don't have focus then don't try to change things - we'll get called again when we get focus
-		if(!this.tab.has_focus())
+		logDebug('_update_contents');
+		// if we don't have focus or aren't loaded, then don't try to change things - we'll get called again when we get focus
+		if(!this.tab.has_focus() || !this._loaded)
 			return;
 
 		this._iea.setValue( this.contents );
