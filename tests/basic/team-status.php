@@ -21,7 +21,10 @@ test_nonexistent($status->getStatusPath(), 'Status saved to disk before save cal
 
 $status->save($user);
 
-test_existent($status->getStatusPath(), 'Status not saved to disk after save called');
+$statusPath = $status->getStatusPath();
+test_existent($statusPath, 'Status not saved to disk after save called');
+$perms = fileperms($statusPath);
+test_true($perms & 0x0010, 'Status file needs to be group writable for image review purposes');
 
 $data = json_decode(file_get_contents($status->getStatusPath()));
 test_equal($data->$field->draft, $content, 'Wrong content in draft field');
