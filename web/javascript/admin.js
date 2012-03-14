@@ -18,7 +18,7 @@ function Admin() {
 /* *****	Initialization code	***** */
 Admin.prototype.init = function() {
 	if(!user.can_admin()) {
-		status_msg('You have not been granted IDE Admin privileges', LEVEL_WARN);
+		this._prompt = status_msg('You have not been granted IDE Admin privileges', LEVEL_WARN);
 		return;
 	}
 	if(!this._inited) {
@@ -166,6 +166,10 @@ Admin.prototype.GetItemsToReview = function(team) {
 	log("Admin: Retrieving items to review for team " + team);
 
 	// Clear up, store the team we'll be showing
+	if( this._prompt != null ) {
+		this._prompt.close();
+		this._prompt = null;
+	}
 	replaceChildNodes(this._tableId);
 	this._team = team;
 
