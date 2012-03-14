@@ -10,6 +10,9 @@ function Admin() {
 
 	// Id for the table that contains the items to review
 	this._tableId = 'admin-page-review';
+
+	// The id of the team we're currently reviewing.
+	this._team = null;
 }
 
 /* *****	Initialization code	***** */
@@ -72,7 +75,9 @@ Admin.prototype._close = function() {
 /* *****	Teams with stuff to review listing code	***** */
 Admin.prototype._receiveGetTeamsToReview = function(nodes) {
 
+	// Clear the table, clear the team we're showing
 	replaceChildNodes(this._tableId);
+	this._team = null;
 
 	var selectId = 'admin-page-team-select';
 
@@ -128,9 +133,6 @@ Admin.prototype.GetTeamsToReview = function() {
 /* *****	Items to review display code	***** */
 Admin.prototype._receiveGetItemsToReview = function(nodes) {
 
-	// Clear the table
-	replaceChildNodes(this._tableId);
-
 	var linkable = ['feed', 'url'];
 
 	for ( var field in nodes.items ) {
@@ -148,7 +150,7 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 		var buttons = TD({'class': 'buttons'}, accept, reject);
 		var tr = TR(null, th, content, buttons)
 
-		var setReview = bind(this._setReview, this, tr, team, field, nodes.items[field]);
+		var setReview = bind(this._setReview, this, tr, field, nodes.items[field]);
 		connect(accept, 'onclick', partial(setReview, true));
 		connect(reject, 'onclick', partial(setReview, false));
 
@@ -162,6 +164,11 @@ Admin.prototype._errorGetItemsToReview = function() {
 }
 Admin.prototype.GetItemsToReview = function(team) {
 	log("Admin: Retrieving items to review for team " + team);
+
+	// Clear up, store the team we'll be showing
+	replaceChildNodes(this._tableId);
+	this._team = team;
+
 	IDE_backend_request("admin/review-items-get", { team: team },
 		bind(this._receiveGetItemsToReview, this),
 		bind(this._errorGetItemsToReview, this)
@@ -186,7 +193,7 @@ Admin.prototype._error_setReview = function(tr) {
 	this._prompt = status_msg("Unable to save review", LEVEL_ERROR);
 	log("Admin: Failed to save review");
 }
-Admin.prototype._setReview = function(tr, team, field, value, valid) {
+Admin.prototype._setReview = function(tr, field, value, valid) {
 	// disable the row until the response comes back
 	addElementClass(tr, 'disabled');
 	addElementClass(tr, valid ? 'valid' : 'rejected');
@@ -194,9 +201,9 @@ Admin.prototype._setReview = function(tr, team, field, value, valid) {
 		button.disabled = true;
 	}, getElementsByTagAndClassName('button', null, tr));
 
-	log("Admin: Setting review for " + field + ' of team ' + team);
+	log("Admin: Setting review for " + field + ' of team ' + this._team);
 	IDE_backend_request("admin/review-item-set",
-		{ team: team, item: field, value: value, valid: valid },
+		{ team: this._team, item: field, value: value, valid: valid },
 		bind(this._receive_setReview, this, tr),
 		bind(this._error_setReview, this, tr)
 	);
