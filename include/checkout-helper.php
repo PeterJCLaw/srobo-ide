@@ -1,5 +1,6 @@
 <?php
 
+require_once('include/logger.php');
 require_once('include/git.php');
 
 class CheckoutHelper
@@ -38,6 +39,11 @@ class CheckoutHelper
 		$zipBuilder = self::getArchiveBuilder($libRobotHash, $tmpDir);
 
 		self::createZip($zipBuilder, $userTmpDir, $destFile);
+
+		// log exactly what we've done,
+		// so that we can easily track which teams have been served what
+		$repoName = basename($this->repo->workingPath());
+		Logger::log(LOG_INFO, "Created ZipFile for team '$this->team' based on lib_robot '$libRobotHash' and team repo '$repoName' at '$revision'.");
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
