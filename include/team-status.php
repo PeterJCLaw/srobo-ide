@@ -82,6 +82,7 @@ class TeamStatus
 
 		$data = json_encode($this->statusData);
 		$ret = file_put_contents($this->statusPath, $data);
+		chmod($this->statusPath, 0664);
 		return (bool)$ret;
 	}
 
