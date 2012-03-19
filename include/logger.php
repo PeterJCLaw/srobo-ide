@@ -30,7 +30,7 @@ class Logger
 
 		$level = self::$names[$level];
 		$data = array();
-		$data['D'] = date('Y-m-d H:i:s:u');
+		$data['D'] = date('Y-m-d H:i:s');
 		$data['P'] = $pid;
 		$data['L'] = $level;
 
