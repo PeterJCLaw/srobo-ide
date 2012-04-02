@@ -49,6 +49,8 @@ class PollModule extends Module
 		{
 			$repo = $manager->getMasterRepository($team, $project);
 			$projectRevs[$project] = $repo->getCurrentRevision();
+			// ensure that we release this repo before trying to grab the next
+			$repo = null;
 		}
 
 		$output->setOutput('projects', $projectRevs);
