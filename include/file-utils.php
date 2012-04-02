@@ -24,6 +24,20 @@ function path_walk($callback, $path, $reverse = false)
 		$callback($path);
 }
 
+/**
+ * Does a recursive copy of a folder.
+ * TODO: implement in PHP rather than using cp?
+ */
+function copy_recursive($source, $dest)
+{
+	$s_source = escapeshellarg($source);
+	$s_dest = escapeshellarg($dest);
+	echo "cp -r $s_source $s_dest\n";
+	$res = shell_exec('cp -r '.$s_source.' '.$s_dest);
+	var_dump($res);
+	return $res;
+}
+
 function delete_recursive($path)
 {
 	if (is_dir($path))

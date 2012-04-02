@@ -75,9 +75,7 @@ class ProjectManager
 		//copy the master repository
 		$masterPathOld = $this->getMasterRepoPath($team, $project);
 		$masterPathNew = $this->getMasterRepoPath($team, $new);
-		$s_old = escapeshellarg($masterPathOld);
-		$s_new = escapeshellarg($masterPathNew);
-		$ret = shell_exec("cp -r $s_old $s_new");
+		$ret = copy_recursive($masterPathOld, $masterPathNew);
 		return $ret;
 	}
 
