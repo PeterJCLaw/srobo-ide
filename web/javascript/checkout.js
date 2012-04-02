@@ -68,9 +68,10 @@ Checkout.prototype._use_java = function() {
 	return this._java_works && user.get_setting(this._setting_key);
 }
 
-Checkout.prototype._basic = function(url, successCallback, errorCallback) {
+Checkout.prototype._basic = function(url, rev, successCallback, errorCallback) {
 	logDebug('Checking out code using basic file transfer');
 	$('robot-zip').src = url;
+	status_msg('Exporting ' + rev + '.', LEVEL_INFO);
 	successCallback();
 }
 
@@ -79,14 +80,14 @@ Checkout.prototype._getLocation = function() {
 	return location.protocol + '//' + location.host + location.pathname;
 }
 
-Checkout.prototype._java = function(url, successCallback, errorCallback) {
+Checkout.prototype._java = function(url, rev, successCallback, errorCallback) {
 	logDebug('Checking out code using magic java file transfer');
 	this._ensureApplet();
 	var xhr = new XMLHttpRequest();
 	var retcode = this._applet.writeZip(encodeURI(this._getLocation() + url));
 	//if downloading worked
 	if (retcode == 0) {
-		status_msg("Automatic checkout succeeded", LEVEL_OK);
+		status_msg("Automatic export of " + rev + " succeeded", LEVEL_INFO);
 		successCallback();
 	} else {
 		// negative response code means that java is not going to work ever
@@ -95,16 +96,17 @@ Checkout.prototype._java = function(url, successCallback, errorCallback) {
 		}
 
 		//use the file dialogue download method
-		this._basic(url, successCallback, errorCallback);
+		this._basic(url, rev, successCallback, errorCallback);
 	}
 }
 
 Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
 	var url = nodes.url;
+	var rev = IDE_hash_shrink(nodes.rev);
 	if (this._use_java()) {
-		this._java(url, successCallback, errorCallback);
+		this._java(url, rev, successCallback, errorCallback);
 	} else {
-		this._basic(url, successCallback, errorCallback);
+		this._basic(url, rev, successCallback, errorCallback);
 	}
 }
 

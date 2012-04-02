@@ -34,8 +34,7 @@ test_true($mm->moduleExists('proj'), 'proj module does not exist');
 $proj = $mm->getModule('proj');
 test_true($proj->dispatchCommand('new'), 'failed to create project');
 
-
-// put
+subsection('put');
 $robot_print = 'llama';
 $robot_data = "print '$robot_print'\n";
 $input->setInput('path', 'robot.py');
@@ -44,12 +43,12 @@ test_true($mm->moduleExists('file'), 'file module does not exist');
 $file = $mm->getModule('file');
 test_true($file->dispatchCommand('put'), 'put command failed');
 
-// commit
+subsection('commit');
 $input->setInput('message', 'give robot some data');
 $input->setInput('paths', array('robot.py'));
 test_true($proj->dispatchCommand('commit'), 'commit command failed');
 
-// co
+section('Failure mode');
 $input->setInput('rev', 'HEAD');
 // create a file where it's going to try to put a folder.
 // we can't actually create the situation where the webserver doesn't have write access,
@@ -60,14 +59,20 @@ test_false($proj->dispatchCommand('co'), 'export command should have failed when
 unlink($zipPathBase);
 test_false(file_exists($zipPathBase), "$zipPathBase Must not exist after failure mode testing complete.");
 
+section('Success testing');
 test_true($proj->dispatchCommand('co'), 'export command should succeed');
 
+$rev = $output->getOutput('rev');
+test_nonempty($rev, 'Revision should not be empty - the user wants to know which version they\'re being served');
+
 $zip_path = $output->getOutput('url');
-var_dump($zip_path);
+echo 'zip_path: '; var_dump($zip_path);
 test_true(file_exists($zip_path), "Zip doesn't exist at '$zip_path'.");
 test_true(rename($zip_path, $testWorkPath.'wd/foo.zip'), "Failed to rename the zip from '$zip_path'.");
 $s_wd = escapeshellarg($testWorkPath.'wd');
 shell_exec("cd $s_wd && unzip foo.zip");
+
+test_existent($testWorkPath.'wd/user/robot.py', 'Zip failed to contain user code!');
 
 $python_ret = shell_exec("cd $s_wd && python user/robot.py");
 test_equal($python_ret, $robot_print."\n", 'Running the robot code produced the wrong output.');
