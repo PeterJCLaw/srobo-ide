@@ -33,7 +33,8 @@ class CheckoutHelper
 		// we've now got a copy of the user's code in the tmpDir folder
 
 		// store the revision of the user's code that's been checked out
-		file_put_contents($userTmpDir.'/.user-rev', $revision);
+		$projName = $this->repo->repoName();
+		file_put_contents($userTmpDir.'/.user-rev', $projName.' @ '.$revision);
 
 		$libRobotHash = self::getLibRobotRevisionFor($this->team);
 		$zipBuilder = self::getArchiveBuilder($libRobotHash, $tmpDir);
