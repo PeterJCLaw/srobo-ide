@@ -27,3 +27,11 @@ test_true(preg_match('/^[a-f0-9]{7,40}$/', $rev),
 test_true($repo->commitExists($rev), "Commit given as the current HEAD ($rev) should exist!");
 test_false($repo->commitExists('bacon'), "Commit 'bacon' should not exist!");
 test_false($repo->commitExists('ninjas/nuns'), "Commit whose name matches a file (ninjas/nuns) should not exist!");
+
+section('repo name');
+
+test_equal($repo->repoName(), 'cake', "Wrong repo name for user (ie, non-bare) repo");
+
+$repo = $projectManager->getMasterRepository(1, 'cake');
+
+test_equal($repo->repoName(), 'cake', "Wrong repo name for master (ie bare) repo");

@@ -23,6 +23,25 @@ class GitRepository
 		return $this->git_path;
 	}
 
+	/**
+	 * Returns the local name of the repo, without any .git component.
+	 * For a bare repo, this is the basename of the path, with the .git stripped.
+	 * Otherwise, this is the basename of the working path.
+	 */
+	public function repoName()
+	{
+		if ($this->isBare())
+		{
+			$path = str_ireplace('.git', '', $this->git_path);
+		}
+		else
+		{
+			$path = $this->working_path;
+		}
+		$name = basename($path);
+		return $name;
+	}
+
 	private static function gitBinaryPath()
 	{
 		$path = Configuration::getInstance()->getConfig('git_path');
