@@ -366,7 +366,7 @@ class FileModule extends Module
 		$path   = $input->getInput('path');
 
 		//base dir might need changing with alistair's new git situation
-		$base = $this->repository()->getPath();
+		$base = $this->repository()->workingPath();
 
 		//this occurs because someone decided it would be a good idea to split
 		//these up here instead of javascript, makes this function hideous

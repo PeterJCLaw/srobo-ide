@@ -106,14 +106,6 @@ class GitRepository
 		return $this->working_path === null;
 	}
 
-	/**
-	 * Get the path of the git repository
-	 */
-	public function getPath()
-	{
-		return $this->working_path;
-	}
-
 	public function unstageAll()
 	{
 		$this->gitExecute(true, "reset");
