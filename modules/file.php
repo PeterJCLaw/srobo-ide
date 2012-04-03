@@ -426,6 +426,9 @@ class FileModule extends Module
 				}
 				else
 				{
+					// remove the temporary folder
+					delete_recursive($tmpDir);
+
 					// Both sets of linting failed, so fail overall.
 					return False;
 				}
@@ -442,6 +445,9 @@ class FileModule extends Module
 				}
 				else
 				{
+					// remove the temporary folder
+					delete_recursive($tmpDir);
+
 					// Both sets of linting failed, so fail overall.
 					return False;
 				}
