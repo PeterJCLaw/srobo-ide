@@ -136,3 +136,12 @@ def assertIn(needle, haystack, message = None, *params):
 def assertNotIn(needle, haystack, message = None, *params):
 	message = prepMessagePrefix('collection not containing', needle, haystack, message, params)
 	assert needle not in haystack, message
+
+
+def assertGreaterThan(reference, actual, message = None, *params):
+	message = prepMessagePrefix('value greater than', reference, actual, message, params)
+	assert actual > reference, message
+
+def assertLessThan(reference, actual, message = None, *params):
+	message = prepMessagePrefix('value less than', reference, actual, message, params)
+	assert actual < reference, message
