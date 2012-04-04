@@ -36,6 +36,10 @@ def getURLForEnpoint(endPoint):
 	url = config.URL + "control.php/" + endPoint
 	return url
 
+def raiseOnRequestError(response_data):
+	if response_data.has_key('error'):
+		raise Exception('Server error: %s' % response_data['error'][1])
+
 def makeIDERequest(endPoint, data = None):
 
 	auth_token = getCurrentToken()
@@ -54,8 +58,7 @@ def makeIDERequest(endPoint, data = None):
 
 	response_data = json.load(response)
 	#print 'response_data:', json.dumps(response_data, sort_keys = True, indent = 4)
-	if response_data.has_key('error'):
-		raise Exception('Server error: %s' % response_data['error'][1])
+	raiseOnRequestError(response_data)
 
 	auth_token = extractToken(response)
 	saveCurrentToken(auth_token)
