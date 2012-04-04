@@ -45,6 +45,7 @@ TEST ping/ping
 
 # Some python tests!
 TEST http/auth
+TEST http/files
 
 TEST code-style/shell-var-names
 TEST code-style/no-selenium
