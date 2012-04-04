@@ -2,6 +2,8 @@
 import urllib2
 import Cookie
 import json
+import random
+import string
 
 import config
 
@@ -64,6 +66,11 @@ def makeIDERequest(endPoint, data = None):
 	saveCurrentToken(auth_token)
 
 	return response_data
+
+### Random
+
+def idGenerator(size=6, chars=string.ascii_uppercase + string.digits):
+	return ''.join(random.choice(chars) for x in range(size))
 
 ### Pretty Printing
 
