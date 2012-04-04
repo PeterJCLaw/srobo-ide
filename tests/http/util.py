@@ -36,10 +36,12 @@ def getURLForEnpoint(endPoint):
 	url = config.URL + "control.php/" + endPoint
 	return url
 
-def makeIDERequest(endPoint, data):
+def makeIDERequest(endPoint, data = None):
 
 	auth_token = getCurrentToken()
 
+	if data is None:
+		data = dict()
 	data_string = json.dumps(data)
 
 	url = getURLForEnpoint(endPoint)
