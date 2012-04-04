@@ -56,9 +56,11 @@ def makeIDERequest(endPoint, data = None):
 	if auth_token is not None:
 		req.add_header('Cookie', 'token=%s' % auth_token)
 
+#	print "Requesting '%s'." % endPoint
 	response = urllib2.urlopen(req)
 
 	response_data = json.load(response)
+#	print "Got data from '%s'." % endPoint
 	#print 'response_data:', json.dumps(response_data, sort_keys = True, indent = 4)
 	raiseOnRequestError(response_data)
 
