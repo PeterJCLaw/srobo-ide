@@ -10,10 +10,23 @@ abstract class Module
 	}
 
 	/**
+	 * Initialises the module so that it's ready to have a command
+	 * dispatched to it.
+	 * This is intended to facilitate work that should be done for all
+	 * the commands that a module supports, but which shouldn't be done
+	 * in the constructor, such as verifying a user.
+	 */
+	protected function initModule()
+	{
+		// TODO: prevent init being called more than once?
+	}
+
+	/**
 	 * Dispatches a command to the module
 	 */
 	public function dispatchCommand($name)
 	{
+		$this->initModule();
 		if (isset($this->commandHandlers[$name]))
 			return call_user_func($this->commandHandlers[$name]);
 		else
