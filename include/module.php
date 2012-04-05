@@ -3,6 +3,7 @@
 abstract class Module
 {
 	private $commandHandlers = array();
+	private $_initDone = false;
 
 	protected function installCommand($name, $fn)
 	{
@@ -18,7 +19,15 @@ abstract class Module
 	 */
 	protected function initModule()
 	{
-		// TODO: prevent init being called more than once?
+	}
+
+	private function _initModule()
+	{
+		if (!$this->_initDone)
+		{
+			$this->initModule();
+			$this->_initDone = true;
+		}
 	}
 
 	/**
@@ -26,7 +35,7 @@ abstract class Module
 	 */
 	public function dispatchCommand($name)
 	{
-		$this->initModule();
+		$this->_initModule();
 		if (isset($this->commandHandlers[$name]))
 			return call_user_func($this->commandHandlers[$name]);
 		else
