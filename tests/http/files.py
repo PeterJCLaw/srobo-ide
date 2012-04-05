@@ -38,8 +38,8 @@ class FilesTests(unittest.TestCase):
 		util.makeIDERequest('proj/new', data)
 
 	def tearDown(self):
-		# TODO: find a way to remove the projects we're done with
-		pass
+		data = dict(team = self._team, project = self._projName)
+		util.makeIDERequest('proj/del', data)
 
 	def test_1058(self):
 		data = dict(team = self._team, project = self._projName, path = 'robot.py')

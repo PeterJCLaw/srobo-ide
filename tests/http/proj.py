@@ -30,6 +30,10 @@ class ProjTests(unittest.TestCase):
 
 		cls._team = teams.keys()[0]
 
+	def tearDown(self):
+		data = dict(team = self._team, project = self._projName)
+		util.makeIDERequest('proj/del', data)
+
 	def test_projCreate(self):
 		# Create a project
 		self._projName = 'FilesTests-' + util.idGenerator()
