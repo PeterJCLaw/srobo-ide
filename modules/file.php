@@ -16,34 +16,6 @@ class FileModule extends Module
 			return;
 		}
 
-		try
-		{
-			$this->projectManager = ProjectManager::getInstance();
-		}
-		catch (Exception $e)
-		{
-			if ($e->getCode() == E_INTERNAL_ERROR)
-			{
-				// repo dir not set up
-				// this may be valid for auth tests, so just don't init
-				return;
-			}
-			else
-			{
-				// other error, rethrow
-				throw $e;
-			}
-		}
-
-		$input = Input::getInstance();
-		$this->team = $input->getInput('team', true);
-
-		// check that the project exists and is a git repo otherwise construct
-		// the project directory and git init it
-		$project = $input->getInput('project', true);
-
-		$this->projectName = $project;
-
 		$this->installCommand('compat-tree', array($this, 'getFileTreeCompat'));
 		$this->installCommand('list', array($this, 'listFiles'));
 		$this->installCommand('get', array($this, 'getFile'));
@@ -57,6 +29,20 @@ class FileModule extends Module
 		$this->installCommand('diff', array($this, 'diff'));
 		$this->installCommand('mkdir', array($this, 'makeDirectory'));
 		$this->installCommand('co', array($this, 'checkoutFile'));
+	}
+
+	protected function initModule()
+	{
+		$this->projectManager = ProjectManager::getInstance();
+
+		$input = Input::getInstance();
+		$this->team = $input->getInput('team');
+
+		// check that the project exists and is a git repo otherwise construct
+		// the project directory and git init it
+		$project = $input->getInput('project');
+
+		$this->projectName = $project;
 	}
 
 	/**
