@@ -268,7 +268,9 @@ class FileModule extends Module
 		$input = Input::getInstance();
 		$path = $input->getInput('path');
 
-		$repo = $this->repository();
+		$this->verifyTeam();
+		$pm = ProjectManager::getInstance();
+		$repo = $pm->getMasterRepository($this->team, $this->projectName);
 
 		$number = $input->getInput('number', true);
 		$offset = $input->getInput('offset', true);
