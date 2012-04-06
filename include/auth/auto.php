@@ -6,6 +6,7 @@ class AutoAuth extends SingleAuth
 {
 	public function __construct()
 	{
+		parent::__construct();
 		$this->authUser(Configuration::getInstance()->getConfig('user.default'), '');
 		getDefaultTokenStrategy()->setNextAuthToken($this->getNextAuthToken());
 	}
