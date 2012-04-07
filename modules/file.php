@@ -353,9 +353,6 @@ class FileModule extends Module
 		$config = Configuration::getInstance();
 		$path   = $input->getInput('path');
 
-		//base dir might need changing with alistair's new git situation
-		$base = $this->repository()->workingPath();
-
 		//this occurs because someone decided it would be a good idea to split
 		//these up here instead of javascript, makes this function hideous
 		$splitPath = pathinfo($path);
@@ -369,6 +366,9 @@ class FileModule extends Module
 			throw new Exception('Could not find dummy pyenv', E_NOT_IMPL);
 		}
 
+		//base dir might need changing with alistair's new git situation
+		$base = $this->repository()->workingPath();
+
 		//if the file exists, lint it otherwise return a dictionary explaining
 		//that the file doesn't exist, shouldn't happen when users interface
 		//with software because check syntax button always points at an existing file
@@ -381,12 +381,6 @@ class FileModule extends Module
 			$useAutosave = $input->getInput('autosave', true);
 			$contents = null;
 
-			// if we want the commited version do this
-			if (!$useAutosave) {
-				$contents = $this->repository()->getFile($path);
-				$this->repository()->checkoutFile($path);
-			}
-
 			// Grab a temp folder that we can work in. We'll remove it later.
 			$tmpDir = tmpdir();
 			echo "base, path, tmp\n";
@@ -395,13 +389,22 @@ class FileModule extends Module
 			// Copy the user's files to the temp folder
 			copy_recursive($base, $tmpDir);
 
+			$working = $tmpDir.'/'.basename($base);
+
+			// if we want the committed version do this
+			if (!$useAutosave) {
+				// TODO: do we also want to checkout the entire folder in this case?
+				$repo = GitRepository::GetOrCreate($working);
+				$repo->checkoutFile($path);
+				$repo = null;
+			}
+
 			// Copy the reference file to the tenp folder
-			$dummy_copy = $tmpDir.'/'.basename($base).'/'.basename($dummy);
+			$dummy_copy = $working.'/'.basename($dummy);
 			echo "dummy copy\n";
 			var_dump($dummy_copy);
 			copy($dummy, $dummy_copy);
 
-			$working = $tmpDir.'/'.basename($base);
 			$errors = array();
 
 			$importErrors = $importlint->lintFile($working, $path);
@@ -443,11 +446,6 @@ class FileModule extends Module
 
 			// remove the temporary folder
 			delete_recursive($tmpDir);
-
-			// restore the autosaved version
-			if (!$useAutosave) {
-				$this->repository()->putFile($path, $contents);
-			}
 
 			// Sort & convert to jsonables if needed.
 			// This (latter) step necessary currently since JSONSerializeable doesn't exist yet.
