@@ -18,38 +18,6 @@ class ProjModule extends Module
 			return;
 		}
 
-		try
-		{
-			$this->projectManager = ProjectManager::getInstance();
-		}
-		catch (Exception $e)
-		{
-			if ($e->getCode() == E_INTERNAL_ERROR)
-			{
-				// repo dir not set up
-				// this may be valid for auth tests, so just don't init
-				return;
-			}
-			else
-			{
-				// other error, rethrow
-				throw $e;
-			}
-		}
-
-		$input = Input::getInstance();
-		$this->team = $input->getInput('team', true);
-
-		// check that the project exists and is a git repo otherwise construct
-		// the project directory and git init it
-		$project = $input->getInput('project', true);
-
-		if ($this->team && $project)
-		{
-			$this->openProject($this->team, $project);
-			$this->projectName = $project;
-		}
-
 		$this->installCommand('new', array($this, 'createProject'));
 		$this->installCommand('info', array($this, 'projectInfo'));
 		$this->installCommand('log', array($this, 'projectLog'));
@@ -59,6 +27,21 @@ class ProjModule extends Module
 		$this->installCommand("copy", array($this, "copyProject"));
 		$this->installCommand('zip', array($this, 'redirectToZip'));
 		$this->installCommand('update', array($this, 'updateProject'));
+	}
+
+	protected function initModule()
+	{
+		$this->projectManager = ProjectManager::getInstance();
+
+		$input = Input::getInstance();
+		$this->team = $input->getInput('team');
+
+		// check that the project exists and is a git repo otherwise construct
+		// the project directory and git init it
+		$project = $input->getInput('project');
+
+		$this->openProject($this->team, $project);
+		$this->projectName = $project;
 	}
 
 	private function updateProject()
