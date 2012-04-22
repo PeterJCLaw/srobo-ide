@@ -377,9 +377,7 @@ class FileModule extends Module
 			$pylint = new PyLint();
 			$importlint = new ImportLint();
 
-			// copy the reference file in
 			$useAutosave = $input->getInput('autosave', true);
-			$contents = null;
 
 			// Grab a temp folder that we can work in. We'll remove it later.
 			$tmpDir = tmpdir();
