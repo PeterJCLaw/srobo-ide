@@ -378,6 +378,7 @@ class FileModule extends Module
 			$importlint = new ImportLint();
 
 			$useAutosave = $input->getInput('autosave', true);
+			$revision = $input->getInput('rev', true);
 
 			// Grab a temp folder that we can work in. We'll remove it later.
 			$tmpDir = tmpdir();
@@ -389,8 +390,20 @@ class FileModule extends Module
 
 			$working = $tmpDir.'/'.basename($base);
 
-			// if we want the committed version do this
-			if (!$useAutosave) {
+			// fixed revision
+			if ($revision !== null)
+			{
+				// While this is in theory a file-level command, and we
+				// therefore shouldn't be modding the whole repo, it doesn't
+				// make any sense to just check out an old revision of just
+				// the requested file.
+				$repo = GitRepository::GetOrCreate($working);
+				$repo->reset();
+				$repo->checkoutRepo($revision);
+			}
+			// they want the current committed version of the file
+			else if (!$useAutosave)
+			{
 				// TODO: do we also want to checkout the entire folder in this case?
 				$repo = GitRepository::GetOrCreate($working);
 				$repo->checkoutFile($path);

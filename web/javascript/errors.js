@@ -121,11 +121,12 @@ function ErrorsPage() {
 	/**
 	 * use autosave parameter if to check against autosave or normal save
 	 */
-	this.check = function(file, opts, autosave) {
+	this.check = function(file, opts, autosave, revision) {
 		var project = IDE_path_get_project(file)
 		IDE_backend_request("file/lint", {team: team,
 		                                  project: project,
 		                                  path: IDE_path_get_file(file),
+		                                  rev: revision,
 		                                  autosave: autosave
 		                                 },
 		                                  partial(bind(this._done_check, this), file, opts, project),
