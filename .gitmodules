@@ -7,3 +7,6 @@
 [submodule "include/pipebot"]
 	path = include/pipebot
 	url = git://srobo.org/pipebot.git
+[submodule "web/javascript/ace"]
+	path = web/javascript/ace
+	url = git://github.com/ajaxorg/ace-builds.git
