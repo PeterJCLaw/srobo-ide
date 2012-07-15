@@ -251,6 +251,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._iea = iea;
 	// the ace session for this tab
 	this._session = this._iea.newSession();
+	// are we currently setting the session document value?
+	// used to avoid responding to change notifications during updates
+	this._settingValue = false;
 	//this will host the delay for the autosave
 	this._timeout = null;
 	//the time in seconds to delay before saving
@@ -274,6 +277,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 		connect( this.tab, "onfocus", bind( this._onfocus, this ) );
 		connect( this.tab, "onblur", bind( this._onblur, this ) );
 		connect( this.tab, "onclickclose", bind( this.close, this, false ) );
+
+		// change events from our editor
+		this._session.on( 'change', bind( this._on_change, this ) );
 
 		if( this.project == null ) {
 			// New file
@@ -439,14 +445,18 @@ function EditTab(iea, team, project, path, rev, mode) {
 			var e = ev;
 
 		//Ctrl+s or Cmd+s: do a save
-		if( e != 'auto' && (e.ctrlKey || e.metaKey) && e.keyCode == 83 ) {
+		if( (e.ctrlKey || e.metaKey) && e.keyCode == 83 ) {
 			this._save();
 			// try to prevent the browser doing something else
 			kill_event(ev);
 		}
+	}
 
-		//any alpha or number key or a retry: think about autosave
-		if( e == 'auto' || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) ) {
+	this._on_change = function(e) {
+		if (!this._settingValue) {
+			this._show_modified();
+
+			// Trigger an autosave
 			if( this._timeout != null )
 				this._timeout.cancel();
 			if( e == 'auto' )
@@ -534,6 +544,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._close = function() {
 		signal( this, "onclose", this );
 		this.tab.close();
+		this._session.removeAllListeners('change');
 		disconnectAll(this);
 		status_hide();
 	}
@@ -566,18 +577,12 @@ function EditTab(iea, team, project, path, rev, mode) {
 		this._signals.push( connect( "history",
 					     "onclick",
 					     bind( this._change_revision, this ) ) );
-		// keyboard shortcuts when the cursor is inside editarea
-		this._signals.push( connect( window,
-					    "ea_keydown",
-					    bind( this._on_keydown, this ) ) );
-		// keyup handler
-		this._signals.push( connect( window,
-					    "ea_keyup",
-					    bind( this._on_keyup, this ) ) );
+
 		// keyboard shortcuts
 		this._signals.push( connect( document,
 					    "onkeydown",
 					    bind( this._on_keydown, this ) ) );
+
 		this._show_contents();
 		this._iea.focus();
 	}
@@ -593,7 +598,9 @@ function EditTab(iea, team, project, path, rev, mode) {
 	}
 
 	this._update_contents = function() {
+		this._settingValue = true;
 		this._session.setValue( this.contents );
+		this._settingValue = false;
 	}
 
 	this._show_contents = function() {
@@ -765,17 +772,4 @@ function ide_editarea(id) {
 	}
 
 	this._init();
-}
-
-// Called when the editarea changes
-function ea_keyup(e) {
-	// Rebroadcast the signal
-	signal(this, "ea_keyup", e);
-}
-
-// Called when the editarea is due for an autosave
-function ea_autosave(e) {
-	// Rebroadcast the signal
-	on_doc_keydown(e);
-	signal(this, "ea_keydown", e);
 }
