@@ -737,7 +737,7 @@ function ide_editarea(id) {
 	this._open_queue = [];
 	this._close_queue = [];
 	this._value = null;
-	this._ace = null;
+	this._ace = null;	// An ACE Editor instance
 
 	this._init = function() {
 		this._ace = ace.edit( this._id );
