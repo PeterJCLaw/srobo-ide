@@ -582,6 +582,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 					    "onkeydown",
 					    bind( this._on_keydown, this ) ) );
 		this._update_contents();
+		this._iea.focus();
 	}
 
 	// Handler for when the tab loses focus
@@ -747,6 +748,10 @@ function ide_editarea(id) {
 
 	this.getValue = function() {
 		return this._ace.getSession().getValue();
+	}
+
+	this.focus = function() {
+		return this._ace.focus();
 	}
 
 	this._init();
