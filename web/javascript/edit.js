@@ -198,6 +198,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	//  - _init: Constructor.
 	//  - _check_syntax: Handler for when the "check syntax" button is clicked
 	//  - _update_contents: Update the contents of the edit area.
+	//  - _show_contents: Update that edit page such that this tab's content is shown
 	//  - _capture_code: Store the contents of the edit area.
 
 	//  ** File Contents Related **
@@ -248,6 +249,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._stat_contents = null;
 	// the ide_editarea instance
 	this._iea = iea;
+	// the ace session for this tab
+	this._session = this._iea.newSession();
 	//this will host the delay for the autosave
 	this._timeout = null;
 	//the time in seconds to delay before saving
@@ -257,10 +260,6 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._autosaved = "";
 	// whether we're loading from the vcs repo or an autosave
 	this._mode = mode;
-	//the cursor selection
-	this._selection_range = null;
-	// whether or not we've loaded the file contents yet.
-	this._loaded = false;
 
 	this._init = function() {
 		this.tab = new Tab( this.path );
@@ -282,7 +281,6 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this.contents = "";
 			this._original = "";
 			$("check-syntax").disabled = true;
-			this._loaded = false;
 		} else {
 			// Existing file
 			this._load_contents();
@@ -312,9 +310,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this.contents = this._original;
 		}
 
-		this._loaded = true;
-
 		this._update_contents();
+		this._show_contents();
 		this._show_modified();
 	}
 
@@ -581,7 +578,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		this._signals.push( connect( document,
 					    "onkeydown",
 					    bind( this._on_keydown, this ) ) );
-		this._update_contents();
+		this._show_contents();
 		this._iea.focus();
 	}
 
@@ -596,15 +593,13 @@ function EditTab(iea, team, project, path, rev, mode) {
 	}
 
 	this._update_contents = function() {
-		logDebug('_update_contents');
-		// if we don't have focus or aren't loaded, then don't try to change things - we'll get called again when we get focus
-		if(!this.tab.has_focus() || !this._loaded)
-			return;
+		this._session.setValue( this.contents );
+	}
 
-		this._iea.setValue( this.contents );
-		this._iea.setSelectionRange( this._selection_range );
-
+	this._show_contents = function() {
 	 	this._get_revisions();
+
+		this._iea.setSession( this._session );
 
 		// Display file path
 		var t = this.path;
@@ -615,9 +610,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	//call this to update this.contents with the current contents of the edit area and to grab the current cursor position
 	this._capture_code = function() {
-		this.contents = this._iea.getValue();
-
-		this._selection_range = this._iea.getSelectionRange();
+		this.contents = this._session.getValue();
 	}
 
 	this._change_revision = function() {
@@ -707,7 +700,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		lineNumber -= 1;
 		var endIndex = startIndex + length;
 		if (endIndex == -1) {
-			var lineText = this._iea.getLine(lineNumber);
+			var lineText = this._session.getLine(lineNumber);
 			if (lineText != null) {
 				endIndex = lineText.length;
 			}
@@ -741,32 +734,30 @@ function ide_editarea(id) {
 
 	this._init = function() {
 		this._ace = ace.edit( this._id );
-		var PythonMode = require( "ace/mode/python" ).Mode;
-		this._ace.getSession().setMode( new PythonMode );
 
 		signal( this, "onload" );
 	}
 
-	this.getSelectionRange = function() {
-		return this._ace.getSelectionRange();
+	this.newSession = function() {
+		var PythonMode = require( "ace/mode/python" ).Mode;
+		var UndoManager = require("ace/undomanager").UndoManager;
+		var EditSession = require( "ace/edit_session" ).EditSession;
+		var session = new EditSession( "" , new PythonMode );
+		session.setUndoManager( new UndoManager );
+		this._ace.setSession( session );
+		return session;
+	}
+
+	this.setSession = function( session ) {
+		if( session != null ) {
+			this._ace.setSession( session );
+		}
 	}
 
 	this.setSelectionRange = function( range ) {
 		if( range != null ) {
 			this._ace.selection.setSelectionRange( range );
 		}
-	}
-
-	this.setValue = function( contents ) {
-		this._ace.getSession().setValue( contents );
-	}
-
-	this.getValue = function() {
-		return this._ace.getSession().getValue();
-	}
-
-	this.getLine = function(n) {
-		return this._ace.getSession().getLine(n);
 	}
 
 	this.focus = function() {
