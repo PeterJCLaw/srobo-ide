@@ -698,6 +698,24 @@ function EditTab(iea, team, project, path, rev, mode) {
         );
     }
 
+	// Sets the selection in the editor as a line relative position.
+	// If length is -1 this is treated as the end of the line.
+	// If length would push the selection onto multiple lines its value is truncated to the end of the current line.
+	// Note that lines are indexed from 1.
+	this.setSelectionRange = function(lineNumber, startIndex, length) {
+		var Range = require("ace/range").Range;
+		lineNumber -= 1;
+		var endIndex = startIndex + length;
+		if (endIndex == -1) {
+			var lineText = this._iea.getLine(lineNumber);
+			if (lineText != null) {
+				endIndex = lineText.length;
+			}
+		}
+		var range = new Range(lineNumber, startIndex, lineNumber, endIndex);
+		this._iea.setSelectionRange(range);
+	}
+
 	//initialisation
 	this._init();
 }
@@ -726,19 +744,16 @@ function ide_editarea(id) {
 		var PythonMode = require( "ace/mode/python" ).Mode;
 		this._ace.getSession().setMode( new PythonMode );
 
-		//focus to the top of the file
-		this.setSelectionRange(0,0);
-
 		signal( this, "onload" );
 	}
 
 	this.getSelectionRange = function() {
-		// return this._ace.getSelectionRange();
+		return this._ace.getSelectionRange();
 	}
 
 	this.setSelectionRange = function( range ) {
 		if( range != null ) {
-			// this._ace.getSelection().setSelectionRange( range );
+			this._ace.selection.setSelectionRange( range );
 		}
 	}
 
@@ -748,6 +763,10 @@ function ide_editarea(id) {
 
 	this.getValue = function() {
 		return this._ace.getSession().getValue();
+	}
+
+	this.getLine = function(n) {
+		return this._ace.getSession().getLine(n);
 	}
 
 	this.focus = function() {
