@@ -44,6 +44,13 @@
 	<!-- editarea can die in ie6 if there is a leading ./ on the src line -->
 	<script type="text/javascript" src="web/javascript/edit_area/edit_area_loader.js"></script>
 	<title>Robotics IDE</title>
+<?php if (Configuration::getInstance()->getConfig('usage_tracking')): ?>
+	<!-- TODO: support some form of DNT? -->
+	<script type="text/javascript">
+		var pkBaseURL = (("https:" == document.location.protocol) ? "https://www.studentrobotics.org/piwik/" : "http://www.studentrobotics.org/piwik/");
+		document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+<?php endif ?>
 </head>
 <body>
 

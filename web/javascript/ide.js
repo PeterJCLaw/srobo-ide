@@ -75,7 +75,24 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 			errorCallback(-xhr.status, xhr.statusText, args);
 		}
 	};
-	xhr.open("POST", IDE_base + "/" + command, true);
+	var ep = IDE_base + "/" + command;
+
+	if (typeof(Piwik) == "object") {
+		switch (command) {
+			case 'file/put':
+			case 'proj/co':
+			case 'proj/commit':
+				try {
+					var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 4);
+					piwikTracker.setCustomVariable(1, "Team ID", team, "visit");
+					piwikTracker.setCustomUrl(ep);
+					piwikTracker.trackPageView();
+				} catch( err ) {}
+			default:
+		}
+	}
+
+	xhr.open("POST", ep, true);
 	xhr.onreadystatechange = cb;
 	xhr.setRequestHeader("Content-type", "text/json");
 	showElement('rotating-box');

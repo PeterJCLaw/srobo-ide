@@ -29,7 +29,7 @@ try {
 	$token = getDefaultTokenStrategy()->getAuthToken();
 	if ($auth->validateAuthToken($token))
 	{
-		readfile('web/index.html');
+		include('web/index.html.php');
 	}
 	else
 	{
