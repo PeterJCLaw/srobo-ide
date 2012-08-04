@@ -9,6 +9,13 @@ class ProjModule extends Module
 
 	public function __construct()
 	{
+		// Hook our cron hanlder. This runs even without a user.
+		$mm = ModuleManager::getInstance();
+		if ($mm->moduleExists('cron') && ($cron = $mm->getModule('cron')) != null)
+		{
+			$cron->subscribe(__CLASS__, array($this, 'cron'));
+		}
+
 		$auth = AuthBackend::getInstance();
 
 		// bail if we aren't authenticated
@@ -262,5 +269,40 @@ class ProjModule extends Module
 		$this->updateProject();
 		$this->projectRepository =
 			$this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
+	}
+
+	public function cron()
+	{
+		$config = Configuration::getInstance();
+		$zipRoot = $config->getConfig('zipurl');
+		$zip_max_age = $config->getConfig('zips.max_age');
+		$zip_max_age *= 60;	// input is minutes
+
+		$now = time();
+		$zip_delete_date = $now - $zip_max_age;	// $zip_max_age ago
+
+		$overall = true;
+
+		$dirIterator = new RecursiveDirectoryIterator($zipRoot);
+		foreach (new RecursiveIteratorIterator($dirIterator) as $file)
+		{
+			$name = $file->getPathname();
+			$ext = substr($name, strrpos($name, '.') + 1);
+			// Filter to non-hidden .zip files
+			if (!$file->isFile() || $name[0] == '.' || $ext != 'zip')
+			{
+				continue;
+			}
+
+			// consider the file for deletion.
+			$last_access = $file->getATime();
+			if ($last_access < $zip_delete_date)
+			{
+				$result = unlink($file);
+				$overall = $overall && $result;
+			}
+		}
+
+		return $overall;
 	}
 }
