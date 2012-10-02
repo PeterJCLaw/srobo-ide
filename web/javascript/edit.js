@@ -37,9 +37,8 @@ function EditPage() {
 	this._init = function() {
 		connect( tabbar, "onswitch", bind( this._tab_switch, this ) );
 
-		this.textbox = TEXTAREA({"id" : "editpage-editarea",
-					"style" : 'width: 99%; height: 500px;',
-					"value" : "" });
+		this.textbox = DIV({"id" : "editpage-editarea",
+				    "style" : 'width: 100%; height: 90%; position:absolute; text-align: left' });
 		appendChildNodes($("edit-mode"), this.textbox);
 
 		this._iea = new ide_editarea("editpage-editarea");
@@ -48,14 +47,10 @@ function EditPage() {
 	// Show the edit page
 	this._show = function() {
 		setStyle($("edit-mode"), {"display" : "block"});
-
-		this._iea.show();
 	}
 
 	// Hide the edit page
 	this._hide = function() {
-		this._iea.hide();
-
 		setStyle($("edit-mode"), {"display" : "none"});
 	}
 
@@ -203,6 +198,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	//  - _init: Constructor.
 	//  - _check_syntax: Handler for when the "check syntax" button is clicked
 	//  - _update_contents: Update the contents of the edit area.
+	//  - _show_contents: Update that edit page such that this tab's content is shown
 	//  - _capture_code: Store the contents of the edit area.
 
 	//  ** File Contents Related **
@@ -253,6 +249,11 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._stat_contents = null;
 	// the ide_editarea instance
 	this._iea = iea;
+	// the ace session for this tab
+	this._session = this._iea.newSession();
+	// are we currently setting the session document value?
+	// used to avoid responding to change notifications during updates
+	this._settingValue = false;
 	//this will host the delay for the autosave
 	this._timeout = null;
 	//the time in seconds to delay before saving
@@ -262,12 +263,6 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._autosaved = "";
 	// whether we're loading from the vcs repo or an autosave
 	this._mode = mode;
-	//the cursor selection
-	this._selection_start = 0;
-	this._selection_end = 0;
-	// whether or not we've loaded the file contents yet.
-	this._loaded = false;
-	this._pre_loaded_calls = [];
 
 	this._init = function() {
 		this.tab = new Tab( this.path );
@@ -283,27 +278,20 @@ function EditTab(iea, team, project, path, rev, mode) {
 		connect( this.tab, "onblur", bind( this._onblur, this ) );
 		connect( this.tab, "onclickclose", bind( this.close, this, false ) );
 
+		// change events from our editor
+		this._session.on( 'change', bind( this._on_change, this ) );
+
 		if( this.project == null ) {
 			// New file
 			this._isNew = true;
 			this.contents = "";
 			this._original = "";
 			$("check-syntax").disabled = true;
-			this._loaded = false;
 		} else {
 			// Existing file
 			this._load_contents();
 			$("check-syntax").disabled = false;
 		}
-	}
-
-	// For each of the functions that tried to be called before we were loaded,
-	// but couldn't be, try calling them again now.
-	this._retry_pre_loaded_calls = function() {
-		for ( var i=0; i<this._pre_loaded_calls.length; i++ ) {
-			this._pre_loaded_calls[i]();
-		}
-		this._pre_loaded_calls = [];
 	}
 
 	// Start load the file contents
@@ -328,10 +316,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this.contents = this._original;
 		}
 
-		this._loaded = true;
-		this._retry_pre_loaded_calls();
-
 		this._update_contents();
+		this._show_contents();
 		this._show_modified();
 	}
 
@@ -459,14 +445,18 @@ function EditTab(iea, team, project, path, rev, mode) {
 			var e = ev;
 
 		//Ctrl+s or Cmd+s: do a save
-		if( e != 'auto' && (e.ctrlKey || e.metaKey) && e.keyCode == 83 ) {
+		if( (e.ctrlKey || e.metaKey) && e.keyCode == 83 ) {
 			this._save();
 			// try to prevent the browser doing something else
 			kill_event(ev);
 		}
+	}
 
-		//any alpha or number key or a retry: think about autosave
-		if( e == 'auto' || (e.keyCode >= 65 && e.keyCode <= 90) || (e.keyCode >= 48 && e.keyCode <= 57) ) {
+	this._on_change = function(e) {
+		if (!this._settingValue) {
+			this._show_modified();
+
+			// Trigger an autosave
 			if( this._timeout != null )
 				this._timeout.cancel();
 			if( e == 'auto' )
@@ -554,6 +544,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._close = function() {
 		signal( this, "onclose", this );
 		this.tab.close();
+		this._session.removeAllListeners('change');
 		disconnectAll(this);
 		status_hide();
 	}
@@ -586,19 +577,14 @@ function EditTab(iea, team, project, path, rev, mode) {
 		this._signals.push( connect( "history",
 					     "onclick",
 					     bind( this._change_revision, this ) ) );
-		// keyboard shortcuts when the cursor is inside editarea
-		this._signals.push( connect( window,
-					    "ea_keydown",
-					    bind( this._on_keydown, this ) ) );
-		// keyup handler
-		this._signals.push( connect( window,
-					    "ea_keyup",
-					    bind( this._on_keyup, this ) ) );
+
 		// keyboard shortcuts
 		this._signals.push( connect( document,
 					    "onkeydown",
 					    bind( this._on_keydown, this ) ) );
-		this._update_contents();
+
+		this._show_contents();
+		this._iea.focus();
 	}
 
 	// Handler for when the tab loses focus
@@ -612,15 +598,15 @@ function EditTab(iea, team, project, path, rev, mode) {
 	}
 
 	this._update_contents = function() {
-		logDebug('_update_contents');
-		// if we don't have focus or aren't loaded, then don't try to change things - we'll get called again when we get focus
-		if(!this.tab.has_focus() || !this._loaded)
-			return;
+		this._settingValue = true;
+		this._session.setValue( this.contents );
+		this._settingValue = false;
+	}
 
-		this._iea.setValue( this.contents );
-		this._iea.setSelectionRange( this._selection_start, this._selection_end );
-
+	this._show_contents = function() {
 	 	this._get_revisions();
+
+		this._iea.setSession( this._session );
 
 		// Display file path
 		var t = this.path;
@@ -631,11 +617,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	//call this to update this.contents with the current contents of the edit area and to grab the current cursor position
 	this._capture_code = function() {
-		this.contents = this._iea.getValue();
-
-		var selection = this._iea.getSelectionRange();
-		this._selection_start = selection.start;
-		this._selection_end = selection.end;
+		this.contents = this._session.getValue();
 	}
 
 	this._change_revision = function() {
@@ -716,63 +698,22 @@ function EditTab(iea, team, project, path, rev, mode) {
         );
     }
 
-	// Sets the selection in the editarea as a line relative position.
+	// Sets the selection in the editor as a line relative position.
 	// If length is -1 this is treated as the end of the line.
 	// If length would push the selection onto multiple lines its value is truncated to the end of the current line.
 	// Note that lines are indexed from 1.
-	this.setSelectionRange = function(line, startIndex, length, retry) {
-		if (line < 1) {
-			log('Cannot set selection before start of file.');
-			logDebug('line: '+line);
-		}
-
-		// can't do anything if we're not loaded!
-		if (!this._loaded) {
-			logDebug('sSR: not loaded yet, setting up callback');
-			this._pre_loaded_calls.push(bind(this.setSelectionRange, this, line, startIndex, length, true));
-			return;
-		}
-		if (this.tab.has_focus() && !retry) {
-			this._capture_code();
-		}
-		var c = this.contents;
-		// normalise newlines to \n, while preserving length
-		c = c.replace('\r\n', ' \n');
-		c = c.replace('\r', '\n');
-
-		// get an array of lines
-		var lines = c.split('\n');
-		if (line > lines.length) {
-			log('Cannot set selection beyond end of file');
-			logDebug('line: '+line);
-			logDebug('#lines: '+lines.length);
-		}
-
-		var start = 0;
-		for ( var i = 0; i < line - 1 && i < lines.length; i++ ) {
-			logDebug('line: '+i+', len: '+lines[i].length+', "'+lines[i]+'"');
-			start += lines[i].length + 1;
-		}
-		logDebug('line: '+i+', len: '+lines[i].length+', "'+lines[i]+'"');
-
-		this._selection_start = start + startIndex;
-
-		var end = this._selection_start;
-		if (length != null) {
-			var endOfLine = this._selection_start + lines[i].length;
-			if (length == -1 || end + length > endOfLine) {
-				end = endOfLine;
-			} else {
-				end += length;
+	this.setSelectionRange = function(lineNumber, startIndex, length) {
+		var Range = require("ace/range").Range;
+		lineNumber -= 1;
+		var endIndex = startIndex + length;
+		if (endIndex == -1) {
+			var lineText = this._session.getLine(lineNumber);
+			if (lineText != null) {
+				endIndex = lineText.length;
 			}
 		}
-		this._selection_end = end;
-
-		// if we have focus action the selection
-		if (this.tab.has_focus() && !retry) {
-			this._iea.setSelectionRange( 0, 0 );
-			this._iea.setSelectionRange( this._selection_start, this._selection_end );
-		}
+		var range = new Range(lineNumber, startIndex, lineNumber, endIndex);
+		this._iea.setSelectionRange(range);
 	}
 
 	//initialisation
@@ -788,166 +729,47 @@ function EditTab(iea, team, project, path, rev, mode) {
 //  - onload: Emitted when the editarea has finished loading
 function ide_editarea(id) {
 	// Public functions:
-	//  - show() -- won't break horribly if the editarea hasn't finished loading (load safe)
-	//  - hide() -- load safe hide()
 	//  - getSelectionRange() -- get the cursor selection range, no need to pass the id, load safe
 	//  - setSelectionRange() -- set the cursor selection range, no need to pass the id, load safe
 
 	// Public properties:
-	this.loaded = false;
-
 	this._id = id;
-	this._init_started = false;
-	this._visible = false;
 	this._open_queue = [];
 	this._close_queue = [];
 	this._value = null;
+	this._ace = null;	// An ACE Editor instance
 
-	// Start initialising the editarea
-	this._init_start = function() {
-		//initialize new instance of editArea
-		editAreaLoader.init({
-			id : this._id,
-			syntax : "python",
-			language : "en",
-			start_highlight : true,
-			allow_toggle : false,
-			allow_resize : "no",
-			display : 'onload',
-			replace_tab_by_spaces : 4,
-			plugins: "SRkeydown",
-			show_line_colors: true,
-			keyup_callback: "ea_keyup",
-			EA_load_callback: "ea_loaded"
- 		});
-
-		connect( window, "ea_init_done",
-			 bind( this._on_init_done, this ) );
-
-		this._init_started = true;
-	}
-
-	this._on_init_done = function() {
-		logDebug( "ide_editarea: editarea has finished loading" );
-		this.loaded = true;
-
-		if( this._visible )
-			this.show();
-		else
-			this.hide();
-
-		this._proc_open_queue();
-		this._proc_close_queue();
-		//focus to the top of the file
-		this.setSelectionRange(0,0);
+	this._init = function() {
+		this._ace = ace.edit( this._id );
 
 		signal( this, "onload" );
 	}
 
-	this._proc_open_queue = function() {
-		// Open the files that we've been waiting to load
-		logDebug( "iea funnelling " + this._open_queue.length + " queued things into editarea" );
-		for( var i in this._open_queue ) {
-			logDebug( this._open_queue[i].id + " -- " + this._open_queue[i].text  );
-			editAreaLoader.openFile( this._id,
-						 this._open_queue[i] );
-		}
-		this._open_queue = [];
+	this.newSession = function() {
+		var PythonMode = require( "ace/mode/python" ).Mode;
+		var UndoManager = require("ace/undomanager").UndoManager;
+		var EditSession = require( "ace/edit_session" ).EditSession;
+		var session = new EditSession( "" , new PythonMode );
+		session.setUndoManager( new UndoManager );
+		this._ace.setSession( session );
+		return session;
 	}
 
-	this.show = function() {
-		logDebug( "iea show" );
-		this._visible = true;
-
-		if( this.loaded ) {
-			editAreaLoader.show( this._id );
-			this._proc_open_queue();
-			this._proc_close_queue();
-			this._set_queued_value();
-		}
-		else if( !this._init_started )
-			this._init_start();
-	}
-
-	this.hide = function() {
-		this._visible = false;
-
-		if( this.loaded )
-			editAreaLoader.hide( this._id );
-	}
-
-	this.getSelectionRange = function() {
-		if( this.loaded ) {
-			log('editArea: getting selection');
-			return editAreaLoader.getSelectionRange( this._id );
-		} else
-			return {start : 0, end : 0};
-	}
-
-	this.setSelectionRange = function(start, end) {
-		if( this.loaded ) {
-			editAreaLoader.setSelectionRange( this._id, start, end);
-			logDebug('editArea: setting selection - start:'+start+':end:'+end+':');
+	this.setSession = function( session ) {
+		if( session != null ) {
+			this._ace.setSession( session );
 		}
 	}
 
-	this.openFile = function( inf ) {
-		if( !this.loaded || !this._visible )
-			this._open_queue.push( inf );
-		else
-			editAreaLoader.openFile( this._id, inf );
+	this.setSelectionRange = function( range ) {
+		if( range != null ) {
+			this._ace.selection.setSelectionRange( range );
+		}
 	}
 
-	this._proc_close_queue = function() {
-		for( var i in this._close_queue )
-			editAreaLoader.closeFile( this._id,
-						  this._close_queue[i] );
-		this._close_queue = [];
+	this.focus = function() {
+		return this._ace.focus();
 	}
 
-	this.closeFile = function( id ) {
-		if( !this.loaded )
-			this._close_queue.push( id );
-		else
-			editAreaLoader.closeFile( this._id, id );
-	}
-
-	this.setValue = function( contents ) {
-		if( !this.loaded )
-			this._value = contents;
-		else
-			editAreaLoader.setValue( this._id, contents );
-	}
-
-	this._set_queued_value = function() {
-		if( this._value != null )
-			editAreaLoader.setValue( this._id, this._value );
-
-		this._value = null;
-	}
-
-	this.getValue = function() {
-		return editAreaLoader.getValue( this._id );
-	}
-}
-
-// Called when the editarea has finished loading
-function ea_loaded() {
-	ea_has_loaded = true;
-
-	// Rebroadcast the signal
-	signal(window, "ea_init_done");
-}
-
-// Called when the editarea changes
-function ea_keyup(e) {
-	// Rebroadcast the signal
-	signal(this, "ea_keyup", e);
-}
-
-// Called when the editarea is due for an autosave
-function ea_autosave(e) {
-	// Rebroadcast the signal
-	on_doc_keydown(e);
-	signal(this, "ea_keydown", e);
+	this._init();
 }
