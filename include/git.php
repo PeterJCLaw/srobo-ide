@@ -215,13 +215,10 @@ class GitRepository
 			list($commitpath, $hash) = self::populateRepoObjects($path);
 			$s_commitpath = escapeshellarg($commitpath);
 			$s_hash = escapeshellarg($hash);
+			shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
 			shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
 		}
-		list($commitpath, $hash) = self::populateRepoObjects($path);
-		$s_commitpath = escapeshellarg($commitpath);
-		$s_hash = escapeshellarg($hash);
-		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
-		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
+
 		return self::GetOrCreate($path);
 	}
 
