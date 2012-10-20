@@ -202,7 +202,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 	}
 
 	//file, dir or project name already exists
-	logDebug('Finding '+this.newFname+' in '+this._List+' : '+(findValue(this._List, this.newFname) > -1) );
+	logDebug('Checking file existence: '+this.newFname+' in '+this._List+' : '+(findValue(this._List, this.newFname) > -1) );
 	if( ( ( this.type == 'isFile' || this.type == 'isDir' ) && findValue(this._List, this.newFname) > -1 ) ||
 		( this.type == 'isProj' && projpage.project_exists(this.newFname) )
 	) {

@@ -706,7 +706,7 @@ ProjList.prototype._got_list = function(resp) {
 }
 
 ProjList.prototype.project_exists = function(pname) {
-	logDebug('Finding '+pname+' in '+this.projects+' : '+(findValue(this.projects, pname) > -1) );
+	logDebug('Checking project existence: '+pname+' in '+this.projects+' : '+(findValue(this.projects, pname) > -1) );
 	return findValue(this.projects, pname) > -1;
 }
 
