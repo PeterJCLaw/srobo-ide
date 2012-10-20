@@ -212,11 +212,7 @@ class GitRepository
 		else
 		{
 			shell_exec("cd $s_path ; $s_bin init --shared=all" . $s_bare);
-			list($commitpath, $hash) = self::populateRepoObjects($path);
-			$s_commitpath = escapeshellarg($commitpath);
-			$s_hash = escapeshellarg($hash);
-			shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
-			shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
+			self::addInitialCommit($path);
 		}
 
 		return self::GetOrCreate($path);
@@ -249,9 +245,12 @@ class GitRepository
 	}
 
 	/**
-	 * Construct some of the internals of the git repo we're going to use.
+	 * Add the initial commit that we want in all repos.
+	 * This is done by manipulating git objects directly,
+	 * rather than by using a working clone.
+	 * At the moment this just means adding a blank robot.py file.
 	 */
-	private static function populateRepoObjects($path)
+	private static function addInitialCommit($path)
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$s_path = escapeshellarg($path);
@@ -259,9 +258,14 @@ class GitRepository
 		$s_treepath = escapeshellarg(realpath('resources/base-tree'));
 		$commitpath = realpath('resources/initial-commit');
 		$s_commitpath = escapeshellarg($commitpath);
+
+		// Create the initial commit
 		$s_hash = trim(shell_exec("cd $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
-		$hash = trim(shell_exec("cd $s_path ; cat $s_commitpath | $s_bin commit-tree $s_hash"));
-		return array($commitpath, $hash);
+		$s_hash = trim(shell_exec("cd $s_path ; cat $s_commitpath | $s_bin commit-tree $s_hash"));
+
+		// Update the branch & HEAD to point to the initial commit we just created
+		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
+		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
 	}
 
 	/**
