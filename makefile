@@ -8,7 +8,7 @@ _JAVE_KEYSTORE_USER = Test User
 
 # Useful groupings
 default: dev
-all: dev docs applet submodules config
+all: dev docs submodules config applet
 
 applet: applet/build.xml applet/.keystore
 	cd applet/ && ant build
@@ -20,7 +20,7 @@ clean:
 	cd applet/ && ant clean
 	rm -f srobo-ide.deb metapackages/deb/srobo-ide.deb
 
-dev: applet folders config lint-reference/sr.py
+dev: folders config lint-reference/sr.py applet
 
 config: config/automagic.ini
 
