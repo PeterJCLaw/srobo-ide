@@ -141,11 +141,27 @@ class GitRepository
 	 */
 	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
-		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$base = $working ? $this->working_path : $this->git_path;
+		return self::gitExecuteInternal($base, $s_command, null, $env, $catchResult);
+	}
+
+	/**
+	 * Execute a git command with the specified environment variables.
+	 * @param base: The path to use as the current directory for the command.
+	 * @param s_command: The command to run, already escaped for the command line.
+	 * @parm input: A file to pipe to stdin of the git process.
+	 * @parm env: An array with the environment variables for the command that will be run.
+	 * @parm catchResult: Whether or not to catch the result in the event of failure.
+	 * @returns: If not catching failures (see catchResult) then either the process's stdout if the call succeeds or False otherwise.
+	 *           If catching failures then an array whose first element is a boolean success indicator, and whose second contains the process's stdout.
+	 */
+	private static function gitExecuteInternal($base, $s_command, $input = null, $env = array(), $catchResult = false)
+	{
+		$s_bin = escapeshellarg(self::gitBinaryPath());
 		ide_log(LOG_DEBUG, "$s_bin $s_command [cwd = $base]");
 		$s_buildCommand = "$s_bin $s_command";
-		$proc = proc_open($s_buildCommand, array(0 => array('file', '/dev/null', 'r'),
+		$s_input = ($input === null) ? '/dev/null' : $input;
+		$proc = proc_open($s_buildCommand, array(0 => array('file', $s_input, 'r'),
 		                                       1 => array('pipe', 'w'),
 		                                       2 => array('pipe', 'w')),
 		                                 $pipes,
@@ -259,9 +275,20 @@ class GitRepository
 		$commitpath = realpath('resources/initial-commit');
 		$s_commitpath = escapeshellarg($commitpath);
 
+		// Build the environment - tell git who we are.
+		$config = Configuration::getInstance();
+		$name = $config->getConfig('git.system_user');
+		$email = $config->getConfig('git.system_email');
+
+		$env = array('GIT_AUTHOR_NAME' => $name,
+		             'GIT_AUTHOR_EMAIL' => $email,
+		             'GIT_COMMITTER_NAME' => $name,
+		             'GIT_COMMITTER_EMAIL' => $email
+		            );
+
 		// Create the initial commit
 		$s_hash = trim(shell_exec("cd $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
-		$s_hash = trim(shell_exec("cd $s_path ; cat $s_commitpath | $s_bin commit-tree $s_hash"));
+		$s_hash = self::gitExecuteInternal($path, "commit-tree $s_hash", $commitpath, $env);
 
 		// Update the branch & HEAD to point to the initial commit we just created
 		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
