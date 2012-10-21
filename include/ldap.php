@@ -9,6 +9,7 @@ class LDAPManager
 	public function __construct($host, $user, $pass)
 	{
 		$this->connection = ldap_connect($host);
+		ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION,3);
 		$dn = "uid=$user,ou=users,o=sr";
 		$this->authed = ldap_bind($this->connection, $dn, $pass);
 		$this->user = $user;
