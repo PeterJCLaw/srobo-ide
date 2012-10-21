@@ -59,7 +59,10 @@ def makeIDERequest(endPoint, data = None):
 #	print "Requesting '%s'." % endPoint
 	response = urllib2.urlopen(req)
 
-	response_data = json.load(response)
+	data = response.read()
+	print "data: '%s'" % data
+
+	response_data = json.loads(data)
 #	print "Got data from '%s'." % endPoint
 	#print 'response_data:', json.dumps(response_data, sort_keys = True, indent = 4)
 	raiseOnRequestError(response_data)
