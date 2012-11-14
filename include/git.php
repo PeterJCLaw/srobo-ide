@@ -170,19 +170,17 @@ class GitRepository
 		$stdout = stream_get_contents($pipes[1]);
 		$stderr = stream_get_contents($pipes[2]);
 		$status = proc_close($proc);
+		ide_log(LOG_DEBUG, "$s_command result: status: $status, stdout: $stdout, stderr: $stderr.");
 		if ($status != 0)
 		{
+			ide_log(LOG_ERR, "$s_bin $s_command [cwd = $base]");
+			ide_log(LOG_ERR, "\tfailed miserably with exit code $status!");
+			ide_log(LOG_ERR, "-- LOG --");
+			ide_log(LOG_ERR, "$stderr");
+			ide_log(LOG_ERR, "-- END LOG --");
 			if ($catchResult)
 			{
 				return array(false, $stdout);
-			}
-			else
-			{
-				ide_log(LOG_ERR, "$s_bin $s_command [cwd = $base]");
-				ide_log(LOG_ERR, "\tfailed miserably with exit code $status!");
-				ide_log(LOG_ERR, "-- LOG --");
-				ide_log(LOG_ERR, "$stderr");
-				ide_log(LOG_ERR, "-- END LOG --");
 			}
 			return false;
 		}
