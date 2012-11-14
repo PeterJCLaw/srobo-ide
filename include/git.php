@@ -259,6 +259,32 @@ class GitRepository
 	}
 
 	/**
+	 * Creates a git committer/author env array.
+	 * @param name: The user's name.
+	 * @param email: The user's email address.
+	 * @param base_env: The base environment to use. If specified, the user's
+	 *                  details are added to this rather than a new array.
+	 */
+	private static function makeGitUserEnv($name, $email, $base_env = null)
+	{
+		if ($base_env !== null)
+		{
+			$env = (array)$base_env;
+		}
+		else
+		{
+			$env = array();
+		}
+
+		$env['GIT_AUTHOR_NAME'] = $name;
+		$env['GIT_AUTHOR_EMAIL'] = $email;
+		$env['GIT_COMMITTER_NAME'] = $name;
+		$env['GIT_COMMITTER_EMAIL'] = $email;
+
+		return $env;
+	}
+
+	/**
 	 * Add the initial commit that we want in all repos.
 	 * This is done by manipulating git objects directly,
 	 * rather than by using a working clone.
@@ -278,11 +304,7 @@ class GitRepository
 		$name = $config->getConfig('git.system_user');
 		$email = $config->getConfig('git.system_email');
 
-		$env = array('GIT_AUTHOR_NAME' => $name,
-		             'GIT_AUTHOR_EMAIL' => $email,
-		             'GIT_COMMITTER_NAME' => $name,
-		             'GIT_COMMITTER_EMAIL' => $email
-		            );
+		$env = self::makeGitUserEnv($name, $email);
 
 		// Create the initial commit
 		$s_hash = trim(shell_exec("cd $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
@@ -420,10 +442,7 @@ class GitRepository
 		$mergeOptions = array('--no-stat',
 		                      '--quiet');
 		// environment variables are safe anyway.
-		$s_committerEnv = array('GIT_AUTHOR_NAME'    => $name,
-		                      'GIT_AUTHOR_EMAIL'   => $email,
-		                      'GIT_COMMITER_NAME'  => $name,
-		                      'GIT_COMMITER_EMAIL' => $email);
+		$s_committerEnv = self::makeGitUserEnv($name, $email);
 		list($success, $message) = $this->gitExecute(true, 'merge '
 		                                             . implode(' ', $mergeOptions)
 		                                             . ' '
@@ -567,10 +586,7 @@ class GitRepository
 		file_put_contents($tmp, $message);
 		$s_tmp = escapeshellarg($tmp);
 		// environment variables are safe anyway.
-		$s_committerEnv = array('GIT_AUTHOR_NAME'    => $name,
-		                      'GIT_AUTHOR_EMAIL'   => $email,
-		                      'GIT_COMMITER_NAME'  => $name,
-		                      'GIT_COMMITER_EMAIL' => $email);
+		$s_committerEnv = self::makeGitUserEnv($name, $email);
 		list($result, $out) = $this->gitExecute(true, "commit -F $s_tmp", $s_committerEnv, true);
 		unlink($tmp);
 		return $result;
