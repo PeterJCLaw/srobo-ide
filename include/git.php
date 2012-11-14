@@ -516,8 +516,17 @@ class GitRepository
 	 */
 	private function stash($id)
 	{
+		// Build the environment - tell git who we are.
+		// TODO: use the user's actual info. For now, this is painful to
+		// route throught to here, so we just use the system details.
+		$config = Configuration::getInstance();
+		$name = $config->getConfig('git.system_user');
+		$email = $config->getConfig('git.system_email');
+
+		$s_committerEnv = self::makeGitUserEnv($name, $email);
+
 		$s_id = escapeshellarg($id);
-		$res = $this->gitExecute(true, 'stash save '.$s_id);
+		$res = $this->gitExecute(true, 'stash save '.$s_id, $s_committerEnv);
 		$res = trim($res);
 		return $res != 'No local changes to save';
 	}
