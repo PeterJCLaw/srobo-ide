@@ -111,9 +111,11 @@
 			<li id="teaminfo">Loading...</li>
 		</ul>
 		<ul id="top-links">
+<?php if (Configuration::getInstance()->getConfig('gui.ticket_link')): ?>
 			<li>
 				<a href="https://www.studentrobotics.org/tickets/" title="Get your ticket now!">Ticket System</a>
 			</li>
+<?php endif ?>
 			<li>
 				<a href="https://www.studentrobotics.org/forum/" title="Meet other competitors, get help from mentors and share ideas in the forums">Forum</a>
 			</li>
