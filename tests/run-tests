@@ -5,6 +5,8 @@ require_once('tests/test-runners.php');
 // delete_recursive, mkdir_full, tmpdir
 require_once('include/file-utils.php');
 
+$start_time = microtime(true);
+
 array_shift($argv);
 $test_restrict = empty($argv) ? null : $argv;
 $sched = file('tests/test-schedule');
@@ -123,10 +125,13 @@ foreach ($sched as $value)
 	}
 }
 
-printf("%4d tests passed.\n", $passes);
+$end_time = microtime(true);
+$duration = $end_time - $start_time;
+
+printf("%4d tests passed in %4.3f seconds.\n", $passes, $duration);
 if ($fails > 0)
 {
-	printf("%4d tests failed.\n", $fails);
+	printf("%4d tests failed in %4.3f seconds.\n", $fails, $duration);
 	echo "\tSee working directory '$workPath'.\n";
 }
 else
