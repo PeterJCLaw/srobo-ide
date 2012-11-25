@@ -19,7 +19,7 @@ $config->override('zipurl', $zipPathBase);
 $config->override('user.default', 'death');
 $config->override('user.default.teams', array(1, 2));
 $config->override('auth_module', 'single');
-$config->override('modules', array('proj', 'file'));
+$config->override('modules.always', array('proj', 'file'));
 
 $auth = AuthBackend::getInstance();
 test_true($auth->authUser('death','face'), 'authentication failed');

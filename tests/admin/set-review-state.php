@@ -9,7 +9,7 @@ $config->override("team.status_images.live_dir", $liveImagesDir);
 $config->override("user.default", "bees");
 $config->override("user.default.is_admin", true);
 $config->override("auth_module", "single");
-$config->override("modules", array("admin"));
+$config->override('modules.always', array("admin"));
 
 //do a quick authentication
 $auth = AuthBackend::getInstance();

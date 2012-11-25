@@ -5,7 +5,7 @@ $config->override("repopath", $testWorkPath);
 $config->override("user.default", "bees");
 $config->override("user.default.teams", array(1, 2));
 $config->override("auth_module", "single");
-$config->override("modules", array("file"));
+$config->override('modules.always', array("file"));
 
 //do a quick authentication
 $auth = AuthBackend::getInstance();

@@ -1,7 +1,7 @@
 <?php
 
 $config = Configuration::getInstance();
-$config->override('modules', array('cron'));
+$config->override('modules.always', array('cron'));
 
 $output = Output::getInstance();
 

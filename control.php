@@ -49,7 +49,7 @@ foreach ($data as $key => $value)
 try
 {
 	$mm = ModuleManager::getInstance();
-	$mm->importModules();
+	$mm->importModules(false);	// core modules only
 
 	$modname = $input->getRequestModule();
 	if (!$mm->moduleExists($modname))

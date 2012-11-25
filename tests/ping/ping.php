@@ -1,7 +1,7 @@
 <?php
 
 $config = Configuration::getInstance();
-$config->override('modules', array('ping'));
+$config->override('modules.always', array('ping'));
 
 $mm = ModuleManager::getInstance();
 $mm->importModules();

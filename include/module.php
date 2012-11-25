@@ -60,6 +60,7 @@ class ModuleManager
 		return self::$singleton;
 	}
 
+	private $module_list = null;
 	private $modules = array();
 
 	private function moduleNameToClass($mod)
@@ -68,17 +69,53 @@ class ModuleManager
 	}
 
 	/**
-	 * Imports all modules defined in the config file
+	 * Loads the given module into the local cache.
 	 */
-	public function importModules()
+	private function importModule($module)
 	{
-		$config = Configuration::getInstance();
-		$module_list = $config->getConfig('modules');
-		foreach ($module_list as $module)
+		require_once("modules/$module.php");
+		$class = $this->moduleNameToClass($module);
+		$this->modules[$module] = new $class();
+	}
+
+	/**
+	 * Loads the module list from the centeral configuration.
+	 * @param flat_list: whether or not to flatten the always/lazy groups
+	 *                   to provide a simple list of all known modules.
+	 */
+	private function getModuleList($flat_list)
+	{
+		if ($this->module_list == null)
 		{
-			require_once("modules/$module.php");
-			$class = $this->moduleNameToClass($module);
-			$this->modules[$module] = new $class();
+			$config = Configuration::getInstance();
+			$this->module_list['always'] = $config->getConfig('modules.always');
+			$this->module_list['lazy'] = $config->getConfig('modules.lazy');
+		}
+		if ($flat_list)
+		{
+			return array_merge($this->module_list['always'], $this->module_list['lazy']);
+		}
+		return $this->module_list;
+	}
+
+	/**
+	 * Imports all modules defined in the config file
+	 * This is not generally needed, as modules will be created on-demand.
+	 * @param include_lazy: include modules marker as lazy-loadable.
+	 */
+	public function importModules($include_lazy = false)
+	{
+		$module_list = $this->getModuleList(false);
+		foreach ($module_list['always'] as $module)
+		{
+			$this->importModule($module);
+		}
+		if ($include_lazy)
+		{
+			foreach ($module_list['lazy'] as $module)
+			{
+				$this->importModule($module);
+			}
 		}
 	}
 
@@ -87,7 +124,9 @@ class ModuleManager
 	 */
 	public function moduleExists($mod)
 	{
-		return isset($this->modules[$mod]);
+		$module = $this->getModule($mod);
+		$exists = ($module != null);
+		return $exists;
 	}
 
 	/**
@@ -95,6 +134,15 @@ class ModuleManager
 	 */
 	public function getModule($mod)
 	{
+		$list = $this->getModuleList(true);
+		if (!in_array($mod, $list))
+		{
+			return false;
+		}
+		if (!isset($this->modules[$mod]))
+		{
+			$this->importModule($mod);
+		}
 		return $this->modules[$mod];
 	}
 }
