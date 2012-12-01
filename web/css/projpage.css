@@ -6,28 +6,32 @@
   border-style: none solid none none;
   border-color: #dfdbd7;
   border-width: 1px;
-  margin-left: 1em;
+  padding-left:1em;
+}
+
+#proj-sidebar hr {
+  border-color: #dfdbd7;
+  border-width: 1px;
+  border-top-width:0px;
+  border-style: solid;
 }
 
 #proj-options {
   text-align: center;
 }
 #proj-options div {
-	margin-left: 22px;
-	text-align: left;
+	text-align: center;
 }
+
 #proj-options button {
 	width: 130px;
 }
 
-#proj-revselect {
-  border-style: solid none solid none;
+#proj-fileops span {
 }
 
-#proj-fileops span {
-	text-align: right;
-	float: right;
-	margin-right: 10px;
+.clear {
+	clear:both;
 }
 
 #proj-fileops ul {

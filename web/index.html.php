@@ -199,6 +199,7 @@
 
 				<div id="proj-options">
 					<div>Project:<select id="project-select"><option>loading...</option></select></div>
+					<hr/>
 					<button id="new-project">New Project</button>
 					<button id="export-project">Export Project</button>
 					<!-- button id="archive-project" disabled="disabled">Archive Project</button -->
@@ -206,6 +207,37 @@
 					<button id="check-code">Check Code</button>
 					<!-- button id="simulate-project" disabled="disabled">Simulate Project</button -->
 				</div>
+
+				<hr/>
+				<div id="proj-fileops">
+					<div>
+						File selection:
+						<ul>
+							<li>
+								<a id="proj-select-all">Select All</button>
+							</li>
+							<li>
+								<a id="proj-select-none">Select None</a>
+							</li>
+						</ul>
+					</div>
+					<br>
+					<div>
+						File operations:
+						<ul>
+							<li><a id="op-newfile"      href="#">New File</a></li>
+							<li><a id="op-mkdir"        href="#">New Directory</a></li>
+							<li><a id="op-mv"           href="#">Move (including rename)</a></li>
+							<li><a id="op-cp"           href="#">Copy</a></li>
+							<li><a id="op-rm"           href="#">Delete</a></li>
+							<li><a id="op-undel"        href="#">Undelete</a></li>
+							<li><a id="op-rm_autosaves" href="#">Delete Autosaves</a></li>
+							<li><a id="op-check"        href="#">Check Files' Syntax</a></li>
+							<li><a id="op-log"          href="#">View Log</a></li>
+						</ul>
+					</div>
+				</div>
+				<hr/>
 
 				<div id="proj-revselect">
 					<select id="cal-revs">
@@ -229,25 +261,6 @@
 						<tr id="cal-row-4"><td>&nbsp;</td></tr>
 						<tr id="cal-row-5"><td>&nbsp;</td></tr>
 					</table>
-				</div>
-
-				<div id="proj-fileops">
-					<span>
-						<button id="proj-select-none">Select None</button><br>
-						<button id="proj-select-all">Select All</button>
-					</span>
-					Selection operations:
-					<ul>
-						<li><a id="op-newfile"      href="#">New File</a></li>
-						<li><a id="op-mkdir"        href="#">New Directory</a></li>
-						<li><a id="op-mv"           href="#">Move (including rename)</a></li>
-						<li><a id="op-cp"           href="#">Copy</a></li>
-						<li><a id="op-rm"           href="#">Delete</a></li>
-						<li><a id="op-undel"        href="#">Undelete</a></li>
-						<li><a id="op-rm_autosaves" href="#">Delete Autosaves</a></li>
-						<li><a id="op-check"        href="#">Check Files' Syntax</a></li>
-						<li><a id="op-log"          href="#">View Log</a></li>
-					</ul>
 				</div>
 
 			</div> <!-- end of "proj-sidebar" -->
