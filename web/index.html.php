@@ -200,11 +200,11 @@
 				<div id="proj-options">
 					<div>Project:<select id="project-select"><option>loading...</option></select></div>
 					<button id="new-project">New Project</button>
+					<button id="export-project">Export Project</button>
 					<!-- button id="archive-project" disabled="disabled">Archive Project</button -->
 					<button id="copy-project">Copy Project</button>
 					<button id="check-code">Check Code</button>
 					<!-- button id="simulate-project" disabled="disabled">Simulate Project</button -->
-					<button id="export-project">Export Project</button>
 				</div>
 
 				<div id="proj-revselect">
