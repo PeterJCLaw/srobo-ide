@@ -202,7 +202,7 @@ function TabBar() {
 	this._onclose = function( tab ) {
 		var index = 0;
 
-		for( var i in this.tabs ) {
+		for( var i = index; i < this.tabs.length; i++ ) {
 			if( this.tabs[i] == tab ) {
 				index = i;
 				this.tabs.splice( i, 1 );

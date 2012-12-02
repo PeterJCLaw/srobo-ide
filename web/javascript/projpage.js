@@ -784,8 +784,8 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	this._team = team;
 
 	// Rebuild the select box options
-	for( var p in this._plist.projects ) {
-		var pname = this._plist.projects[p];
+	for( var i=0; i < this._plist.projects.length; i++ ) {
+		var pname = this._plist.projects[i];
 		var props = { "value" : pname };
 
 		if( pname == this.project )
