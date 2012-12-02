@@ -144,10 +144,10 @@
 		<div id="edit-mode" class="page">
 			<div class="menu-bar">
 				<ul id="filemenu">
-					<li><button id="save-file" >Save</button></li>
-					<li><button id="check-syntax">Check Syntax</button></li>
-					<li><button id="edit-diff">View Changes</button></li>
-					<li><button id="close-edit-area">Close</button></li>
+					<li><button id="save-file" title="Save the changes you've made as a new revision. (Ctrl+S)">Save</button></li>
+					<li><button id="check-syntax" title="Check that the code you've writen is valid python.">Check Syntax</button></li>
+					<li><button id="edit-diff" title="See an overview of the changes you've made.">View Changes</button></li>
+					<li><button id="close-edit-area" title="Close this file.">Close</button></li>
 					<li><div id="tab-filename">new file</div></li>
 					<li class= "file-history">
 						<select name="history" id="history">
@@ -201,7 +201,7 @@
 					<div>Project:<select id="project-select"><option>loading...</option></select></div>
 					<hr/>
 					<button id="new-project">New Project</button>
-					<button id="export-project">Export Project</button>
+					<button id="export-project" title="Create a zip file for the robot that contains your code. (Ctrl+E)">Export Project</button>
 					<!-- button id="archive-project" disabled="disabled">Archive Project</button -->
 					<button id="copy-project">Copy Project</button>
 					<button id="check-code">Check Code</button>
