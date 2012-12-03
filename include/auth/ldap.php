@@ -25,19 +25,23 @@ class LDAPAuth extends SecureTokenAuth
 
 	public function getTeams($username)
 	{
+		ide_log(LOG_INFO, "Getting teams for '$username'.");
 		$config = Configuration::getInstance();
 		$ldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
 		$groups = $ldapManager->getGroupsForUser($username);
 		$teams = array();
 
+		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
+		ide_log(LOG_INFO, "Using prefix '$groupNamePrefix'.");
 		foreach ($groups as $group)
 		{
-			$groupNamePrefix = $config->getConfig("ldap.team.prefix");
 			if (stripos($group["cn"], $groupNamePrefix) === 0)
 			{
+				ide_log(LOG_DEBUG, "Got group '$group[cn]'.");
 				$teams[] = substr($group["cn"], strlen($groupNamePrefix));
 			}
 		}
+		ide_log(LOG_INFO, "Got teams: ". print_r($teams, true));
 
 		return $teams;
 	}
