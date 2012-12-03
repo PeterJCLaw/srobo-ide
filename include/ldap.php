@@ -30,7 +30,10 @@ class LDAPManager
 			$group = $results[$i];
 			$saneGroup = array();
 			$saneGroup['cn'] = $group['cn'][0];
-			$saneGroup['description'] = $group['description'][0];
+			if (isset($group['description']) && count($group['description']) > 0)
+			{
+				$saneGroup['description'] = $group['description'][0];
+			}
 			$saneGroups[] = $saneGroup;
 		}
 
