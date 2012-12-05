@@ -7,6 +7,11 @@ require_once('include/config.php');
 require_once('include/input.php');
 require_once('include/logger.php');
 
+function ide_log_exception($e, $message = null)
+{
+	ide_log(LOG_ERR, "$message Exception: ".$e->getCode().': '.$e->getMessage().PHP_EOL.$e->getTraceAsString());
+}
+
 function ide_log($level, $message)
 {
 	if (IN_TESTS)

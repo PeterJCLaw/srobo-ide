@@ -43,4 +43,5 @@ try {
 	echo "Debugging information:\n";
 	echo $e->getMessage() . "\n";
 	echo $e->getTraceAsString() . "\n";
+	ide_log_exception($e);
 }

@@ -65,6 +65,7 @@ try
 }
 catch (Exception $e)
 {
+	ide_log_exception($e);
 	$output->setOutput('error', array($e->getCode(), $e->getMessage(), $e->getTraceAsString()));
 }
 
