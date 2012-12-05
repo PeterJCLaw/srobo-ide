@@ -337,7 +337,9 @@
 								Upload an image to show on your Team page. It can be of anything you wish, within reason. Ideally it'd show the current state of your robot to keep the other teams on their toes! Please avoid faces appearing in the image.
 							</p>
 							<p class="info">
-								Max. file size: 4MB. PNG, JPEG and GIF are supported. The image will be resized to fit within 480x320.
+								Max. file size:
+								<?php echo ini_get('upload_max_filesize'); ?>B.
+								PNG, JPEG and GIF are supported. The image will be resized to fit within 480x320.
 							</p>
 							<input type="hidden" name="_command" id="team-status-image-command" value="" />
 							<input type="hidden" name="team" id="team-status-image-team" value="" />
