@@ -28,18 +28,16 @@ class LDAPAuth extends SecureTokenAuth
 		ide_log(LOG_INFO, "Getting teams for '$username'.");
 		$config = Configuration::getInstance();
 		$ldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
-		$groups = $ldapManager->getGroupsForUser($username);
+		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
+		$groups = $ldapManager->getGroupsForUser($username, $groupNamePrefix.'*');
 		$teams = array();
 
 		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
 		ide_log(LOG_INFO, "Using prefix '$groupNamePrefix'.");
 		foreach ($groups as $group)
 		{
-			if (stripos($group["cn"], $groupNamePrefix) === 0)
-			{
-				ide_log(LOG_DEBUG, "Got group '$group[cn]'.");
-				$teams[] = substr($group["cn"], strlen($groupNamePrefix));
-			}
+			ide_log(LOG_DEBUG, "Got group '$group'.");
+			$teams[] = substr($group, strlen($groupNamePrefix));
 		}
 		ide_log(LOG_INFO, "Got teams: ". print_r($teams, true));
 
@@ -52,16 +50,10 @@ class LDAPAuth extends SecureTokenAuth
 		$adminName = $config->getConfig("ldap.admin_group");
 		$user = $this->ldapManager->getUser();
 		$IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
-		$groups = $IDEldapManager->getGroupsForUser($user);
-		foreach ($groups as $group)
-		{
-			if ($group["cn"] == $adminName)
-			{
-				return true;
-			}
-		}
-
-		return false;
+		$groups = $IDEldapManager->getGroupsForUser($user, $adminName);
+		// should either be 0 or 1 responses...
+		$isAdmin = count($groups) > 0;
+		return $isAdmin;
 	}
 
 	public function displayNameForUser($user)

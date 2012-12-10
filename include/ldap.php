@@ -15,26 +15,31 @@ class LDAPManager
 		$this->user = $user;
 	}
 
-	public function getGroupsForUser($user)
+	/**
+	 * Get the groups that the user is in, optionally pre-filtered.
+	 * @param user: the uid of the user to lookup.
+	 * @param filter: optional filter to the groups, applied in LDAP.
+	 */
+	public function getGroupsForUser($user, $filter = null)
 	{
 		if (!$this->authed)
 			throw new Exception('cannot search groups, not authed to ldap', E_LDAP_NOT_AUTHED);
 		if ($this->user != 'ide')
 			throw new Exception('cannot search groups, not the IDE user', E_LDAP_NOT_AUTHED);
 		//do an ldap search
-		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', "memberUid=$user");
+		$ldap_filter = "memberUid=$user";
+		$attrs = array('cn');
+		if ($filter != null)
+		{
+			$ldap_filter = "(&($ldap_filter)(cn=$filter))";
+		}
+		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', $ldap_filter, $attrs);
 		$results = ldap_get_entries($this->connection , $resultsID);
 		$saneGroups = array();
 		for ($i = 0; $i < $results['count']; $i++)
 		{
 			$group = $results[$i];
-			$saneGroup = array();
-			$saneGroup['cn'] = $group['cn'][0];
-			if (isset($group['description']) && count($group['description']) > 0)
-			{
-				$saneGroup['description'] = $group['description'][0];
-			}
-			$saneGroups[] = $saneGroup;
+			$saneGroups[] = $group['cn'][0];
 		}
 
 		return $saneGroups;
