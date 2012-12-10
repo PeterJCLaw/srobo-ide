@@ -40,6 +40,15 @@ class TeamStatus
 		}
 	}
 
+	public function getLive($name)
+	{
+		if (!empty($this->statusData->$name->live))
+		{
+			return $this->statusData->$name->live;
+		}
+		return null;
+	}
+
 	public function getDraftOrLive($name)
 	{
 		if (isset($this->statusData->$name))

@@ -39,7 +39,7 @@ class UserModule extends Module
 		$teams = array();
 		foreach ($teamNumbers as $id)
 		{
-			$teams[$id] = $auth->displayNameForTeam($id);
+			$teams[$id] = $this->displayNameForTeam($id);
 		}
 
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));
@@ -63,5 +63,20 @@ class UserModule extends Module
 		$settingsManager = Settings::getInstance();
 		$settingsManager->setSettings($this->username, $settings);
 		return true;
+	}
+
+	private function displayNameForTeam($team)
+	{
+		$ts = new TeamStatus($team);
+		$name = $ts->getLive('name');
+		if (empty($name))
+		{
+			$name = "Team $team";
+		}
+		else
+		{
+			$name = "Team $team: $name";
+		}
+		return $name;
 	}
 }
