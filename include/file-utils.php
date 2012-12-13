@@ -156,7 +156,7 @@ function file_lock($lockfile)
 
 	if ($ret !== true)
 	{
-		ide_log(LOG_ERR, "flock(LOCK_EX) failed to get lock on '$resource'.");
+		ide_log(LOG_ERR, "flock(LOCK_EX) failed to get lock on '$resource:$lockfile'.");
 		throw new Exception("Failed to get a lock on '$lockfile'.", E_INTERNAL_ERROR);
 	}
 
