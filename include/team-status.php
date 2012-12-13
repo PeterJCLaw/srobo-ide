@@ -15,12 +15,14 @@ class TeamStatus
 
 	public function __construct($team)
 	{
+		ide_log(LOG_INFO, "Team Status .ctor for '$team'");
 		$basePath = self::getStatusDir();
 		if (!is_dir($basePath))
 		{
 			mkdir_full($basePath);
 		}
 		$this->statusPath = "$basePath/$team-status.json";
+		ide_log(LOG_DEBUG, "Team Status path: '$this->statusPath'.");
 		$this->load();
 //		echo '$this->statusData: '; var_dump($this->statusData);
 	}
