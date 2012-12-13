@@ -37,11 +37,9 @@ function EditPage() {
 	this._init = function() {
 		connect( tabbar, "onswitch", bind( this._tab_switch, this ) );
 
-		this.textbox = DIV({"id" : "editpage-editarea",
-				    "style" : 'width: 100%; height: 90%; position:absolute; text-align: left' });
-		appendChildNodes($("edit-mode"), this.textbox);
+		this.textbox = $('editpage-acebox');
 
-		this._iea = new ide_editarea("editpage-editarea");
+		this._iea = new ide_editarea('editpage-acebox');
 	}
 
 	// Show the edit page

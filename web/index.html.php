@@ -157,6 +157,7 @@
 				</ul>
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
+			<div id="editpage-acebox"></div>
 		</div>
 
 		<div id="log-mode" class="page">

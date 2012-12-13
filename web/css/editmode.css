@@ -26,3 +26,10 @@
 	border: none;
 	height: 30em;
 }
+
+#editpage-acebox {
+	height: 90%;
+	position: absolute;
+	text-align: left;
+	width: 100%;
+}
