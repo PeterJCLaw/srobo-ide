@@ -1,5 +1,6 @@
 TEST basic/sanity
 TEST basic/test-skip
+TEST basic/config
 TEST basic/cron
 TEST basic/input
 TEST basic/log
