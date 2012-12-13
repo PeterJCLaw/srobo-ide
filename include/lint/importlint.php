@@ -67,6 +67,7 @@ class ImportLint extends Lint
 		$status = proc_close($proc);
 
 		// status code non-zero says something went very wrong
+		// probably threw an exception - TODO: log this!
 		if ($status !== 0)
 		{
 			return False;
@@ -77,6 +78,11 @@ class ImportLint extends Lint
 		$errors = array();
 		foreach ($info as $file => $imports)
 		{
+			if ($file == '.error')
+			{
+				$errors[] = new LintMessage($imports['file'], $imports['line'], $imports['msg']);
+				continue;
+			}
 			$this->touched[] = $file;
 			foreach ($imports as $import => $line)
 			{

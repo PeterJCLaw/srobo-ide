@@ -49,14 +49,24 @@ sys.path.insert(0, os.getcwd())
 
 finder = ModuleFinder()
 mainName = sys.argv[1]
-finder.run_script(mainName)
-
 absPath = os.path.abspath(mainName)
 basePath = os.path.dirname(absPath)
+missingIncludes = {}
+
+try:
+	finder.run_script(mainName)
+except Exception as ex:
+	"Probably an error in the user code"
+	if not ex.filename.startswith(basePath):
+		raise
+	fileName = ex.filename[len(basePath) + 1:]
+	missingIncludes['.error'] = { 'file': fileName,
+	                              'line': ex.lineno,
+	                              'msg': ex.msg
+	                            }
 
 includeOriginal = True
 allMissingImports = invertBadmodules(finder)
-missingIncludes = {}
 
 #print 'All missing imports nice:\n', json.dumps(allMissingImports).replace(']', ']\n')
 

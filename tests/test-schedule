@@ -42,6 +42,7 @@ TEST file/create-dirs
 TEST file/del
 TEST file/del2
 TEST file/lint
+TEST file/lint2
 TEST file/mv
 
 TEST ping/ping
