@@ -478,13 +478,14 @@ function TeamSelector() {
 	this._build_options = function() {
 		var olist = [];
 
-		for( var t in user.teams ) {
-			var props = { "value" : user.teams[t]};
+		for( var i=0; i < user.teams.length; i++ ) {
+			var team_id = user.teams[i];
+			var props = { "value" : team_id };
 
-			if( user.teams[t] == team )
+			if( team_id == team )
 				props["selected"] = "selected";
 
-			olist.push( OPTION(props, user.teams[t]) );
+			olist.push( OPTION(props, team_id) );
 		}
 
 		return olist;
@@ -495,7 +496,7 @@ function TeamSelector() {
 		if( team == 0 )
 			return false;
 
-		for( var i in user.teams )
+		for( var i=0; i < user.teams.length; i++ )
 			if( user.teams[i] == team )
 				return true;
 		return false;
