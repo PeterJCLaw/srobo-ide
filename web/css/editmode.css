@@ -28,8 +28,9 @@
 }
 
 #editpage-acebox {
-	height: 90%;
+	bottom: 0;
 	position: absolute;
 	text-align: left;
+	top: 205px;
 	width: 100%;
 }
