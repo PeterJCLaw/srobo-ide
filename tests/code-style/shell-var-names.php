@@ -3,7 +3,7 @@
 $failures = false;
 $fial_lines = 0;
 
-$shellCommands = array('gitExecute', 'gitExecuteInternal', 'shell_exec', 'proc_open');
+$shellCommands = array('gitExecute', 'gitExecuteInternal', 'proc_exec', 'shell_exec', 'proc_open');
 $pattern = '('.implode('|', $shellCommands).')\s*\(.*\\$.*\)';
 $s_pattern = escapeshellarg($pattern);
 

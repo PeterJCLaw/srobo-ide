@@ -158,39 +158,9 @@ class GitRepository
 	private static function gitExecuteInternal($base, $s_command, $input = null, $env = array(), $catchResult = false)
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
-		ide_log(LOG_DEBUG, "$s_bin $s_command [cwd = $base]");
 		$s_buildCommand = "$s_bin $s_command";
-		$s_input = ($input === null) ? '/dev/null' : $input;
-		$proc = proc_open($s_buildCommand, array(0 => array('file', $s_input, 'r'),
-		                                       1 => array('pipe', 'w'),
-		                                       2 => array('pipe', 'w')),
-		                                 $pipes,
-		                                 $base,
-		                                 $env);
-		$stdout = stream_get_contents($pipes[1]);
-		$stderr = stream_get_contents($pipes[2]);
-		$status = proc_close($proc);
-		ide_log(LOG_DEBUG, "$s_command result: status: $status, stdout: $stdout, stderr: $stderr.");
-		if ($status != 0)
-		{
-			ide_log(LOG_ERR, "$s_bin $s_command [cwd = $base]");
-			ide_log(LOG_ERR, "\tfailed miserably with exit code $status!");
-			ide_log(LOG_ERR, "-- LOG --");
-			ide_log(LOG_ERR, "$stderr");
-			ide_log(LOG_ERR, "-- END LOG --");
-			if ($catchResult)
-			{
-				return array(false, $stdout);
-			}
-			return false;
-		}
-		else
-		{
-			if ($catchResult)
-				return array(true, $stdout);
-			else
-				return $stdout;
-		}
+		$ret = proc_exec($s_buildCommand, $base, $input, $env, $catchResult);	// SHELL SAFE
+		return $ret;
 	}
 
 	/**
