@@ -142,7 +142,7 @@ class GitRepository
 	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
 		$base = $working ? $this->working_path : $this->git_path;
-		return self::gitExecuteInternal($base, $s_command, null, $env, $catchResult);
+		return self::gitExecuteInternal($base, $s_command, null, $env, $catchResult);	// SHELL SAFE
 	}
 
 	/**
@@ -308,7 +308,7 @@ class GitRepository
 
 		// Create the initial commit
 		$s_hash = trim(shell_exec("cd $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
-		$s_hash = self::gitExecuteInternal($path, "commit-tree $s_hash", $commitpath, $env);
+		$s_hash = self::gitExecuteInternal($path, "commit-tree $s_hash", $commitpath, $env);	// SHELL SAFE
 
 		// Update the branch & HEAD to point to the initial commit we just created
 		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");

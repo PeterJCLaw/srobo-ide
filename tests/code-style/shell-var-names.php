@@ -3,7 +3,7 @@
 $failures = false;
 $fial_lines = 0;
 
-$shellCommands = array('gitExecute', 'shell_exec', 'proc_open');
+$shellCommands = array('gitExecute', 'gitExecuteInternal', 'shell_exec', 'proc_open');
 $pattern = '('.implode('|', $shellCommands).')\s*\(.*\\$.*\)';
 $s_pattern = escapeshellarg($pattern);
 
@@ -45,6 +45,13 @@ function get_cmd_line($match, $commands)
 	return substr($match, $pos);
 }
 
+function endswith($string, $expectedEnd)
+{
+	$len = strlen($expectedEnd);
+	$end = substr($string, -1 * $len);
+	return $end == $expectedEnd;
+}
+
 function startswith($string, $expectedStart)
 {
 	$len = strlen($expectedStart);
@@ -53,14 +60,21 @@ function startswith($string, $expectedStart)
 }
 
 $results = explode("\n", $raw_results);
+$declarationsPattern = '/(private )?(static )?function (' . implode('|', $shellCommands) . ')/';
 
 foreach($results as $result)
 {
 	$local_fail = FALSE;
 	list($file, $line, $full_match) = get_parts($result);
 
-	// ignore the funciton declaration of gitExecute
-	if (startswith(trim($full_match), 'private function gitExecute'))
+	// ignore the funciton declaration
+	if (preg_match($declarationsPattern, $full_match))
+	{
+		continue;
+	}
+
+	// Allow things that have been explicitly marked safe
+	if (endswith(trim($full_match), '// SHELL SAFE'))
 	{
 		continue;
 	}
