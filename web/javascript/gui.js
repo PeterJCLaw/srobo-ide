@@ -49,6 +49,15 @@ var about = null;
 // Gets disconnected as soon as a team is selected
 var tabchange_ident = null;
 
+function logErrorNice(err) {
+	if (typeof(err) != 'string') {
+		var locLen = window.location.href.length;
+		var fn = err.fileName.substr(locLen);
+		err = err + " : " + fn + "(" + err.lineNumber + "," + err.columnNumber + ")";
+	}
+	logError(err);
+}
+
 // onload function
 addLoadEvent( function() {
 	//On page load - this replaces a onload action of the body tag
@@ -63,6 +72,7 @@ addLoadEvent( function() {
 	// Wait for the user information to come back
 	d.addCallback( load_select_team );
 	d.addErrback( function(err) {
+		logErrorNice(err);
 		window.alert("Failed to get user info: " + err);
 	} );
 });
