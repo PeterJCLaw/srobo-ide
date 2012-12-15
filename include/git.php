@@ -188,14 +188,14 @@ class GitRepository
 			}
 
 			$s_source = escapeshellarg($source);
-			shell_exec($s_bin.' clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
-			shell_exec("cd $s_path ; $s_bin config core.sharedRepository all");
-			shell_exec("cd $s_path ; $s_bin config receive.denyNonFastForwards true");
+			self::gitExecuteInternal(null, 'clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
+			self::gitExecuteInternal($path, 'config core.sharedRepository all');
+			self::gitExecuteInternal($path, 'config receive.denyNonFastForwards true');
 		}
 		// Make a shiny new master repo
 		else
 		{
-			shell_exec("cd $s_path ; $s_bin init --shared=all" . $s_bare);
+			self::gitExecuteInternal($path, 'init --shared=all' . $s_bare);
 			self::addInitialCommit($path);
 		}
 
@@ -223,7 +223,7 @@ class GitRepository
 		$s_from = escapeshellarg($from);
 		$s_to   = escapeshellarg($to);
 
-		shell_exec("$s_bin clone $s_from $s_to");
+		self::gitExecuteInternal(null, "clone $s_from $s_to");
 
 		return self::GetOrCreate($to);
 	}
@@ -264,7 +264,8 @@ class GitRepository
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$s_path = escapeshellarg($path);
-		$s_hash = trim(shell_exec("cd $s_path ; $s_bin hash-object -w /dev/null"));
+		$raw_hash = self::gitExecuteInternal($path, 'hash-object -w /dev/null');
+		$s_hash = trim($raw_hash);
 		$s_treepath = escapeshellarg(realpath('resources/base-tree'));
 		$commitpath = realpath('resources/initial-commit');
 		$s_commitpath = escapeshellarg($commitpath);
@@ -281,8 +282,8 @@ class GitRepository
 		$s_hash = self::gitExecuteInternal($path, "commit-tree $s_hash", $commitpath, $env);	// SHELL SAFE
 
 		// Update the branch & HEAD to point to the initial commit we just created
-		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
-		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
+		self::gitExecuteInternal($path, "update-ref -m $s_commitpath HEAD $s_hash");
+		self::gitExecuteInternal($path, "update-ref -m $s_commitpath refs/heads/master $s_hash");
 	}
 
 	/**
