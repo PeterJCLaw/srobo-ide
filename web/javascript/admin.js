@@ -139,6 +139,7 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 		var th = TH(null, 'Team '+field+':');
 		// rely on the backend escaping the content for display.
 		var content = nodes.items[field];
+		var valid_value = content;
 		if ( findValue( linkable, field ) != -1 ) {	// contains
 			var opts = { href: content,
 			           target: '_blank',
@@ -154,7 +155,7 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 		var buttons = TD({'class': 'buttons'}, accept, reject);
 		var tr = TR(null, th, content, buttons)
 
-		var setReview = bind(this._setReview, this, tr, field, nodes.items[field]);
+		var setReview = bind(this._setReview, this, tr, field, valid_value);
 		connect(accept, 'onclick', partial(setReview, true));
 		connect(reject, 'onclick', partial(setReview, false));
 
