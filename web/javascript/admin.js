@@ -140,7 +140,11 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 		// rely on the backend escaping the content for display.
 		var content = nodes.items[field];
 		if ( findValue( linkable, field ) != -1 ) {	// contains
-			content = A({href: content}, content);
+			var opts = { href: content,
+			           target: '_blank',
+			            title: 'Opens in a new window'
+			           };
+			content = A(opts, content);
 		}
 		content = TD(null, content);
 
