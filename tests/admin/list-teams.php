@@ -48,12 +48,3 @@ $admin->dispatchCommand('review-teams-get');
 $teams = $output->getOutput('teams');
 test_true(is_array($teams), 'The list of teams needs to be an array.');
 test_equal($teams, array(), 'After review should be an empty list that need review');
-
-section('images not reviewed through IDE');
-$statusABC->setDraft('image', $propertyValue);
-$statusABC->save();
-
-$admin->dispatchCommand('review-teams-get');
-$teams = $output->getOutput('teams');
-test_true(is_array($teams), 'The list of teams needs to be an array.');
-test_equal($teams, array(), 'After adding an image, should still be an empty list that need review');
