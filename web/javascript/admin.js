@@ -107,7 +107,7 @@ Admin.prototype._receiveGetTeamsToReview = function(nodes) {
 			return;
 		}
 		// avoid removing it if it's already gone.
-		if (isChildNode(pleaseSelect, document))
+		if (isChildNode(pleaseSelect, s))
 		{
 			removeElement(pleaseSelect);
 		}
