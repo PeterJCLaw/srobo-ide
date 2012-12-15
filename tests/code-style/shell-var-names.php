@@ -79,20 +79,34 @@ foreach($results as $result)
 		continue;
 	}
 
+	// if it's one of ours, then we'll allow the first parameter to be
+	// "unsafe" since we know that this is a path.
+	$allowFirstUnsafe = false;
+	if (preg_match('/::gitExecute(Internal)?\s*\(/', trim($full_match)))
+	{
+		$allowFirstUnsafe = true;
+	}
+
 	$args = get_cmd_line($full_match, $shellCommands);
 //	var_dump($args);
 
 	$matches = array();
 	$count = preg_match_all('/\$\S+/', $args, $matches);
 
+	$first = true;
 	foreach($matches[0] as $arg)
 	{
 //		var_dump($arg);
+		if ($first && $allowFirstUnsafe)
+		{
+			continue;
+		}
 		if (!startswith($arg, '$s_'))
 		{
 			$local_fail = TRUE;
 			$failures += 1;
 		}
+		$first = false;
 	}
 	if ($local_fail)
 	{
