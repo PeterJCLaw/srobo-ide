@@ -27,12 +27,18 @@ function Poll(command, args, delay, retry) {
 	// Store the previous data from this poll so we can detect changes
 	this._prevData = null;
 
+	this._deferred = null;
+
 	this._setupPoll();
+}
+
+Poll.prototype.cancel = function() {
+	this._deferred.cancel();
 }
 
 Poll.prototype._setupPoll = function(delay) {
 	var delay = delay || this._delay;
-	callLater( delay, bind(this._doPoll, this, 1) );
+	this._deferred = callLater( delay, bind(this._doPoll, this, 1) );
 }
 
 Poll.prototype._pollResponse = function(nodes) {
