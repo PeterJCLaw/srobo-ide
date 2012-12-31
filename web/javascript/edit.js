@@ -38,13 +38,35 @@ function EditPage() {
 		connect( tabbar, "onswitch", bind( this._tab_switch, this ) );
 
 		this.textbox = $('editpage-acebox');
+		connect( window, 'onresize', bind(this._window_resize, this) );
 
 		this._iea = new ide_editarea('editpage-acebox');
+	}
+
+	// Resize the edit box to cope.
+	this._window_resize = function() {
+		// only if there's an edit box shown
+		var dispStyle = getStyle('edit-mode', 'display');
+		if (dispStyle == 'none') {
+			return;
+		}
+
+		// prevElem should be the menu bar
+		var prevElem = this.textbox.previousSibling.previousSibling;
+
+		var dims = getElementDimensions(prevElem);
+		var pos = getElementPosition(prevElem);
+		var marginBottom = getStyle(prevElem, 'margin-bottom');
+		marginBottom = parseInt(marginBottom);
+
+		var aboveHeight = pos.y + dims.h + marginBottom;
+		setStyle(this.textbox, {'top': aboveHeight + 'px'});
 	}
 
 	// Show the edit page
 	this._show = function() {
 		setStyle($("edit-mode"), {"display" : "block"});
+		this._window_resize();
 	}
 
 	// Hide the edit page
