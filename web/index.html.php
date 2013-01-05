@@ -142,7 +142,7 @@
 	<div id="page">
 
 		<div id="edit-mode" class="page">
-			<div class="menu-bar">
+			<div id="editpage-menu-bar" class="menu-bar">
 				<ul id="filemenu">
 					<li><button id="save-file" title="Save the changes you've made as a new revision. (Ctrl+S)">Save</button></li>
 					<li><button id="check-syntax" title="Check that the code you've writen is valid python.">Check Syntax</button></li>

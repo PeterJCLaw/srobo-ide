@@ -52,7 +52,7 @@ function EditPage() {
 		}
 
 		// prevElem should be the menu bar
-		var prevElem = this.textbox.previousSibling.previousSibling;
+		var prevElem = $('editpage-menu-bar');
 
 		var dims = getElementDimensions(prevElem);
 		var pos = getElementPosition(prevElem);
