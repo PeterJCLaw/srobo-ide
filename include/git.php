@@ -142,7 +142,7 @@ class GitRepository
 	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
 		$base = $working ? $this->working_path : $this->git_path;
-		return self::gitExecuteInternal($base, $s_command, null, $env, $catchResult);
+		return self::gitExecuteInternal($base, $s_command, null, $env, $catchResult);	// SHELL SAFE
 	}
 
 	/**
@@ -158,39 +158,9 @@ class GitRepository
 	private static function gitExecuteInternal($base, $s_command, $input = null, $env = array(), $catchResult = false)
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
-		ide_log(LOG_DEBUG, "$s_bin $s_command [cwd = $base]");
 		$s_buildCommand = "$s_bin $s_command";
-		$s_input = ($input === null) ? '/dev/null' : $input;
-		$proc = proc_open($s_buildCommand, array(0 => array('file', $s_input, 'r'),
-		                                       1 => array('pipe', 'w'),
-		                                       2 => array('pipe', 'w')),
-		                                 $pipes,
-		                                 $base,
-		                                 $env);
-		$stdout = stream_get_contents($pipes[1]);
-		$stderr = stream_get_contents($pipes[2]);
-		$status = proc_close($proc);
-		ide_log(LOG_DEBUG, "$s_command result: status: $status, stdout: $stdout, stderr: $stderr.");
-		if ($status != 0)
-		{
-			ide_log(LOG_ERR, "$s_bin $s_command [cwd = $base]");
-			ide_log(LOG_ERR, "\tfailed miserably with exit code $status!");
-			ide_log(LOG_ERR, "-- LOG --");
-			ide_log(LOG_ERR, "$stderr");
-			ide_log(LOG_ERR, "-- END LOG --");
-			if ($catchResult)
-			{
-				return array(false, $stdout);
-			}
-			return false;
-		}
-		else
-		{
-			if ($catchResult)
-				return array(true, $stdout);
-			else
-				return $stdout;
-		}
+		$ret = proc_exec($s_buildCommand, $base, $input, $env, $catchResult);	// SHELL SAFE
+		return $ret;
 	}
 
 	/**
@@ -218,14 +188,14 @@ class GitRepository
 			}
 
 			$s_source = escapeshellarg($source);
-			shell_exec($s_bin.' clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
-			shell_exec("cd $s_path ; $s_bin config core.sharedRepository all");
-			shell_exec("cd $s_path ; $s_bin config receive.denyNonFastForwards true");
+			self::gitExecuteInternal(null, 'clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
+			self::gitExecuteInternal($path, 'config core.sharedRepository all');
+			self::gitExecuteInternal($path, 'config receive.denyNonFastForwards true');
 		}
 		// Make a shiny new master repo
 		else
 		{
-			shell_exec("cd $s_path ; $s_bin init --shared=all" . $s_bare);
+			self::gitExecuteInternal($path, 'init --shared=all' . $s_bare);
 			self::addInitialCommit($path);
 		}
 
@@ -253,7 +223,7 @@ class GitRepository
 		$s_from = escapeshellarg($from);
 		$s_to   = escapeshellarg($to);
 
-		shell_exec("$s_bin clone $s_from $s_to");
+		self::gitExecuteInternal(null, "clone $s_from $s_to");
 
 		return self::GetOrCreate($to);
 	}
@@ -294,7 +264,8 @@ class GitRepository
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$s_path = escapeshellarg($path);
-		$s_hash = trim(shell_exec("cd $s_path ; $s_bin hash-object -w /dev/null"));
+		$raw_hash = self::gitExecuteInternal($path, 'hash-object -w /dev/null');
+		$s_hash = trim($raw_hash);
 		$s_treepath = escapeshellarg(realpath('resources/base-tree'));
 		$commitpath = realpath('resources/initial-commit');
 		$s_commitpath = escapeshellarg($commitpath);
@@ -308,11 +279,11 @@ class GitRepository
 
 		// Create the initial commit
 		$s_hash = trim(shell_exec("cd $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
-		$s_hash = self::gitExecuteInternal($path, "commit-tree $s_hash", $commitpath, $env);
+		$s_hash = self::gitExecuteInternal($path, "commit-tree $s_hash", $commitpath, $env);	// SHELL SAFE
 
 		// Update the branch & HEAD to point to the initial commit we just created
-		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath HEAD $s_hash");
-		shell_exec("cd $s_path ; $s_bin update-ref -m $s_commitpath refs/heads/master $s_hash");
+		self::gitExecuteInternal($path, "update-ref -m $s_commitpath HEAD $s_hash");
+		self::gitExecuteInternal($path, "update-ref -m $s_commitpath refs/heads/master $s_hash");
 	}
 
 	/**
@@ -399,7 +370,6 @@ class GitRepository
 		}
 
 		$log = $this->gitExecute(false, $s_logCommand);
-		$server_user = trim(shell_exec('whoami'));
 
 		$lines = explode("\n", $log);
 		$results = array();
@@ -408,11 +378,6 @@ class GitRepository
 			$exp     = explode(';', $line);
 			$hash    = array_shift($exp);
 			$author  = array_shift($exp);
-			// begins with the apache user
-			if (strpos($author, $server_user) === 0)
-			{
-				continue;
-			}
 			$time    = (int)array_shift($exp);
 			$message = implode(';', $exp);
 			$results[] = array('hash'    => $hash,
@@ -578,7 +543,7 @@ class GitRepository
 	public function listFolders()
 	{
 		$s_path = escapeshellarg($this->working_path);
-		$folders = trim(shell_exec("cd $s_path && find . -type d | grep -v '\.git'"));
+		$folders = trim(shell_exec("cd $s_path && find . -type d -name .git -prune -o -type d -print"));
 		$folders = explode("\n", $folders);
 		return $folders;
 	}
