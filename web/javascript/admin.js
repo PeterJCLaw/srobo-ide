@@ -107,7 +107,7 @@ Admin.prototype._receiveGetTeamsToReview = function(nodes) {
 			return;
 		}
 		// avoid removing it if it's already gone.
-		if (isChildNode(pleaseSelect, document))
+		if (isChildNode(pleaseSelect, s))
 		{
 			removeElement(pleaseSelect);
 		}
@@ -139,8 +139,13 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 		var th = TH(null, 'Team '+field+':');
 		// rely on the backend escaping the content for display.
 		var content = nodes.items[field];
+		var valid_value = content;
 		if ( findValue( linkable, field ) != -1 ) {	// contains
-			content = A({href: content}, content);
+			var opts = { href: content,
+			           target: '_blank',
+			            title: 'Opens in a new window'
+			           };
+			content = A(opts, content);
 		}
 		content = TD(null, content);
 
@@ -150,7 +155,7 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 		var buttons = TD({'class': 'buttons'}, accept, reject);
 		var tr = TR(null, th, content, buttons)
 
-		var setReview = bind(this._setReview, this, tr, field, nodes.items[field]);
+		var setReview = bind(this._setReview, this, tr, field, valid_value);
 		connect(accept, 'onclick', partial(setReview, true));
 		connect(reject, 'onclick', partial(setReview, false));
 
