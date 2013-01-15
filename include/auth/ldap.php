@@ -32,7 +32,6 @@ class LDAPAuth extends SecureTokenAuth
 		$groups = $ldapManager->getGroupsForUser($username, $groupNamePrefix.'*');
 		$teams = array();
 
-		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
 		ide_log(LOG_INFO, "Using prefix '$groupNamePrefix'.");
 		foreach ($groups as $group)
 		{
