@@ -72,12 +72,22 @@ function test_nonempty($a, $message)
 
 function test_null($a, $message)
 {
-	__test($a === null, $message);
+	test_same($a, null, $message);
 }
 
 function test_nonnull($a, $message)
 {
-	__test($a !== null, $message);
+	test_notsame($a, null, $message);
+}
+
+function test_same($a, $b, $message)
+{
+	__test($a === $b, $message . " (expected same as " . __test_value($b) . ", got " . __test_value($a) . ")");
+}
+
+function test_notsame($a, $b, $message)
+{
+	__test($a !== $b, $message . " (expected not same as " . __test_value($b) . ")");
 }
 
 function test_equal($a, $b, $message)
