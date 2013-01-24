@@ -87,7 +87,7 @@ function test_equal($a, $b, $message)
 
 function test_nonequal($a, $b, $message)
 {
-	__test($a != $b, $message);
+	__test($a != $b, $message . " (expected not equal to " . __test_value($b) . ")");
 }
 
 function test_existent($path, $message)
