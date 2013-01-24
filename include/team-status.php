@@ -119,9 +119,12 @@ class TeamStatus
 	 */
 	public function getReviewState($name)
 	{
-		$state = isset($this->statusData->$name) &&
-		         self::_getReviewState($this->statusData->$name);
-		return $state;
+		if (isset($this->statusData->$name))
+		{
+			$state = self::_getReviewState($this->statusData->$name);
+			return $state;
+		}
+		return null;
 	}
 
 	/**
