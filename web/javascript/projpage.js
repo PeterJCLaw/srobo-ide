@@ -79,10 +79,17 @@ ProjPage.prototype._init = function() {
 	this._on_proj_change( this._selector.project );
 	this.flist.update( this._selector.project, this._selector._team );
 
-	this._poll = new Poll('poll/poll', { team: team });
-	connect(this._poll, 'onchange', bind(this._pollChanged, this));
+	this._setupPolling();
 
 	this._initted = true;
+}
+
+ProjPage.prototype._setupPolling = function() {
+	if ( this._poll != null ) {
+		this._poll.cancel();
+	}
+	this._poll = new Poll('poll/poll', { team: team });
+	connect(this._poll, 'onchange', bind(this._pollChanged, this));
 }
 
 ProjPage.prototype._pollChanged = function(nodes) {
@@ -157,6 +164,8 @@ ProjPage.prototype.set_team = function(team) {
 		return;
 
 	this._init();
+	// reset polling for the new team
+	this._setupPolling();
 
 	// Start the chain of updates
  	this._list.update(team);

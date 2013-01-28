@@ -40,6 +40,15 @@ class TeamStatus
 		}
 	}
 
+	public function getLive($name)
+	{
+		if (!empty($this->statusData->$name->live))
+		{
+			return $this->statusData->$name->live;
+		}
+		return null;
+	}
+
 	public function getDraftOrLive($name)
 	{
 		if (isset($this->statusData->$name))
@@ -110,7 +119,8 @@ class TeamStatus
 	 */
 	public function getReviewState($name)
 	{
-		$state = self::_getReviewState($this->statusData->$name);
+		$state = isset($this->statusData->$name) &&
+		         self::_getReviewState($this->statusData->$name);
 		return $state;
 	}
 

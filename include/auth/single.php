@@ -25,11 +25,6 @@ class SingleAuth extends SecureTokenAuth
 		return (bool) Configuration::getInstance()->getConfig('user.default.is_admin');
 	}
 
-	public function displayNameForTeam($team)
-	{
-		return "Team $team";
-	}
-
 	public function displayNameForUser($user)
 	{
 		return $user;

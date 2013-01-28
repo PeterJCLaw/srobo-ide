@@ -142,7 +142,7 @@
 	<div id="page">
 
 		<div id="edit-mode" class="page">
-			<div class="menu-bar">
+			<div id="editpage-menu-bar" class="menu-bar">
 				<ul id="filemenu">
 					<li><button id="save-file" title="Save the changes you've made as a new revision. (Ctrl+S)">Save</button></li>
 					<li><button id="check-syntax" title="Check that the code you've writen is valid python.">Check Syntax</button></li>
@@ -157,6 +157,7 @@
 				</ul>
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
+			<div id="editpage-acebox"></div>
 		</div>
 
 		<div id="log-mode" class="page">
@@ -369,7 +370,7 @@
 					<td>
 						<input type="text" name="team-status-feed-input" id="team-status-feed-input" />
 						<p class="info">
-							Enter the URL of your blog's RSS/Atom feed here to make it easier for other teams to find out about your progress.
+							Enter the URL (including the http://) of your blog's RSS/Atom feed here to make it easier for other teams to find out about your progress.
 							If you do not have a blog there are many free sites where you can create one, such as <a href="http://www.blogger.com" target="_blank">Blogger</a> and <a href="http://wordpress.com/" target="_blank">Wordpress</a>.
 						</p>
 					</td>

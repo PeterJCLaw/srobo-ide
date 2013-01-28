@@ -25,7 +25,6 @@ abstract class AuthBackend
 	abstract public function deauthUser();
 	abstract public function getNextAuthToken();
 	abstract public function validateAuthToken($token);
-	abstract public function displayNameForTeam($team);
 	abstract public function displayNameForUser($user);
 	abstract public function emailForUser($user);
 }

@@ -3,7 +3,7 @@
 $failures = false;
 $fial_lines = 0;
 
-$shellCommands = array('gitExecute', 'shell_exec', 'proc_open');
+$shellCommands = array('gitExecute', 'gitExecuteInternal', 'proc_exec', 'shell_exec', 'proc_open');
 $pattern = '('.implode('|', $shellCommands).')\s*\(.*\\$.*\)';
 $s_pattern = escapeshellarg($pattern);
 
@@ -45,6 +45,13 @@ function get_cmd_line($match, $commands)
 	return substr($match, $pos);
 }
 
+function endswith($string, $expectedEnd)
+{
+	$len = strlen($expectedEnd);
+	$end = substr($string, -1 * $len);
+	return $end == $expectedEnd;
+}
+
 function startswith($string, $expectedStart)
 {
 	$len = strlen($expectedStart);
@@ -53,16 +60,31 @@ function startswith($string, $expectedStart)
 }
 
 $results = explode("\n", $raw_results);
+$declarationsPattern = '/(private )?(static )?function (' . implode('|', $shellCommands) . ')/';
 
 foreach($results as $result)
 {
 	$local_fail = FALSE;
 	list($file, $line, $full_match) = get_parts($result);
 
-	// ignore the funciton declaration of gitExecute
-	if (startswith(trim($full_match), 'private function gitExecute'))
+	// ignore the funciton declaration
+	if (preg_match($declarationsPattern, $full_match))
 	{
 		continue;
+	}
+
+	// Allow things that have been explicitly marked safe
+	if (endswith(trim($full_match), '// SHELL SAFE'))
+	{
+		continue;
+	}
+
+	// if it's one of ours, then we'll allow the first parameter to be
+	// "unsafe" since we know that this is a path.
+	$allowFirstUnsafe = false;
+	if (preg_match('/::gitExecute(Internal)?\s*\(/', trim($full_match)))
+	{
+		$allowFirstUnsafe = true;
 	}
 
 	$args = get_cmd_line($full_match, $shellCommands);
@@ -71,14 +93,20 @@ foreach($results as $result)
 	$matches = array();
 	$count = preg_match_all('/\$\S+/', $args, $matches);
 
+	$first = true;
 	foreach($matches[0] as $arg)
 	{
 //		var_dump($arg);
+		if ($first && $allowFirstUnsafe)
+		{
+			continue;
+		}
 		if (!startswith($arg, '$s_'))
 		{
 			$local_fail = TRUE;
 			$failures += 1;
 		}
+		$first = false;
 	}
 	if ($local_fail)
 	{
