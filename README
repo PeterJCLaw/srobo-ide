@@ -6,7 +6,7 @@ If you're using devmode and you hate apache for development then you'll find a l
 configuration file in this directory. Just run `lighttpd -f lighttpd.config -D` to get
 devmode.
 
-A guide for getting it running will be found here (once we've got it working properly):
+A guide for getting it running will be found here:
 https://www.studentrobotics.org/trac/wiki/CyanIDE
 
 In the mean time here's some basic info about the make targets:
