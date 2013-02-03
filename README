@@ -26,7 +26,7 @@ You can run tests on CyanIDE by running `./run-tests`.
 
 Dependencies:
  * A web server
- * PHP 5.3
+ * PHP 5.3.3
  * Git
  * ant     # for building the Java applet
  * javac   # for building the Java applet

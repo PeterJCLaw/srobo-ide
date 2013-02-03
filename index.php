@@ -1,10 +1,10 @@
 <?php
 
-if (version_compare(PHP_VERSION, '5.3.0') < 0)
+if (version_compare(PHP_VERSION, '5.3.3') < 0)
 {
 	header('HTTP/1.1 501 Not Implemented');
 	header('Content-type: text/plain');
-	echo 'This server does not have PHP 5.3.0 or later installed.' . "\n";
+	echo 'This server does not have PHP 5.3.3 or later installed.' . "\n";
 	exit();
 }
 
