@@ -36,6 +36,10 @@ section("loading");
 $status = new TeamStatus($team);
 test_equal($status->getDraftOrLive($field), $content, "Loaded wrong draft content for $field.");
 
+section("review state when empty");
+$reviewState = $status->getReviewState($field2);
+test_null($reviewState, "Missing items should appear un-reviewed");
+
 section("partial update");
 $field1Date = $data->$field->date;
 
