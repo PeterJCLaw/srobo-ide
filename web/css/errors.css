@@ -49,7 +49,7 @@
 #errors-listing ul li {
 	list-style-type: none;
 	background-color: #DFDBD8;
-	font-family: monospace;
+	font-family: 'Courier New',monospace;
 	padding: 0.5em;
 	margin: 0.8em;
 	white-space: pre;

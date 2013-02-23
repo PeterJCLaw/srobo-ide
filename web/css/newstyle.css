@@ -2,7 +2,7 @@ body {
 	margin: 0;
 	padding: 0;
 	color: #000000;
-	font-family: Arial,sans-serif;
+	font-family: Helvetica,Arial,sans-serif;
 	font-size-adjust: none;
 	font-style: normal;
 	font-variant: normal;
@@ -241,7 +241,6 @@ iframe { display: none; }
 
 #login-box strong {
 	display: block;
-	font-family: arial;
 }
 #login-box em {
 	font-size: 0.7em;
