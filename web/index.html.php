@@ -88,7 +88,7 @@
 		<span id="about-title">Student Robotics IDE</span>
 		<fieldset>
 			<legend>About the IDE</legend>
-			<dl id="about-list"><dt>Loading...</dt></dl>
+			<dl id="about-list"><dt>Loading...</dt><dd>&nbsp;</dd></dl>
 		</fieldset>
 		<fieldset id="about-shortcuts">
 			<legend>Keyboard Shortcuts</legend>
@@ -200,7 +200,7 @@
 
 				<div id="proj-options">
 					<div>Project:<select id="project-select"><option>loading...</option></select></div>
-					<hr/>
+					<hr />
 					<button id="new-project">New Project</button>
 					<button id="export-project" title="Create a zip file for the robot that contains your code. (Ctrl+E)">Export Project</button>
 					<!-- button id="archive-project" disabled="disabled">Archive Project</button -->
@@ -209,13 +209,13 @@
 					<!-- button id="simulate-project" disabled="disabled">Simulate Project</button -->
 				</div>
 
-				<hr/>
+				<hr />
 				<div id="proj-fileops">
 					<div>
 						File selection:
 						<ul>
 							<li>
-								<a id="proj-select-all">Select All</button>
+								<a id="proj-select-all">Select All</a>
 							</li>
 							<li>
 								<a id="proj-select-none">Select None</a>
@@ -255,12 +255,12 @@
 							<td title="Friday">F</td>
 							<td title="Saturday">S</td>
 						</tr>
-						<tr id="cal-row-0"><td>&nbsp;</td></tr>
-						<tr id="cal-row-1"><td>&nbsp;</td></tr>
-						<tr id="cal-row-2"><td>&nbsp;</td></tr>
-						<tr id="cal-row-3"><td>&nbsp;</td></tr>
-						<tr id="cal-row-4"><td>&nbsp;</td></tr>
-						<tr id="cal-row-5"><td>&nbsp;</td></tr>
+						<tr id="cal-row-0"><td colspan="7">&nbsp;</td></tr>
+						<tr id="cal-row-1"><td colspan="7">&nbsp;</td></tr>
+						<tr id="cal-row-2"><td colspan="7">&nbsp;</td></tr>
+						<tr id="cal-row-3"><td colspan="7">&nbsp;</td></tr>
+						<tr id="cal-row-4"><td colspan="7">&nbsp;</td></tr>
+						<tr id="cal-row-5"><td colspan="7">&nbsp;</td></tr>
 					</table>
 				</div>
 
@@ -350,7 +350,7 @@
 				<tr id="team-status-description">
 					<th>About the team:</th>
 					<td>
-						<textarea id="team-status-description-input"></textarea>
+						<textarea id="team-status-description-input" cols="70" rows="4"></textarea>
 						<p class="info">
 							Tell the world about your team! Who are you? How did you form? Got any interesting facts?
 						</p>
