@@ -81,8 +81,9 @@ Calendar.prototype.drawCal = function() {
 	}
 
 	//highlight today's date (bold text only) if we are showing current month and current year
-	if( ( this.date.getMonth() == (new Date()).getMonth() ) && (this.date.getFullYear() == (new Date()).getFullYear() ) )
-		setStyle("cal"+(new Date()).getDate(), {"font-weight" : "bold", "border" : "1px solid #eee"});
+	var date_today = new Date();
+	if ( this.date.getMonth() == date_today.getMonth() && this.date.getFullYear() == date_today.getFullYear() )
+		setStyle("cal" + date_today.getDate(), {"font-weight" : "bold", "border" : "1px solid #eee"});
 
 	//clears date/revision select box
 	replaceChildNodes("cal-revs",
