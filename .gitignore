@@ -3,6 +3,7 @@ latex/
 repos/
 zips/
 settings/*
+web/cache/
 config/local.ini
 config/automagic.ini
 /applet/.classpath

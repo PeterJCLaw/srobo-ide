@@ -1,4 +1,4 @@
-_FOLDERS = settings repos zips notifications
+_FOLDERS = settings repos zips notifications web/cache
 
 _JAVA_KEYSTORE = applet/.keystore
 _JAVA_KEYSTORE_PWD = testpass
