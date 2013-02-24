@@ -768,13 +768,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._init();
 }
 
-// A fractionally nicer interface to the editarea
-// Cleans up the loading interface in particular.
-// Things don't explode as much if you try to do something to it before the
-// editarea has loaded, or when it's invisible.
-
-// Emits these signals:
-//  - onload: Emitted when the editarea has finished loading
+/// A wrapper around our editor of choice.
+/// This used to be editarea, which needed coddling to prevent it exploding (hence the name).
 function ide_editarea(id) {
 	// Public functions:
 	//  - getSelectionRange() -- get the cursor selection range, no need to pass the id, load safe
@@ -789,8 +784,6 @@ function ide_editarea(id) {
 
 	this._init = function() {
 		this._ace = ace.edit( this._id );
-
-		signal( this, "onload" );
 	}
 
 	this.newSession = function() {
