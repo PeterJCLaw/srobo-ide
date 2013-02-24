@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * Works out whether or not the given outputs are up to date with regards
+ * to the specified inputs, using the files' ctimes as a guide.
+ * @param inputs: An array of input files.
+ * @param outputs: An array of output files.
+ * @returns: whether or not the output files are up to date.
+ */
+function up_to_date($inputs, $outputs)
+{
+	// find the oldest output
+	$oldest = time();
+	foreach ($outputs as $output)
+	{
+		if (!file_exists($output))
+		{
+			return false;
+		}
+		$ctime = filectime($output);
+		if ($ctime < $oldest)
+		{
+			$oldest = $ctime;
+		}
+	}
+
+	foreach ($inputs as $input)
+	{
+		$ctime = filectime($output);
+		if ($ctime > $oldest)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+/**
+ * Combines the given list of files' content into the given output file.
+ * This function will only overwrite an existing file if it's out of date.
+ * @param collection: An array of input files to combine.
+ * @param output_file: The path to the file to combine the files into.
+ */
+function combine_into($collection, $output_file)
+{
+	if (up_to_date($collection, array($output_file)))
+	{
+		return;
+	}
+	$raw_data = '';
+	foreach ($collection as $input_file)
+	{
+		$content = file_get_contents($input_file);
+		if ($content !== FALSE)
+		{
+			$raw_data .= $content;
+		}
+	}
+	file_put_contents($output_file, $raw_data);
+}
