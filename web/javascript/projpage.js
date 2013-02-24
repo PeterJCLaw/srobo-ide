@@ -1,6 +1,6 @@
 // vim: noexpandtab
 // The project page
-function ProjPage() {
+function ProjPage(team_selector) {
 	// Whether _init has run
 	this._initted = false;
 
@@ -19,6 +19,12 @@ function ProjPage() {
 
 	this._poll = null;
 
+	// The selection operations
+	this.selection_operations = null;
+
+	//  The Projects tab
+	this._tab = null;
+
 	this.flist = null;
 	this.project = "";
 
@@ -26,6 +32,9 @@ function ProjPage() {
 	this._projectRev = "";
 
 	this.last_updated	= new Date();
+
+	// listen for changes in the selected team
+	connect( team_selector, "onchange", bind(this.set_team, this) );
 
 	// Member functions (declared below)
 	// Public:
@@ -56,6 +65,9 @@ ProjPage.prototype._init = function() {
 	this._selector = new ProjSelect(this._list, getElement("project-select"));
 	connect( this._selector, "onchange", bind( this._on_proj_change, this ) );
 
+	// Selection operations
+	this.selection_operations = new ProjOps();
+
 	this.flist = new ProjFileList();
 	// Update the file list when the project changes
 	connect( this._selector, "onchange", bind( this.flist.update, this.flist ) );
@@ -84,9 +96,27 @@ ProjPage.prototype._init = function() {
 	this._on_proj_change( this._selector.project );
 	this.flist.update( this._selector.project, this._selector._team );
 
+	this._createTab();
+
 	this._setupPolling();
 
 	this._initted = true;
+
+	// This triggers the tab to be shown, our hanlder for which (correctly)
+	// verifies that we're inited, so we need to do this after setting the flag.
+	tabbar.switch_to( this._tab );
+}
+
+ProjPage.prototype._createTab = function() {
+	// Projects tab
+	this._tab = new Tab( "Projects", { can_close: false } );
+	connect( this._tab, "onfocus", bind( this.show, this ) );
+	connect( this._tab, "onblur", bind( this.hide, this ) );
+	tabbar.add_tab( this._tab );
+}
+
+ProjPage.prototype.has_focus = function() {
+	return this._tab != null && this._tab.has_focus();
 }
 
 ProjPage.prototype._setupPolling = function() {
@@ -141,7 +171,7 @@ ProjPage.prototype.hide_filelist = function() {
 }
 
 ProjPage.prototype.project_exists = function(pname) {
-	return this._list.project_exists(pname);
+	return this._list != null && this._list.project_exists(pname);
 }
 
 ProjPage.prototype.projects_exist = function() {
@@ -239,7 +269,7 @@ ProjPage.prototype._CopyProjectSuccess = function(newProjName, nodes) {
 		status_msg("ERROR COPYING: "+nodes.message, LEVEL_ERROR);
 	else {
 		status_msg("Project copy successful", LEVEL_OK);
-		if(projtab.has_focus()) {
+		if (this.has_focus()) {
 			log('Project Copied, need to update the list...');
 			// Transition to the new project once the project list has loaded
 			this._selector.trans_project = newProjName;
@@ -912,7 +942,6 @@ function ProjOps() {
 	//list of operations
 	this.ops = new Array();
 
-
 	this.init = function() {
 		//connect up operations
 		for(var i=0; i < this.ops.length; i++) {
@@ -1286,18 +1315,19 @@ function ProjOps() {
 		}
 	}
 
+	// Don't use bind on external items in case they don't exist yet.
 	this.ops.push({ "name" : "Select None",
-			"action" : bind(projpage.flist.select_none, projpage.flist),
+			"action" : function() { projpage.flist.select_none(); },
 			"handle" : getElement("proj-select-none"),
 			"event" : null});
 
 	this.ops.push({ "name" : "Select All",
-			"action" : bind(projpage.flist.select_all, projpage.flist),
+			"action" : function() { projpage.flist.select_all(); },
 			"handle": getElement("proj-select-all"),
 			"event" : null});
 
 	this.ops.push({ "name" : "New File",
-			"action" : bind(editpage.new_file, editpage),
+			"action" : function() { editpage.new_file(); },
 			"handle" : getElement("op-newfile"),
 			"event" : null});
 

@@ -113,6 +113,9 @@ function EditPage() {
 
 	// Create a new tab with a new file open in it
 	this.new_file = function() {
+		if (!validate_team()) {
+			return;
+		}
 		if(!projpage.projects_exist()) {
 			status_msg("You must create a project before creating a file", LEVEL_ERROR);
 			return;

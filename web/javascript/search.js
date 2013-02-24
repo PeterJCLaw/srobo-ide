@@ -30,6 +30,10 @@ function SearchPage(results_handler) {
 		if (this._inited)
 			return;
 
+		if (!validate_team()) {
+			return;
+		}
+
 		this._tab = new Tab( "Search" );
 		connect( this._tab, "onfocus", bind(this._onfocus, this) );
 		connect( this._tab, "onblur", bind(this._onblur, this) );

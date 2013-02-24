@@ -26,6 +26,10 @@ TeamStatus.prototype.init = function()
 	{
 		logDebug("TeamStatus: Initializing");
 
+		if (!validate_team()) {
+			return;
+		}
+
 		/* Initialize a new tab for switchboard - Do this only once */
 		this.tab = new Tab( "Team Status" );
 		this._signals.push(connect( this.tab, "onfocus", bind( this._onfocus, this ) ));
