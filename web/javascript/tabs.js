@@ -230,7 +230,7 @@ function TabBar() {
 				}
 			}
 
-			if( this.tabs[i].can_focus ) {
+			if( index < this.tabs.length ) {
 				logDebug( "Switching to tab index " + index );
 				this.switch_to( this.tabs[index] );
 			}
