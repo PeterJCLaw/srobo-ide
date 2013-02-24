@@ -92,7 +92,7 @@ function status_click() {
 // Display a status message with some options
 // Args:
 //    message: The message to display
-//      level: The log level of the message (LOG_OK etc)
+//      level: The log level of the message (LEVEL_OK etc)
 //   opt_list: An array of buttons, each of which must be an object with the following properties
 //             text: The button text
 //         callback: The function to call when the button is clicked.
@@ -112,7 +112,7 @@ function status_options( message, level, opt_list ) {
 // Display a status message with a button
 // Args:
 //    message: The message to display
-//      level: The log level of the message (LOG_OK etc)
+//      level: The log level of the message (LEVEL_OK etc)
 //      btext: The button text
 //      bfunc: The function to call when the button is clicked.
 function status_button( message, level, btext, bfunc ) {
