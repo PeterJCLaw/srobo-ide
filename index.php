@@ -34,7 +34,7 @@ try {
 	else
 	{
 		getDefaultTokenStrategy()->removeAuthToken();
-		readfile('web/login.html');
+		include('web/login.html.php');
 	}
 } catch (Exception $e) {
 	header('HTTP/1.1 500 Internal Server Error');

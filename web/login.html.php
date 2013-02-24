@@ -3,18 +3,24 @@
 <html>
 <head>
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<title>Robotics IDE Login</title>
 	<!-- Style Sheets -->
 	<link rel="stylesheet" href="web/css/newstyle.css" type="text/css">
 
 	<!-- Javascript Source Files -->
-	<script src="web/javascript/base64.js" type="text/javascript"></script>
-	<script src="web/javascript/json2.js" type="text/javascript"></script>
-	<script src="web/javascript/ide.js" type="text/javascript"></script>
-	<script src="web/javascript/MochiKit.js" type="text/javascript"></script>
-	<script src="web/javascript/status.js" type="text/javascript"></script>
-	<script src="web/javascript/login.js" type="text/javascript"></script>
+<?php
+	require_once('include/cache-utils.php');
+	$javaScripts[] = "web/javascript/base64.js";
+	$javaScripts[] = "web/javascript/json2.js";
+	$javaScripts[] = "web/javascript/ide.js";
+	$javaScripts[] = "web/javascript/MochiKit.js";
+	$javaScripts[] = "web/javascript/status.js";
+	$javaScripts[] = "web/javascript/login.js";
 
-	<title>Robotics IDE Login</title>
+	$combined_js = 'web/cache/login-combined.js';
+	combine_into($javaScripts, $combined_js);
+	echo '<script type="text/javascript" src="' . $combined_js . '"></script>', PHP_EOL;
+?>
 </head>
 <body id="login-back">
 
