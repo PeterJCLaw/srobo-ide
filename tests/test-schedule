@@ -6,6 +6,7 @@ TEST basic/input
 TEST basic/log
 TEST basic/output
 TEST basic/user
+TEST basic/cache-utils
 TEST basic/case-transform
 TEST basic/notifications
 TEST basic/compat-tree

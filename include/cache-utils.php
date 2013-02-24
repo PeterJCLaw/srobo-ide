@@ -2,7 +2,7 @@
 
 /**
  * Works out whether or not the given outputs are up to date with regards
- * to the specified inputs, using the files' ctimes as a guide.
+ * to the specified inputs, using the files' mtimes as a guide.
  * @param inputs: An array of input files.
  * @param outputs: An array of output files.
  * @returns: whether or not the output files are up to date.
@@ -17,17 +17,20 @@ function up_to_date($inputs, $outputs)
 		{
 			return false;
 		}
-		$ctime = filectime($output);
-		if ($ctime < $oldest)
+		$mtime = filemtime($output);
+//		echo "$output: $mtime\n";
+		if ($mtime < $oldest)
 		{
-			$oldest = $ctime;
+			$oldest = $mtime;
 		}
 	}
+//	echo "oldest output: $oldest\n";
 
 	foreach ($inputs as $input)
 	{
-		$ctime = filectime($output);
-		if ($ctime > $oldest)
+		$mtime = filemtime($input);
+//		echo "$input: $mtime\n";
+		if ($mtime > $oldest)
 		{
 			return false;
 		}
