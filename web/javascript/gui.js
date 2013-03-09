@@ -404,6 +404,15 @@ function User() {
 		IDE_backend_request('user/settings-put', {settings: this._settings}, cb, eb);
 	}
 
+	this._logout_success = function(nodes) {
+		window.location.reload();
+	}
+
+	this._logout_error = function(nodes) {
+		status_button("Failed to log out", LEVEL_ERROR, "retry",
+		              bind( this._logout_click, this ));
+	}
+
 	this._logout_click = function(ev) {
 		if( ev != null ) {
 			ev.preventDefault();
@@ -411,11 +420,8 @@ function User() {
 		}
 
 		IDE_backend_request("auth/deauthenticate", {},
-		                    function() { window.location.reload(); },
-		                    partial( status_button, "Failed to log out",
-		                               LEVEL_ERROR, "retry",
-		                               bind( this._logout_click, this, null )
-		                           )
+		                    bind(this._logout_success, this),
+		                    bind(this._logout_error, this)
 		                   );
 	}
 
