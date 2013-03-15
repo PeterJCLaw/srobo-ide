@@ -3,7 +3,7 @@ function ErrorsPage() {
 	//hold the tab object
 	this.tab = null;
 	//Array of ErrorFiles
-	this.eflist = new Array();
+	this.eflist = new Object();
 
 	//hold signals for the page
 	this._signals = new Array();
