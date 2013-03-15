@@ -266,9 +266,10 @@ function ErrorFile(name) {
 			removeElement(this._msgs_elem);
 		this._msgs_elem = null;
 		this._name_elem = null;
-		for( var i in this._signals ) {
+		for(var i = 0; i < this._signals.length; i++) {
 			disconnect(this._signals[i]);
 		}
+		this._signals = new Array();
 	}
 
 	this.clear_items = function() {

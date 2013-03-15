@@ -600,7 +600,7 @@ ProjFileList.prototype.select_none = function() {
 }
 
 ProjFileList.prototype._is_file_selected = function( path ) {
-	for( var i in this.selection )
+	for( var i=0; i < this.selection.length; i++ )
 		if( this.selection[i] == path )
 			return true;
 	return false;
@@ -659,7 +659,7 @@ ProjFileList.prototype._get_innerdiv = function(elem) {
 
 ProjFileList.prototype._ul_get_num_children = function(ul) {
 	var count = 0;
-	for( var i in ul.childNodes ) {
+	for( var i=0; i < ul.childNodes.length; i++ ) {
 		if( ul.childNodes[i].tagName == "LI" )
 			count++;
 	}
@@ -1101,8 +1101,10 @@ function ProjOps() {
 		}
 
 		var death_list = new Array();
-		for( var i in projpage.flist.selection ) {
-			death_list.push(projpage.flist.selection[i].substr(projpage.project.length+2))
+		var selection = projpage.flist.selection;
+		var proj_path_len = projpage.project.length + 2;
+		for( var i=0; i < selection.length; i++ ) {
+			death_list.push(selection[i].substr(proj_path_len))
 		};
 
 		logDebug("will delete: "+death_list);
@@ -1150,8 +1152,10 @@ function ProjOps() {
 		}
 
 		var death_list = new Array();
-		for( var i in projpage.flist.selection ) {
-			death_list.push(projpage.flist.selection[i].substr(projpage.project.length+2))
+		var selection = projpage.flist.selection;
+		var proj_path_len = projpage.project.length + 2;
+		for( var i=0; i < selection.length; i++ ) {
+			death_list.push(selection[i].substr(proj_path_len))
 		};
 
 		log("Will delete autosaves: "+death_list);

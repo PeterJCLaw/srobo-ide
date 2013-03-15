@@ -240,7 +240,7 @@ function TabBar() {
 	//close all the tabs by signalling that their close button was clicked on
 	//check that all the edit tabs are closed: return true if so, false otherwise
 	this.close_all_tabs = function() {
-		for( var i in this.tabs ) {
+		for( var i=0; i < this.tabs.length; i++ ) {
 			if( this.tabs[i].can_close )
 				signal(this.tabs[i], "onclickclose");
 		}
