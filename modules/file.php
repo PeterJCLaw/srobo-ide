@@ -176,13 +176,14 @@ class FileModule extends Module
 		$revision = $input->getInput('rev');
 
 		// The data the repo has stored
-		$original = $this->repository()->getFile($path, $revision);
+		$repo = $this->repository();
+		$original = $repo->getFile($path, $revision);
 
 		// only bother specifying the autosave data if HEAD
 		$autosaved = null;
-		if($revision == 'HEAD' && in_array($path, $this->repository()->unstagedChanges()))
+		if ($revision == 'HEAD' && in_array($path, $repo->unstagedChanges()))
 		{
-			$autosaved = $this->repository()->getFile($path);
+			$autosaved = $repo->getFile($path);
 		}
 
 		$output->setOutput('autosaved', $autosaved);
@@ -328,16 +329,17 @@ class FileModule extends Module
 		$path = $input->getInput('path');
 		$newCode = $input->getInput('code', true);
 
+		$repo = $this->repository();
 		// patch from log
 		if ($newCode === null)
 		{
-			$diff = $this->repository()->historyDiff($hash);
+			$diff = $repo->historyDiff($hash);
 		}
 		// diff against changed file
 		else
 		{
-			$this->repository()->putFile($path, $newCode);
-			$diff = $this->repository()->diff($path);
+			$repo->putFile($path, $newCode);
+			$diff = $repo->diff($path);
 		}
 
 		$output->setOutput("diff", $diff);
