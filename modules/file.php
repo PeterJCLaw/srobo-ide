@@ -130,20 +130,20 @@ class FileModule extends Module
 		$revision = $input->getInput("revision");
 		//latest
 		$output->setOutput("rev", $revision);
+		$repo = $this->repository();
 		if ($revision === 0 || $revision === "HEAD")
 		{
 			foreach ($paths as $file)
 			{
-				$this->repository()->checkoutFile($file);
+				$repo->checkoutFile($file);
 			}
-
 		}
 		else
 		{
 			$output->setOutput("revision reverting","");
 			foreach ($paths as $file)
 			{
-				$this->repository()->checkoutFile($file,$revision);
+				$repo->checkoutFile($file, $revision);
 			}
 		}
 

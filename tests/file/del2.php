@@ -40,7 +40,8 @@ $projectManager->createRepository($input->getInput("team"), $input->getInput("pr
 $repo = $projectManager->getUserRepository($input->getInput("team"), $input->getInput("project"), 'bees');
 test_true(is_dir($repopath), "created repo did not exist");
 
-section('create the files');
+section('delete multiple files');
+subsection('create the files');
 $fileNames = array('first.py', 'second.py', 'pound-£-pony-♞-file.py');
 foreach ($fileNames as $name)
 {
@@ -49,7 +50,7 @@ foreach ($fileNames as $name)
 }
 $repo->commit('create', 'bees', 'bees@sr.org');
 
-section('delete the files');
+subsection('delete the files');
 $input->setInput('files', $fileNames);
 test_true($file->dispatchCommand('del'), "Failed to dispatch deletion");
 
@@ -59,7 +60,7 @@ foreach ($fileNames as $name)
 	test_nonexistent($abspath, "file/del failed to remove $abspath, before commit");
 }
 
-section('commit');
+subsection('commit');
 $input->setInput('paths', $fileNames);
 $input->setInput('message', "Delete all 3 files.");
 test_true($proj->dispatchCommand('commit'), "Failed to commit removal of the 3 files.");
@@ -70,7 +71,7 @@ foreach ($fileNames as $name)
 	test_nonexistent($abspath, "file/del failed to remove $abspath, after commit");
 }
 
-section("get the file-list to check that it's really gone");
+subsection("get the file-list to check that it's really gone");
 $input->setInput('path', '.');
 test_true($file->dispatchCommand('list'), "Failed to get file list after removing files.");
 $list = $output->getOutput('files');
@@ -80,4 +81,40 @@ foreach ($fileNames as $name)
 	test_false(in_array($name, $list), "File '$name' listed after committing its removal.");
 	$abspath = "$repopath/$name";
 	test_nonexistent($abspath, "file/del failed to remove $abspath, after commit");
+}
+
+section('undelete multiple files');
+subsection("'checkout' the files to a specific older revision (HEAD^)");
+$input->setInput('revision', 'HEAD^');
+$input->setInput('files', $fileNames);
+test_true($file->dispatchCommand('co'), "Failed to checkout files to older revision.");
+
+subsection('Check they exist before commit');
+foreach ($fileNames as $name)
+{
+	$abspath = "$repopath/$name";
+	test_existent($abspath, "file/co failed to restore $abspath, before commit");
+}
+
+subsection('commit');
+$input->setInput('paths', $fileNames);
+$input->setInput('message', "Restore all 3 files.");
+test_true($proj->dispatchCommand('commit'), "Failed to commit restoration of the 3 files.");
+
+foreach ($fileNames as $name)
+{
+	$abspath = "$repopath/$name";
+	test_existent($abspath, "file/co failed to restore $abspath, after commit");
+}
+
+subsection("get the file-list to check they're really back");
+$input->setInput('path', '.');
+test_true($file->dispatchCommand('list'), "Failed to get file list after restoring files.");
+$list = $output->getOutput('files');
+
+foreach ($fileNames as $name)
+{
+	test_true(in_array($name, $list), "File '$name' not listed after committing its restoration.");
+	$abspath = "$repopath/$name";
+	test_existent($abspath, "file/co failed to restore $abspath, after commit");
 }
