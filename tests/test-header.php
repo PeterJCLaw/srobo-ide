@@ -52,12 +52,12 @@ function test_unreachable($message)
 
 function test_true($cond, $message)
 {
-	__test($cond, $message);
+	test_equal($cond, true, $message);
 }
 
 function test_false($cond, $message)
 {
-	__test(!$cond, $message);
+	test_equal($cond, false, $message);
 }
 
 function test_empty($a, $message)
