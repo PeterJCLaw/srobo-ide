@@ -220,9 +220,10 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$files = $input->getInput("files");
 
+		$repo = $this->repository();
 		foreach ($files as $file)
 		{
-			$this->repository()->removeFile($file);
+			$repo->removeFile($file);
 		}
 		return true;
 	}

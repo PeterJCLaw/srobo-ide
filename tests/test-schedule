@@ -40,6 +40,7 @@ TEST file/basic
 TEST file/create
 TEST file/create-dirs
 TEST file/del
+TEST file/del2
 TEST file/lint
 TEST file/mv
 
