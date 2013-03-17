@@ -139,10 +139,17 @@ ProjPage.prototype.project_exists = function(pname) {
 }
 
 ProjPage.prototype.projects_exist = function() {
-	if(this._list.projects.length > 0)
+	if (this.list_projects().length > 0)
 		return true;
 	else
 		return false;
+}
+
+ProjPage.prototype.list_projects = function() {
+	if (this._list == null || this._list.projects == null) {
+		return [];
+	}
+	return this._list.projects;
 }
 
 ProjPage.prototype._on_proj_change = function(proj, team) {

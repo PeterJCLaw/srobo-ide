@@ -446,8 +446,7 @@ SettingsPage.Settings = {
 		options: {
 			dependsUpon: {setting: 'project.autoload', valueEq:'project.load'},
 			type: Setting.Type.single,
-			// TODO: Fix the below not to use a private property!
-			optionsCallback: function(){ return projpage._list.projects }
+			optionsCallback: function(){ return projpage.list_projects(); }
 		}
 	},
 	'save.autoerrorcheck' : {
