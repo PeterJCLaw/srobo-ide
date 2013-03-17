@@ -14,7 +14,8 @@ ob_start();
 
 // includes
 require_once('include/main.php');
-try {
+try
+{
 	$config = Configuration::getInstance();
 
 	if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))

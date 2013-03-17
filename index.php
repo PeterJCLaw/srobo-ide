@@ -12,7 +12,8 @@ error_reporting(E_ALL | E_STRICT);
 
 // includes
 require_once('include/main.php');
-try {
+try
+{
 	$config = Configuration::getInstance();
 
 	if ($config->getConfig('require_ssl') && empty($_SERVER['HTTPS']))
@@ -36,7 +37,9 @@ try {
 		getDefaultTokenStrategy()->removeAuthToken();
 		readfile('web/login.html');
 	}
-} catch (Exception $e) {
+}
+catch (Exception $e)
+{
 	header('HTTP/1.1 500 Internal Server Error');
 	header('Content-type: text/plain');
 	echo "The ide exploded, please tell the srobo team immediately.\n";
