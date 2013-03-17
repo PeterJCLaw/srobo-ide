@@ -239,7 +239,7 @@ iframe { display: none; }
 	font-weight: bold;
 }
 
-#login-box strong {
+#login-box #login-title {
 	display: block;
 }
 #login-box em {
