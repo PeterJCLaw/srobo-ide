@@ -87,6 +87,7 @@
 #proj-filelist li a {
   display: block;
   text-decoration: none;
+  line-height: 1.2em;
   margin-right: 1em;
   color: black;
 }
