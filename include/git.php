@@ -78,27 +78,36 @@ class GitRepository
 	}
 
 	/**
+	 * Checks whether the specified path looks like a bare repository.
+	 * This is intended for validity checking, not for plain existence checks.
+	 * If it doesn't then we throw an internal exception about this.
+	 */
+	public static function EnsureBareRepo($path)
+	{
+		// some guesswork based on the file structure we find.
+		$exists = file_exists("$path/config") &&
+		          file_exists("$path/objects") &&
+		          is_dir("$path/objects") &&
+		          file_exists("$path/branches") &&
+		          is_dir("$path/branches");
+		if (!$exists)
+		{
+			throw new Exception("git repository at $path is corrupt", E_INTERNAL_ERROR);
+		}
+	}
+
+	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
 	private function __construct($path)
 	{
 		if (!file_exists("$path/.git") || !is_dir("$path/.git"))
 		{
-			// this may be a bare repository, take a guess and see
-			if (file_exists("$path/config") &&
-			    file_exists("$path/objects") &&
-			    is_dir("$path/objects") &&
-			    file_exists("$path/branches") &&
-			    is_dir("$path/branches"))
-			{
-				// almost certainly is
-				$this->git_path = $path;
-				$this->working_path = null;
-			}
-			else
-			{
-				throw new Exception("git repository at $path is corrupt", E_INTERNAL_ERROR);
-			}
+			// check if this is a bare repo (throws if not)
+			self::EnsureBareRepo($path);
+			// almost certainly is
+			$this->git_path = $path;
+			$this->working_path = null;
 		}
 		else
 		{

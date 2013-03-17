@@ -101,8 +101,9 @@ class ProjectManager
 		// the user needs a clone of an existing master
 		else
 		{
-			$master = $this->getMasterRepository($team, $project);
-			$masterPath = $master->gitPath();
+			$masterPath = $this->getMasterRepoPath($team, $project);
+			// check this is valid (throws if not) - master repos are bare.
+			GitRepository::EnsureBareRepo($masterPath);
 			return GitRepository::cloneRepository($masterPath, $path);
 		}
 	}
