@@ -79,7 +79,8 @@ class ProjectManager
 		return $ret;
 	}
 
-	public function getMasterRepoPath($team, $project) {
+	public function getMasterRepoPath($team, $project)
+	{
 		return $this->rootProjectPath . "/$team/master/$project.git";
 	}
 
