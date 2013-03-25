@@ -139,6 +139,9 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 		var th = TH(null, 'Team '+field+':');
 		// rely on the backend escaping the content for display.
 		var content = nodes.items[field];
+		if ( content == null ) {
+			continue;
+		}
 		var valid_value = content;
 		if ( findValue( linkable, field ) != -1 ) {	// contains
 			var opts = { href: content,
@@ -146,6 +149,11 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 			            title: 'Opens in a new window'
 			           };
 			content = A(opts, content);
+		}
+		if ( field == 'image' ) {
+			var opts = { src: "data:image/png;base64," + content.base64 };
+			valid_value = content.md5;
+			content = IMG(opts);
 		}
 		content = TD(null, content);
 

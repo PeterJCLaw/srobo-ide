@@ -57,11 +57,3 @@ test_exception('setValue', E_MALFORMED_REQUEST, 'Should not allow review of mism
 section('non-existent field');
 $input->setInput('item', 'cheese');
 test_exception('setValue', E_MALFORMED_REQUEST, 'Should not allow review of non-existent field');
-
-section('images not reviewed through IDE');
-$statusABC->setDraft('image', $propertyValue);
-$statusABC->save();
-
-$input->setInput('item', 'image');
-$input->setInput('value', $propertyValue);
-test_exception('setValue', E_MALFORMED_REQUEST, 'Should not allow review of images');
