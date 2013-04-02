@@ -88,7 +88,8 @@ ProjPage.prototype._setupPolling = function() {
 	if ( this._poll != null ) {
 		this._poll.cancel();
 	}
-	this._poll = new Poll('poll/poll', { team: team });
+	// 30 second delay, retry once.
+	this._poll = new Poll('poll/poll', { team: team }, 30, 1);
 	connect(this._poll, 'onchange', bind(this._pollChanged, this));
 }
 
