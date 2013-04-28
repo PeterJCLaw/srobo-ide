@@ -824,7 +824,11 @@ class GitRepository
 	}
 
 	/**
-	 * does a git clone on destination then deletes the .git directory
+	 * Creates a Zip archive containing the contents of this repo,
+	 * at the specified revision.
+	 * @param dest: The file to create.
+	 * @param commit: The point in the history to get the contents from
+	 *                (defaults to HEAD).
 	 */
 	public function archiveSourceZip($dest, $commit = 'HEAD')
 	{
@@ -832,7 +836,7 @@ class GitRepository
 		$dest = realpath($dest);
 		$s_dest = escapeshellarg($dest);
 		$s_commit = escapeshellarg($commit);
-		$this->gitExecute(true, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
+		$this->gitExecute(false, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
 	}
 
 	/**
