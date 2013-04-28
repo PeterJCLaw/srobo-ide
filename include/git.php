@@ -5,9 +5,9 @@
 define('COMPRESSION_LEVEL', 0);
 
 /**
- * A class to manage git repositories
+ * A class to manage read-only interactions with git repositories
  */
-class GitRepository
+class ReadOnlyGitRepository
 {
 	// local variables, all expected to be immutable after construction
 	private $working_path;
@@ -43,7 +43,7 @@ class GitRepository
 		return $name;
 	}
 
-	private static function gitBinaryPath()
+	protected static function gitBinaryPath()
 	{
 		$path = Configuration::getInstance()->getConfig('git_path');
 		if (!$path)
@@ -74,7 +74,7 @@ class GitRepository
 	 */
 	public static function GetOrCreate($path)
 	{
-		$repo = new GitRepository($path);
+		$repo = new ReadOnlyGitRepository($path);
 		return $repo;
 	}
 
@@ -100,7 +100,7 @@ class GitRepository
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
-	private function __construct($path)
+	protected function __construct($path)
 	{
 		if (!file_exists("$path/.git") || !is_dir("$path/.git"))
 		{
@@ -135,11 +135,6 @@ class GitRepository
 		return $this->workingPath() === null;
 	}
 
-	public function unstageAll()
-	{
-		$this->gitExecute(true, "reset");
-	}
-
 	/**
 	 * Execute a git command with the specified environment variables.
 	 * @param working: Whether or not the command should be run from a working checkout.
@@ -149,8 +144,12 @@ class GitRepository
 	 * @returns: If not catching failures (see catchResult) then either the process's stdout if the call succeeds or False otherwise.
 	 *           If catching failures then an array whose first element is a boolean success indicator, and whose second contains the process's stdout.
 	 */
-	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
+	protected function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
+		if (!$this->isBare() && !$working)
+		{
+			ide_log(LOG_DEBUG, "Call could use bare repo on a working copy: " . $s_command);
+		}
 		$base = $working ? $this->workingPath() : $this->git_path;
 		return self::gitExecuteInternal($base, $s_command, null, $env, $catchResult);	// SHELL SAFE
 	}
@@ -165,12 +164,269 @@ class GitRepository
 	 * @returns: If not catching failures (see catchResult) then either the process's stdout if the call succeeds or False otherwise.
 	 *           If catching failures then an array whose first element is a boolean success indicator, and whose second contains the process's stdout.
 	 */
-	private static function gitExecuteInternal($base, $s_command, $input = null, $env = array(), $catchResult = false)
+	protected static function gitExecuteInternal($base, $s_command, $input = null, $env = array(), $catchResult = false)
 	{
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$s_buildCommand = "$s_bin $s_command";
 		$ret = proc_exec($s_buildCommand, $base, $input, $env, $catchResult);	// SHELL SAFE
 		return $ret;
+	}
+
+	/**
+	 * Gets the most recent revision hash
+	 */
+	public function getCurrentRevision()
+	{
+		return $this->expandRevision('HEAD');
+	}
+
+	/**
+	 * Gets the hash of the oldest revision
+	 */
+	public function getFirstRevision()
+	{
+		$revisions = explode("\n", trim($this->gitExecute(false, 'rev-list --all')));
+		return $revisions[count($revisions)-1];
+	}
+
+	/**
+	 * Expand a revision, or revision-ish, to a full hash.
+	 */
+	public function expandRevision($hash)
+	{
+		var_dump($hash);
+		$s_hash = escapeshellarg($hash);
+		$rawRevision = $this->gitExecute(false, "rev-list --abbrev-commit --max-count=1 $s_hash");
+		var_dump($rawRevision);
+		return trim($rawRevision);
+	}
+
+	/**
+	 * Verify that a given revision exists in the repo.
+	 */
+	public function commitExists($hash)
+	{
+		$s_hash = escapeshellarg($hash);
+		list($res, $out) = $this->gitExecute(false,
+		                                     "rev-list --abbrev-commit --max-count=1 $s_hash --",
+		                                     array(),	// env
+		                                     true		// catch result
+		                                    );
+		return $res;
+	}
+
+	/**
+	 * Gets the log between the arguments
+	 * @param oldCommit: The commit to start at.
+	 * @param newCommit: The commit to end at.
+	 * @param file: The file to limit the revisions to.
+	 * @returns: An array of the revisions in the given range.
+	 */
+	public function log($oldCommit, $newCommit, $file=null)
+	{
+		$log = null;
+		$s_logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
+
+		if ($oldCommit !== null)
+		{
+			$s_oldCommit = escapeshellarg($oldCommit);
+			$s_logCommand .= ' '.$s_oldCommit;
+
+			if ($newCommit !== null)
+			{
+				$s_newCommit = escapeshellarg($newCommit);
+				$s_logCommand .= '..'.$s_newCommit;
+			}
+		}
+
+		if ($file != null)
+		{
+			$s_logCommand .= ' --follow -- '.escapeshellarg($file);
+		}
+
+		$log = $this->gitExecute(false, $s_logCommand);
+
+		$lines = explode("\n", $log);
+		$results = array();
+		foreach ($lines as $line)
+		{
+			$exp     = explode(';', $line);
+			$hash    = array_shift($exp);
+			$author  = array_shift($exp);
+			$time    = (int)array_shift($exp);
+			$message = implode(';', $exp);
+			$results[] = array('hash'    => $hash,
+			                   'author'  => $author,
+			                   'time'    => $time,
+			                   'message' => $message);
+		}
+		return $results;
+	}
+
+	/**
+	 * Returns a list of files with un-staged changes.
+	 * @param {indexed_only} Whether or not to constrict the list only to files that are in the index.
+	 */
+	public function unstagedChanges($indexed_only = FALSE)
+	{
+		if ($indexed_only)
+		{
+			return explode("\n", $this->gitExecute(true, 'diff --name-only'));
+		}
+
+		$files = array();
+		$status = $this->gitExecute(true, 'status -z --porcelain');
+
+		$all_files = explode("\0", $status);
+	//	var_dump($all_files);
+		foreach ($all_files as $file)
+		{
+			$mod = substr($file, 1, 1);
+			// the file's been modified
+			if ($mod !== FALSE && $mod != ' ')
+			{
+				$files[] = substr($file, 3);
+			}
+		}
+		return $files;
+	}
+
+	/**
+	 * Returns a list of folders in the repo's file tree.
+	 */
+	public function listFolders()
+	{
+		$s_path = escapeshellarg($this->workingPath());
+		$folders = trim(shell_exec("cd $s_path && find . -type d -name .git -prune -o -type d -print"));
+		$folders = explode("\n", $folders);
+		return $folders;
+	}
+
+	/**
+	 * Lists the files within the top level of the repository
+	 */
+	public function listFiles($path)
+	{
+		$files = scandir($this->workingPath() . "/$path");
+		$result = array();
+		foreach ($files as $file)
+		{
+			if ($file[0] != '.')
+			{
+				$result[] = $file;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Gets the contents of the file, optionally of a specific revision
+	 */
+	public function getFile($path, $commit = null) // pass $commit to get a particular revision
+	{
+		if ($commit === null)
+		{
+			return file_get_contents($this->workingPath() . "/$path");
+		}
+		else
+		{
+			$s_commit = escapeshellarg($commit);
+			$s_path = escapeshellarg($path);
+			$code = $this->gitExecute(false, "show $s_commit:$s_path");
+			return $code;
+		}
+	}
+
+	/**
+	 * Gets the modification time of a file
+	 */
+	public function fileMTime($path)
+	{
+		return filemtime($this->workingPath() . '/' . $path);
+	}
+
+	/**
+	 * Gets a diff:
+	 *  that a log entry provides,
+	 *  between two commits,
+	 *  between two commits for a specified file
+	 */
+	public function historyDiff($commitOld, $commitNew=null, $file=null)
+	{
+		$s_commitOld = escapeshellarg($commitOld);
+		if ($commitNew === null)
+		{
+			return $this->gitExecute(false, "log -p -1 $s_commitOld");
+		}
+
+		$s_commitNew = escapeshellarg($commitNew);
+
+		$s_command = 'diff -C -M '.$s_commitOld.'..'.$s_commitNew;
+		if ($file !== null)
+		{
+			$s_command .= escapeshellarg($file);
+		}
+
+		return $this->gitExecute(false, $s_command);
+	}
+
+	/**
+	 * Gets the current diff
+	 * @param file: optional path or paths to get the diff for
+	 * @param staged: whether or not (the default) to return the cached diff
+	 */
+	public function diff($file=null, $staged=false)
+	{
+		$s_command = 'diff';
+		if ($staged)
+		{
+			$s_command .= ' --cached';
+		}
+
+		if ($file !== null)
+		{
+			$s_command .= ' '.escapeshellarg($file);
+		}
+
+		return $this->gitExecute(true, $s_command);
+	}
+
+	/**
+	 * Creates a Zip archive containing the contents of this repo,
+	 * at the specified revision.
+	 * @param dest: The file to create.
+	 * @param commit: The point in the history to get the contents from
+	 *                (defaults to HEAD).
+	 */
+	public function archiveSourceZip($dest, $commit = 'HEAD')
+	{
+		touch($dest);
+		$dest = realpath($dest);
+		$s_dest = escapeshellarg($dest);
+		$s_commit = escapeshellarg($commit);
+		$this->gitExecute(false, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
+	}
+}
+
+/**
+ * A class to manage git repositories
+ */
+class GitRepository extends ReadOnlyGitRepository
+{
+	/**
+	 * Constructs a git repo object on the path, will fail if the path isn't a git repository.
+	 * This factory method manages caching of the handles such that threads can't deadlock.
+	 */
+	public static function GetOrCreate($path)
+	{
+		$repo = new GitRepository($path);
+		return $repo;
+	}
+
+	public function unstageAll()
+	{
+		$this->gitExecute(true, "reset");
 	}
 
 	/**
@@ -294,49 +550,6 @@ class GitRepository
 		self::gitExecuteInternal($path, "update-ref -m $s_commitpath refs/heads/master $s_hash");
 	}
 
-	/**
-	 * Gets the most recent revision hash
-	 */
-	public function getCurrentRevision()
-	{
-		return $this->expandRevision('HEAD');
-	}
-
-	/**
-	 * Gets the hash of the oldest revision
-	 */
-	public function getFirstRevision()
-	{
-		$revisions = explode("\n", trim($this->gitExecute(false, 'rev-list --all')));
-		return $revisions[count($revisions)-1];
-	}
-
-	/**
-	 * Expand a revision, or revision-ish, to a full hash.
-	 */
-	public function expandRevision($hash)
-	{
-		var_dump($hash);
-		$s_hash = escapeshellarg($hash);
-		$rawRevision = $this->gitExecute(false, "rev-list --abbrev-commit --max-count=1 $s_hash");
-		var_dump($rawRevision);
-		return trim($rawRevision);
-	}
-
-	/**
-	 * Verify that a given revision exists in the repo.
-	 */
-	public function commitExists($hash)
-	{
-		$s_hash = escapeshellarg($hash);
-		list($res, $out) = $this->gitExecute(false,
-		                                     "rev-list --abbrev-commit --max-count=1 $s_hash --",
-		                                     array(),	// env
-		                                     true		// catch result
-		                                    );
-		return $res;
-	}
-
 	public function gitMKDir($path)
 	{
 		$dir = $this->workingPath() . "/" . $path;
@@ -346,54 +559,6 @@ class GitRepository
 			return true;
 		}
 		return mkdir_full($dir);
-	}
-
-	/**
-	 * Gets the log between the arguments
-	 * @param oldCommit: The commit to start at.
-	 * @param newCommit: The commit to end at.
-	 * @param file: The file to limit the revisions to.
-	 * @returns: An array of the revisions in the given range.
-	 */
-	public function log($oldCommit, $newCommit, $file=null)
-	{
-		$log = null;
-		$s_logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
-
-		if ($oldCommit !== null)
-		{
-			$s_oldCommit = escapeshellarg($oldCommit);
-			$s_logCommand .= ' '.$s_oldCommit;
-
-			if ($newCommit !== null)
-			{
-				$s_newCommit = escapeshellarg($newCommit);
-				$s_logCommand .= '..'.$s_newCommit;
-			}
-		}
-
-		if ($file != null)
-		{
-			$s_logCommand .= ' --follow -- '.escapeshellarg($file);
-		}
-
-		$log = $this->gitExecute(false, $s_logCommand);
-
-		$lines = explode("\n", $log);
-		$results = array();
-		foreach ($lines as $line)
-		{
-			$exp     = explode(';', $line);
-			$hash    = array_shift($exp);
-			$author  = array_shift($exp);
-			$time    = (int)array_shift($exp);
-			$message = implode(';', $exp);
-			$results[] = array('hash'    => $hash,
-			                   'author'  => $author,
-			                   'time'    => $time,
-			                   'message' => $message);
-		}
-		return $results;
 	}
 
 	/**
@@ -518,45 +683,6 @@ class GitRepository
 	}
 
 	/**
-	 * Returns a list of files with un-staged changes.
-	 * @param {indexed_only} Whether or not to constrict the list only to files that are in the index.
-	 */
-	public function unstagedChanges($indexed_only = FALSE)
-	{
-		if ($indexed_only)
-		{
-			return explode("\n", $this->gitExecute(true, 'diff --name-only'));
-		}
-
-		$files = array();
-		$status = $this->gitExecute(true, 'status -z --porcelain');
-
-		$all_files = explode("\0", $status);
-	//	var_dump($all_files);
-		foreach ($all_files as $file)
-		{
-			$mod = substr($file, 1, 1);
-			// the file's been modified
-			if ($mod !== FALSE && $mod != ' ')
-			{
-				$files[] = substr($file, 3);
-			}
-		}
-		return $files;
-	}
-
-	/**
-	 * Returns a list of folders in the repo's file tree.
-	 */
-	public function listFolders()
-	{
-		$s_path = escapeshellarg($this->workingPath());
-		$folders = trim(shell_exec("cd $s_path && find . -type d -name .git -prune -o -type d -print"));
-		$folders = explode("\n", $folders);
-		return $folders;
-	}
-
-	/**
 	 * Commits the currently staged changes into the git tree.
 	 * @returns (boolean) whether or not the commit succeeded.
 	 */
@@ -645,24 +771,6 @@ class GitRepository
 	}
 
 	/**
-	 * Lists the files within the top level of the repository
-	 */
-	public function listFiles($path)
-	{
-		$files = scandir($this->workingPath() . "/$path");
-		$result = array();
-		foreach ($files as $file)
-		{
-			if ($file[0] != '.')
-			{
-				$result[] = $file;
-			}
-		}
-
-		return $result;
-	}
-
-	/**
 	 * Creates a file on the repo that is empty
 	 */
 	public function createFile($path)
@@ -706,24 +814,6 @@ class GitRepository
 	}
 
 	/**
-	 * Gets the contents of the file, optionally of a specific revision
-	 */
-	public function getFile($path, $commit = null) // pass $commit to get a particular revision
-	{
-		if ($commit === null)
-		{
-			return file_get_contents($this->workingPath() . "/$path");
-		}
-		else
-		{
-			$s_commit = escapeshellarg($commit);
-			$s_path = escapeshellarg($path);
-			$code = $this->gitExecute(false, "show $s_commit:$s_path");
-			return $code;
-		}
-	}
-
-	/**
 	 * Writes content to a file
 	 */
 	public function putFile($path, $content)
@@ -731,14 +821,6 @@ class GitRepository
 		// ensure that the file exists before writing to it.
 		$ret = $this->createFile($path);
 		return $ret && file_put_contents($this->workingPath() . "/$path", $content);
-	}
-
-	/**
-	 * Gets the modification time of a file
-	 */
-	public function fileMTime($path)
-	{
-		return filemtime($this->workingPath() . '/' . $path);
 	}
 
 	/**
@@ -765,68 +847,6 @@ class GitRepository
 		{
 			$this->removeFile($path);
 		}
-	}
-
-	/**
-	 * Gets a diff:
-	 *  that a log entry provides,
-	 *  between two commits,
-	 *  between two commits for a specified file
-	 */
-	public function historyDiff($commitOld, $commitNew=null, $file=null)
-	{
-		$s_commitOld = escapeshellarg($commitOld);
-		if ($commitNew === null)
-		{
-			return $this->gitExecute(false, "log -p -1 $s_commitOld");
-		}
-
-		$s_commitNew = escapeshellarg($commitNew);
-
-		$s_command = 'diff -C -M '.$s_commitOld.'..'.$s_commitNew;
-		if ($file !== null)
-		{
-			$s_command .= escapeshellarg($file);
-		}
-
-		return $this->gitExecute(false, $s_command);
-	}
-
-	/**
-	 * Gets the current diff
-	 * @param file: optional path or paths to get the diff for
-	 * @param staged: whether or not (the default) to return the cached diff
-	 */
-	public function diff($file=null, $staged=false)
-	{
-		$s_command = 'diff';
-		if ($staged)
-		{
-			$s_command .= ' --cached';
-		}
-
-		if ($file !== null)
-		{
-			$s_command .= ' '.escapeshellarg($file);
-		}
-
-		return $this->gitExecute(true, $s_command);
-	}
-
-	/**
-	 * Creates a Zip archive containing the contents of this repo,
-	 * at the specified revision.
-	 * @param dest: The file to create.
-	 * @param commit: The point in the history to get the contents from
-	 *                (defaults to HEAD).
-	 */
-	public function archiveSourceZip($dest, $commit = 'HEAD')
-	{
-		touch($dest);
-		$dest = realpath($dest);
-		$s_dest = escapeshellarg($dest);
-		$s_commit = escapeshellarg($commit);
-		$this->gitExecute(false, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
 	}
 
 	/**
