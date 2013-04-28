@@ -801,7 +801,7 @@ class GitRepository
 	public function diff($file=null, $staged=false)
 	{
 		$s_command = 'diff';
-		if($staged)
+		if ($staged)
 		{
 			$s_command .= ' --cached';
 		}
