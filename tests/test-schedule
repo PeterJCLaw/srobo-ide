@@ -31,6 +31,7 @@ SKIP auth/ldap
 
 TEST proj/commit
 TEST proj/create
+TEST proj/cron
 TEST proj/log
 TEST proj/del
 TEST proj/export
