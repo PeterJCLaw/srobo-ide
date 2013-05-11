@@ -260,22 +260,29 @@ class ProjModule extends Module
 		$overall = true;
 
 		$dirIterator = new RecursiveDirectoryIterator($zipRoot);
-		foreach (new RecursiveIteratorIterator($dirIterator) as $file)
+		foreach (new RecursiveIteratorIterator($dirIterator, RecursiveIteratorIterator::CHILD_FIRST) as $file)
 		{
 			$name = $file->getPathname();
-			$ext = substr($name, strrpos($name, '.') + 1);
-			// Filter to non-hidden .zip files
-			if (!$file->isFile() || $name[0] == '.' || $ext != 'zip')
+			// Remove all zip files
+			if ($file->isFile())
 			{
-				continue;
+				$ext = substr($name, strrpos($name, '.') + 1);
+				$last_access = $file->getATime();
+				// Only zip files that haven't been accessed recently
+				if ($ext == 'zip' && $last_access < $zip_delete_date)
+				{
+					$result = unlink($file);
+					$overall = $overall && $result;
+				}
 			}
-
-			// consider the file for deletion.
-			$last_access = $file->getATime();
-			if ($last_access < $zip_delete_date)
+			// Remove all the empty child folders
+			elseif ($file->isDir())
 			{
-				$result = unlink($file);
-				$overall = $overall && $result;
+				$items = scandir($name);
+				if (count($items) == 2) // . & ..
+				{
+					rmdir($name);
+				}
 			}
 		}
 
