@@ -18,6 +18,11 @@ class LDAPAuth extends SecureTokenAuth
 
 	public function checkAuthentication($username, $password)
 	{
+		// empty usernames aren't valid in LDAP
+		if (empty($username))
+		{
+			return false;
+		}
 		$config = Configuration::getInstance();
 		$this->ldapManager = new LDAPManager($config->getConfig("ldap.host"), $username, $password);
 		return $this->ldapManager->getAuthed();
