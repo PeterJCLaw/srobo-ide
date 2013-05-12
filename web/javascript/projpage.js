@@ -728,6 +728,9 @@ function ProjSelect(plist, elem) {
 	// The team that we're currently listing
 	this._team = null;
 
+	// The 'please select a project' prompt
+	this._prompt = null;
+
 	// Signals:
 	//  - onchange: when the project selection changes.
 	//              Handler passed the name of the new project.
@@ -760,6 +763,11 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	var startteam = this._team;
 	var items = [];
 
+	if( this._prompt != null ) {
+		this._prompt.close();
+		this._prompt = null;
+	}
+
 	// Find the project to select
 	if( this.trans_project != ""
 	    && this._plist.project_exists( this.trans_project ) ) {
@@ -776,7 +784,7 @@ ProjSelect.prototype._plist_onchange = function(team) {
 		var dp = this._get_default();
 		if( dp == null ) {
 			// Add "Please select..."
-			status_msg( "Please select a project", LEVEL_INFO );
+			this._prompt = status_msg( "Please select a project", LEVEL_INFO );
 			items.unshift( OPTION( { "id" : "projlist-tmpitem",
 						 "selected" : "selected" }, "Select a project." ) );
 		} else
