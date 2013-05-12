@@ -1,26 +1,18 @@
 _FOLDERS = settings repos zips notifications
 
-_JAVA_KEYSTORE = applet/.keystore
-_JAVA_KEYSTORE_PWD = testpass
-_JAVE_KEYSTORE_USER = Test User
-
-.PHONY: all default dev docs check clean applet folders config submodules
+.PHONY: all default dev docs check clean folders config submodules
 
 # Useful groupings
 default: dev
-all: dev docs submodules config applet
-
-applet: applet/build.xml applet/.keystore
-	cd applet/ && ant build
+all: dev docs submodules config
 
 # Actual targets
 clean:
 	rm -rf $(_FOLDERS) html latex
 	rm -f config/automagic.ini
-	cd applet/ && ant clean
 	rm -f srobo-ide.deb metapackages/deb/srobo-ide.deb
 
-dev: folders config lint-reference/sr.py applet
+dev: folders config lint-reference/sr.py
 
 config: config/automagic.ini
 
@@ -38,11 +30,6 @@ config/automagic.ini:
 	/bin/echo -n "python.path = " >> $@
 	which python >> $@
 
-applet/.keystore:
-	keytool -genkeypair -keyalg rsa -alias test-only-applet-key \
-	-storepass $(_JAVA_KEYSTORE_PWD) -keypass $(_JAVA_KEYSTORE_PWD) \
-	-dname "cn=$(_JAVA_KEYSTORE_USER), ou=SR, o=SR, c=UK" -keystore $(_JAVA_KEYSTORE)
-
 zips/.htaccess:
 	ln resources/zips-htaccess zips/.htaccess
 
@@ -56,9 +43,6 @@ $(_FOLDERS):
 submodules:
 	git submodule init
 	git submodule update
-
-sign: applet
-	jarsigner applet/build/checkout.jar prod-key
 
 srobo-ide.deb: metapackages/deb/srobo-ide.deb
 	cp metapackages/deb/srobo-ide.deb .

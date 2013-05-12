@@ -5,9 +5,6 @@ zips/
 settings/*
 config/local.ini
 config/automagic.ini
-/applet/.classpath
-/applet/.project
-/applet/test-only-applet-key.crt
 notifications
 srobo-ide.deb
 metapackages/deb/srobo-ide.deb

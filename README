@@ -11,8 +11,6 @@ https://www.studentrobotics.org/trac/wiki/CyanIDE
 
 In the mean time here's some basic info about the make targets:
 
-`applet`: Builds the java applet used for checkouts.
-
 `dev`: Sets up the base folders you'll need for the repos etc.
 
 `docs`: Builds the docs according to the doxyfile.
@@ -28,15 +26,13 @@ Dependencies:
  * A web server
  * PHP 5.3.3
  * Git
- * ant     # for building the Java applet
- * javac   # for building the Java applet
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
  * pylint  # syntax checker
  * php-ldap
 
 In Ubuntu these can be achieved by installing the following packages:
- apache2 php5 ant1.8 openjdk-6-jdk doxygen php5-cli git-core pylint
+ apache2 php5 doxygen php5-cli git-core pylint
 
 
 Note that by default Ubuntu Lucid will not execute PHP files in

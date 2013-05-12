@@ -124,9 +124,6 @@ function load_gui() {
 	connect( projtab, "onblur", bind( projpage.hide, projpage ) );
 	tabbar.add_tab( projtab );
 
-	// Checkout handler
-	Checkout.GetInstance().init();
-
 	// Diff Page
 	diffpage = new DiffPage();
 

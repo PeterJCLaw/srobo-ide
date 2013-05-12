@@ -395,7 +395,5 @@
 
 	<iframe id="robot-zip" style="display:none;"></iframe>
 
-	<div id="applet" style="visibility: hidden;"></div>
-
 </body>
 </html>
