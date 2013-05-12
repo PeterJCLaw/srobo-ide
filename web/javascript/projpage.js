@@ -70,8 +70,6 @@ ProjPage.prototype._init = function() {
 //	connect("archive-project",	'onclick', bind(this.clickArchiveProject, this));
 	connect("copy-project",		'onclick', bind(this.clickCopyProject, this));
 	connect("check-code",		'onclick', bind(this.clickCheckCode, this));
-//	The simulator isn't ready yet, and this fails anyway:
-//	connect("simulate-project",	'onclick', bind(this.clickSimulateProject, this));
 	connect("export-project",	'onclick', bind(this.clickExportProject, this));
 
 	// We have to synthesize the first "onchange" event from the ProjSelect,
@@ -262,21 +260,6 @@ ProjPage.prototype._createProjectFailure = function(newProjName) {
 		bind(this.CreateNewProject, this, newProjName)
 	);
 }
-
-/*** The simulator is nowhere near ready, so hide this for the moment
-ProjPage.prototype.clickSimulateProject = function() {
-	if( $('projlist-tmpitem') != null && $('projlist-tmpitem').selected == true ) {
-		status_msg( "No project selected, please select a project", LEVEL_ERROR );
-		return;
-	}
-
-	if( !this.flist.robot ) {	//if there's no robot.py script then it's going to fail
-		status_msg( "A robot.py file is required for project simulation", LEVEL_ERROR );
-		return false;
-	}
-	simpage.load(this.project);
-}
-*/
 
 ProjPage.prototype.clickExportProject = function() {
 	if( $('projlist-tmpitem') != null && $('projlist-tmpitem').selected == true ) {

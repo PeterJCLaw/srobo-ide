@@ -348,8 +348,3 @@ a.button:hover, #login-box #login-button:hover {
 	opacity: .75;
 	filter: alpha(opacity=75);
 }
-
-#robolog-pre {
-	height: 30em;
-	overflow: scroll;
-}

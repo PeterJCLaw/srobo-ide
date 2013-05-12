@@ -9,9 +9,6 @@ var tabbar = null;
 // The project page
 var projpage = null;
 
-// The simulator page
-var simpage = null;
-
 // The project tab
 var projtab = null;
 
@@ -20,9 +17,6 @@ var editpage = null;
 
 // The errors tab
 var errorspage = null;
-
-// The robot log page
-var robolog = null;
 
 // The user
 var user;
@@ -130,9 +124,6 @@ function load_gui() {
 	connect( projtab, "onblur", bind( projpage.hide, projpage ) );
 	tabbar.add_tab( projtab );
 
-	// Simulator tab
-	//simpage = new SimPage();
-
 	// Checkout handler
 	Checkout.GetInstance().init();
 
@@ -141,8 +132,6 @@ function load_gui() {
 
 	// Errors Tab
 	errorspage = new ErrorsPage();
-
-	robolog = new RoboLog();
 
 	//The selection operations
 	sel_operations = new ProjOps();
