@@ -74,6 +74,15 @@ function EditPage() {
 		setStyle("edit-mode", {"display" : "none"});
 	}
 
+	// Mark the given errors in the named file
+	this.mark_errors = function( file, errors ) {
+		if (!this.is_open(file))
+			return;
+
+		var etab = this._file_get_etab(file);
+		etab.mark_errors(errors);
+	}
+
 	//Is the given file open?
 	this.is_open = function( file ) {
 		return this._open_files[file] != null;
@@ -735,6 +744,24 @@ function EditTab(iea, team, project, path, rev, mode) {
 		}
 		var range = new Range(lineNumber, startIndex, lineNumber, endIndex);
 		this._iea.setSelectionRange(range);
+	}
+
+	// Marks the given set of errors in the editor.
+	this.mark_errors = function(errors) {
+		var annotations = [];
+		for ( var i=0; i < errors.length; i++) {
+			var error = errors[i];
+			annotations.push({ row: error.lineNumber - 1,
+			                column: 0,
+			                  text: error.message,
+			                  type: error.level });
+		}
+		this._session.setAnnotations(annotations);
+	}
+
+	// Clears all the marked errors from the editor
+	this.clear_errors = function() {
+		this._session.clearAnnotations();
 	}
 
 	//initialisation

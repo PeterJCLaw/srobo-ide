@@ -140,6 +140,7 @@ function ErrorsPage() {
 			if(cb) {
 				opts.callback('codefail', info.errors.length);
 			}
+			editpage.mark_errors(file, info.errors);
 		} else {
 			if(cb) {
 				opts.callback('pass');
