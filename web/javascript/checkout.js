@@ -67,7 +67,7 @@ Checkout.prototype._use_java = function() {
 
 Checkout.prototype._basic = function(url, rev, successCallback, errorCallback) {
 	logDebug('Checking out code using basic file transfer');
-	$('robot-zip').src = url;
+	getElement('robot-zip').src = url;
 	var revLink = A({href: url, target: '_blank', title: 'Download the zip again'}, rev);
 	var span = SPAN(null, 'Exporting ', revLink, '.');
 	status_msg(span, LEVEL_INFO);

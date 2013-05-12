@@ -51,7 +51,7 @@ TeamStatus.prototype.init = function()
 /* ***** Tab events: onfocus, onblur and close		***** */
 TeamStatus.prototype._onfocus = function()
 {
-	setStyle($("team-status-page"), {'display':'block'});
+	setStyle("team-status-page", {'display':'block'});
 }
 
 TeamStatus.prototype._onblur = function()
@@ -61,7 +61,7 @@ TeamStatus.prototype._onblur = function()
 		this._prompt.close();
 		this._prompt = null;
 	}
-	setStyle($("team-status-page"), {'display':'none'});
+	setStyle("team-status-page", {'display':'none'});
 }
 
 TeamStatus.prototype._close = function()
@@ -86,7 +86,7 @@ TeamStatus.prototype._close = function()
 	this._inited = false;
 
 	/* hide switchboard page */
-	setStyle($("team-status-page"), {'display':'none'});
+	setStyle("team-status-page", {'display':'none'});
 }
 /* *****	End Tab events		***** */
 
@@ -94,7 +94,7 @@ TeamStatus.prototype._close = function()
 // Gets the input field the user may have edited
 TeamStatus.prototype._getField = function(name)
 {
-	return $('team-status-'+name+'-input');
+	return getElement('team-status-'+name+'-input');
 }
 // Gets the element that the review state class will be set on.
 TeamStatus.prototype._getField2 = function(name)
@@ -102,7 +102,7 @@ TeamStatus.prototype._getField2 = function(name)
 	logDebug('getting field: '+name);
 	if (name == 'image')
 	{
-		return $('team-status-image-upload-form');
+		return getElement('team-status-image-upload-form');
 	}
 	return this._getField(name);
 }
@@ -252,9 +252,9 @@ TeamStatus.prototype.saveStatus = function()
 	if (!IDE_string_empty(imageInput.value))	// not null or whitespace
 	{
 		// TODO: verify that it looks like an image
-		$('team-status-image-command').value = 'team/status-put-image';
-		$('team-status-image-team').value = team;
-		$('team-status-image-upload-form').submit();
+		getElement('team-status-image-command').value = 'team/status-put-image';
+		getElement('team-status-image-team').value = team;
+		getElement('team-status-image-upload-form').submit();
 	}
 }
 /* *****    End Team Status save code	***** */

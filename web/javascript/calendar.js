@@ -44,7 +44,7 @@ Calendar.prototype.init = function() {
 Calendar.prototype.drawCal = function() {
 
 	//Set month header
-	$("cal-header").innerHTML = MONTHS[this.date.getMonth()]+" "+this.date.getFullYear();
+	getElement("cal-header").innerHTML = MONTHS[this.date.getMonth()]+" "+this.date.getFullYear();
 
 	//reset row, cell and day variables
 	var td = 0;
@@ -59,22 +59,24 @@ Calendar.prototype.drawCal = function() {
 	//insert grey cells so we start on the correct day of the week
 	tr = 0;
 	for(td= 0; td < 7; td++) {
+		var rowId = "cal-row-" + tr;
 		if(td < this.date.getDay()) {
-			appendChildNodes($("cal-row-"+tr), TD({'class':'null'}, ""));
+			appendChildNodes(rowId, TD({'class':'null'}, ""));
 		} else {
-			appendChildNodes($("cal-row-"+tr), TD({'id' : 'cal'+day}, day));
+			appendChildNodes(rowId, TD({'id' : 'cal'+day}, day));
 			day++;
 		}
 	}
 
 	//now generate the rest of the cells in rows of 7 cells
 	for(tr=1; tr < 6; tr++) {
+		var rowId = "cal-row-" + tr;
 		while(td < (7*(tr+1))) {
 			if(day <= this.dinm() ) {
-				appendChildNodes($("cal-row-"+tr), TD({'id' : 'cal'+day}, day));
+				appendChildNodes(rowId, TD({'id' : 'cal'+day}, day));
 				day++;
 			} else {
-				//appendChildNodes($("cal-row-"+tr), TD(null, " "));
+				//appendChildNodes(rowId, TD(null, " "));
 			}
 			td++;
 		}
@@ -164,11 +166,12 @@ Calendar.prototype.processDates = function() {
 //use logdays to bring to life the cells on the Calendar which relate to log entries
 Calendar.prototype.updateCal = function() {
 	for(var i=0; i < this.logdays.length; i++) {
-		setNodeAttribute($("cal"+this.logdays[i]), "class", "td-log");
-		connect($("cal"+this.logdays[i]),
+		var cell = getElement("cal"+this.logdays[i]);
+		setNodeAttribute(cell, "class", "td-log");
+		connect(cell,
 			'onclick',
 			bind(this.change_day, this, this.logdays[i]) );
-		setNodeAttribute($("cal"+this.logdays[i]), "title", "Click to see revisions for this day");
+		setNodeAttribute(cell, "title", "Click to see revisions for this day");
 	}
 }
 
@@ -214,20 +217,20 @@ Calendar.prototype.change_day = function(target) {
 
 	projpage.hide_filelist();
 	status_msg("Please select a revision", LEVEL_OK);
-	$("cal-revs").className = "hilight"
+	getElement("cal-revs").className = "hilight"
 	setTimeout(function() {
-			$("cal-revs").className = "normal"
+			getElement("cal-revs").className = "normal"
 		},500);
 	setTimeout(function() {
-			$("cal-revs").className = "hilight"
+			getElement("cal-revs").className = "hilight"
 		},1000);
 	setTimeout(function() {
-			$("cal-revs").className = "normal"
+			getElement("cal-revs").className = "normal"
 		},1500);
 }
 
 Calendar.prototype._load_new_rev = function() {
-	var target = $("cal-revs").value;
+	var target = getElement("cal-revs").value;
 
 	// Check that it's not a special value
 	if( !(target < 0) )

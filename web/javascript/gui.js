@@ -237,7 +237,7 @@ function populate_shortcuts_box() {
 // Take id of existing hidden div to make into appearing box
 function dropDownBox (id, children) {
 	this._init = function(id, children) {
-		this.id = $(id);
+		this.id = getElement(id);
 		appendChildNodes(this.id, children);
 		connect( this.id, "onmouseenter", bind( this._clearTimeout, this) );	// when mouse is inside the dropbox disable timeout
 		connect( this.id, "onmouseleave", bind( this.hideBox, this ) );		// when mouse leaves dropbox hide it
@@ -274,7 +274,7 @@ function dropDownBox (id, children) {
 // Show some info about the IDE, just the version number for now
 function AboutBox() {
 	this._init = function() {
-		this.box = $('about-box');
+		this.box = getElement('about-box');
 		connect( this.box, "onclick", bind( this.hideBox, this ) );
 		this.got_info = false;
 	}
@@ -296,11 +296,11 @@ function AboutBox() {
 	this.showBox = function() {
 		this.get_info();
 		removeElementClass( this.box, "hidden" );
-		showElement($("grey-out"));
+		showElement("grey-out");
 	}
 	this.hideBox = function() {
 		addElementClass( this.box, "hidden" );
-		hideElement($("grey-out"));
+		hideElement("grey-out");
 	}
 
 	this._init();
@@ -473,7 +473,7 @@ function TeamSelector() {
 		var tname = SPAN( { "id" : "teamname" }, null );
 		teambox.push( tname );
 
-		replaceChildNodes( $("teaminfo"), teambox );
+		replaceChildNodes( "teaminfo", teambox );
 		this._update_name();
 
 		if( this._team_exists(team) )
@@ -528,7 +528,7 @@ function TeamSelector() {
 		}
 
 		// Remove the "please select a team" item from the list
-		var tmpitem = $("teamlist-tmpitem");
+		var tmpitem = getElement("teamlist-tmpitem");
 		if( tmpitem != null && src != tmpitem )
 			removeElement( tmpitem );
 
@@ -548,6 +548,6 @@ function TeamSelector() {
 				name = "Team " + team + ": " + name
 		}
 
-		replaceChildNodes( $("teamname"), " " + name );
+		replaceChildNodes( "teamname", " " + name );
 	}
 }

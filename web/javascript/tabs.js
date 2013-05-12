@@ -36,7 +36,7 @@ function Tab(label, opts) {
 		this._a = A( {"href":'#', "title": this.title}, this.label, this._a_close );
 		this._li = LI({"class": 'nofocus'}, this._a );
 
-		appendChildNodes($("tab-list"), this._li);
+		appendChildNodes("tab-list", this._li);
 
 		connect(this._li, 'onclick', bind(this._onclick,this) );
 	}

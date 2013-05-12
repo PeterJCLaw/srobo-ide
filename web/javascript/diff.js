@@ -81,7 +81,7 @@ DiffPage.prototype._diffReady = function () {
 		description = 'from your modifications, based on';
 	}
 	description += ' '+IDE_hash_shrink(this.revhash);
-	$('diff-page-summary').innerHTML = 'Displaying differences on '
+	getElement('diff-page-summary').innerHTML = 'Displaying differences on '
 			+this.file+' '+description;
 	this.init();
 }
@@ -119,7 +119,7 @@ function Diff(elem, file, rev) {
  * @returns: The created diff object.
  */
 Diff.Create = function(elem, file, rev, code) {
-	var diff = new Diff($(elem), file, rev);
+	var diff = new Diff(getElement(elem), file, rev);
 	diff.makeDiff(code);
 	return diff;
 }

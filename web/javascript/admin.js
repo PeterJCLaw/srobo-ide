@@ -45,7 +45,7 @@ Admin.prototype.init = function() {
 
 /* *****	Tab events: onfocus, onblur and close	***** */
 Admin.prototype._onfocus = function() {
-	setStyle($("admin-page"), {'display':'block'});
+	setStyle("admin-page", {'display':'block'});
 }
 
 Admin.prototype._onblur = function() {
@@ -55,7 +55,7 @@ Admin.prototype._onblur = function() {
 		this._prompt = null;
 	}
 	/* hide Admin page */
-	setStyle($("admin-page"), {'display':'none'});
+	setStyle("admin-page", {'display':'none'});
 }
 
 Admin.prototype._close = function() {

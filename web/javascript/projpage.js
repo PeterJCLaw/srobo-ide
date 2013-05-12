@@ -53,7 +53,7 @@ ProjPage.prototype._init = function() {
 	this._list = new ProjList();
 
 	// The selection box for selecting a project
-	this._selector = new ProjSelect(this._list, $("project-select"));
+	this._selector = new ProjSelect(this._list, getElement("project-select"));
 	connect( this._selector, "onchange", bind( this._on_proj_change, this ) );
 
 	this.flist = new ProjFileList();
@@ -158,7 +158,7 @@ ProjPage.prototype._on_proj_change = function(proj, team) {
 	if( proj == "" )
 		this._rpane_hide();
 	else {
-		$("proj-name").innerHTML = "Project " + this.project;
+		getElement("proj-name").innerHTML = "Project " + this.project;
 		this._rpane_show();
 	}
 
@@ -262,7 +262,8 @@ ProjPage.prototype._createProjectFailure = function(newProjName) {
 }
 
 ProjPage.prototype.clickExportProject = function() {
-	if( $('projlist-tmpitem') != null && $('projlist-tmpitem').selected == true ) {
+	var tmpItem = getElement('projlist-tmpitem');
+	if( tmpItem != null && tmpItem.selected == true ) {
 		status_msg( "No project selected, please select a project", LEVEL_ERROR );
 		return;
 	}
@@ -570,7 +571,7 @@ ProjFileList.prototype._onclick = function(ev) {
 }
 
 ProjFileList.prototype.select_all = function() {
-	var files = $('proj-filelist').getElementsByTagName('li');
+	var files = getElement('proj-filelist').getElementsByTagName('li');
 	for(var i=0; i<files.length; i++) {
 		this._select_path(getNodeAttribute(files[i].firstChild, "ide_path"), files[i]);
 	}
@@ -578,7 +579,7 @@ ProjFileList.prototype.select_all = function() {
 
 ProjFileList.prototype.select_none = function() {
 	this.selection = [];
-	var selected = getElementsByTagAndClassName('li', "selected", $('proj-filelist'));
+	var selected = getElementsByTagAndClassName('li', "selected", getElement('proj-filelist'));
 	for(var i=0; i<selected.length; i++)
 		removeElementClass( selected[i], "selected" );
 }
@@ -810,7 +811,7 @@ ProjSelect.prototype._onchange = function(ev) {
 	var src = ev.src();
 
 	// Remove the "select a project" item from the list
-	var tmp = $("projlist-tmpitem");
+	var tmp = getElement("projlist-tmpitem");
 	if( tmp != null && src != tmp )
 		removeElement( tmp );
 
@@ -1225,57 +1226,57 @@ function ProjOps() {
 
 	this.ops.push({ "name" : "Select None",
 			"action" : bind(projpage.flist.select_none, projpage.flist),
-			"handle" : $("proj-select-none"),
+			"handle" : getElement("proj-select-none"),
 			"event" : null});
 
 	this.ops.push({ "name" : "Select All",
 			"action" : bind(projpage.flist.select_all, projpage.flist),
-			"handle": $("proj-select-all"),
+			"handle": getElement("proj-select-all"),
 			"event" : null});
 
 	this.ops.push({ "name" : "New File",
 			"action" : bind(editpage.new_file, editpage),
-			"handle" : $("op-newfile"),
+			"handle" : getElement("op-newfile"),
 			"event" : null});
 
 	this.ops.push({ "name" : "New Directory",
 			"action" : bind(this.new_folder, this, null, null),
-			"handle": $("op-mkdir"),
+			"handle": getElement("op-mkdir"),
 			"event" : null});
 
 	this.ops.push({ "name" : "Move",
 			"action" : bind(this.mv, this),
-			"handle": $("op-mv"),
+			"handle": getElement("op-mv"),
 			"event" : null });
 
 	this.ops.push({ "name" : "Copy",
 			"action" : bind(this.cp, this),
-			"handle": $("op-cp"),
+			"handle": getElement("op-cp"),
 			"event" : null });
 
 	this.ops.push({ "name" : "Delete",
 			"action" : bind(this.rm, this, false),
-			"handle": $("op-rm"),
+			"handle": getElement("op-rm"),
 			"event" : null });
 
 	this.ops.push({ "name" : "Undelete",
 			"action" : bind(this.undel, this),
-			"handle": $("op-undel"),
+			"handle": getElement("op-undel"),
 			"event" : null });
 
 	this.ops.push({ "name" : "Delete AutoSaves",
 			"action" : bind(this.rm_autosaves, this, false),
-			"handle": $("op-rm_autosaves"),
+			"handle": getElement("op-rm_autosaves"),
 			"event" : null });
 
 	this.ops.push({ "name" : "Check Files' Code",
 			"action" : bind(this.check_code, this),
-			"handle": $("op-check"),
+			"handle": getElement("op-check"),
 			"event" : null });
 
 	this.ops.push({ "name" : "View Log",
 			"action" : bind(this.view_log, this),
-			"handle": $("op-log"),
+			"handle": getElement("op-log"),
 			"event" : null });
 
 	this.init();

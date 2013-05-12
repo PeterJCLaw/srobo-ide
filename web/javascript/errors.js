@@ -86,11 +86,11 @@ function ErrorsPage() {
 	}
 
 	this._onfocus = function() {
-		setStyle( $("errors-page"), {"display":"block"} );
+		setStyle( "errors-page", {"display":"block"} );
 	}
 
 	this._onblur = function() {
-		setStyle( $("errors-page"), {"display":"none"} );
+		setStyle( "errors-page", {"display":"none"} );
 	}
 
 	this._file_count = function() {

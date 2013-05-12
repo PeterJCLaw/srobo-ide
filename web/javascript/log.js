@@ -103,10 +103,11 @@ Log.prototype._populateList = function() {
 
 	//print summary information
 	var entries = this.history.length;
+	var logSummaryElem = getElement("log-summary");
 	if(entries <= 0) {
-		$("log-summary").innerHTML = "There are no revisions available for file(s): "+this.file;
+		logSummaryElem.innerHTML = "There are no revisions available for file(s): "+this.file;
 	} else {
-		$("log-summary").innerHTML = "Displaying "+entries+" revision(s) between "
+		logSummaryElem.innerHTML = "Displaying "+entries+" revision(s) between "
 			+this._histDate(this.history.length-1)+" & "+this._histDate(0)
 			+" Page "+(this.offset+1)+" of "+(this.pageCount);
 	}
@@ -133,44 +134,47 @@ Log.prototype._populateList = function() {
 
 
 	//clear log list
-	replaceChildNodes($("log-list"), null);
+	var logListElem = getElement("log-list");
+	replaceChildNodes(logListElem);
 	//now populate log list
 	for(var x=0; x <this.history.length; x++) {
 		var logtxt = SPAN(IDE_hash_shrink(this.history[x].hash)+" | "+this.history[x].author+" | "+this._histDate(x));
 		var radio = INPUT({'type' : 'radio', 'name' : 'log', 'class' : 'log-radio', 'value' : this.history[x].hash });
 		var label = LABEL( null, radio, logtxt );
 		var commitMsg = DIV({'class' : 'commit-msg'}, this.history[x].message);
-		appendChildNodes($("log-list"), LI(null, label, commitMsg));
+		appendChildNodes(logListElem, LI(null, label, commitMsg));
 	}
 	//make selected user selected in drop down box (visual clue that filter is applied)
 	if(this.user != null) {
-		$('repo-users').value = findValue(this.userList, this.user);
+		getElement('repo-users').value = findValue(this.userList, this.user);
 	}
 
 	//connect event handler for when user applies filter to results
 	connect('repo-users', 'onchange', bind(this._update, this));
 
 	//disconnect the older/newer buttons
-	disconnectAll($("older"));
-	disconnectAll($("newer"));
+	var olderButton = getElement('older');
+	var newerButton = getElement('newer');
+	disconnectAll(olderButton);
+	disconnectAll(newerButton);
 
 	//if older results are available, enable the 'older' button and hook it up
 	if(this.offset < (this.pageCount-1)) {
-		$("older").disabled = false;
-		connect($("older"), 'onclick', bind(this._nextview, this, +1));
+		olderButton.disabled = false;
+		connect(olderButton, 'onclick', bind(this._nextview, this, +1));
 	} else
-		$("older").disabled = true;
+		olderButton.disabled = true;
 
 	//if newer results are available, enable the 'newer' button and hook it up
 	if(this.offset > 0) {
-		$("newer").disabled = false;
-		connect($("newer"), 'onclick', bind(this._nextview, this, -1));
+		newerButton.disabled = false;
+		connect(newerButton, 'onclick', bind(this._nextview, this, -1));
 	} else
-		$("newer").disabled = true;
+		newerButton.disabled = true;
 
 	//connect up the 'Revert' button to event handler
-	disconnectAll($("revert"));
-	connect($("revert"), 'onclick', bind(this._revert, this, false));
+	disconnectAll("revert");
+	connect("revert", 'onclick', bind(this._revert, this, false));
 
 	//connect up the 'Diff' button to event handler
 	disconnectAll('log-diff');
@@ -181,8 +185,8 @@ Log.prototype._populateList = function() {
 	connect('log-open', 'onclick', bind(this._open, this));
 
 	//connect up the close button on log menu
-	disconnectAll($("log-close"));
-	connect($("log-close"), 'onclick', bind(this.close, this));
+	disconnectAll("log-close");
+	connect("log-close", 'onclick', bind(this.close, this));
 }
 //get older (updown > 0) or newer (updown < 0) results
 Log.prototype._nextview = function(updown) {
@@ -193,7 +197,7 @@ Log.prototype._nextview = function(updown) {
 //called when user applies author filter
 Log.prototype._update = function() {
 	//find out which author was selected  using select value as key to userList array
-	var index = $('repo-users').value;
+	var index = getElement('repo-users').value;
 	//if user clicks 'All' (-1) clear user variable
 	if(index > -1) {
 		this.user = this.userList[index];
@@ -314,8 +318,8 @@ Log.prototype._open = function() {
 
 //tab gets focus
 Log.prototype._onfocus = function() {
-	if(getStyle($("log-mode"), "display") != "block") {
-		setStyle($("log-mode"), {"display" : "block"});
+	if(getStyle("log-mode", "display") != "block") {
+		setStyle("log-mode", {"display" : "block"});
 	}
 	//don't waste time doing query again, just process results in buffer
 	this._populateList();
@@ -323,7 +327,7 @@ Log.prototype._onfocus = function() {
 
 //tab loses focus
 Log.prototype._onblur = function() {
-	setStyle($("log-mode"), {"display" : "none"});
+	setStyle("log-mode", {"display" : "none"});
 }
 //tab is closed
 Log.prototype.close = function() {
