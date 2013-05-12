@@ -84,9 +84,18 @@ class ProjModule extends Module
 
 	public function projectInfo()
 	{
-		$output = Output::getInstance();
 		$this->verifyTeam();
-		$output->setOutput('project-info', array());
+		$config = Configuration::getInstance();
+		$repo_clone_url = $config->getConfig('repo_clone_url');
+
+		$auth = AuthBackend::getInstance();
+		$user = $auth->getCurrentUser();
+		var_dump($repo_clone_url);
+		$repo_clone_url = sprintf($repo_clone_url, $user, $this->team, $this->projectName);
+		var_dump($repo_clone_url);
+
+		$output = Output::getInstance();
+		$output->setOutput('repoUrl', $repo_clone_url);
 		return true;
 	}
 

@@ -257,6 +257,7 @@
 			<div id="proj-rpane">
 				<div id="proj-rpane-header">
 					<div id="proj-name"></div>
+					<div id="proj-info">https://USERNAME@www.studentrobotics.org/robogit/TEAMTLA/PROJNAME.git</div>
 					Ctrl+Click to Select (Cmd+Click on a Mac)<br>
 					Click to Open<br>
 				</div>

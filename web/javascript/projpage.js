@@ -151,6 +151,10 @@ ProjPage.prototype.list_projects = function() {
 	return this._list.projects;
 }
 
+ProjPage.prototype._got_proj_info = function(nodes) {
+	$('proj-info').innerHTML = nodes.repoUrl;
+}
+
 ProjPage.prototype._on_proj_change = function(proj, team) {
 	logDebug( "ProjPage._on_proj_change(\"" + proj + "\", " + team + ")" );
 	this.project = proj;
@@ -158,10 +162,15 @@ ProjPage.prototype._on_proj_change = function(proj, team) {
 	if( proj == "" )
 		this._rpane_hide();
 	else {
+		IDE_backend_request('proj/info',
+		                    { team: team, project: proj },
+		                    bind(this._got_proj_info, this),
+		                    function() {}
+		                   );
+		getElement('proj-info').innerHTML = '';
 		getElement("proj-name").innerHTML = "Project " + this.project;
 		this._rpane_show();
 	}
-
 }
 
 ProjPage.prototype.set_team = function(team) {
