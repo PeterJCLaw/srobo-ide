@@ -145,7 +145,7 @@ function ErrorsPage() {
 				opts.callback('pass');
 			}
 			//if not (quiet if pass or a mulifile call from the projpage and no errors yet and this is not the last one to check)
-			if( !( opts != null && (opts.quietpass || opts.projpage_multifile && projtab.has_focus() && async_count > 1) ) )
+			if( !( opts != null && (opts.quietpass || opts.projpage_multifile && projtab.has_focus() && IDE_async_count > 1) ) )
 				this._prompt = status_msg( "No errors found", LEVEL_OK );
 			this._clear_file(file);
 		}
