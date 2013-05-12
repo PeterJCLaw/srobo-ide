@@ -418,13 +418,6 @@ function User() {
 	this.can_admin = function() {
 		return false;
 	}
-
-	// Do the login if they press enter in the password box
-	this._pwd_on_keypress = function(ev) {
-		if ( ev.key()["string"] == "KEY_ENTER" )
-			this._do_login( null );
-	}
-
 };
 
 function TeamSelector() {
