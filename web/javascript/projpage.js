@@ -356,6 +356,8 @@ function ProjFileList() {
 
 	// The files/folders that are currently selected
 	this.selection = [];
+	// Files/folders that have tried to be selected while we were updating the list
+	this._deferred_selection = [];
 
 	// Member functions:
 	// Public:
@@ -403,6 +405,9 @@ ProjFileList.prototype.update = function( pname, team, rev ) {
 			       "class" : "loading"},
 			      "Loading project file listing..." ) );
 	}
+	if (pname != this._project || team != this._team) {
+		this.select_none();
+	}
 
 	this._project = pname;
 	this._team = team;
@@ -425,19 +430,10 @@ ProjFileList.prototype._auto_refresh = function() {
 	if( this.rev != "HEAD" && this.rev != 0 && this.rev != null )	//not showing HEAD
 		return;
 
-	// Should we not do an update?
-	// ie, are we on projpage and something's selected?
-	if( projtab.has_focus() && this.selection.length > 0 )
-	{
-		this._prepare_auto_refresh();
-	}
-	else
-	{
-		// this will bail if there's no project selected,
-		// but that's not something we need to worry about,
-		// because we'll get setup again if the user selects a project.
-		this.refresh(true);
-	}
+	// this will bail if there's no project selected,
+	// but that's not something we need to worry about,
+	// because we'll get setup again if the user selects a project.
+	this.refresh(true);
 }
 
 ProjFileList.prototype.refresh = function(auto) {
@@ -484,6 +480,7 @@ function flist_cmp(a,b) {
 
 // Handler for receiving the file list
 ProjFileList.prototype._received = function(nodes) {
+	this._deferred_selection = this.selection;
 	this.selection = new Array();
 	this._birth = new Date().valueOf();
 	log( "filelist received" );
@@ -493,6 +490,8 @@ ProjFileList.prototype._received = function(nodes) {
 		 UL( { "id" : "proj-filelist",
 		       "style" : "display:none" },
 		     map( bind(this._dir, this, 0), nodes.tree.sort(flist_cmp) ) ) );
+
+	this._deferred_selection = [];
 
 	this._show();
 }
@@ -529,6 +528,12 @@ ProjFileList.prototype._dir = function( level, node ) {
 		var children = map(bind(this._dir, this, level + 1), node.children.sort(flist_cmp));
 		appendChildNodes(node_li, UL({ "class" : "flist-l" }, children));
 	}
+
+	// Should it be selected?
+	if (findValue(this._deferred_selection, node.path) != -1) {
+		this._select_path(node.path, node_li);
+	}
+
 	return node_li;
 }
 
