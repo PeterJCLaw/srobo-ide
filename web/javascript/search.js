@@ -128,19 +128,53 @@ function SearchPage(results_handler) {
 
 function SearchResults(root) {
 	this._root = root || getElement('search-results');
+	this._container = null;
+	this._sections = {};
 
 	this.clear = function() {
 		replaceChildNodes(this._root);
+		this._container = null;
+		this._sections = {};
 	}
 
 	this.add = function(section, result) {
 		logDebug("Adding result '" + result + "' in section '" + section + "'.");
+
+		var result_li = LI(null, result);
+		var section_ul = this._get_section(section);
+		appendChildNodes(section_ul, result_li);
+	}
+
+	this._get_section = function(section) {
+		var ul = this._sections[section];
+		if (ul == null) {
+			this._sections[section] = ul = this._make_section(section);
+		}
+		return ul;
+	}
+
+	this._make_section = function(section) {
+		var container_dl = this._get_container();
+		var dt = DT(null, section);
+		var ul = UL();
+		var dd = DD(null, ul);
+		appendChildNodes(container_dl, dt, dd);
+		return ul;
+	}
+
+	this._get_container = function() {
+		if (this._container == null) {
+			this._container = DL();
+			appendChildNodes(this._root, this._container);
+		}
+		return this._container;
 	}
 }
 
 function MockProvider() {
 	this.search = function(page, query) {
 		page.add_result('Mock', 'foo ' + query + ' bar');
+		page.add_result('Mock', 'second ' + query + ' bar');
 		return false;
 	}
 }
