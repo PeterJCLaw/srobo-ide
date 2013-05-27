@@ -512,26 +512,24 @@ ProjFileList.prototype._nested_divs = function( level, inner ) {
 // Returns a DOM object for the given node
 ProjFileList.prototype._dir = function( level, node ) {
 	// Assemble the link with divs in it
-	var link = A( { "href" : "#",
-			"ide_path" : node.path,
-			"ide_kind" : node.kind },
-		this._nested_divs( level, node.name + (node.kind == "FOLDER"?"/":"") ) );
-	connect( link, "onclick", bind( this._onclick, this ) );
+	var attrs = { href: '#', ide_path: node.path, ide_kind: node.kind };
+	var is_file = node.kind == "FILE";
+	var children = this._nested_divs(level, node.name + (is_file ? '' : '/'));
+	var link = A(attrs, children);
+	connect( link, "onclick", bind(this._onclick, this) );
 
-	// Assemble links to available autosave, if there is one
-	var autosave_link = this._autosave_link( node, level );
-
-	if( node.kind == "FILE" ) {
-		var path_arr = node.path.split('/');
-		if( path_arr[path_arr.length-1] == 'robot.py' && level == 0 )
+	var node_li = LI(attrs, link);
+	if (is_file) {
+		// Assemble links to available autosave, if there is one
+		var autosave_link = this._autosave_link( node, level );
+		if (level == 0 && node.path.endsWith('/robot.py'))
 			this.robot = true;
-		var n = LI( null, link , autosave_link );
-		return n;
-	} else
-		var n = LI( null, [ link,
-			UL( { "class" : "flist-l" },
-			map( bind(this._dir, this, level + 1), node.children.sort(flist_cmp) ) ) ] );
-	return n;
+		appendChildNodes(node_li, autosave_link);
+	} else {
+		var children = map(bind(this._dir, this, level + 1), node.children.sort(flist_cmp));
+		appendChildNodes(node_li, UL({ "class" : "flist-l" }, children));
+	}
+	return node_li;
 }
 
 // Returns a DOM link for the given node's autosave, if it exists
