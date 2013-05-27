@@ -20,7 +20,7 @@ function SearchPage(results_handler) {
 	// Hold a list of the current async searching providers
 	this._async_results = new Array();
 
-	this._results = results_handler || new SearchResults();
+	this._results = results_handler;
 
 	this._root = getElement('search-page');
 
@@ -124,6 +124,14 @@ function SearchPage(results_handler) {
 
 		this._inited = false;
 	}
+}
+
+SearchPage.GetInstance = function() {
+	if (SearchPage.Instance == null) {
+		var results = new SearchResults();
+		SearchPage.Instance = new SearchPage(results);
+	}
+	return SearchPage.Instance;
 }
 
 function SearchResults(root) {

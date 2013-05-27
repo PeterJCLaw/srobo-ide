@@ -111,7 +111,7 @@ function load_gui() {
 	adminpage = new Admin();
 
 	//The Search page - this must happen before populate_shortcuts_box is called
-	searchpage = new SearchPage();
+	searchpage = SearchPage.GetInstance();
 	searchpage.add_provider(new ProjectNameSearchProvider());
 
 	var shortcutsList = populate_shortcuts_box();
