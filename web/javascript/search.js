@@ -151,7 +151,7 @@ function SearchResults(root) {
 	 *           Probably some form of navigation to the location where the match was.
 	 */
 	this.add = function(section, result) {
-		logDebug("Adding result '" + result + "' in section '" + section + "'.");
+		logDebug("Adding result '" + JSON.stringify(result) + "' in section '" + section + "'.");
 
 		var result_li = LI(null, result.text);
 		if (result.action != null) {
