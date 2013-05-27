@@ -734,6 +734,9 @@ function ProjSelect(plist, elem) {
 	// Project to transition to when the projlist changes
 	this.trans_project = "";
 
+	// The 'Select a project' option
+	this._tmp_select = null;
+
 	// The team that we're currently listing
 	this._team = null;
 
@@ -746,6 +749,7 @@ function ProjSelect(plist, elem) {
 
 	// Member functions:
 	// Public:
+	// - select(project): Selects the given project, if it exists.
 
 	// Private:
 	//  - _init: Initialisation.
@@ -771,6 +775,7 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	var startproj = this.project;
 	var startteam = this._team;
 	var items = [];
+	this._tmp_select = null;
 
 	if( this._prompt != null ) {
 		this._prompt.close();
@@ -794,8 +799,9 @@ ProjSelect.prototype._plist_onchange = function(team) {
 		if( dp == null ) {
 			// Add "Please select..."
 			this._prompt = status_msg( "Please select a project", LEVEL_INFO );
-			items.unshift( OPTION( { "id" : "projlist-tmpitem",
-						 "selected" : "selected" }, "Select a project." ) );
+			var opts = { value: -1, selected: "selected" };
+			this._tmp_select = OPTION(opts, "Select a project.");
+			items.unshift(this._tmp_select);
 		} else
 			this.project = dp;
 	}
@@ -825,20 +831,34 @@ ProjSelect.prototype._onchange = function(ev) {
 	//hide the status bar - anything there is now obselete
 	status_hide();
 
-	var src = ev.src();
+	this.select(ev.src().value);
+}
 
-	// Remove the "select a project" item from the list
-	var tmp = getElement("projlist-tmpitem");
-	if( tmp != null && src != tmp )
-		removeElement( tmp );
+/**
+ * Select the given project.
+ * This is expected to be used when triggering from a user action that
+ * isn't necessarily on the project page, but also provides separation
+ * between the onchange handler and its actions.
+ * @param project: The name of the project to switch to.
+ */
+ProjSelect.prototype.select = function(project) {
+	if (!this._plist.project_exists(project)) {
+		return;
+	}
 
-	if( src != tmp ) {
-		var proj = src.value;
-
-		if( proj != this.project ) {
-			this.project = proj;
-			signal( this, "onchange", this.project, this._team );
+	if (this._tmp_select != null) {
+		// Don't allow switching _to_ the 'Please select' option.
+		if (project == this._tmp_select.value) {
+			return;
 		}
+		removeElement(this._tmp_select);
+		this._tmp_select = null;
+	}
+
+	if (project != this.project) {
+		this.project = project;
+		this._elem.value = project;
+		signal(this, "onchange", project, this._team);
 	}
 }
 
