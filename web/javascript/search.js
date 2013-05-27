@@ -130,17 +130,33 @@ function SearchResults(root) {
 	this._root = root || getElement('search-results');
 	this._container = null;
 	this._sections = {};
+	this._signals = [];
 
 	this.clear = function() {
 		replaceChildNodes(this._root);
 		this._container = null;
 		this._sections = {};
+		for (var i = 0; i < this._signals.length; i++) {
+			disconnect(this._signals[i]);
+		}
+		this._signals = [];
 	}
 
+	/**
+	 * Adds a search result to the given result section.
+	 * @param section: The name of the section to add the result to.
+	 * @param result: A result object:
+	 *    .text: Text to displayed that describes the match (eg: the whole source line matched).
+	 *  .action: [optional] A function to be called when the user double-clicks on the result.
+	 *           Probably some form of navigation to the location where the match was.
+	 */
 	this.add = function(section, result) {
 		logDebug("Adding result '" + result + "' in section '" + section + "'.");
 
-		var result_li = LI(null, result);
+		var result_li = LI(null, result.text);
+		if (result.action != null) {
+			this._signals.push(connect(result_li, 'ondblclick', result.action));
+		}
 		var section_ul = this._get_section(section);
 		appendChildNodes(section_ul, result_li);
 	}
@@ -173,8 +189,8 @@ function SearchResults(root) {
 
 function MockProvider() {
 	this.search = function(page, query) {
-		page.add_result('Mock', 'foo ' + query + ' bar');
-		page.add_result('Mock', 'second ' + query + ' bar');
+		page.add_result('Mock', { text: 'foo ' + query + ' bar' });
+		page.add_result('Mock', { text: 'second ' + query + ' bar' });
 		return false;
 	}
 }
@@ -185,7 +201,7 @@ function MockAsyncProvider(delay) {
 
 	this.search = function(page, query) {
 		this._def = callLater(this._delay, function() {
-			page.add_result('MockAsync', 'foo ' + query + ' bar');
+			page.add_result('MockAsync', { text: 'foo ' + query + ' bar' });
 		});
 		return true;
 	}

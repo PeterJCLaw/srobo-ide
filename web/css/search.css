@@ -9,3 +9,20 @@
 	margin-top: 1px;
 	padding: 0.2em;
 }
+
+#search-results dl {
+	margin-left: 1em;
+}
+
+#search-results dt {
+	font-weight: bold;
+	margin-top: 0.5em;
+}
+
+#search-results dd {
+	margin: 0;
+}
+
+#search-results li {
+	line-height: 1.5em;
+}
