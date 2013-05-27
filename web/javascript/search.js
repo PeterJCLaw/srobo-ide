@@ -66,7 +66,7 @@ function SearchPage(results_handler) {
 	this.cancel_searches = function() {
 		for (var i=0; i < this._async_results.length; i++) {
 			var provider = this._async_results[i];
-			provider.cancel_current();
+			provider.cancel();
 		}
 		this._async_results = new Array();
 	}
@@ -108,6 +108,7 @@ function SearchPage(results_handler) {
 			return;
 
 		this._clear();
+		this.cancel_searches();
 
 		this._tab.close();
 
@@ -141,5 +142,22 @@ function MockProvider() {
 	this.search = function(page, query) {
 		page.add_result('Mock', 'foo ' + query + ' bar');
 		return false;
+	}
+}
+
+function MockAsyncProvider(delay) {
+	this._delay = delay || 2;
+	this._def = null;
+
+	this.search = function(page, query) {
+		this._def = callLater(this._delay, function() {
+			page.add_result('MockAsync', 'foo ' + query + ' bar');
+		});
+		return true;
+	}
+
+	this.cancel = function() {
+		this._def.cancel();
+		this._def = null;
 	}
 }
