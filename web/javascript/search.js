@@ -220,17 +220,25 @@ function MockAsyncProvider(delay) {
 	}
 }
 
-function ProjectNameSearchProvider(proj_source) {
-	this._proj_source = proj_source || projpage;
+function ProjectNameSearchProvider(proj_source, selector) {
+	this._proj_source = proj_source;
+	this._proj_selector = selector;
 
 	this.search = function(page, query) {
 		var projects = this._proj_source.list_projects();
 		for (var i=0; i < projects.length; i++) {
 			var project = projects[i];
 			if (project.indexOf(query) != -1) {
-				page.add_result('Projects', { text: project });
+				var result = { text: project,
+				             action: bind(this._select_project, this, project) };
+				page.add_result('Projects', result);
 			}
 		}
 		return false;
+	}
+
+	this._select_project = function(project) {
+		tabbar.switch_to(projtab);
+		this._proj_selector.select(project);
 	}
 }

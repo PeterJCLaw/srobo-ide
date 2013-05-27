@@ -64,6 +64,9 @@ ProjPage.prototype._init = function() {
 	// Refresh the calendar when the project changes
 	connect(this._selector, "onchange", bind( this._calendar.change_proj, this._calendar ) );
 
+	var searcher = new ProjectNameSearchProvider(this, this._selector);
+	SearchPage.GetInstance().add_provider(searcher);
+
 	// Connect up the project management buttons
 	connect("new-project",		'onclick', bind(this.clickNewProject, this));
 //	Archive doesn't do anything yet!
