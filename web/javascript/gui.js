@@ -112,6 +112,7 @@ function load_gui() {
 
 	//The Search page - this must happen before populate_shortcuts_box is called
 	searchpage = new SearchPage();
+	searchpage.add_provider(new ProjectNameSearchProvider());
 
 	var shortcutsList = populate_shortcuts_box();
 

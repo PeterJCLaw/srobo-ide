@@ -211,3 +211,18 @@ function MockAsyncProvider(delay) {
 		this._def = null;
 	}
 }
+
+function ProjectNameSearchProvider(proj_source) {
+	this._proj_source = proj_source || projpage;
+
+	this.search = function(page, query) {
+		var projects = this._proj_source.list_projects();
+		for (var i=0; i < projects.length; i++) {
+			var project = projects[i];
+			if (project.indexOf(query) != -1) {
+				page.add_result('Projects', { text: project });
+			}
+		}
+		return false;
+	}
+}
