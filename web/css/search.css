@@ -1,0 +1,11 @@
+
+#search-page .menu-bar button {
+	margin-left: 1em;
+}
+
+#search-page #search-query {
+	margin-left: 1em;
+	margin-right: -1em;
+	margin-top: 1px;
+	padding: 0.2em;
+}

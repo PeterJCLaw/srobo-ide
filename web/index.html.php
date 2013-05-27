@@ -20,6 +20,7 @@
 	$styleSheets[] = "web/css/log.css";
 	$styleSheets[] = "web/css/menubar.css";
 	$styleSheets[] = "web/css/projpage.css";
+	$styleSheets[] = "web/css/search.css";
 	$styleSheets[] = "web/css/settings.css";
 	$styleSheets[] = "web/css/team-status.css";
 
@@ -42,6 +43,7 @@
 	$javaScripts[] = "web/javascript/projpage.js";
 	$javaScripts[] = "web/javascript/settings.js";
 	$javaScripts[] = "web/javascript/team-status.js";
+	$javaScripts[] = "web/javascript/search.js";
 	$javaScripts[] = "web/javascript/status.js";
 	$javaScripts[] = "web/javascript/tabs.js";
 
@@ -164,6 +166,22 @@
 			</div>
 			<div id="editpage-acebox"></div>
 		</div>
+
+		<div id="search-page" class="page">
+			<!-- Search Page -->
+			<div class="menu-bar">
+				<form action="" id="search-form">
+					<ul id="searchmenu">
+						<li><button type="button" id="search-clear-results" title="Clear all the search results.">Clear</button></li>
+						<li><input id="search-query" placeholder="Enter something to search for." title="Enter something to search for." /></li>
+						<li><button type="submit" id="search-go" title="Begins the search.">Search</button></li>
+						<li><button type="button" id="search-close" title="Close the search page.">Close</button></li>
+					</ul>
+				</form>
+				<div class="ie6-prop-clear" style="clear:both;"></div>
+			</div>
+			<div id="search-results"></div>
+		</div><!-- end search page -->
 
 		<div id="log-mode" class="page">
 			<!-- Log Viewer -->
