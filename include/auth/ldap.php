@@ -43,15 +43,26 @@ class LDAPAuth extends SecureTokenAuth
 		return $teams;
 	}
 
+	/**
+	 * Returns whether or not the user is in the requested group.
+	 * @param group: The group to search for.
+	 */
+	private function inGroup($group)
+	{
+		$config = Configuration::getInstance();
+		$user = $this->ldapManager->getUser();
+		$IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
+		$groups = $IDEldapManager->getGroupsForUser($user, $group);
+		// should either be 0 or 1 responses...
+		$inGroup = count($groups) > 0;
+		return $inGroup;
+	}
+
 	public function isCurrentUserAdmin()
 	{
 		$config = Configuration::getInstance();
 		$adminName = $config->getConfig("ldap.admin_group");
-		$user = $this->ldapManager->getUser();
-		$IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
-		$groups = $IDEldapManager->getGroupsForUser($user, $adminName);
-		// should either be 0 or 1 responses...
-		$isAdmin = count($groups) > 0;
+		$isAdmin = $this->inGroup($adminName);
 		return $isAdmin;
 	}
 
