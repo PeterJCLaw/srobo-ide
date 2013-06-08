@@ -107,6 +107,7 @@ function SearchPage(results_handler) {
 		if (!this._inited)
 			return;
 
+		this._onblur();
 		this._clear();
 		this.cancel_searches();
 

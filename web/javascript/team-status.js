@@ -82,11 +82,9 @@ TeamStatus.prototype._close = function()
 	this._signals = new Array();
 
 	/* Close tab */
+	this._onblur();
 	this.tab.close();
 	this._inited = false;
-
-	/* hide switchboard page */
-	setStyle("team-status-page", {'display':'none'});
 }
 /* *****	End Tab events		***** */
 
