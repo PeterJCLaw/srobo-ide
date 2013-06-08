@@ -178,7 +178,6 @@ class GitRepository
 	public static function createRepository($path, $bare = false, $source = null)
 	{
 		self::checkPath($path);
-		$s_bin = escapeshellarg(self::gitBinaryPath());
 		ide_log(LOG_INFO, "Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
 		if (!is_dir($path))
 		{
@@ -220,7 +219,6 @@ class GitRepository
 	public static function cloneRepository($from, $to)
 	{
 		self::checkPath($to);
-		$s_bin = escapeshellarg(self::gitBinaryPath());
 
 		ide_log(LOG_INFO, "Cloning a repository at $from to $to.");
 
