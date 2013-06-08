@@ -6,7 +6,7 @@
 	<title>Robotics IDE</title>
 	<!-- Style Sheets -->
 <?php
-	require_once('include/cache-utils.php');
+	require_once('include/html-utils.php');
 	$styleSheets[] = "web/css/newstyle.css";
 	// Everything above here should be in that order so things don't explode,
 	// but below here things matter less, so go alphabetical...
@@ -50,12 +50,8 @@
 	$javaScripts[] = "web/javascript/ace/src/ace.js";
 	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
 
-	$combined_css = 'web/cache/combined.css';
-	combine_into($styleSheets, $combined_css);
-	echo '<link rel="stylesheet" type="text/css" href="' . $combined_css . '">', PHP_EOL;
-	$combined_js = 'web/cache/combined.js';
-	combine_into($javaScripts, $combined_js);
-	echo '<script type="text/javascript" src="' . $combined_js . '"></script>', PHP_EOL;
+	output_statics($styleSheets, 'css_tag', 'web/cache/combined.css');
+	output_statics($javaScripts, 'js_tag', 'web/cache/combined.js');
 
 	if (Configuration::getInstance()->getConfig('usage_tracking')): ?>
 	<!-- TODO: support some form of DNT? -->

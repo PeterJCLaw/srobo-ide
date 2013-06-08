@@ -9,7 +9,7 @@
 
 	<!-- Javascript Source Files -->
 <?php
-	require_once('include/cache-utils.php');
+	require_once('include/html-utils.php');
 	$javaScripts[] = "web/javascript/base64.js";
 	$javaScripts[] = "web/javascript/json2.js";
 	$javaScripts[] = "web/javascript/ide.js";
@@ -17,9 +17,7 @@
 	$javaScripts[] = "web/javascript/status.js";
 	$javaScripts[] = "web/javascript/login.js";
 
-	$combined_js = 'web/cache/login-combined.js';
-	combine_into($javaScripts, $combined_js);
-	echo '<script type="text/javascript" src="' . $combined_js . '"></script>', PHP_EOL;
+	output_statics($javaScripts, 'js_tag', 'web/cache/login-combined.js');
 ?>
 </head>
 <body id="login-back">
