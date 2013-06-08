@@ -242,3 +242,76 @@ function ProjectNameSearchProvider(proj_source, selector) {
 		this._proj_selector.select(project);
 	}
 }
+
+function FileNameSearchProvider(proj_source, selector) {
+	this._proj_source = proj_source;
+	this._proj_selector = selector;
+
+	this._cancelled = false;
+
+	this.cancel = function() {
+		this._cancelled = true;
+		this._page = null;
+		this._query = null;
+	}
+
+	this.search = function(page, query) {
+		this._cancelled = false;
+		this._page = page;
+		this._query = query;
+		var projects = this._proj_source.list_projects();
+		for (var i=0; i < projects.length; i++) {
+			this._get_files(projects[i]);
+		}
+		return true;
+	}
+
+	this._got_files = function(project, nodes) {
+		if (this._cancelled) {
+			return;
+		}
+		this._search_tree(project, nodes.tree);
+	}
+
+	this._search_tree = function(project, tree) {
+		for (var i=0; i < tree.length; i++) {
+			var node = tree[i];
+			logDebug('FNSP checking ' + JSON.stringify(node));
+			if (node.name.indexOf(this._query) != -1) {
+				var result = { text: node.path,
+				             action: bind(this._select_file, this, project, node.path) };
+				this._page.add_result('Files', result);
+			}
+			if (node.kind == 'FOLDER') {
+				this._search_tree(project, node.children);
+			}
+		}
+	}
+
+	this._get_files = function(project, isRetry) {
+		if (this._cancelled) {
+			return;
+		}
+		var opts = { team: team, project: project };
+		var err_handler;
+		if (!isRetry) {
+			err_handler = bind(this._get_files, this, true);
+		} else {
+			err_handler = function(){};
+		}
+		IDE_backend_request("file/compat-tree", opts,
+		                    bind(this._got_files, this, project),
+		                    err_handler);
+	}
+
+	this._select_file = function(project, path) {
+		tabbar.switch_to(projtab);
+		logDebug('before switching project');
+		this._proj_selector.select(project);
+		logDebug('mid');
+		var flist = this._proj_source.flist;
+		flist.select_none();
+		flist.select(path);
+		logDebug('files selected');
+	}
+}

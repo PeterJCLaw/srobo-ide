@@ -68,6 +68,9 @@ ProjPage.prototype._init = function() {
 	var proj_searcher = new ProjectNameSearchProvider(this, this._selector);
 	searchpage.add_provider(proj_searcher);
 
+	var file_searcher = new FileNameSearchProvider(this, this._selector);
+	searchpage.add_provider(file_searcher);
+
 	// Connect up the project management buttons
 	connect("new-project",		'onclick', bind(this.clickNewProject, this));
 //	Archive doesn't do anything yet!
@@ -590,6 +593,21 @@ ProjFileList.prototype.select_all = function() {
 	var files = getElement('proj-filelist').getElementsByTagName('li');
 	for(var i=0; i<files.length; i++) {
 		this._select_path(getNodeAttribute(files[i].firstChild, "ide_path"), files[i]);
+	}
+}
+
+ProjFileList.prototype.select = function(path) {
+	var root = getElement('proj-filelist');
+	if (hasElementClass(root, 'loading')) {
+		this.selection.push(path);
+	}
+	var allNodes = root.getElementsByTagName('li');
+	for(var i=0; i < allNodes.length; i++) {
+		var node = allNodes[i];
+		if (getNodeAttribute(node.firstChild, 'ide_path') == path) {
+			this._select_path(path, node);
+			break;
+		}
 	}
 }
 
