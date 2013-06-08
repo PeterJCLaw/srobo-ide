@@ -24,7 +24,6 @@
 	$styleSheets[] = "web/css/team-status.css";
 
 	// Javascript Source Files
-	$javaScripts[] = "web/javascript/base64.js";
 	$javaScripts[] = "web/javascript/json2.js";
 	$javaScripts[] = "web/javascript/ide.js";
 	$javaScripts[] = "web/javascript/MochiKit.js";
