@@ -318,16 +318,14 @@ Log.prototype._open = function() {
 
 //tab gets focus
 Log.prototype._onfocus = function() {
-	if(getStyle("log-mode", "display") != "block") {
-		setStyle("log-mode", {"display" : "block"});
-	}
+	showElement('log-mode');
 	//don't waste time doing query again, just process results in buffer
 	this._populateList();
 }
 
 //tab loses focus
 Log.prototype._onblur = function() {
-	setStyle("log-mode", {"display" : "none"});
+	hideElement('log-mode');
 }
 //tab is closed
 Log.prototype.close = function() {

@@ -22,7 +22,7 @@ function status_clearclass() {
 
 // Hide the status bar
 function status_hide() {
-	setStyle( "status-span", {"display":"none"} );
+	hideElement('status-span');
 
 	var s = getElement(status_id);
 	status_clearclass();

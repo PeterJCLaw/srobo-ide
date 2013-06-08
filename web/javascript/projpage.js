@@ -127,12 +127,12 @@ ProjPage.prototype.show = function() {
 	logDebug( "Projpage.show: Current project is \"" + this.project + "\"" );
 	this._init();
 
-	setStyle('projects-page', {'display':'block'});
+	showElement('projects-page');
 }
 
 ProjPage.prototype.hide = function() {
 	logDebug( "Hiding the projects page" );
-	setStyle('projects-page', {'display':'none'});
+	hideElement('projects-page');
 }
 
 ProjPage.prototype.hide_filelist = function() {
@@ -471,11 +471,11 @@ ProjFileList.prototype.refresh = function(auto) {
 }
 
 ProjFileList.prototype._hide = function() {
-	setStyle( "proj-filelist", {"display":"none"} );
+	hideElement('proj-filelist');
 }
 
 ProjFileList.prototype._show = function() {
-	setStyle( "proj-filelist", {"display":""} );
+	showElement('proj-filelist');
 }
 
 //compare filelist items for use in sorting it

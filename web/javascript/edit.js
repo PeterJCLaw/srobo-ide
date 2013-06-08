@@ -65,13 +65,13 @@ function EditPage() {
 
 	// Show the edit page
 	this._show = function() {
-		setStyle("edit-mode", {"display" : "block"});
+		showElement('edit-mode');
 		this._window_resize();
 	}
 
 	// Hide the edit page
 	this._hide = function() {
-		setStyle("edit-mode", {"display" : "none"});
+		hideElement('edit-mode');
 	}
 
 	// Mark the given errors in the named file
