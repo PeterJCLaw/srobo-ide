@@ -717,18 +717,9 @@ class GitRepository
 		}
 		else
 		{
-			$stash_id = 'Stashing before getFile of '.$commit;
-			$needs_unstash = $this->stash($stash_id);
-			$this->checkoutFile($path, $commit);
-
-			$code = file_get_contents($this->working_path . "/$path");
-
-			// reset the tree back to tip
-			$this->checkoutFile($path, 'master');
-			if ($needs_unstash)
-			{
-				$this->stashPop($stash_id);
-			}
+			$s_commit = escapeshellarg($commit);
+			$s_path = escapeshellarg($path);
+			$code = $this->gitExecute(false, "show $s_commit:$s_path");
 			return $code;
 		}
 	}
@@ -810,7 +801,7 @@ class GitRepository
 	public function diff($file=null, $staged=false)
 	{
 		$s_command = 'diff';
-		if($staged)
+		if ($staged)
 		{
 			$s_command .= ' --cached';
 		}
@@ -824,7 +815,11 @@ class GitRepository
 	}
 
 	/**
-	 * does a git clone on destination then deletes the .git directory
+	 * Creates a Zip archive containing the contents of this repo,
+	 * at the specified revision.
+	 * @param dest: The file to create.
+	 * @param commit: The point in the history to get the contents from
+	 *                (defaults to HEAD).
 	 */
 	public function archiveSourceZip($dest, $commit = 'HEAD')
 	{
@@ -832,7 +827,7 @@ class GitRepository
 		$dest = realpath($dest);
 		$s_dest = escapeshellarg($dest);
 		$s_commit = escapeshellarg($commit);
-		$this->gitExecute(true, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
+		$this->gitExecute(false, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
 	}
 
 	/**

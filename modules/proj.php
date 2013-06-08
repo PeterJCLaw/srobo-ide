@@ -5,7 +5,6 @@ class ProjModule extends Module
 	private $team;
 	private $projectName;
 	private $projectManager;
-	private $projectRepository;
 
 	public function __construct()
 	{
@@ -43,30 +42,8 @@ class ProjModule extends Module
 		$input = Input::getInstance();
 		$this->team = $input->getInput('team');
 
-		// check that the project exists and is a git repo otherwise construct
-		// the project directory and git init it
 		$project = $input->getInput('project');
-
-		$this->openProject($this->team, $project);
 		$this->projectName = $project;
-	}
-
-	private function updateProject()
-	{
-		$this->verifyTeam();
-
-		if ($this->projectRepository == null)
-		{
-			return false;
-		}
-
-		$auth = AuthBackend::getInstance();
-		$currentUser = $auth->getCurrentUser();
-
-		$this->projectManager->updateRepository($this->team,
-		                                        $this->projectName,
-		                                        $currentUser);
-		return true;
 	}
 
 	private function verifyTeam()
@@ -117,7 +94,8 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 
-		if ($this->projectRepository == null)
+		$repo = $this->openProject($this->team, $this->projectName);
+		if ($repo == null)
 		{
 			return false;
 		}
@@ -131,16 +109,16 @@ class ProjModule extends Module
 
 		$files = $input->getInput("paths");
 		//gaurd project state by doing a reset
-		$this->projectRepository->unstageAll();
+		$repo->unstageAll();
 
 		//stage the files
 		foreach ($files as $file)
 		{
-			$this->projectRepository->stage($file);
+			$repo->stage($file);
 		}
 
 		$currentUserEmail = UserInfo::makeCommitterEmail($currentUser);
-		$commitResult = $this->projectRepository->commit($message,
+		$commitResult = $repo->commit($message,
 		                                                 $currentUser,
 		                                                 $currentUserEmail);
 		// couldn't make the commit
@@ -152,7 +130,7 @@ class ProjModule extends Module
 		                                                     $this->projectName,
 		                                                     $currentUser);
 		$output->setOutput('merges', $conflicts);
-		$output->setOutput('commit', $this->projectRepository->getCurrentRevision());
+		$output->setOutput('commit', $repo->getCurrentRevision());
 		return true;
 	}
 
@@ -161,7 +139,8 @@ class ProjModule extends Module
 		$this->verifyTeam();
 
 		//bail if we aren't in a repo
-		if ($this->projectRepository == null)
+		$repo = $this->projectManager->getMasterRepository($this->team, $this->projectName);
+		if ($repo == null)
 		{
 			return false;
 		}
@@ -172,7 +151,7 @@ class ProjModule extends Module
 		$firstRev = $input->getInput('end-commit', true);
 
 		// if the revisions are null then it just grabs the whole log
-		$output->setOutput('log', $this->projectRepository->log($firstRev, $currRev));
+		$output->setOutput('log', $repo->log($firstRev, $currRev));
 		return true;
 	}
 
@@ -181,7 +160,8 @@ class ProjModule extends Module
 		$this->verifyTeam();
 
 		//bail if we aren't in a repo
-		if ($this->projectRepository == null)
+		$repo = $this->projectManager->getMasterRepository($this->team, $this->projectName);
+		if ($repo == null)
 		{
 			return false;
 		}
@@ -196,7 +176,7 @@ class ProjModule extends Module
 		// even if it does then it shouldn't matter as it'll still be the same hash
 		if ($hash == 'HEAD')
 		{
-			$hash = $this->projectRepository->getCurrentRevision();
+			$hash = $repo->getCurrentRevision();
 		}
 
 		$projNameEscaped = rawurlencode($this->projectName);
@@ -210,7 +190,7 @@ class ProjModule extends Module
 			return false;
 		}
 
-		$helper = new CheckoutHelper($this->projectRepository, $this->team);
+		$helper = new CheckoutHelper($repo, $this->team);
 		$helper->buildZipFile("$servePath/robot.zip", $hash);
 
 		$output->setOutput('url', "$serveUrl/robot.zip");
@@ -224,12 +204,6 @@ class ProjModule extends Module
 	public function redirectToZip()
 	{
 		$this->verifyTeam();
-
-		//bail if we aren't in a repo
-		if ($this->projectRepository == null)
-		{
-			return false;
-		}
 
 		$config = Configuration::getInstance();
 		$output = Output::getInstance();
@@ -263,12 +237,14 @@ class ProjModule extends Module
 			}
 			else
 			{
-				return;
+				return null;
 			}
 		}
-		$this->updateProject();
-		$this->projectRepository =
-			$this->projectManager->getUserRepository($team, $project, AuthBackend::getInstance()->getCurrentUser());
+
+		$this->verifyTeam();
+		$user = AuthBackend::getInstance()->getCurrentUser();
+		$repo = $this->projectManager->getUserRepository($this->team, $this->projectName, $user);
+		return $repo;
 	}
 
 	public function cron()

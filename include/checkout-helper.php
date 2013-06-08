@@ -43,8 +43,7 @@ class CheckoutHelper
 
 		// log exactly what we've done,
 		// so that we can easily track which teams have been served what
-		$repoName = basename($this->repo->workingPath());
-		Logger::log(LOG_INFO, "Created ZipFile for team '$this->team' based on lib_robot '$libRobotHash' and team repo '$repoName' at '$revision'.");
+		ide_log(LOG_INFO, "Created ZipFile for team '$this->team' based on lib_robot '$libRobotHash' and team repo '$projName' at '$revision'.");
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
