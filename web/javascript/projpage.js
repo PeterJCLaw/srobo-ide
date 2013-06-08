@@ -152,7 +152,7 @@ ProjPage.prototype.list_projects = function() {
 }
 
 ProjPage.prototype._got_proj_info = function(nodes) {
-	$('proj-info').innerHTML = nodes.repoUrl;
+	getElement('proj-info').innerHTML = nodes.repoUrl;
 }
 
 ProjPage.prototype._on_proj_change = function(proj, team) {
