@@ -36,7 +36,6 @@
 	<script type="text/javascript" src="web/javascript/log.js"></script>
 	<script type="text/javascript" src="web/javascript/poll.js"></script>
 	<script type="text/javascript" src="web/javascript/projpage.js"></script>
-	<script type="text/javascript" src="web/javascript/robolog.js"></script>
 	<script type="text/javascript" src="web/javascript/settings.js"></script>
 	<script type="text/javascript" src="web/javascript/team-status.js"></script>
 	<script type="text/javascript" src="web/javascript/status.js"></script>
@@ -184,16 +183,6 @@
 			</div>
 		</div><!-- end log viewer -->
 
-		<div id="robolog-page" class="page">
-			<div>
-				<button id="robolog-clear">Clear</button>
-				<span id="robolog-status"></span>
-			</div>
-			<pre id="robolog-pre">
-				Robot log
-			</pre>
-		</div>
-
 		<div id="projects-page" class="page">
 
 			<div id="proj-sidebar">
@@ -206,7 +195,6 @@
 					<!-- button id="archive-project" disabled="disabled">Archive Project</button -->
 					<button id="copy-project">Copy Project</button>
 					<button id="check-code">Check Code</button>
-					<!-- button id="simulate-project" disabled="disabled">Simulate Project</button -->
 				</div>
 
 				<hr />
@@ -391,10 +379,6 @@
 				</tr>
 			</table>
 		</div> <!-- end of "admin-page" -->
-
-		<div id="simulator-page" class="page">
-			<div id="graphics"></div>
-		</div> <!--end "simulator-page" -->
 
 		<div id="diff-page" class="page">
 			<div class="menu-bar">

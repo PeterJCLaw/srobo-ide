@@ -9,9 +9,6 @@ var tabbar = null;
 // The project page
 var projpage = null;
 
-// The simulator page
-var simpage = null;
-
 // The project tab
 var projtab = null;
 
@@ -20,9 +17,6 @@ var editpage = null;
 
 // The errors tab
 var errorspage = null;
-
-// The robot log page
-var robolog = null;
 
 // The user
 var user;
@@ -130,9 +124,6 @@ function load_gui() {
 	connect( projtab, "onblur", bind( projpage.hide, projpage ) );
 	tabbar.add_tab( projtab );
 
-	// Simulator tab
-	//simpage = new SimPage();
-
 	// Checkout handler
 	Checkout.GetInstance().init();
 
@@ -141,8 +132,6 @@ function load_gui() {
 
 	// Errors Tab
 	errorspage = new ErrorsPage();
-
-	robolog = new RoboLog();
 
 	//The selection operations
 	sel_operations = new ProjOps();
@@ -248,7 +237,7 @@ function populate_shortcuts_box() {
 // Take id of existing hidden div to make into appearing box
 function dropDownBox (id, children) {
 	this._init = function(id, children) {
-		this.id = $(id);
+		this.id = getElement(id);
 		appendChildNodes(this.id, children);
 		connect( this.id, "onmouseenter", bind( this._clearTimeout, this) );	// when mouse is inside the dropbox disable timeout
 		connect( this.id, "onmouseleave", bind( this.hideBox, this ) );		// when mouse leaves dropbox hide it
@@ -285,7 +274,7 @@ function dropDownBox (id, children) {
 // Show some info about the IDE, just the version number for now
 function AboutBox() {
 	this._init = function() {
-		this.box = $('about-box');
+		this.box = getElement('about-box');
 		connect( this.box, "onclick", bind( this.hideBox, this ) );
 		this.got_info = false;
 	}
@@ -307,11 +296,11 @@ function AboutBox() {
 	this.showBox = function() {
 		this.get_info();
 		removeElementClass( this.box, "hidden" );
-		showElement($("grey-out"));
+		showElement("grey-out");
 	}
 	this.hideBox = function() {
 		addElementClass( this.box, "hidden" );
-		hideElement($("grey-out"));
+		hideElement("grey-out");
 	}
 
 	this._init();
@@ -429,13 +418,6 @@ function User() {
 	this.can_admin = function() {
 		return false;
 	}
-
-	// Do the login if they press enter in the password box
-	this._pwd_on_keypress = function(ev) {
-		if ( ev.key()["string"] == "KEY_ENTER" )
-			this._do_login( null );
-	}
-
 };
 
 function TeamSelector() {
@@ -484,7 +466,7 @@ function TeamSelector() {
 		var tname = SPAN( { "id" : "teamname" }, null );
 		teambox.push( tname );
 
-		replaceChildNodes( $("teaminfo"), teambox );
+		replaceChildNodes( "teaminfo", teambox );
 		this._update_name();
 
 		if( this._team_exists(team) )
@@ -539,7 +521,7 @@ function TeamSelector() {
 		}
 
 		// Remove the "please select a team" item from the list
-		var tmpitem = $("teamlist-tmpitem");
+		var tmpitem = getElement("teamlist-tmpitem");
 		if( tmpitem != null && src != tmpitem )
 			removeElement( tmpitem );
 
@@ -559,78 +541,6 @@ function TeamSelector() {
 				name = "Team " + team + ": " + name
 		}
 
-		replaceChildNodes( $("teamname"), " " + name );
+		replaceChildNodes( "teamname", " " + name );
 	}
-}
-
-
-// Count of outstanding asynchronous requests
-var async_count = 0;
-
-function postJSONDoc( url, qa ) {
-	alert("did a postJSONDoc: " + url);
-	async_count += 1;
-	showElement( $("rotating-box") );
-
-	var d = new Deferred();
-	var r;
-
-	if( qa == undefined ) {	//it shouldn't ever be, but if that's what they want...
-		r = doXHR( url );
-	} else {	//throw in some defaults, then run the call
-		qa.method = 'post';
-		qa.headers = {"Content-Type":"application/x-www-form-urlencoded"};
-		qa.sendContent = queryString(qa.sendContent);
-		r = doXHR( url, qa );
-	}
-
-	r.addCallback( partial( load_postedJSONDoc, d, 0 ) );
-	r.addErrback( partial( load_postedJSONDoc, d, 1 ) );
-
-	return d;
-}
-
-function load_postedJSONDoc( d, fail, XHR ) {
-	var res = evalJSONRequest(XHR);
-	if( fail == 0 )	//success
-		ide_json_cb( d, res );
-	else
-		ide_json_err( d, res );
-}
-
-function loadJSONDoc( url, qa ) {
-	alert("did a loadJSONDoc: " + url);
-	async_count += 1;
-	showElement( $("rotating-box") );
-
-	var d = new Deferred();
-	var r;
-
-	if( qa == undefined )
-		r = MochiKit.Async.loadJSONDoc( url );
-	else
-		r = MochiKit.Async.loadJSONDoc( url, qa );
-
-	r.addCallback( partial( ide_json_cb, d ) );
-	r.addErrback( partial( ide_json_err, d ) );
-
-	return d;
-}
-
-function ide_json_cb( d, res ) {
-	async_count -= 1;
-
-	if( async_count == 0 )
-		hideElement( $("rotating-box") );
-
-	d.callback(res);
-}
-
-function ide_json_err( def, res ) {
-	async_count -= 1;
-
-	if( async_count == 0 )
-		hideElement( $("rotating-box") );
-
-	def.errback(res);
 }

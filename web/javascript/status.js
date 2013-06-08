@@ -15,7 +15,7 @@ status_id = "status";
 
 function status_clearclass() {
 	var classes = ["status-info", "status-ok", "status-warn", "status-error"];
-	var s = $(status_id);
+	var s = getElement(status_id);
 
 	map( partial( removeElementClass, s ), classes );
 }

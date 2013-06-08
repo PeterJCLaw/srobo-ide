@@ -50,15 +50,16 @@ function Browser(cback, options) {
 
 Browser.prototype._init = function() {
 
-	$("new-commit-msg").value = this._DEFAULT_MSG;
+	getElement("new-commit-msg").value = this._DEFAULT_MSG;
+	var newFileNameElem = getElement("new-file-name");
 	if(this.type == 'isDir')
-		$("new-file-name").value = this._DEFAULT_DNAME;
+		newFileNameElem.value = this._DEFAULT_DNAME;
 	else if(this.type == 'isProj')
-		$("new-file-name").value = this._DEFAULT_PNAME;
+		newFileNameElem.value = this._DEFAULT_PNAME;
 	else if(this.type == 'isTag')
-		$("new-file-name").value = this._DEFAULT_TNAME;
+		newFileNameElem.value = this._DEFAULT_TNAME;
 	else
-		$("new-file-name").value = this._DEFAULT_FNAME;
+		newFileNameElem.value = this._DEFAULT_FNAME;
 
 	//make visible
 	this.display();
@@ -70,7 +71,7 @@ Browser.prototype._init = function() {
 		var projlist = new ProjList();
 		projlist.update(team);
 		// The selection box for selecting a project
-		this._selector = new ProjSelect(projlist, $("browser-project-select"));
+		this._selector = new ProjSelect(projlist, getElement("browser-project-select"));
 		connect( this._selector, "onchange", bind( this._getFileTree, this, team ) );
 	}
 
@@ -93,9 +94,9 @@ Browser.prototype._init = function() {
 	if(this.type == 'isProj'
 	 || this.type == 'isTag'
 	) {
-		$("new-file-name").focus();
+		getElement("new-file-name").focus();
 	} else {
-		$("new-commit-msg").focus();
+		getElement("new-commit-msg").focus();
 	}
 }
 
@@ -126,32 +127,33 @@ Browser.prototype._window_keydown = function(ev) {
 
 Browser.prototype._receiveTree = function(nodes) {
 	this.fileTree = nodes.tree;
-	$('save-new-file').disabled = false;
+	getElement('save-new-file').disabled = false;
 	//default to the first directory
-	replaceChildNodes($("left-pane-list"), null);
-	replaceChildNodes($("right-pane-list"), null);
-	this._processTree($("left-pane-list"), this.fileTree, "");
+	replaceChildNodes("left-pane-list", null);
+	replaceChildNodes("right-pane-list", null);
+	this._processTree(getElement("left-pane-list"), this.fileTree, "");
 	//fake a click on the LHS root to show the root files on the RHS
 	signal("left-pane", 'onclick');
 }
 
 Browser.prototype._errorReceiveTree = function(a) {
-	$("browser-status").innerHTML = "ERROR :: Unable to retrieve file list for "+a;
+	getElement("browser-status").innerHTML = "ERROR :: Unable to retrieve file list for "+a;
 	signal("left-pane", 'onclick');
 }
 
 Browser.prototype._getFileTree = function(tm) {
-	if($("browser-project-select").options[$("browser-project-select").selectedIndex].id == 'projlist-tmpitem')
+	var projSelect = getElement("browser-project-select");
+	if (projSelect.options[projSelect.selectedIndex].id == 'projlist-tmpitem')
 		return;
 
 	this._receiveTree({tree:[{autosave:0,children:[],kind:'FOLDER',name:'Loading...',path:'@',rev:-1}]});
-	$('save-new-file').disabled = true;
+	getElement('save-new-file').disabled = true;
 
 	IDE_backend_request("file/compat-tree", {team: tm,
-	                                         project: $("browser-project-select").value},
+	                                         project: projSelect.value},
 	                                         bind(this._receiveTree, this),
 	                                         bind(this._errorReceiveTree, this,
-	                                              $("browser-project-select").value));
+	                                              projSelect.value));
 }
 
 Browser.prototype._badCommitMsg = function(msg) {
@@ -170,8 +172,8 @@ Browser.prototype._badFname = function(name) {
 //when user clicks save
 Browser.prototype.clickSaveFile = function(noMsg) {
 	disconnectAll("browser-status");
-	this.commitMsg = $("new-commit-msg").value;
-	this.newFname = $("new-file-name").value;
+	this.commitMsg = getElement("new-commit-msg").value;
+	this.newFname = getElement("new-file-name").value;
 
 	switch(this.type) {
 		case 'isFile':
@@ -190,14 +192,14 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 
 	//don't allow null strings or pure whitespace
 	if(this._badFname(this.newFname)) {
-		$("browser-status").innerHTML = "Please specify a valid "+type+" name:";
-		$("new-file-name").focus();
+		getElement("browser-status").innerHTML = "Please specify a valid "+type+" name:";
+		getElement("new-file-name").focus();
 		return;
 	}
 
 	//fail if the file list is requested, but hasn't loaded
 	if((this.type == 'isFile' || this.type == 'isDir') && this.fileTree == null) {
-		$("browser-status").innerHTML = "Unable to save - file list not yet loaded";
+		getElement("browser-status").innerHTML = "Unable to save - file list not yet loaded";
 		return;
 	}
 
@@ -214,8 +216,8 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 		else
 			warn += ' in "'+this.newDirectory.substr(1)+'"';
 
-		$("browser-status").innerHTML = warn+"!";
-		$("new-file-name").focus();
+		getElement("browser-status").innerHTML = warn+"!";
+		getElement("new-file-name").focus();
 		return;
 	}
 
@@ -225,9 +227,9 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 		this._badCommitMsg(this.commitMsg) );
 
 	if(commitErrFlag) {
-		$("browser-status").innerHTML = "No commit message added - click to ignore";
-		connect($("browser-status"), 'onclick', bind(this.clickSaveFile, this, true));
-		$("new-commit-msg").focus();
+		getElement("browser-status").innerHTML = "No commit message added - click to ignore";
+		connect("browser-status", 'onclick', bind(this.clickSaveFile, this, true));
+		getElement("new-commit-msg").focus();
 		return;
 	}
 
@@ -291,10 +293,10 @@ Browser.prototype.dirSelected = function(directory, thingsInside, ev) {
 	logDebug("Folder selected :"+directory);
 	//update selected directory
 	this.newDirectory = directory;
-	$("selected-dir").innerHTML = directory;
+	getElement("selected-dir").innerHTML = directory;
 
 	//empty file list
-	replaceChildNodes($("right-pane-list"));
+	replaceChildNodes("right-pane-list");
 
 	//populate file list with only files from all the things contained within this directory
 	this._List = new Array();
@@ -302,21 +304,21 @@ Browser.prototype.dirSelected = function(directory, thingsInside, ev) {
 		if(thingsInside[j].kind == "FILE") {	//build li and append to pane
 			var li = LI(null, "");
 			li.innerHTML = thingsInside[j].name;
-			appendChildNodes($("right-pane-list"), li);
+			appendChildNodes("right-pane-list", li);
 		}
 		this._List.push(thingsInside[j].name);	//add to the list of all things regardless
 	}
 }
 
 Browser.prototype.display = function() {
-	showElement($("file-browser"));
-	showElement($("grey-out"));
+	showElement("file-browser");
+	showElement("grey-out");
 	hideElement('browser-diff');
 
 	switch(this.type) {
 		case 'isFile':
-			$("browser-status").innerHTML = "Please Select a save directory & new file name";
-			$("browser-title").innerHTML = this.title || "File Save As";
+			getElement("browser-status").innerHTML = "Please Select a save directory & new file name";
+			getElement("browser-title").innerHTML = this.title || "File Save As";
 			showElement("save-path");
 			showElement("right-pane");
 			showElement("left-pane");
@@ -324,8 +326,8 @@ Browser.prototype.display = function() {
 			showElement("new-file-name");
 			break;
 		case 'isDir' :
-			$("browser-status").innerHTML = "Please Select a save directory & new directory name";
-			$("browser-title").innerHTML = this.title || "New Directory";
+			getElement("browser-status").innerHTML = "Please Select a save directory & new directory name";
+			getElement("browser-title").innerHTML = this.title || "New Directory";
 			showElement("save-path");
 			showElement("right-pane");
 			showElement("left-pane");
@@ -333,8 +335,8 @@ Browser.prototype.display = function() {
 			showElement("new-file-name");
 			break;
 		case 'isCommit' :
-			$("browser-status").innerHTML = "Please add a commit message before saving";
-			$("browser-title").innerHTML = "Commit Changes:";
+			getElement("browser-status").innerHTML = "Please add a commit message before saving";
+			getElement("browser-title").innerHTML = "Commit Changes:";
 			hideElement("save-path");
 			hideElement("right-pane");
 			hideElement("left-pane");
@@ -342,8 +344,8 @@ Browser.prototype.display = function() {
 			hideElement("new-file-name");
 			break;
 		case 'isTag' :
-			$("browser-status").innerHTML = "Enter new tag name:";
-			$("browser-title").innerHTML = this.title || "New Tag";
+			getElement("browser-status").innerHTML = "Enter new tag name:";
+			getElement("browser-title").innerHTML = this.title || "New Tag";
 			hideElement("save-path");
 			hideElement("right-pane");
 			hideElement("left-pane");
@@ -351,8 +353,8 @@ Browser.prototype.display = function() {
 			showElement("new-file-name");
 			break;
 		case 'isProj' :
-			$("browser-status").innerHTML = "Enter new project name:";
-			$("browser-title").innerHTML = this.title || "New Project";
+			getElement("browser-status").innerHTML = "Enter new project name:";
+			getElement("browser-title").innerHTML = this.title || "New Project";
 			hideElement("save-path");
 			hideElement("right-pane");
 			hideElement("left-pane");
@@ -371,14 +373,14 @@ Browser.prototype.hide = function() {
 	disconnectAll("browser-status");
 	disconnect(this._show_diff);
 	disconnect(this._esc_press);
-	hideElement($("file-browser"));
-	hideElement($("grey-out"));
-	replaceChildNodes($("left-pane-list"));
-	replaceChildNodes($("right-pane-list"));
+	hideElement("file-browser");
+	hideElement("grey-out");
+	replaceChildNodes("left-pane-list");
+	replaceChildNodes("right-pane-list");
 }
 
 Browser.prototype._msg_focus = function() {
-	var t = $("new-commit-msg");
+	var t = getElement("new-commit-msg");
 
 	if( t.value == this._DEFAULT_MSG )
 		// Select all
@@ -386,7 +388,7 @@ Browser.prototype._msg_focus = function() {
 }
 
 Browser.prototype._fname_focus = function() {
-	var t = $("new-file-name");
+	var t = getElement("new-file-name");
 
 	if( t.value == this._DEFAULT_FNAME )
 		// Select all

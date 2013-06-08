@@ -16,11 +16,19 @@ function Login() {
 		disconnectAll( "login-box" );
 		connect( "login-box", "onsubmit", bind( this._do_login, this ) );
 
+		var userBox = getElement("username");
+
 		//clear box on focus, replace with 'username' on blur.
-		connect("username","onfocus",function(){if ($("username").value==$("username").defaultValue) $("username").value=''});
-		connect("username","onblur",function(){if (!$("username").value) $("username").value = $("username").defaultValue});
+		connect("username","onfocus",function(){
+			if (userBox.value == userBox.defaultValue)
+				userBox.value='';
+		});
+		connect("username","onblur",function(){
+			if (!userBox.value)
+				userBox.value = userBox.defaultValue;
+		});
 		//and focus the username
-		$("username").focus();
+		userBox.focus();
 	}
 
 	// Grab the username and password from the login form and start the login
@@ -30,15 +38,15 @@ function Login() {
 			ev.stopPropagation();
 		}
 
-		var user = $("username").value;
-		var pass = $("password").value;
+		var user = getElement("username").value;
+		var pass = getElement("password").value;
 
 		IDE_backend_request("auth/authenticate", {username: user, password: pass},
 			function(){ window.location.reload(); },
 			bind(function(errcode, errmsg) {
 				status_msg(errmsg, LEVEL_WARN);
-				$("password").value = '';
-				$("password").focus();
+				getElement("password").value = '';
+				getElement("password").focus();
 			}, this)
 		);
 	}

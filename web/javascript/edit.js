@@ -37,7 +37,7 @@ function EditPage() {
 	this._init = function() {
 		connect( tabbar, "onswitch", bind( this._tab_switch, this ) );
 
-		this.textbox = $('editpage-acebox');
+		this.textbox = getElement('editpage-acebox');
 		connect( window, 'onresize', bind(this._window_resize, this) );
 
 		this._iea = new ide_editarea('editpage-acebox');
@@ -52,7 +52,7 @@ function EditPage() {
 		}
 
 		// prevElem should be the menu bar
-		var prevElem = $('editpage-menu-bar');
+		var prevElem = getElement('editpage-menu-bar');
 
 		var dims = getElementDimensions(prevElem);
 		var pos = getElementPosition(prevElem);
@@ -65,13 +65,13 @@ function EditPage() {
 
 	// Show the edit page
 	this._show = function() {
-		setStyle($("edit-mode"), {"display" : "block"});
+		setStyle("edit-mode", {"display" : "block"});
 		this._window_resize();
 	}
 
 	// Hide the edit page
 	this._hide = function() {
-		setStyle($("edit-mode"), {"display" : "none"});
+		setStyle("edit-mode", {"display" : "none"});
 	}
 
 	//Is the given file open?
@@ -306,11 +306,11 @@ function EditTab(iea, team, project, path, rev, mode) {
 			this._isNew = true;
 			this.contents = "";
 			this._original = "";
-			$("check-syntax").disabled = true;
+			getElement("check-syntax").disabled = true;
 		} else {
 			// Existing file
 			this._load_contents();
-			$("check-syntax").disabled = false;
+			getElement("check-syntax").disabled = false;
 		}
 	}
 
@@ -430,7 +430,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		}
 		this._isNew = false;
 		this.rev = nodes.commit;
-		$("check-syntax").disabled = false;
+		getElement("check-syntax").disabled = false;
 		this._update_contents();
 	}
 
@@ -572,25 +572,26 @@ function EditTab(iea, team, project, path, rev, mode) {
 	// Handler for when the tab receives focus
 	this._onfocus = function() {
 		// Close handler
-		this._signals.push( connect( $("close-edit-area"),
+		this._signals.push( connect( "close-edit-area",
 					     "onclick",
 					     bind( this.close, this, false ) ) );
 		// Check syntax handler
+		var checkSyntaxElem = getElement("check-syntax");
 		if(this._isNew) {
-			$("check-syntax").disabled = true;
+			checkSyntaxElem.disabled = true;
 		} else {
-			$("check-syntax").disabled = false;
+			checkSyntaxElem.disabled = false;
 		}
-		this._signals.push( connect( $("check-syntax"),
+		this._signals.push( connect( checkSyntaxElem,
 					     "onclick",
 					     bind( this._check_syntax, this ) ) );
 
 		// Diff view handler
-		this._signals.push( connect( $("edit-diff"),
+		this._signals.push( connect( "edit-diff",
 					     "onclick",
 					     bind( this._diff, this ) ) );
 		// Save handler
-		this._signals.push( connect( $("save-file"),
+		this._signals.push( connect( "save-file",
 					     "onclick",
 					     bind( this._save, this ) ) );
 		// change revision handler
@@ -632,7 +633,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 		var t = this.path;
 		if( this.rev != 0 )
 			t = t + " - " + IDE_hash_shrink(this.rev);
-		replaceChildNodes( $("tab-filename"), t );
+		replaceChildNodes( "tab-filename", t );
 	}
 
 	//call this to update this.contents with the current contents of the edit area and to grab the current cursor position
@@ -641,7 +642,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 	}
 
 	this._change_revision = function() {
-		var rev = $("history").value;
+		var rev = getElement("history").value;
 		switch(rev) {
 		case "-2":
 			var d = new Log(this.path);

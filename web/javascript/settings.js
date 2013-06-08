@@ -153,7 +153,7 @@ function Setting(container, name, description, options) {
 	this._options = options;
 
 	this._construct();
-	appendChildNodes($(container), this._container);
+	appendChildNodes(container, this._container);
 }
 
 /* ***** Disable, Enable, Flash, Remove the setting ***** */
