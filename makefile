@@ -1,4 +1,4 @@
-_FOLDERS = settings repos zips notifications
+_FOLDERS = settings repos zips notifications web/cache
 
 .PHONY: all default dev docs check clean folders config submodules
 

@@ -3,50 +3,61 @@
 <html>
 <head>
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-	<!-- Style Sheets -->
-	<link rel="stylesheet" href="web/css/newstyle.css" type="text/css">
-	<!-- Everything above here should be in that order so things don't explode,
-	     but below here things matter less, so go alphabetical... -->
-	<link rel="stylesheet" type="text/css" href="web/css/admin.css">
-	<link rel="stylesheet" type="text/css" href="web/css/browser.css">
-	<link rel="stylesheet" type="text/css" href="web/css/calendar.css">
-	<link rel="stylesheet" type="text/css" href="web/css/diff.css">
-	<link rel="stylesheet" type="text/css" href="web/css/editmode.css">
-	<link rel="stylesheet" type="text/css" href="web/css/errors.css">
-	<link rel="stylesheet" type="text/css" href="web/css/log.css">
-	<link rel="stylesheet" type="text/css" href="web/css/menubar.css">
-	<link rel="stylesheet" type="text/css" href="web/css/projpage.css">
-	<link rel="stylesheet" type="text/css" href="web/css/settings.css">
-	<link rel="stylesheet" type="text/css" href="web/css/team-status.css">
-	<!-- Javascript Source Files -->
-	<script src="web/javascript/base64.js" type="text/javascript"></script>
-	<script src="web/javascript/json2.js" type="text/javascript"></script>
-	<script src="web/javascript/ide.js" type="text/javascript"></script>
-	<script src="web/javascript/MochiKit.js" type="text/javascript"></script>
-	<script src="web/javascript/gui.js" type="text/javascript"></script>
-	<!-- Everything above here should be in that order so things don't explode,
-	     but below here things matter less, so go alphabetical... -->
-	<script type="text/javascript" src="web/javascript/admin.js"></script>
-	<script type="text/javascript" src="web/javascript/browser.js"></script>
-	<script type="text/javascript" src="web/javascript/calendar.js"></script>
-	<script type="text/javascript" src="web/javascript/checkout.js"></script>
-	<script type="text/javascript" src="web/javascript/diff.js"></script>
-	<script type="text/javascript" src="web/javascript/edit.js"></script>
-	<script type="text/javascript" src="web/javascript/errors.js"></script>
-	<script type="text/javascript" src="web/javascript/log.js"></script>
-	<script type="text/javascript" src="web/javascript/poll.js"></script>
-	<script type="text/javascript" src="web/javascript/projpage.js"></script>
-	<script type="text/javascript" src="web/javascript/settings.js"></script>
-	<script type="text/javascript" src="web/javascript/team-status.js"></script>
-	<script type="text/javascript" src="web/javascript/status.js"></script>
-	<script type="text/javascript" src="web/javascript/tabs.js"></script>
-
-	<!-- external editor component - ACE - http://ace.ajax.org -->
-	<script type="text/javascript" src="web/javascript/ace/src/ace.js"></script>
-	<script type="text/javascript" src="web/javascript/ace/src/mode-python.js"></script>
-
 	<title>Robotics IDE</title>
-<?php if (Configuration::getInstance()->getConfig('usage_tracking')): ?>
+	<!-- Style Sheets -->
+<?php
+	require_once('include/cache-utils.php');
+	$styleSheets[] = "web/css/newstyle.css";
+	// Everything above here should be in that order so things don't explode,
+	// but below here things matter less, so go alphabetical...
+
+	$styleSheets[] = "web/css/admin.css";
+	$styleSheets[] = "web/css/browser.css";
+	$styleSheets[] = "web/css/calendar.css";
+	$styleSheets[] = "web/css/diff.css";
+	$styleSheets[] = "web/css/editmode.css";
+	$styleSheets[] = "web/css/errors.css";
+	$styleSheets[] = "web/css/log.css";
+	$styleSheets[] = "web/css/menubar.css";
+	$styleSheets[] = "web/css/projpage.css";
+	$styleSheets[] = "web/css/settings.css";
+	$styleSheets[] = "web/css/team-status.css";
+
+	// Javascript Source Files
+	$javaScripts[] = "web/javascript/base64.js";
+	$javaScripts[] = "web/javascript/json2.js";
+	$javaScripts[] = "web/javascript/ide.js";
+	$javaScripts[] = "web/javascript/MochiKit.js";
+	$javaScripts[] = "web/javascript/gui.js";
+	// Everything above here should be in that order so things don't explode,
+	// but below here things matter less, so go alphabetical...
+	$javaScripts[] = "web/javascript/admin.js";
+	$javaScripts[] = "web/javascript/browser.js";
+	$javaScripts[] = "web/javascript/calendar.js";
+	$javaScripts[] = "web/javascript/checkout.js";
+	$javaScripts[] = "web/javascript/diff.js";
+	$javaScripts[] = "web/javascript/edit.js";
+	$javaScripts[] = "web/javascript/errors.js";
+	$javaScripts[] = "web/javascript/log.js";
+	$javaScripts[] = "web/javascript/poll.js";
+	$javaScripts[] = "web/javascript/projpage.js";
+	$javaScripts[] = "web/javascript/settings.js";
+	$javaScripts[] = "web/javascript/team-status.js";
+	$javaScripts[] = "web/javascript/status.js";
+	$javaScripts[] = "web/javascript/tabs.js";
+
+	// external editor component - ACE - http://ace.ajax.org
+	$javaScripts[] = "web/javascript/ace/src/ace.js";
+	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
+
+	$combined_css = 'web/cache/combined.css';
+	combine_into($styleSheets, $combined_css);
+	echo '<link rel="stylesheet" type="text/css" href="' . $combined_css . '">', PHP_EOL;
+	$combined_js = 'web/cache/combined.js';
+	combine_into($javaScripts, $combined_js);
+	echo '<script type="text/javascript" src="' . $combined_js . '"></script>', PHP_EOL;
+
+	if (Configuration::getInstance()->getConfig('usage_tracking')): ?>
 	<!-- TODO: support some form of DNT? -->
 	<script type="text/javascript">
 		var pkBaseURL = (("https:" == document.location.protocol) ? "https://www.studentrobotics.org/piwik/" : "http://www.studentrobotics.org/piwik/");

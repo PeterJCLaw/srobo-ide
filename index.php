@@ -35,7 +35,7 @@ try
 	else
 	{
 		getDefaultTokenStrategy()->removeAuthToken();
-		readfile('web/login.html');
+		include('web/login.html.php');
 	}
 }
 catch (Exception $e)
