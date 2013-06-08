@@ -545,8 +545,13 @@ function TeamSelector() {
 		if( this._team_exists(team) ) {
 			name = user.team_names[ team ];
 
-			if( user.teams.length == 1 )
-				name = "Team " + team + ": " + name
+			if (user.teams.length == 1) {
+				var chosen_name = name;
+				name = "Team " + team;
+				if (!IDE_string_empty(chosen_name)) {
+					name += ": " + chosen_name;
+				}
+			}
 		}
 
 		replaceChildNodes( "teamname", " " + name );

@@ -71,11 +71,8 @@ class UserModule extends Module
 		$name = $ts->getLive('name');
 		if (empty($name))
 		{
-			$name = "Team $team";
-		}
-		else
-		{
-			$name = "Team $team: $name";
+			// empty string renders better than 'null' which we otherwise get
+			$name = '';
 		}
 		return $name;
 	}
