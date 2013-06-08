@@ -51,7 +51,7 @@ TeamStatus.prototype.init = function()
 /* ***** Tab events: onfocus, onblur and close		***** */
 TeamStatus.prototype._onfocus = function()
 {
-	setStyle("team-status-page", {'display':'block'});
+	showElement('team-status-page');
 }
 
 TeamStatus.prototype._onblur = function()
@@ -61,7 +61,7 @@ TeamStatus.prototype._onblur = function()
 		this._prompt.close();
 		this._prompt = null;
 	}
-	setStyle("team-status-page", {'display':'none'});
+	hideElement('team-status-page');
 }
 
 TeamStatus.prototype._close = function()

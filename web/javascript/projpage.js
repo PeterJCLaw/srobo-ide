@@ -197,11 +197,11 @@ ProjPage.prototype.set_team = function(team) {
 
 // ***** Project Page Right Hand pane *****
 ProjPage.prototype._rpane_hide = function() {
-	setStyle( "proj-rpane", {'display':'none'} );
+	hideElement('proj-rpane');
 }
 
 ProjPage.prototype._rpane_show = function() {
-	setStyle( "proj-rpane", {'display':''} );
+	showElement('proj-rpane');
 }
 
 ProjPage.prototype.clickArchiveProject = function() {
