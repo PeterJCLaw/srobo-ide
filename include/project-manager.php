@@ -102,9 +102,21 @@ class ProjectManager
 		else
 		{
 			$masterPath = $this->getMasterRepoPath($team, $project);
+			// Get an instance of the master repo to lock it.
+			// Since the user repo we're creating doesn't exist, we can't
+			// lock it so we lock the master instead. This prevents any
+			// other requests for this user repo from trying to create it
+			// while we're doing so.
+			$masterRepo = GitRepository::GetOrCreate($masterPath);
+
 			// check this is valid (throws if not) - master repos are bare.
 			GitRepository::EnsureBareRepo($masterPath);
-			return GitRepository::cloneRepository($masterPath, $path);
+			$userRepo = GitRepository::cloneRepository($masterPath, $path);
+
+			// Force-clear our lock on the master
+			$masterRepo = null;
+
+			return $userRepo;
 		}
 	}
 
