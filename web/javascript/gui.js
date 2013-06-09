@@ -104,14 +104,14 @@ function load_gui_initial() {
 
 	//The Admin page - this must happen before populate_shortcuts_box is called
 	adminpage = new Admin();
+
+	//The Search page - this must happen before populate_shortcuts_box is called
+	searchpage = SearchPage.GetInstance();
 }
 
 // 2) Executed once we have user details
 function load_gui() {
 	logDebug( "load_gui" );
-
-	//The Search page - this must happen before populate_shortcuts_box is called
-	searchpage = SearchPage.GetInstance();
 
 	var shortcutsList = populate_shortcuts_box();
 
