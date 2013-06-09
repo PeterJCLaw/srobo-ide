@@ -2,6 +2,7 @@ TEST basic/sanity
 TEST basic/test-skip
 TEST basic/config
 TEST basic/cron
+TEST basic/html
 TEST basic/input
 TEST basic/log
 TEST basic/output
