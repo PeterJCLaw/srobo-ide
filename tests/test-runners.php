@@ -17,7 +17,7 @@ abstract class BaseRunner implements ITestRunner
 	 *    0: the return code
 	 *    1: the combined StdOut and StdErr
 	 */
-	protected function runCommand($s_command, $s_inFile)
+	protected static function runCommand($s_command, $s_inFile)
 	{
 //		echo 'About to run: '; var_dump($s_command);
 		$process = proc_open("$s_command 2>&1", array(0 => array('file', $s_inFile, 'r'),
@@ -34,7 +34,10 @@ abstract class BaseRunner implements ITestRunner
 		$this->name = $name;
 	}
 
-	static $runners = array('php' => 'PHPRunner', 'py' => 'PythonRunner');
+	static $runners = array('php' => 'PHPRunner'
+	                       ,'py' => 'PythonRunner'
+	                       ,'spec.js' => 'JasmineNodeRunner'
+	                       );
 
 	protected static function realpath($name)
 	{
@@ -70,6 +73,26 @@ class PythonRunner extends BaseRunner
 	{
 		$name = str_replace('/', '.', $this->name);
 		return parent::runCommand("python -m unittest --buffer tests.$name", $inFile);
+	}
+}
+
+class JasmineNodeRunner extends BaseRunner
+{
+	public function run($inFile)
+	{
+		if (!self::checkInstalled())
+		{
+			return array(-1, "Jasmine-node is not installed, unable to run specs.");
+		}
+
+		$name = $this->name . '.spec.js';
+		return parent::runCommand("jasmine-node tests/$name", $inFile);
+	}
+
+	private static function checkInstalled()
+	{
+		$res = parent::runCommand('which jasmine-node', '/dev/null');
+		return empty($res[0]);
 	}
 }
 

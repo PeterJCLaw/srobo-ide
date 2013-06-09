@@ -30,10 +30,14 @@ Dependencies:
  * PHP CLI # for running the tests.
  * pylint  # syntax checker
  * php-ldap
+ * NodeJS         # for running JS tests
+ * Jasmine Node   # for running JS tests
 
 In Ubuntu these can be achieved by installing the following packages:
- apache2 php5 doxygen php5-cli git-core pylint
+ apache2 php5 doxygen php5-cli git-core pylint nodejs
 
+Jasmine Node can be installed via npm:
+ npm install jasmine-node -g
 
 Note that by default Ubuntu Lucid will not execute PHP files in
 public_html folders. This can be resolved by following the instructions

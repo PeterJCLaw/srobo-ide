@@ -56,5 +56,10 @@ TEST http/auth
 TEST http/files
 TEST http/proj
 
+# Some Jasmine tests!
+#XFAIL js/xfail
+TEST js/test-skip
+TEST js/basic
+
 TEST code-style/shell-var-names
 TEST code-style/no-selenium
