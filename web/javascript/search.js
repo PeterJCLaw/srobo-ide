@@ -300,7 +300,7 @@ function FileNameSearchProvider(proj_source, selector) {
 		var opts = { team: team, project: project };
 		var err_handler;
 		if (!isRetry) {
-			err_handler = bind(this._get_files, this, true);
+			err_handler = bind(this._get_files, this, project, true);
 		} else {
 			err_handler = function(){};
 		}
