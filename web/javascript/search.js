@@ -320,3 +320,13 @@ function FileNameSearchProvider(proj_source, selector) {
 		logDebug('files selected');
 	}
 }
+
+// node require() based exports.
+if (exports) {
+	exports.SearchPage = SearchPage;
+	exports.SearchResults = SearchResults;
+	exports.MockProvider = MockProvider;
+	exports.MockAsyncProvider = MockAsyncProvider;
+	exports.ProjectNameSearchProvider = ProjectNameSearchProvider;
+	exports.FileNameSearchProvider = FileNameSearchProvider;
+}
