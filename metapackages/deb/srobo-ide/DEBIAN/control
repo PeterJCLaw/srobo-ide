@@ -11,3 +11,6 @@ Description: A metapackage for srobo-ide
  The Student Robotics web IDE provides a web interface to develop python
  code on top of git version control. This package provides the minimum
  requirements to run the IDE on debian systems.
+ .
+ Developers should install the suggested packages too, so they can run
+ the tests.
