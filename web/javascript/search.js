@@ -322,7 +322,7 @@ function FileNameSearchProvider(proj_source, selector) {
 }
 
 // node require() based exports.
-if (exports) {
+if (typeof(exports) != 'undefined') {
 	exports.SearchPage = SearchPage;
 	exports.SearchResults = SearchResults;
 	exports.MockProvider = MockProvider;
