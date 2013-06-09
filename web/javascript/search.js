@@ -243,8 +243,8 @@ function ProjectNameSearchProvider(proj_source, selector) {
 	}
 
 	this._select_project = function(project) {
-		tabbar.switch_to(projtab);
 		this._proj_selector.select(project);
+		this._proj_source.switch_to();
 	}
 }
 
@@ -310,7 +310,6 @@ function FileNameSearchProvider(proj_source, selector) {
 	}
 
 	this._select_file = function(project, path) {
-		tabbar.switch_to(projtab);
 		logDebug('before switching project');
 		this._proj_selector.select(project);
 		logDebug('mid');
@@ -318,6 +317,7 @@ function FileNameSearchProvider(proj_source, selector) {
 		flist.select_none();
 		flist.select(path);
 		logDebug('files selected');
+		this._proj_source.switch_to();
 	}
 }
 

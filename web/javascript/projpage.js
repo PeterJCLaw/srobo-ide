@@ -119,6 +119,12 @@ ProjPage.prototype.has_focus = function() {
 	return this._tab != null && this._tab.has_focus();
 }
 
+ProjPage.prototype.switch_to = function() {
+	this._init();
+	// only actually needed if we're not inited, but it's simpler to just call both
+	tabbar.switch_to(this._tab);
+}
+
 ProjPage.prototype._setupPolling = function() {
 	if ( this._poll != null ) {
 		this._poll.cancel();
