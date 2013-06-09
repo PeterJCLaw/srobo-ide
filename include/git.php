@@ -9,6 +9,7 @@ define('COMPRESSION_LEVEL', 0);
  */
 class GitRepository
 {
+	// local variables, all expected to be immutable after construction
 	private $working_path;
 	private $git_path;
 	private $lock_fd;
@@ -36,7 +37,7 @@ class GitRepository
 		}
 		else
 		{
-			$path = $this->working_path;
+			$path = $this->workingPath();
 		}
 		$name = basename($path);
 		return $name;
@@ -131,7 +132,7 @@ class GitRepository
 	 */
 	public function isBare()
 	{
-		return $this->working_path === null;
+		return $this->workingPath() === null;
 	}
 
 	public function unstageAll()
@@ -150,7 +151,7 @@ class GitRepository
 	 */
 	private function gitExecute($working, $s_command, $env = array(), $catchResult = false)
 	{
-		$base = $working ? $this->working_path : $this->git_path;
+		$base = $working ? $this->workingPath() : $this->git_path;
 		return self::gitExecuteInternal($base, $s_command, null, $env, $catchResult);	// SHELL SAFE
 	}
 
@@ -338,7 +339,7 @@ class GitRepository
 
 	public function gitMKDir($path)
 	{
-		$dir = $this->working_path . "/" . $path;
+		$dir = $this->workingPath() . "/" . $path;
 		// cope with the folder already existing
 		if (is_dir($dir) && file_exists($dir))
 		{
@@ -549,7 +550,7 @@ class GitRepository
 	 */
 	public function listFolders()
 	{
-		$s_path = escapeshellarg($this->working_path);
+		$s_path = escapeshellarg($this->workingPath());
 		$folders = trim(shell_exec("cd $s_path && find . -type d -name .git -prune -o -type d -print"));
 		$folders = explode("\n", $folders);
 		return $folders;
@@ -587,12 +588,12 @@ class GitRepository
 
 		$result = array();
 		$unstagedChanges = $this->unstagedChanges();
-		for ($iterator = new FilesystemIterator($this->working_path . "/$subpath");
+		for ($iterator = new FilesystemIterator($this->workingPath() . "/$subpath");
 		     $iterator->valid();
 		     $iterator->next())
 		{
 			$raw_path = $iterator->key();
-			$realpath = substr($raw_path, strlen($this->working_path . '/'));
+			$realpath = substr($raw_path, strlen($this->workingPath() . '/'));
 			$realpath = str_replace('./', '', $realpath);
 			$filename = basename($realpath);
 			$fileinfo = $iterator->current();
@@ -648,7 +649,7 @@ class GitRepository
 	 */
 	public function listFiles($path)
 	{
-		$files = scandir($this->working_path . "/$path");
+		$files = scandir($this->workingPath() . "/$path");
 		$result = array();
 		foreach ($files as $file)
 		{
@@ -673,7 +674,7 @@ class GitRepository
 		{
 			$ret = $this->gitMKDir($dir);
 		}
-		return $ret && touch($this->working_path . "/$path");
+		return $ret && touch($this->workingPath() . "/$path");
 	}
 
 	/**
@@ -711,7 +712,7 @@ class GitRepository
 	{
 		if ($commit === null)
 		{
-			return file_get_contents($this->working_path . "/$path");
+			return file_get_contents($this->workingPath() . "/$path");
 		}
 		else
 		{
@@ -729,7 +730,7 @@ class GitRepository
 	{
 		// ensure that the file exists before writing to it.
 		$ret = $this->createFile($path);
-		return $ret && file_put_contents($this->working_path . "/$path", $content);
+		return $ret && file_put_contents($this->workingPath() . "/$path", $content);
 	}
 
 	/**
@@ -737,7 +738,7 @@ class GitRepository
 	 */
 	public function fileMTime($path)
 	{
-		return filemtime($this->working_path . '/' . $path);
+		return filemtime($this->workingPath() . '/' . $path);
 	}
 
 	/**
@@ -745,7 +746,7 @@ class GitRepository
 	 */
 	public function touchFile($path, $time)
 	{
-		return touch($this->working_path . '/' . $path, $time);
+		return touch($this->workingPath() . '/' . $path, $time);
 	}
 
 	/**
@@ -754,7 +755,7 @@ class GitRepository
 	 */
 	public function stage($path)
 	{
-		$absPath = $this->working_path . '/' . $path;
+		$absPath = $this->workingPath() . '/' . $path;
 		if (file_exists($absPath))
 		{
 			$s_path = escapeshellarg($path);
