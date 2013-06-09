@@ -268,7 +268,7 @@ function FileNameSearchProvider(proj_source, selector) {
 		for (var i=0; i < projects.length; i++) {
 			this._get_files(projects[i]);
 		}
-		return true;
+		return projects.length > 0;
 	}
 
 	this._got_files = function(project, nodes) {
