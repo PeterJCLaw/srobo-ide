@@ -407,6 +407,31 @@ class ReadOnlyGitRepository
 		$s_commit = escapeshellarg($commit);
 		$this->gitExecute(false, "archive --format=zip $s_commit -".COMPRESSION_LEVEL." > $s_dest");
 	}
+
+	/**
+	 * Search the contents of the working copy using git grep.
+	 * @param pattern: the pattern to match.
+	 * @param regex: boolean indicating whether or not the pattern should
+	 *               be treated as a regular expression.
+	 */
+	public function grep($pattern, $regex = true)
+	{
+		$s_pattern = escapeshellarg($pattern);
+		$s_regex = $regex ? '' : '-F';
+		$ret = $this->gitExecute(true, "grep -n $s_regex -e $s_pattern");
+		if ($ret === FALSE)
+		{
+			return array();
+		}
+		$matches = array();
+		$outputLines = explode(PHP_EOL, trim($ret));
+		foreach ($outputLines as $lineText)
+		{
+			list($fname, $lineNo, $match) = explode(':', $lineText, 3);
+			$matches[$fname][] = array('line' => $lineNo, 'text' => $match);
+		}
+		return $matches;
+	}
 }
 
 /**

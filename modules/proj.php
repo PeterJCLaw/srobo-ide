@@ -33,6 +33,7 @@ class ProjModule extends Module
 		$this->installCommand("copy", array($this, "copyProject"));
 		$this->installCommand('zip', array($this, 'redirectToZip'));
 		$this->installCommand('update', array($this, 'updateProject'));
+		$this->installCommand('search', array($this, 'searchProject'));
 	}
 
 	protected function initModule()
@@ -161,6 +162,31 @@ class ProjModule extends Module
 
 		// if the revisions are null then it just grabs the whole log
 		$output->setOutput('log', $repo->log($firstRev, $currRev));
+		return true;
+	}
+
+	public function searchProject()
+	{
+		$repo = $this->openProject($this->team, $this->projectName);
+		if ($repo == null)
+		{
+			return false;
+		}
+
+		$input = Input::getInstance();
+		$query = $input->getInput('query');
+		$is_regex = FALSE; // $input->getInput('regex');
+
+		$output = Output::getInstance();
+		$raw_results = $repo->grep($query, $is_regex);
+		var_dump($raw_results);
+		$results = array();
+		foreach ($raw_results as $fileName => $matches)
+		{
+			$fpath = "/$this->projectName/$fileName";
+			$results[$fpath] = $matches;
+		}
+		$output->setOutput('results', $results);
 		return true;
 	}
 

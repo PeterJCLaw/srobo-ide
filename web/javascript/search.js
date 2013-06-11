@@ -135,6 +135,9 @@ SearchPage.GetInstance = function() {
 	if (SearchPage.Instance == null) {
 		var results = new SearchResults();
 		SearchPage.Instance = new SearchPage(results);
+
+		var contentSearch = new FileContentSearchProvider(projpage);
+		SearchPage.Instance.add_provider(contentSearch);
 	}
 	return SearchPage.Instance;
 }
@@ -321,6 +324,66 @@ function FileNameSearchProvider(proj_source, selector) {
 	}
 }
 
+function FileContentSearchProvider(proj_source) {
+	this._proj_source = proj_source;
+
+	this._cancelled = false;
+
+	this.cancel = function() {
+		this._cancelled = true;
+		this._page = null;
+		this._query = null;
+	}
+
+	this.search = function(page, query) {
+		this._cancelled = false;
+		this._page = page;
+		this._query = query;
+		var projects = this._proj_source.list_projects();
+		for (var i=0; i < projects.length; i++) {
+			this._search_project(projects[i]);
+		}
+		return projects.length > 0;
+	}
+
+	this._search_project = function(project, isRetry) {
+		if (this._cancelled) {
+			return;
+		}
+		var args = { team: team, project: project, query: this._query };
+		var err_handler;
+		if (!isRetry) {
+			err_handler = bind(this._search_project, this, project, true);
+		} else {
+			err_handler = function(){};
+		}
+		IDE_backend_request("proj/search", args,
+		                    bind(this._handle_results, this, project),
+		                    err_handler);
+	}
+
+	this._handle_results = function(project, nodes) {
+		if (this._cancelled) {
+			return;
+		}
+		var results = nodes.results;
+		for (var file in results) {
+			var matches = results[file];
+			for (var i=0; i < matches.length; i++) {
+				var match = matches[i];
+				var result = { text: file + ':' + match.line + ': ' + match.text,
+				             action: bind(this._open_file_line, this, project, file, match.line) };
+				this._page.add_result('File Contents', result);
+			}
+		}
+	}
+
+	this._open_file_line = function(project, file, line) {
+		var etab = editpage.edit_file(team, project, file, null, 'AUTOSAVE');
+		etab.setSelectionRange(line, 0, -1);
+	}
+}
+
 // node require() based exports.
 if (typeof(exports) != 'undefined') {
 	exports.SearchPage = SearchPage;
@@ -329,4 +392,5 @@ if (typeof(exports) != 'undefined') {
 	exports.MockAsyncProvider = MockAsyncProvider;
 	exports.ProjectNameSearchProvider = ProjectNameSearchProvider;
 	exports.FileNameSearchProvider = FileNameSearchProvider;
+	exports.FileContentSearchProvider = FileContentSearchProvider;
 }
