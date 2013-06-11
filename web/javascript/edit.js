@@ -252,8 +252,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 	//  - _onblur: Handler for when the tab is blurred.
 
 	// *** Public Properties ***
-	if(rev == null || rev == undefined)
-		this.rev = 0;
+	if (rev == null || rev == undefined)
+		this.rev = 'HEAD';
 	else
 		this.rev = rev;
 
