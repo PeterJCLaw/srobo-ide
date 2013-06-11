@@ -342,8 +342,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 		this._original = nodes.original;
 		this._autosaved = nodes.autosaved || null;
 
-		if(this._mode == 'AUTOSAVE') {
-			this.contents = this._autosaved;
+		if (this._mode == 'AUTOSAVE') {
+			this.contents = this._autosaved || this._original;
 		} else {
 			this.contents = this._original;
 		}
