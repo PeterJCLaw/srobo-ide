@@ -296,6 +296,10 @@ function EditTab(iea, team, project, path, rev, mode) {
 	// whether we're loading from the vcs repo or an autosave
 	this._mode = mode;
 
+	// Have we completed our initial load of the file contents?
+	this._loaded = false;
+	this._after_load_actions = [];
+
 	this._init = function() {
 		this.tab = new Tab( this.path );
 		tabbar.add_tab( this.tab );
@@ -335,6 +339,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 
 	// Handler for the reception of file contents
 	this._recv_contents = function(nodes) {
+		var first_load = !this._loaded;
+		this._loaded = true;
 		this._isNew = false;
 		this._original = nodes.original;
 		this._autosaved = nodes.autosaved || null;
@@ -348,6 +354,14 @@ function EditTab(iea, team, project, path, rev, mode) {
 		this._update_contents();
 		this._show_contents();
 		this._show_modified();
+
+		if (first_load) {
+			for (var i=0; i < this._after_load_actions.length; i++) {
+				var action = this._after_load_actions[i];
+				action();
+			}
+			this._after_load_actions = null;
+		}
 	}
 
 	// Handler for errors in receiving the file contents
@@ -733,6 +747,14 @@ function EditTab(iea, team, project, path, rev, mode) {
 	// If length would push the selection onto multiple lines its value is truncated to the end of the current line.
 	// Note that lines are indexed from 1.
 	this.setSelectionRange = function(lineNumber, startIndex, length) {
+		if (this._loaded) {
+			this._setSelectionRange(lineNumber, startIndex, length);
+		} else {
+			this._after_load_actions.push(bind(this._setSelectionRange, this, lineNumber, startIndex, length));
+		}
+	}
+
+	this._setSelectionRange = function(lineNumber, startIndex, length) {
 		var Range = require("ace/range").Range;
 		lineNumber -= 1;
 		var endIndex = startIndex + length;
