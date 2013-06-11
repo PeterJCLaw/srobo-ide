@@ -303,9 +303,6 @@ function EditTab(iea, team, project, path, rev, mode) {
 		// Mark the tab as a edit tab
 		this.tab.__edit = true;
 
-		// Link ourselves to the tab so the EditPage can find us
-		this.tab.__etab = this;
-
 		connect( this.tab, "onfocus", bind( this._onfocus, this ) );
 		connect( this.tab, "onblur", bind( this._onblur, this ) );
 		connect( this.tab, "onclickclose", bind( this.close, this, false ) );
