@@ -28,7 +28,13 @@
 		<input type="password" name="password" id="password">
 		<button type="submit" id="login-button">Log In</button>
 		<br />
-		<a href="https://www.studentrobotics.org/forgotpassword/">&raquo; Forgotten password</a>
+		<a id="forgotten-password-button" class="smaller" href="#">&raquo; Forgotten password</a>
+		<p id="forgotten-password-help" class="smaller">
+			If you have forogtten your password, you should contact your
+			<a href="https://www.studentrobotics.org/schools/team-leaders/">team leader</a>.
+			Team leaders can reset passwords for users in the teams they lead using Student Robotics'
+			<a href="https://www.studentrobotics.org/userman/">User Management Page</a>.
+		</p>
 	</form>
 
 	<iframe id="background-load"></iframe>

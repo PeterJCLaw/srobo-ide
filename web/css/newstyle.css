@@ -246,10 +246,12 @@ iframe { display: none; }
 	font-size: 0.7em;
 }
 
+#login-box .smaller {
+	font-size: 0.7em;
+}
 #login-box a {
 	color: #ffffff;
 	text-decoration: none;
-	font-size: 0.7em;
 	padding: 2px 4px;
 }
 #login-box a:hover {
@@ -264,6 +266,16 @@ iframe { display: none; }
 	border: none;
 	margin: 10px 0;
 	width: 100%;
+}
+#login-box p#forgotten-password-help {
+	display: none;
+	margin: 1em;
+}
+#login-box p#forgotten-password-help.visible {
+	display: block;
+}
+#login-box p#forgotten-password-help a {
+	padding: 0;
 }
 a.button, #login-box #login-button {
 	margin: 10px 25%;

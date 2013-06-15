@@ -16,6 +16,10 @@ function Login() {
 		disconnectAll( "login-box" );
 		connect( "login-box", "onsubmit", bind( this._do_login, this ) );
 
+		// Show the user some help when the click the forgotten password link
+		disconnectAll( "forgotten-password-button" );
+		connect( "forgotten-password-button", "onclick", bind( this._forgotten_password_help, this ) );
+
 		var userBox = getElement("username");
 
 		//clear box on focus, replace with 'username' on blur.
@@ -49,6 +53,16 @@ function Login() {
 				getElement("password").focus();
 			}, this)
 		);
+	}
+
+	// Grab the username and password from the login form and start the login
+	this._forgotten_password_help = function(ev) {
+		if (ev != null) {
+			ev.preventDefault();
+			ev.stopPropagation();
+		}
+
+		toggleElementClass('visible', 'forgotten-password-help');
 	}
 }
 
