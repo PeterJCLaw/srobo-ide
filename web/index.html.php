@@ -54,10 +54,12 @@
 	output_statics($styleSheets, 'css_tag', 'web/cache/combined.css');
 	output_statics($javaScripts, 'js_tag', 'web/cache/combined.js');
 
+	$root_url = Configuration::getInstance()->getConfig('host_root_url');
+
 	if (Configuration::getInstance()->getConfig('usage_tracking')): ?>
 	<!-- TODO: support some form of DNT? -->
 	<script type="text/javascript">
-		var pkBaseURL = (("https:" == document.location.protocol) ? "https://www.studentrobotics.org/piwik/" : "http://www.studentrobotics.org/piwik/");
+		var pkBaseURL = "<?=$root_url ?>/piwik/";
 		document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
 	</script>
 <?php endif ?>
@@ -120,14 +122,14 @@
 		<ul id="top-links">
 <?php if (Configuration::getInstance()->getConfig('gui.ticket_link')): ?>
 			<li>
-				<a href="https://www.studentrobotics.org/tickets/" title="Get your ticket now!">Ticket System</a>
+				<a href="<?=$root_url ?>/tickets/" title="Get your ticket now!">Ticket System</a>
 			</li>
 <?php endif ?>
 			<li>
-				<a href="https://www.studentrobotics.org/forum/" title="Meet other competitors, get help from mentors and share ideas in the forums">Forum</a>
+				<a href="<?=$root_url ?>/forum/" title="Meet other competitors, get help from mentors and share ideas in the forums">Forum</a>
 			</li>
 			<li>
-				<a href="https://www.studentrobotics.org/docs/" title="Find out more about the kit in the docs">Docs</a>
+				<a href="<?=$root_url ?>/docs/" title="Find out more about the kit in the docs">Docs</a>
 			</li>
 		</ul>
 		<div id="static-box"><img src="web/images/static.png" alt="logo"></div>
@@ -330,7 +332,7 @@
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
 			<p class="info">
-				The following information will be publicly available on the SR website, in the <a href="http://www.studentrobotics.org/teams">Teams Area</a>.
+				The following information will be publicly available on the SR website, in the <a href="<?=$root_url ?>/teams/">Teams Area</a>.
 				Be sensible with the information you add on this page, avoid anything objectionable/obscene. All content is moderated before appearing on the website and the following icons will appear to the right of the field after moderation:
 			</p>
 			<ul class="info">

@@ -17,6 +17,8 @@
 	$javaScripts[] = "web/javascript/login.js";
 
 	output_statics($javaScripts, 'js_tag', 'web/cache/login-combined.js');
+
+	$root_url = Configuration::getInstance()->getConfig('host_root_url');
 ?>
 </head>
 <body id="login-back">
@@ -31,9 +33,9 @@
 		<a id="forgotten-password-button" class="smaller" href="#">&raquo; Forgotten password</a>
 		<p id="forgotten-password-help" class="smaller">
 			If you have forogtten your password, you should contact your
-			<a href="https://www.studentrobotics.org/schools/team-leaders/">team leader</a>.
+			<a href="<?=$root_url ?>/schools/team-leaders/">team leader</a>.
 			Team leaders can reset passwords for users in the teams they lead using Student Robotics'
-			<a href="https://www.studentrobotics.org/userman/">User Management Page</a>.
+			<a href="<?=$root_url ?>/userman/">User Management Page</a>.
 		</p>
 	</form>
 
