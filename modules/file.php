@@ -97,7 +97,6 @@ class FileModule extends Module
 		// a specific revision is requested
 		if ($revision != null && $revision != 'HEAD')
 		{
-			var_dump($this->projectName, $hash);
 			$uncleanOut = $this->repository()->fileTreeCompat($this->projectName, '.', $revision);
 		}
 		else
