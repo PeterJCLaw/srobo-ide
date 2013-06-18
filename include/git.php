@@ -713,14 +713,12 @@ class GitRepository extends ReadOnlyGitRepository
 	 */
 	public function commit($message, $name, $email)
 	{
-		if ($message == '')
-			$message = ' ';
 		$tmp = tempnam('/tmp', 'ide-');
 		file_put_contents($tmp, $message);
 		$s_tmp = escapeshellarg($tmp);
 		// environment variables are safe anyway.
 		$s_committerEnv = self::makeGitUserEnv($name, $email);
-		list($result, $out) = $this->gitExecute(true, "commit -F $s_tmp", $s_committerEnv, true);
+		list($result, $out) = $this->gitExecute(true, "commit --allow-empty-message -F $s_tmp", $s_committerEnv, true);
 		unlink($tmp);
 		return $result;
 	}

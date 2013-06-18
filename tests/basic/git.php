@@ -28,6 +28,11 @@ test_true($repo->commitExists($rev), "Commit given as the current HEAD ($rev) sh
 test_false($repo->commitExists('bacon'), "Commit 'bacon' should not exist!");
 test_false($repo->commitExists('ninjas/nuns'), "Commit whose name matches a file (ninjas/nuns) should not exist!");
 
+section('commit');
+
+$repo->stage('ninjas/nuns');
+test_true($repo->commit('', 'some one', 'so@sr.org'), 'Should be able to commit with an empty message');
+
 section('repo name');
 
 test_equal($repo->repoName(), 'cake', "Wrong repo name for user (ie, non-bare) repo");
