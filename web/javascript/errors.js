@@ -130,7 +130,7 @@ function ErrorsPage() {
 		                                  autosave: autosave
 		                                 },
 		                                  bind(this._done_check, this, file, opts, project),
-		                                  bind(this._fail_check, this, file, opts));
+		                                  bind(this._fail_check, this, file, opts, autosave, revision));
 	}
 
 	this._done_check = function(file, opts, project, info) {
@@ -152,9 +152,9 @@ function ErrorsPage() {
 		}
 	}
 
-	this._fail_check = function(file, opts) {
+	this._fail_check = function(file, opts, autosave, revision) {
 		this._prompt = status_button( "Failed to check code", LEVEL_ERROR,
-					"retry", bind( this.check, this, file, opts ) );
+		                              "retry", bind( this.check, this, file, opts, autosave, revision ) );
 
 		//run the callback, after our status message so they can overwrite it if they desire
 		if( opts != null &&  opts.callback != null && typeof opts.callback == 'function' )
