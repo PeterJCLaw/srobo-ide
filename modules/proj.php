@@ -312,6 +312,15 @@ class ProjModule extends Module
 			// Remove all the empty child folders
 			elseif ($file->isDir())
 			{
+				// avoid trying to interact with the current folder
+				// or the parent folder. Trying to remove these here would
+				// probably error, and almost certainly have odd results.
+				$base_name = $file->getBasename();
+				if ($base_name == '.' || $base_name == '..')
+				{
+					continue;
+				}
+
 				$name = $file->getPathname();
 				$items = scandir($name);
 				if (count($items) == 2) // . & ..
