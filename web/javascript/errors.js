@@ -237,7 +237,7 @@ function ErrorFile(name) {
 		//hook up the signal
 		this._signals.push(connect( this._view_link, 'onclick', bind(this._view_onclick, this, null) ));
 		this._signals.push(connect( this._expand_elem, 'onclick', bind(this._expand_onclick, this) ));
-		this._signals.push(connect( this._refresh_elem, 'onclick', bind(errorspage.check, errorspage, this.label, null, false) ));
+		this._signals.push(connect( this._refresh_elem, 'onclick', bind(errorspage.check, errorspage, this.label, null, false, null) ));
 	}
 
 	this.add_item = function(w) {
