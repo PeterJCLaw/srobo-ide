@@ -129,7 +129,7 @@ function ErrorsPage() {
 		                                  rev: revision,
 		                                  autosave: autosave
 		                                 },
-		                                  partial(bind(this._done_check, this), file, opts, project),
+		                                  bind(this._done_check, this, file, opts, project),
 		                                  bind(this._fail_check, this, file, opts));
 	}
 
