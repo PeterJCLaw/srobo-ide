@@ -413,7 +413,7 @@ class FileModule extends Module
 				$repo = null;
 			}
 
-			// Copy the reference file to the tenp folder
+			// Copy the reference file to the temp folder
 			$dummy_copy = $working.'/'.basename($dummy);
 			echo "dummy copy\n";
 			var_dump($dummy_copy);
