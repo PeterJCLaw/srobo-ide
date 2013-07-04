@@ -204,10 +204,8 @@
 				</ul>
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
-			<div id="logs">
-				<em id="log-summary"> Displaying [n] revisions between [datetime] & [datetime] Page [n] of [n]</em>
-				<ul id="log-list"><li class="dummy"></li></ul>
-			</div>
+			<em id="log-summary"> Displaying [n] revisions between [datetime] & [datetime] Page [n] of [n]</em>
+			<ul id="log-list"><li class="dummy"></li></ul>
 		</div><!-- end log viewer -->
 
 		<div id="projects-page" class="page">

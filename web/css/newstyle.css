@@ -213,6 +213,9 @@ iframe { display: none; }
 #page div.page {
 	display: none;
 }
+#page div.page div.menu-bar + em {
+	margin-left: 1em;
+}
 
 /* menu bar - top of most tabs, below the status bar - in css/menubar.css */
 /* CSS for edit-mode should be place in css/editmode.css */
