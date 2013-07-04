@@ -182,6 +182,7 @@
 				</form>
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
+			<em>Double click a result to see more detail.</em>
 			<div id="search-results"></div>
 		</div><!-- end search page -->
 
