@@ -97,6 +97,6 @@ search('\.', array(
 $e_changed = array(
 	array('line' => 2, 'text' => $changed_2)
 );
-search('on.*\d', array('matches' => array(
+search('on.*\d', array(
 	"/$projName/changed.py" => $e_changed
 ));
