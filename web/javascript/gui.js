@@ -313,8 +313,7 @@ function AboutBox() {
 function User() {
 	// List of team numbers
 	this.teams = null;
-	// Dictionary of team names (team number => name)
-	this.team_names = null;
+
 	// The user's settings
 	this._settings = null;
 
@@ -339,12 +338,7 @@ function User() {
 	this._got_info = function( info ) {
 		logDebug( "Got user information" );
 
-		this.team_names = {};
-		this.teams = [];
-		for( var id in info["teams"] ) {
-			this.team_names[id] = info["teams"][id];
-			this.teams.push(id);
-		}
+		this.teams = info["teams"];
 
 		this._settings = (info.settings instanceof Array) ? {} : info.settings;
 		for( var k in this._settings ) {
@@ -364,6 +358,20 @@ function User() {
 
 	this.get_setting = function(sname) {
 		return this._settings[sname];
+	}
+
+	this.get_team = function(teamId) {
+		if (teamId == null)
+			return null;
+
+		var teams = user.teams;
+		for (var i=0; i < teams.length; i++) {
+			var teamInfo = teams[i];
+			if (teamInfo.id == teamId) {
+				return teamInfo;
+			}
+		}
+		return null;
 	}
 
 	// Set user settings.
@@ -430,7 +438,7 @@ function TeamSelector() {
 		var teambox = [];
 
 		if( user.teams.length == 1 )
-			team = user.teams[0];
+			team = user.teams[0].id;
 		else if ( user.teams.length == 0 )
 		{
 			replaceChildNodes( "teaminfo", SPAN("You are not in any teams!") );
@@ -486,7 +494,7 @@ function TeamSelector() {
 		var olist = [];
 
 		for( var i=0; i < user.teams.length; i++ ) {
-			var team_id = user.teams[i];
+			var team_id = user.teams[i].id;
 			var props = { "value" : team_id };
 
 			if( team_id == team )
@@ -499,14 +507,8 @@ function TeamSelector() {
 	}
 
 	// Returns true if the given team number exists for this user
-	this._team_exists = function(team) {
-		if( team == 0 )
-			return false;
-
-		for( var i=0; i < user.teams.length; i++ )
-			if( user.teams[i] == team )
-				return true;
-		return false;
+	this._team_exists = function(teamId) {
+		return user.get_team(teamId) != null;
 	}
 
 	this._selected = function(ev) {
@@ -543,8 +545,9 @@ function TeamSelector() {
 
 	this._update_name = function() {
 		var name = "";
-		if( this._team_exists(team) ) {
-			name = user.team_names[ team ];
+		var teamInfo = user.get_team(team);
+		if( teamInfo != null ) {
+			name = teamInfo.name;
 
 			if (user.teams.length == 1) {
 				var chosen_name = name;

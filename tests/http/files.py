@@ -29,7 +29,7 @@ class FilesTests(unittest.TestCase):
 		teams = resp['teams']
 		util.assertGreaterThan(0, len(teams), "User must be in a team to test the IDE")
 
-		cls._team = teams.keys()[0]
+		cls._team = teams[0]['id']
 
 	def setUp(self):
 		# Create a project

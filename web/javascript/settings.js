@@ -473,7 +473,17 @@ SettingsPage.Settings = {
 		options: {
 			dependsUpon: {setting: 'team.autoload', valueEq:'team.load'},
 			type: Setting.Type.single,
-			optionsCallback: function(){ return user.team_names }
+			optionsCallback: function(){
+				var teams = {};
+				var teamInfos = user.teams;
+
+				for (var i=0; i < teamInfos.length; i++) {
+					var t = teamInfos[i];
+					var name = t.name;
+					teams[t.id] = t.name;
+				}
+				return teams;
+			}
 		}
 	}
 };
