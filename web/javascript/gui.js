@@ -455,9 +455,10 @@ function TeamSelector() {
 
 			if( !this._team_exists(team) ) {
 				// Add a "please select a team" option
-				olist.unshift( OPTION( { "id" : "teamlist-tmpitem",
-							 "selected" : "selected" },
-						       "Please select a team." ) );
+				olist.unshift( OPTION( { id: 'teamlist-tmpitem',
+				                   selected: 'selected' },
+				                     "Please select a team." )
+				             );
 
 				this._prompt = status_msg( "Please select a team", LEVEL_INFO );
 			}
