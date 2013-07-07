@@ -38,7 +38,7 @@ class AuthModule extends Module
 	{
 		$input    = Input::getInstance();
 		$output   = Output::getInstance();
-		if ($this->authModule->getCurrentUser() !== null)
+		if ($this->authModule->getCurrentUserName() !== null)
 		{
 			throw new Exception('you are already authenticated', E_AUTH_FAILED);
 		}
@@ -67,7 +67,7 @@ class AuthModule extends Module
 	{
 		$input    = Input::getInstance();
 		$output   = Output::getInstance();
-		if ($this->authModule->getCurrentUser() !== null)
+		if ($this->authModule->getCurrentUserName() !== null)
 		{
 			$this->authModule->deauthUser();
 			getDefaultTokenStrategy()->removeAuthToken();

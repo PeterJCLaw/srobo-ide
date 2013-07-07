@@ -7,7 +7,7 @@ class AdminModule extends Module
 {
     /**
      * The username of the user currently using the module.
-     * @todo Remove this, and use $auth->getCurrentUser() in all instances?
+     * @todo Remove this, and use $auth->getCurrentUserName() in all instances?
      */
     private $username;
 
@@ -30,7 +30,7 @@ class AdminModule extends Module
     private function ensureAuthed()
     {
         $auth = AuthBackend::getInstance();
-        if (!($this->username = $auth->getCurrentUser()))
+        if (!($this->username = $auth->getCurrentUserName()))
         {
             throw new Exception('You are not logged in', E_PERM_DENIED);
         }
@@ -107,8 +107,8 @@ class AdminModule extends Module
         $item = $input->getInput('item');
 
         $status->setReviewState($item, $value, $isValid);
-        $user = AuthBackend::getInstance()->getCurrentUser();
-        $saved = $status->save($user);
+        $userName = AuthBackend::getInstance()->getCurrentUserName();
+        $saved = $status->save($userName);
         if (!$saved)
         {
             throw new Exception('Failed to save review', E_INTERNAL_ERROR);

@@ -17,7 +17,7 @@ abstract class AuthBackend
 		return self::$singleton;
 	}
 
-	abstract public function getCurrentUser();
+	abstract public function getCurrentUserName();
 	abstract public function getCurrentUserTeams();
 	abstract public function getTeams($username);
 	abstract public function isCurrentUserAdmin();

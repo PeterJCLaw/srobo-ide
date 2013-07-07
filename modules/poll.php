@@ -22,7 +22,7 @@ class PollModule extends Module
 	private function ensureAuthed()
 	{
 		$auth = AuthBackend::getInstance();
-		if (!($this->username = $auth->getCurrentUser()))
+		if (!($this->username = $auth->getCurrentUserName()))
 		{
 			throw new Exception('you are not logged in', E_PERM_DENIED);
 		}

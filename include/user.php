@@ -4,13 +4,13 @@ class UserInfo
 {
 	private static $instance = null;
 	private $info = array();
-	private $user = null;
+	private $userName = null;
 
 	//TODO: things here
 	private function __construct()
 	{
 		$auth = AuthBackend::getInstance();
-		$this->user = $auth->getCurrentUser();
+		$this->userName = $auth->getCurrentUserName();
 		$this->info['teams'] = $auth->getCurrentUserTeams();
 	}
 

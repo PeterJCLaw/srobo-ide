@@ -10,7 +10,7 @@ class FileModule extends Module
 		$auth = AuthBackend::getInstance();
 
 		// bail if we aren't authenticated
-		if ($auth->getCurrentUser() == null)
+		if ($auth->getCurrentUserName() == null)
 		{
 			// module does nothing if no authentication
 			return;
@@ -64,9 +64,9 @@ class FileModule extends Module
 	{
 		$pm = ProjectManager::getInstance();
 		$this->verifyTeam();
-		$user = AuthBackend::getInstance()->getCurrentUser();
-		$pm->updateRepository($this->team, $this->projectName, $user);
-		$repo = $pm->getUserRepository($this->team, $this->projectName, $user);
+		$userName = AuthBackend::getInstance()->getCurrentUserName();
+		$pm->updateRepository($this->team, $this->projectName, $userName);
+		$repo = $pm->getUserRepository($this->team, $this->projectName, $userName);
 		return $repo;
 	}
 

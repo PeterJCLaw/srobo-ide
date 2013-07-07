@@ -18,7 +18,7 @@ class ProjModule extends Module
 		$auth = AuthBackend::getInstance();
 
 		// bail if we aren't authenticated
-		if ($auth->getCurrentUser() == null)
+		if ($auth->getCurrentUserName() == null)
 		{
 			// module does nothing if no authentication
 			return;
@@ -90,9 +90,9 @@ class ProjModule extends Module
 		$repo_clone_url = $config->getConfig('repo_clone_url');
 
 		$auth = AuthBackend::getInstance();
-		$user = $auth->getCurrentUser();
+		$userName = $auth->getCurrentUserName();
 		var_dump($repo_clone_url);
-		$repo_clone_url = sprintf($repo_clone_url, $user, $this->team, $this->projectName);
+		$repo_clone_url = sprintf($repo_clone_url, $userName, $this->team, $this->projectName);
 		var_dump($repo_clone_url);
 
 		$output = Output::getInstance();
@@ -115,7 +115,7 @@ class ProjModule extends Module
 		$auth   = AuthBackend::getInstance();
 		$message = $input->getInput('message');
 
-		$currentUser = $auth->getCurrentUser();
+		$currentUser = $auth->getCurrentUserName();
 
 		$files = $input->getInput("paths");
 		//gaurd project state by doing a reset
@@ -277,8 +277,8 @@ class ProjModule extends Module
 		}
 
 		$this->verifyTeam();
-		$user = AuthBackend::getInstance()->getCurrentUser();
-		$repo = $this->projectManager->getUserRepository($this->team, $this->projectName, $user);
+		$userName = AuthBackend::getInstance()->getCurrentUserName();
+		$repo = $this->projectManager->getUserRepository($this->team, $this->projectName, $userName);
 		return $repo;
 	}
 

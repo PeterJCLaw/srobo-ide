@@ -32,7 +32,7 @@ abstract class SecureTokenAuth extends AuthBackend
 		}
 	}
 
-	public function getCurrentUser()
+	public function getCurrentUserName()
 	{
 		return $this->user;
 	}

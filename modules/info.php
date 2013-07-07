@@ -13,7 +13,7 @@ class InfoModule extends Module
 		$info['Version'] = shell_exec('git log -1 --pretty=format:"%h on %aD"');
 
 		$auth = AuthBackend::getInstance();
-		if ($username = $auth->getCurrentUser())
+		if ($username = $auth->getCurrentUserName())
 		{
 			$info['User'] = $username;
 

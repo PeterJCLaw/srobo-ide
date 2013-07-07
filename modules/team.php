@@ -20,7 +20,7 @@ class TeamModule extends Module
 	private static function getRequestTeamID()
 	{
 		$authModule = AuthBackend::getInstance();
-		if ($authModule->getCurrentUser() == null)
+		if ($authModule->getCurrentUserName() == null)
 			throw new Exception('not authenticated', E_PERM_DENIED);
 		$input  = Input::getInstance();
 		$team = $input->getInput('team');
@@ -89,8 +89,8 @@ class TeamModule extends Module
 	 */
 	private function saveStatus($status, $extra = null)
 	{
-		$user = AuthBackend::getInstance()->getCurrentUser();
-		$saved = $status->save($user);
+		$userName = AuthBackend::getInstance()->getCurrentUserName();
+		$saved = $status->save($userName);
 		if (!$saved)
 		{
 			$output = Output::getInstance();
