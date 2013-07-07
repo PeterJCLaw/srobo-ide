@@ -129,8 +129,8 @@ class ProjModule extends Module
 
 		$currentUserEmail = UserInfo::makeCommitterEmail($currentUser);
 		$commitResult = $repo->commit($message,
-		                                                 $currentUser,
-		                                                 $currentUserEmail);
+		                              $currentUser,
+		                              $currentUserEmail);
 		// couldn't make the commit
 		if (!$commitResult)
 		{
