@@ -15,12 +15,14 @@ function js_tag($name)
 
 /**
  * Outputs the given collection using the given callback.
+ * If a cache file is specified, then it is attempted to be used, but
+ * if that fails this falls back to outputting the original files.
  */
 function output_statics($items, $callback, $cache_file = null)
 {
-	if ($cache_file != null && Configuration::getInstance()->getConfig('combine_statics'))
+	if ($cache_file != null && Configuration::getInstance()->getConfig('combine_statics')
+		&& combine_into($items, $cache_file) !== false)
 	{
-		combine_into($items, $cache_file);
 		$callback($cache_file);
 	}
 	else
