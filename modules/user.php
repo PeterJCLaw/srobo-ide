@@ -35,12 +35,13 @@ class UserModule extends Module
 		$output = Output::getInstance();
 		$auth = $this->ensureAuthed();
 
-		$teamNumbers = $auth->getCurrentUserTeams();
+		$teamIds = $auth->getCurrentUserTeams();
 		$teams = array();
-		foreach ($teamNumbers as $id)
+		foreach ($teamIds as $id)
 		{
 			$name = $this->displayNameForTeam($id);
-			$teams[] = array('id' => $id, 'name' => $name);
+			$readOnly = !$auth->canCurrentUserWriteTeam($id);
+			$teams[] = array('id' => $id, 'name' => $name, 'readOnly' => $readOnly);
 		}
 
 		$output->setOutput('display-name', $auth->displayNameForUser($this->username));

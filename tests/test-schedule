@@ -29,6 +29,7 @@ TEST admin/list-items
 TEST admin/set-review-state
 
 TEST auth/single
+TEST auth/read-only
 SKIP auth/ldap
 
 TEST proj/commit

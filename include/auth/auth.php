@@ -18,8 +18,13 @@ abstract class AuthBackend
 	}
 
 	abstract public function getCurrentUserName();
+	/**
+	 * Returns *all* the teams that the current user is a member of.
+	 */
 	abstract public function getCurrentUserTeams();
+	abstract public function canCurrentUserWriteTeam($team);
 	abstract public function getTeams($username);
+	abstract public function getReadOnlyTeams($username);
 	abstract public function isCurrentUserAdmin();
 	abstract public function authUser($username, $password);
 	abstract public function deauthUser();
