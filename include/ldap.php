@@ -22,17 +22,27 @@ class LDAPManager
 	 */
 	public function getGroupsForUser($user, $filter = null)
 	{
+		$ldap_filter = "memberUid=$user";
+		if ($filter != null)
+		{
+			$ldap_filter = "(&($ldap_filter)(cn=$filter))";
+		}
+		$groups = $this->cnSearch($ldap_filter);
+		return $groups;
+	}
+
+	/**
+	 * Get "cn"s of all the items that match the given filter.
+	 * @param filter: filter of items to search for, applied in LDAP.
+	 */
+	private function cnSearch($ldap_filter)
+	{
 		if (!$this->authed)
 			throw new Exception('cannot search groups, not authed to ldap', E_LDAP_NOT_AUTHED);
 		if ($this->user != 'ide')
 			throw new Exception('cannot search groups, not the IDE user', E_LDAP_NOT_AUTHED);
 		//do an ldap search
-		$ldap_filter = "memberUid=$user";
 		$attrs = array('cn');
-		if ($filter != null)
-		{
-			$ldap_filter = "(&($ldap_filter)(cn=$filter))";
-		}
 		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', $ldap_filter, $attrs);
 		$results = ldap_get_entries($this->connection , $resultsID);
 		$saneGroups = array();
