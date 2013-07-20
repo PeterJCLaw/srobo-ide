@@ -221,6 +221,7 @@ ProjPage.prototype.set_team = function(team) {
 	if( team == null || team == 0 )
 		return;
 
+	this._rpane_hide();
 	this._init();
 	// reset polling for the new team
 	this._setupPolling();
