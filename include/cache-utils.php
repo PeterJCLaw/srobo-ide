@@ -43,12 +43,14 @@ function up_to_date($inputs, $outputs)
  * This function will only overwrite an existing file if it's out of date.
  * @param collection: An array of input files to combine.
  * @param output_file: The path to the file to combine the files into.
+ * @returns: true if the outputs are up-to-date, otherwise the result from
+ *           the write using file_put_contents.
  */
 function combine_into($collection, $output_file)
 {
 	if (up_to_date($collection, array($output_file)))
 	{
-		return;
+		return true;
 	}
 	$raw_data = '';
 	foreach ($collection as $input_file)
@@ -59,5 +61,6 @@ function combine_into($collection, $output_file)
 			$raw_data .= $content;
 		}
 	}
-	file_put_contents($output_file, $raw_data);
+	$put = file_put_contents($output_file, $raw_data);
+	return $put;
 }
