@@ -480,7 +480,10 @@ SettingsPage.Settings = {
 				for (var i=0; i < teamInfos.length; i++) {
 					var t = teamInfos[i];
 					var name = t.name;
-					teams[t.id] = t.name;
+					if (IDE_string_empty(name)) {
+						name = t.id;
+					}
+					teams[t.id] = name;
 				}
 				return teams;
 			}
