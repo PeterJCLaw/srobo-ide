@@ -55,6 +55,12 @@
   color: #ffffff;
 }
 
+#proj-fileops li a.disabled {
+  background-color: inherit;
+  color: grey;
+  cursor: default;
+}
+
 #proj-rpane {
   margin-left: 20em;
 }
