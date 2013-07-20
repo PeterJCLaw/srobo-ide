@@ -33,6 +33,8 @@ function ProjPage(team_selector) {
 
 	this.last_updated	= new Date();
 
+	this._read_only = false;
+
 	// listen for changes in the selected team
 	connect( team_selector, "onchange", bind(this.set_team, this) );
 
@@ -230,6 +232,18 @@ ProjPage.prototype.set_team = function(team) {
  	this._list.update(team);
 	// The selector and filelist are connected to onchange on the list,
 	// so they will update when it's updated
+
+	var teamInfo = user.get_team(team);
+	this._set_readonly(teamInfo.readOnly == true);
+}
+
+ProjPage.prototype._set_readonly = function(isReadOnly) {
+	if (this._read_only != isReadOnly) {
+		getElement('new-project').disabled = isReadOnly;
+		getElement('copy-project').disabled = isReadOnly;
+		this.selection_operations.set_readonly(isReadOnly);
+	}
+	this._read_only = isReadOnly;
 }
 
 // ***** Project Page Right Hand pane *****
