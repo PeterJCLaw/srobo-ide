@@ -178,6 +178,10 @@ ProjPage.prototype.hide_filelist = function() {
 	this.flist._hide();
 }
 
+ProjPage.prototype.project_readonly = function(pname) {
+	return this._read_only;
+}
+
 ProjPage.prototype.project_exists = function(pname) {
 	return this._list != null && this._list.project_exists(pname);
 }

@@ -97,7 +97,8 @@ function EditPage() {
 		var newTab = false;
 
 		if( etab == null ) {
-			etab = this._new_etab( team, project, path, rev, mode );
+			var readOnly = projpage.project_readonly(project);
+			etab = this._new_etab( team, project, path, rev, readOnly, mode );
 			newTab = true;
 		}
 
@@ -122,7 +123,7 @@ function EditPage() {
 		}
 		this._new_count ++;
 		var fname = "New File " + this._new_count;
-		var etab = this._new_etab( team, null, fname, 0 );
+		var etab = this._new_etab( team, null, fname, 0, false );
 		tabbar.switch_to( etab.tab );
 	}
 
@@ -167,8 +168,8 @@ function EditPage() {
 
 	// Create a new tab that's one of ours
 	// Doesn't load the tab
-	this._new_etab = function(team, project, path, rev, mode) {
-		var etab = new EditTab(this._iea, team, project, path, rev, mode);
+	this._new_etab = function(team, project, path, rev, isReadOnly, mode) {
+		var etab = new EditTab(this._iea, team, project, path, rev, isReadOnly, mode);
 
 		connect( etab, "onclose", bind( this._on_tab_close, this ) );
 
@@ -221,7 +222,7 @@ function EditPage() {
 
 // Represents a tab that's being edited
 // Managed by EditPage -- do not instantiate outside of EditPage
-function EditTab(iea, team, project, path, rev, mode) {
+function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	// Member functions:
 	// Public:
 	//  - close: Handler for when the tab is closed: check the contents of the file then close
@@ -293,6 +294,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 	this._autosave_retry_delay = 7;
 	//the contents at the time of the last autosave
 	this._autosaved = "";
+	// Whether the file is opened read-only
+	this._read_only = isReadOnly;
 	// whether we're loading from the vcs repo or an autosave
 	this._mode = mode;
 
@@ -610,13 +613,23 @@ function EditTab(iea, team, project, path, rev, mode) {
 					     bind( this._check_syntax, this ) ) );
 
 		// Diff view handler
-		this._signals.push( connect( "edit-diff",
-					     "onclick",
-					     bind( this._diff, this ) ) );
+		var diffElem = getElement('edit-diff');
+		diffElem.disabled = this._read_only;
+		if (!this._read_only) {
+			this._signals.push( connect(diffElem,
+			                            'onclick',
+			                            bind(this._diff, this))
+			                  );
+		}
 		// Save handler
-		this._signals.push( connect( "save-file",
-					     "onclick",
-					     bind( this._save, this ) ) );
+		var saveElem = getElement('save-file');
+		saveElem.disabled = this._read_only;
+		if (!this._read_only) {
+			this._signals.push( connect(saveElem,
+			                            'onclick',
+			                            bind(this._save, this))
+			                  );
+		}
 		// change revision handler
 		this._signals.push( connect( "history",
 					     "onclick",
@@ -628,6 +641,7 @@ function EditTab(iea, team, project, path, rev, mode) {
 					    bind( this._on_keydown, this ) ) );
 
 		this._show_contents();
+		this._iea.setReadOnly(this._read_only);
 		this._iea.focus();
 	}
 
@@ -656,6 +670,8 @@ function EditTab(iea, team, project, path, rev, mode) {
 		var t = this.path;
 		if( this.rev != 0 )
 			t = t + " - " + IDE_hash_shrink(this.rev);
+		if (this._read_only)
+			t += ' [read-only]';
 		replaceChildNodes( "tab-filename", t );
 	}
 
@@ -828,6 +844,11 @@ function ide_editarea(id) {
 		if( range != null ) {
 			this._ace.selection.setSelectionRange( range );
 		}
+	}
+
+	this.setReadOnly = function(isReadOnly) {
+		this._ace.setReadOnly(isReadOnly);
+		setReadOnly(this._id, isReadOnly);
 	}
 
 	this.focus = function() {

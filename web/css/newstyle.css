@@ -364,6 +364,7 @@ a.button:hover, #login-box #login-button:hover {
 	filter: alpha(opacity=75);
 }
 
+.read-only div.ace_scroller,
 .read-only {
 	/* light yellow */
 	background-color: #ffb;
