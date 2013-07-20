@@ -4,7 +4,7 @@ function Log(file, project) {
 	this.tab = null;		//holds reference to tab in tabbar
 	this.selectedRevision = -1;	//Selected revision, -1 indicates no revision set
 	this.team = team;		//team number TODO: get this from elsewhere
-	this.project = project;    //holds the current project name
+	this.project = project || IDE_path_get_project(file); //holds the current project name
 	this.user = null;		//holds author name
 	this.userList = new Array();	//List of  users attributed to file(s)
 	this.history = new Array();	//array of log entries returned by server
