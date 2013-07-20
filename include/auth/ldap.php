@@ -9,7 +9,11 @@ require_once("include/ldap.php");
  */
 class LDAPAuth extends SecureTokenAuth
 {
+	// uses the user's credentials
 	private $ldapManager;
+
+	// uses the IDE credentials
+	private $ideLdapManager;
 
 	public function __construct()
 	{
@@ -32,8 +36,9 @@ class LDAPAuth extends SecureTokenAuth
 	{
 		ide_log(LOG_INFO, "Getting teams for '$username'.");
 		$config = Configuration::getInstance();
-		$ldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
 		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
+
+		$ldapManager = $this->getIDELDAPManager();
 		$groups = $ldapManager->getGroupsForUser($username, $groupNamePrefix.'*');
 		$teams = array();
 
@@ -48,6 +53,18 @@ class LDAPAuth extends SecureTokenAuth
 		return $teams;
 	}
 
+	private function getIDELDAPManager()
+	{
+		if ($this->ideLdapManager == null)
+		{
+			$config = Configuration::getInstance();
+			$host = $config->getConfig("ldap.host");
+			$pass = $config->getConfig("ldap.ideuser.password");
+			$this->ideLdapManager = new LDAPManager($host, "ide", $pass);
+		}
+		return $this->ideLdapManager;
+	}
+
 	/**
 	 * Returns whether or not the user is in the requested group.
 	 * @param user: The user to check membership for.
@@ -55,9 +72,8 @@ class LDAPAuth extends SecureTokenAuth
 	 */
 	private function inGroup($user, $group)
 	{
-		$config = Configuration::getInstance();
-		$IDEldapManager = new LDAPManager($config->getConfig("ldap.host"), "ide", $config->getConfig("ldap.ideuser.password"));
-		$groups = $IDEldapManager->getGroupsForUser($user, $group);
+		$ldapManager = $this->getIDELDAPManager();
+		$groups = $ldapManager->getGroupsForUser($user, $group);
 		// should either be 0 or 1 responses...
 		$inGroup = count($groups) > 0;
 		return $inGroup;
