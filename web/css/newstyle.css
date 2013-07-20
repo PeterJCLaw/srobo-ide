@@ -363,3 +363,8 @@ a.button:hover, #login-box #login-button:hover {
 	opacity: .75;
 	filter: alpha(opacity=75);
 }
+
+.read-only {
+	/* light yellow */
+	background-color: #ffb;
+}

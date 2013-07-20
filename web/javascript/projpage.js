@@ -244,6 +244,7 @@ ProjPage.prototype._set_readonly = function(isReadOnly) {
 		this.selection_operations.set_readonly(isReadOnly);
 	}
 	this._read_only = isReadOnly;
+	setReadOnly('projects-page', isReadOnly);
 }
 
 // ***** Project Page Right Hand pane *****

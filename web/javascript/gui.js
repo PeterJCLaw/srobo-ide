@@ -561,3 +561,15 @@ function TeamSelector() {
 		replaceChildNodes( "teamname", " " + name );
 	}
 }
+
+function setReadOnly(elem, isReadOnly)
+{
+	if (isReadOnly)
+	{
+		addElementClass(elem, 'read-only');
+	}
+	else
+	{
+		removeElementClass(elem, 'read-only');
+	}
+}
