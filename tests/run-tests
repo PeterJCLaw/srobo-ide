@@ -35,6 +35,17 @@ pcntl_signal(SIGINT,  "sig_handler");
 // Get a working folder for this run of tests
 $workPath = tmpdir(null, 'ide-test-');
 
+$single = false;
+if ($test_restrict != null)
+{
+	$tmp = array_diff($test_restrict, array('-s', '--single'));
+	if (count($tmp) != count($test_restrict))
+	{
+		$single = true;
+		$test_restrict = $tmp;
+	}
+}
+
 foreach ($sched as $value)
 {
 	++$line;
@@ -106,7 +117,7 @@ foreach ($sched as $value)
 			++$fails;
 			echo "FAIL    $tn\n";
 			$lines = explode("\n", $output);
-			if (count($lines) > 10)
+			if (count($lines) > 10 && !$single)
 			{
 				$tmpfile = tempnam("/tmp", "ide-test-");
 				file_put_contents($tmpfile, "$output\n");
@@ -123,6 +134,8 @@ foreach ($sched as $value)
 			}
 		}
 	}
+	if ($single)
+		break;
 }
 
 $end_time = microtime(true);
