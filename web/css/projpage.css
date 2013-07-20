@@ -41,7 +41,7 @@
 
 #proj-fileops li {
   list-style-type: none;
-  border: 1px solid white;
+  margin: 1px;
 }
 
 #proj-fileops li a {
