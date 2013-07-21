@@ -75,6 +75,8 @@ class FileModule extends Module
 	 */
 	public function makeDirectory()
 	{
+		AuthBackend::ensureWrite($this->team);
+
 		$input = Input::getInstance();
 		$output = Output::getInstance();
 		$path = $input->getInput("path");
@@ -195,6 +197,8 @@ class FileModule extends Module
 	 */
 	public function putFile()
 	{
+		AuthBackend::ensureWrite($this->team);
+
 		$input  = Input::getInstance();
 		$path   = $input->getInput('path');
 		$data   = $input->getInput('data');
@@ -206,6 +210,8 @@ class FileModule extends Module
 	 */
 	public function newFile()
 	{
+		AuthBackend::ensureWrite($this->team);
+
 		$input  = Input::getInstance();
 		$path   = $input->getInput('path');
 		return $this->repository()->createFile($path);
@@ -216,6 +222,8 @@ class FileModule extends Module
 	 */
 	public function deleteFile()
 	{
+		AuthBackend::ensureWrite($this->team);
+
 		$input  = Input::getInstance();
 		$output = Output::getInstance();
 		$files = $input->getInput("files");
@@ -233,6 +241,8 @@ class FileModule extends Module
 	 */
 	public function copyFile()
 	{
+		AuthBackend::ensureWrite($this->team);
+
 		$input   = Input::getInstance();
 		$output  = Output::getInstance();
 		$oldPath = $input->getInput('old-path');
@@ -248,6 +258,8 @@ class FileModule extends Module
 	 */
 	public function moveFile()
 	{
+		AuthBackend::ensureWrite($this->team);
+
 		$input   = Input::getInstance();
 		$output  = Output::getInstance();
 		$oldPath = $input->getInput('old-path');
