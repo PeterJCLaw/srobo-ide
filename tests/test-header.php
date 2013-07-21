@@ -132,7 +132,8 @@ function test_exception($callback, $code, $message)
 	catch (Exception $e)
 	{
 		$rcode = $e->getCode();
-		__test($rcode == $code, $message . " (wrong code, expected $code, got $rcode)");
+		$emsg = $e->getMessage();
+		__test($rcode == $code, $message . " (wrong code, expected $code, got $rcode: \"$emsg\")");
 	}
 }
 
