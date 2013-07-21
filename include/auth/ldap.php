@@ -58,7 +58,7 @@ class LDAPAuth extends SecureTokenAuth
 		ide_log(LOG_INFO, "Getting read-only teams for '$username'.");
 		$config = Configuration::getInstance();
 		$readAllGroup = $config->getConfig('ldap.read_all_group');
-		if (!$this->inGroup($username, $readAllGroup))
+		if (empty($readAllGroup) || !$this->inGroup($username, $readAllGroup))
 		{
 			return array();
 		}
