@@ -62,6 +62,7 @@ class ProjModule extends Module
 	public function createProject()
 	{
 		$this->verifyTeam();
+		AuthBackend::ensureWrite($this->team);
 		$this->openProject($this->team, $this->projectName, true);
 		return true;
 	}
@@ -69,6 +70,7 @@ class ProjModule extends Module
 	public function copyProject()
 	{
 		$input = Input::getInstance();
+		AuthBackend::ensureWrite($this->team);
 		$this->projectManager->copyRepository($this->team, $this->projectName, $input->getInput("new-name"));
 		return true;
 	}
@@ -79,6 +81,7 @@ class ProjModule extends Module
 	public function deleteProject()
 	{
 		$this->verifyTeam();
+		AuthBackend::ensureWrite($this->team);
 		$this->projectManager->deleteRepository($this->team, $this->projectName);
 		return true;
 	}
@@ -103,6 +106,7 @@ class ProjModule extends Module
 	public function commitProject()
 	{
 		$this->verifyTeam();
+		AuthBackend::ensureWrite($this->team);
 
 		$repo = $this->openProject($this->team, $this->projectName);
 		if ($repo == null)

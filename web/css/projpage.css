@@ -41,7 +41,7 @@
 
 #proj-fileops li {
   list-style-type: none;
-  border: 1px solid white;
+  margin: 1px;
 }
 
 #proj-fileops li a {
@@ -53,6 +53,12 @@
 #proj-fileops li a:hover {
   background-color: #253571;
   color: #ffffff;
+}
+
+#proj-fileops li a.disabled {
+  background-color: inherit;
+  color: grey;
+  cursor: default;
 }
 
 #proj-rpane {

@@ -112,6 +112,7 @@ class TeamModule extends Module
 	{
 		$input = Input::getInstance();
 		$team = self::getRequestTeamID();
+		AuthBackend::ensureWrite($team);
 		$config = Configuration::getInstance();
 
 		$uploadLocation = $config->getConfig('team.status_images.dir');
@@ -157,6 +158,7 @@ class TeamModule extends Module
 	{
 		$input = Input::getInstance();
 		$team = self::getRequestTeamID();
+		AuthBackend::ensureWrite($team);
 		$status = new TeamStatus($team);
 
 		// Handle the simple fields

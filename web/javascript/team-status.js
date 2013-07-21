@@ -9,6 +9,9 @@ function TeamStatus()
 	//hold status message for the page
 	this._prompt = null;
 
+	// Whether or not this is a read-only view
+	this._read_only = false;
+
 	//keep track of whether object is initialised
 	this._inited = false;
 
@@ -30,13 +33,21 @@ TeamStatus.prototype.init = function()
 			return;
 		}
 
+		var teamInfo = user.get_team(team);
+		var isReadOnly = teamInfo.readOnly == true
+		this._set_read_only(isReadOnly);
+
 		/* Initialize a new tab for switchboard - Do this only once */
 		this.tab = new Tab( "Team Status" );
 		this._signals.push(connect( this.tab, "onfocus", bind( this._onfocus, this ) ));
 		this._signals.push(connect( this.tab, "onblur", bind( this._onblur, this ) ));
 		this._signals.push(connect( this.tab, "onclickclose", bind( this._close, this ) ));
-		this._signals.push(connect( 'team-status-save', 'onclick', bind( this.saveStatus, this ) ));
-		this._signals.push(connect( 'upload-helper', "onload", bind( this._uploadHelperLoad, this ) ));
+		var saveElem = getElement('team-status-save');
+		saveElem.disabled = isReadOnly;
+		if (!isReadOnly) {
+			this._signals.push(connect( saveElem, 'onclick', bind( this.saveStatus, this ) ));
+			this._signals.push(connect( 'upload-helper', "onload", bind( this._uploadHelperLoad, this ) ));
+		}
 		tabbar.add_tab( this.tab );
 
 		/* Initialise indiviual page elements */
@@ -49,6 +60,23 @@ TeamStatus.prototype.init = function()
 
 	/* now switch to it */
 	tabbar.switch_to(this.tab);
+}
+
+TeamStatus.prototype._set_read_only = function(isReadOnly)
+{
+	if (this._read_only == isReadOnly) {
+		return;
+	}
+
+	for (var i=0; i < this._fields.length; i++) {
+		var field = this._getField(this._fields[i]);
+		field.readOnly = isReadOnly;
+	}
+	this._getField('image').disabled = isReadOnly;
+
+	setReadOnly('team-status-page', isReadOnly);
+
+	this._read_only = isReadOnly;
 }
 /* *****	End Initialization Code 	***** */
 

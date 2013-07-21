@@ -53,6 +53,32 @@ class LDAPAuth extends SecureTokenAuth
 		return $teams;
 	}
 
+	public function getReadOnlyTeams($username)
+	{
+		ide_log(LOG_INFO, "Getting read-only teams for '$username'.");
+		$config = Configuration::getInstance();
+		$readAllGroup = $config->getConfig('ldap.read_all_group');
+		if (!$this->inGroup($username, $readAllGroup))
+		{
+			return array();
+		}
+
+		$ldapManager = $this->getIDELDAPManager();
+		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
+		$groups = $ldapManager->getGroups($groupNamePrefix.'*');
+		$teams = array();
+
+		ide_log(LOG_INFO, "Using prefix '$groupNamePrefix'.");
+		foreach ($groups as $group)
+		{
+			ide_log(LOG_DEBUG, "Got group '$group'.");
+			$teams[] = substr($group, strlen($groupNamePrefix));
+		}
+		ide_log(LOG_INFO, "Got teams: ". print_r($teams, true));
+
+		return $teams;
+	}
+
 	private function getIDELDAPManager()
 	{
 		if ($this->ideLdapManager == null)

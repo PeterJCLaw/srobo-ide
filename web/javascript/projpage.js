@@ -33,6 +33,8 @@ function ProjPage(team_selector) {
 
 	this.last_updated	= new Date();
 
+	this._read_only = false;
+
 	// listen for changes in the selected team
 	connect( team_selector, "onchange", bind(this.set_team, this) );
 
@@ -176,6 +178,10 @@ ProjPage.prototype.hide_filelist = function() {
 	this.flist._hide();
 }
 
+ProjPage.prototype.project_readonly = function(pname) {
+	return this._read_only;
+}
+
 ProjPage.prototype.project_exists = function(pname) {
 	return this._list != null && this._list.project_exists(pname);
 }
@@ -230,6 +236,19 @@ ProjPage.prototype.set_team = function(team) {
  	this._list.update(team);
 	// The selector and filelist are connected to onchange on the list,
 	// so they will update when it's updated
+
+	var teamInfo = user.get_team(team);
+	this._set_readonly(teamInfo.readOnly == true);
+}
+
+ProjPage.prototype._set_readonly = function(isReadOnly) {
+	if (this._read_only != isReadOnly) {
+		getElement('new-project').disabled = isReadOnly;
+		getElement('copy-project').disabled = isReadOnly;
+		this.selection_operations.set_readonly(isReadOnly);
+	}
+	this._read_only = isReadOnly;
+	setReadOnly('projects-page', isReadOnly);
 }
 
 // ***** Project Page Right Hand pane *****
@@ -949,11 +968,35 @@ function ProjOps() {
 	//list of operations
 	this.ops = new Array();
 
+	this._read_only = false;
+
 	this.init = function() {
 		//connect up operations
 		for(var i=0; i < this.ops.length; i++) {
-			this.ops[i].event = connect(this.ops[i].handle, 'onclick', this.ops[i].action);
+			var action = bind(this._handler, this, this.ops[i]);
+			this.ops[i].event = connect(this.ops[i].handle, 'onclick', action);
 		}
+	}
+
+	this.set_readonly = function(isReadOnly) {
+		if (this._read_only != isReadOnly) {
+			var setClass = isReadOnly ? addElementClass : removeElementClass;
+			for (var i=0; i < this.ops.length; i++) {
+				var op = this.ops[i];
+				if (op.isWrite) {
+					setClass(op.handle, 'disabled');
+				}
+			}
+		}
+		this._read_only = isReadOnly;
+	}
+
+	this._handler = function(operation, ev) {
+		if (operation.isWrite && this._read_only) {
+			kill_event(ev);
+			return false;
+		}
+		operation.action();
 	}
 
 	this.view_log = function() {
@@ -1326,56 +1369,67 @@ function ProjOps() {
 	this.ops.push({ "name" : "Select None",
 			"action" : function() { projpage.flist.select_none(); },
 			"handle" : getElement("proj-select-none"),
+			'isWrite' : false,
 			"event" : null});
 
 	this.ops.push({ "name" : "Select All",
 			"action" : function() { projpage.flist.select_all(); },
 			"handle": getElement("proj-select-all"),
+			'isWrite' : false,
 			"event" : null});
 
 	this.ops.push({ "name" : "New File",
 			"action" : function() { editpage.new_file(); },
 			"handle" : getElement("op-newfile"),
+			'isWrite' : true,
 			"event" : null});
 
 	this.ops.push({ "name" : "New Directory",
 			"action" : bind(this.new_folder, this, null, null),
 			"handle": getElement("op-mkdir"),
+			'isWrite' : true,
 			"event" : null});
 
 	this.ops.push({ "name" : "Move",
 			"action" : bind(this.mv, this),
 			"handle": getElement("op-mv"),
+			'isWrite' : true,
 			"event" : null });
 
 	this.ops.push({ "name" : "Copy",
 			"action" : bind(this.cp, this),
 			"handle": getElement("op-cp"),
+			'isWrite' : true,
 			"event" : null });
 
 	this.ops.push({ "name" : "Delete",
 			"action" : bind(this.rm, this, false),
 			"handle": getElement("op-rm"),
+			'isWrite' : true,
 			"event" : null });
 
 	this.ops.push({ "name" : "Undelete",
 			"action" : bind(this.undel, this),
 			"handle": getElement("op-undel"),
+			'isWrite' : true,
 			"event" : null });
 
 	this.ops.push({ "name" : "Delete AutoSaves",
 			"action" : bind(this.rm_autosaves, this, false),
 			"handle": getElement("op-rm_autosaves"),
+			'isWrite' : true,
 			"event" : null });
 
 	this.ops.push({ "name" : "Check Files' Code",
 			"action" : bind(this.check_code, this),
 			"handle": getElement("op-check"),
+			'isWrite' : false,
 			"event" : null });
 
 	this.ops.push({ "name" : "View Log",
 			"action" : bind(this.view_log, this),
 			"handle": getElement("op-log"),
+			'isWrite' : false,
 			"event" : null });
 
 	this.init();

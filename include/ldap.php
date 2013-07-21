@@ -32,6 +32,17 @@ class LDAPManager
 	}
 
 	/**
+	 * Get all the groups that match the given filter.
+	 * @param filter: filter of group names to search for, applied in LDAP.
+	 */
+	public function getGroups($filter)
+	{
+		$ldap_filter = "cn=$filter";
+		$groups = $this->cnSearch($ldap_filter);
+		return $groups;
+	}
+
+	/**
 	 * Get "cn"s of all the items that match the given filter.
 	 * @param filter: filter of items to search for, applied in LDAP.
 	 */

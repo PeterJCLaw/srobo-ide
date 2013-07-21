@@ -17,9 +17,32 @@ abstract class AuthBackend
 		return self::$singleton;
 	}
 
+	/**
+	 * Checks that the current user can write to the requested team,
+	 * or throws an exception if not.
+	 */
+	public static function ensureWrite($team)
+	{
+		$authModule = self::getInstance();
+		if ($authModule->getCurrentUserName() == null)
+		{
+			throw new Exception('not authenticated', E_PERM_DENIED);
+		}
+
+		if (!$authModule->canCurrentUserWriteTeam($team))
+		{
+			throw new Exception('You do not have permission to write within that team', E_PERM_DENIED);
+		}
+	}
+
 	abstract public function getCurrentUserName();
+	/**
+	 * Returns *all* the teams that the current user is a member of.
+	 */
 	abstract public function getCurrentUserTeams();
+	abstract public function canCurrentUserWriteTeam($team);
 	abstract public function getTeams($username);
+	abstract public function getReadOnlyTeams($username);
 	abstract public function isCurrentUserAdmin();
 	abstract public function authUser($username, $password);
 	abstract public function deauthUser();

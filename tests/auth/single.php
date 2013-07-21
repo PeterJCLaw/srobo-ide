@@ -4,6 +4,7 @@ $config = Configuration::getInstance();
 $config->override('auth_module', 'single');
 $config->override('user.default', 'cake');
 $config->override('user.default.teams', array(1, 2));
+$config->override('user.default.read_only_teams', array());
 
 // get the module
 $auth = AuthBackend::getInstance();

@@ -12,6 +12,8 @@ function Log(file, project) {
 	this.offset = 0;		//which results page we want to retrieve from the server
 	this.pageCount = 0;		//stores the total number of results pages (retrieved from server)
 
+	this._read_only = projpage.project_readonly(this.project);
+
 	//do this only once: add a new tab to the tabbar and link it to this log page
 	this.tab = new Tab("Log: "+this.file.toString());
 	connect(this.tab, 'onfocus', bind(this._onfocus, this));
@@ -173,8 +175,12 @@ Log.prototype._populateList = function() {
 		newerButton.disabled = true;
 
 	//connect up the 'Revert' button to event handler
-	disconnectAll("revert");
-	connect("revert", 'onclick', bind(this._revert, this, false));
+	var revertElem = getElement('revert');
+	disconnectAll(revertElem);
+	revertElem.disabled = this._read_only;
+	if (!this._read_only) {
+		connect(revertElem, 'onclick', bind(this._revert, this, false));
+	}
 
 	//connect up the 'Diff' button to event handler
 	disconnectAll('log-diff');

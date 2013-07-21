@@ -20,6 +20,11 @@ class SingleAuth extends SecureTokenAuth
 		return Configuration::getInstance()->getConfig("user.default.teams");
 	}
 
+	public function getReadOnlyTeams($username)
+	{
+		return Configuration::getInstance()->getConfig("user.default.read_only_teams");
+	}
+
 	public function isCurrentUserAdmin()
 	{
 		return (bool) Configuration::getInstance()->getConfig('user.default.is_admin');
