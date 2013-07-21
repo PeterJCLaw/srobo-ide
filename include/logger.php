@@ -5,7 +5,11 @@
  */
 class Logger
 {
-	public static $names = array(LOG_DEBUG => 'debug', LOG_INFO => 'info', LOG_ERR => 'error');
+	public static $names = array(LOG_DEBUG => 'debug',
+	                             LOG_INFO => 'info',
+	                             LOG_NOTICE => 'notice',
+	                             LOG_WARNING => 'warning',
+	                             LOG_ERR => 'error');
 
 	public static function log($level, $message)
 	{

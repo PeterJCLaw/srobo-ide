@@ -15,17 +15,39 @@ function test_level($logLevel, $data)
 test_level(LOG_DEBUG,	// everygthing
 	array(LOG_DEBUG => true,
 	      LOG_INFO => true,
+	      LOG_NOTICE => true,
+	      LOG_WARNING => true,
 	      LOG_ERR => true)
 	);
 
-test_level(LOG_INFO,	// info and errors only
+test_level(LOG_INFO,	// no debug
 	array(LOG_DEBUG => FALSE,
 	      LOG_INFO => true,
+	      LOG_NOTICE => true,
+	      LOG_WARNING => true,
+	      LOG_ERR => true)
+	);
+
+test_level(LOG_NOTICE,	// notices, warnings & errors only
+	array(LOG_DEBUG => FALSE,
+	      LOG_INFO => FALSE,
+	      LOG_NOTICE => true,
+	      LOG_WARNING => true,
+	      LOG_ERR => true)
+	);
+
+test_level(LOG_WARNING,	// warnings & errors only
+	array(LOG_DEBUG => FALSE,
+	      LOG_INFO => FALSE,
+	      LOG_NOTICE => FALSE,
+	      LOG_WARNING => true,
 	      LOG_ERR => true)
 	);
 
 test_level(LOG_ERR,	// errors only
 	array(LOG_DEBUG => FALSE,
 	      LOG_INFO => FALSE,
+	      LOG_NOTICE => FALSE,
+	      LOG_WARNING => FALSE,
 	      LOG_ERR => true)
 	);
