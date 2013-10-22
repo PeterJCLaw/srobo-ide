@@ -323,10 +323,12 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this.contents = "";
 			this._original = "";
 			getElement("check-syntax").disabled = true;
+			getElement("edit-diff").disabled = true;
 		} else {
 			// Existing file
 			this._load_contents();
 			getElement("check-syntax").disabled = false;
+			getElement("edit-diff").disabled = false;
 		}
 	}
 
@@ -457,6 +459,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		this._isNew = false;
 		this.rev = nodes.commit;
 		getElement("check-syntax").disabled = false;
+		getElement("edit-diff").disabled = false;
 		this._update_contents();
 	}
 
@@ -614,7 +617,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 		// Diff view handler
 		var diffElem = getElement('edit-diff');
-		diffElem.disabled = this._read_only;
+		diffElem.disabled = this._read_only || this._isNew;
 		if (!this._read_only) {
 			this._signals.push( connect(diffElem,
 			                            'onclick',
