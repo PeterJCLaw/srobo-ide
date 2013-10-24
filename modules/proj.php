@@ -95,7 +95,8 @@ class ProjModule extends Module
 		$auth = AuthBackend::getInstance();
 		$userName = $auth->getCurrentUserName();
 
-		$repo_clone_url = sprintf($repo_clone_url, $userName, $this->team, $this->projectName);
+		$escapedProject = rawurlencode($this->projectName);
+		$repo_clone_url = sprintf($repo_clone_url, $userName, $this->team, $escapedProject);
 
 		$output = Output::getInstance();
 		$output->setOutput('repoUrl', $repo_clone_url);

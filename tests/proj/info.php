@@ -38,3 +38,7 @@ function check_project($project, $expected_url) {
 }
 
 check_project('wasps', "{ user: \"$user\", team: \"$team\", project: \"wasps\" }");
+check_project('spacey project', "{ user: \"$user\", team: \"$team\", project: \"spacey%20project\" }");
+check_project('<html></html>', "{ user: \"$user\", team: \"$team\", project: \"%3Chtml%3E%3C%2Fhtml%3E\" }");
+check_project("quote's", "{ user: \"$user\", team: \"$team\", project: \"quote%27s\" }");
+check_project('quote"s', "{ user: \"$user\", team: \"$team\", project: \"quote%22s\" }");
