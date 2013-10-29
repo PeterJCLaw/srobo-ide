@@ -25,6 +25,9 @@
 	$styleSheets[] = "web/css/settings.css";
 	$styleSheets[] = "web/css/team-status.css";
 
+	// external selector box - jquery chosen
+	$styleSheets[] = "web/css/chosen.min.css";
+
 	// Javascript Source Files
 	$javaScripts[] = "web/javascript/json2.js";
 	$javaScripts[] = "web/javascript/ide.js";
@@ -51,6 +54,12 @@
 	// external editor component - ACE - http://ace.ajax.org
 	$javaScripts[] = "web/javascript/ace/src/ace.js";
 	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
+
+	// external jQuery via google's CDN
+	js_tag('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+
+	// external selector box - jquery chosen
+	$javaScripts[] = "web/javascript/chosen.jquery.min.js";
 
 	output_statics($styleSheets, 'css_tag', 'web/cache/combined.css');
 	output_statics($javaScripts, 'js_tag', 'web/cache/combined.js');

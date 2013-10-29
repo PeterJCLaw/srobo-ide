@@ -64,7 +64,7 @@ ProjPage.prototype._init = function() {
 	this._list = new ProjList();
 
 	// The selection box for selecting a project
-	this._selector = new ProjSelect(this._list, getElement("project-select"));
+	this._selector = new ProjSelect(this._list, getElement("project-select"), jQuery("#project-select"));
 	connect( this._selector, "onchange", bind( this._on_proj_change, this ) );
 
 	// Selection operations
@@ -804,9 +804,11 @@ ProjList.prototype.project_exists = function(pname) {
 // The project selector.
 // Arguments:
 //  - plist: The project list (ProjList)
-//  - elem: The DOM object for the select box.
-function ProjSelect(plist, elem) {
+//  - elem: The DOM node for the select box.
+//  - jqElem: The jQuery node for the select box.
+function ProjSelect(plist, elem, jqElem) {
 	this._elem = elem;
+	this._jqElem = jqElem;
 	this._plist = plist;
 
 	// The project that's selected
@@ -841,7 +843,7 @@ function ProjSelect(plist, elem) {
 }
 
 ProjSelect.prototype._init = function() {
-	connect( this._elem, "onchange", bind( this._onchange, this ) );
+	this._jqElem.chosen({ width: '190px' }).change( bind( this._onchange, this ) );
 	connect( this._plist, "onchange", bind( this._plist_onchange, this ) );
 	connect( this, "onchange", function(p) { user.set_settings({'project.last':p}); } );
 
@@ -899,6 +901,7 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	}
 
 	replaceChildNodes( this._elem, items );
+	this._jqElem.trigger('chosen:updated');
 
 	logDebug( "ProjList._plist_onchange: Now on project " + this._team + "." + this.project );
 
@@ -912,7 +915,7 @@ ProjSelect.prototype._onchange = function(ev) {
 	//hide the status bar - anything there is now obselete
 	status_hide();
 
-	this.select(ev.src().value);
+	this.select(this._elem.value);
 }
 
 /**
@@ -933,6 +936,7 @@ ProjSelect.prototype.select = function(project) {
 			return;
 		}
 		removeElement(this._tmp_select);
+		this._jqElem.trigger('chosen:updated');
 		this._tmp_select = null;
 	}
 
