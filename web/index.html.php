@@ -7,6 +7,7 @@
 	<!-- Style Sheets -->
 <?php
 	require_once('include/html-utils.php');
+	$config = Configuration::getInstance();
 	$styleSheets[] = "web/css/newstyle.css";
 	// Everything above here should be in that order so things don't explode,
 	// but below here things matter less, so go alphabetical...
@@ -54,9 +55,9 @@
 	output_statics($styleSheets, 'css_tag', 'web/cache/combined.css');
 	output_statics($javaScripts, 'js_tag', 'web/cache/combined.js');
 
-	$root_url = Configuration::getInstance()->getConfig('host_root_url');
+	$root_url = $config->getConfig('host_root_url');
 
-	if (Configuration::getInstance()->getConfig('usage_tracking')): ?>
+	if ($config->getConfig('usage_tracking')): ?>
 	<!-- TODO: support some form of DNT? -->
 	<script type="text/javascript">
 		var pkBaseURL = "<?=$root_url ?>/piwik/";
@@ -120,7 +121,7 @@
 			<li id="teaminfo">Loading...</li>
 		</ul>
 		<ul id="top-links">
-<?php if (Configuration::getInstance()->getConfig('gui.ticket_link')): ?>
+<?php if ($config->getConfig('gui.ticket_link')): ?>
 			<li>
 				<a href="<?=$root_url ?>/tickets/" title="Get your ticket now!">Ticket System</a>
 			</li>
