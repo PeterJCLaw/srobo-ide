@@ -424,7 +424,7 @@ SettingsPage.Settings = {
 		name: 'Project Autoload',
 		description: 'Whether or not to automatically select a project when you login to the IDE.',
 		options: {
-			'default': 'Last selected',
+			'default': 'project.last',
 			type: Setting.Type.single,
 			options: {'project.last':'Last selected', 0:'None', 'project.load':'Specify manually'}
 		}
@@ -442,7 +442,7 @@ SettingsPage.Settings = {
 		name: 'Syntax check on save',
 		description: 'Whether or not to automatically syntax check a file after you save it.',
 		options: {
-			'default': 'Enabled',
+			'default': 'true',
 			type: Setting.Type.single,
 			result: Setting.Options.bool,
 			options: { 'true': 'Enabled', 'false': "Disabled" }
@@ -452,7 +452,7 @@ SettingsPage.Settings = {
 			name: 'Show a diff in the commit window',
 			description: 'Whether or not to show a diff in the commit window so you can review your changes before committing them.',
 			options: {
-				'default': 'Enabled',
+				'default': 'true',
 				type: Setting.Type.single,
 				result: Setting.Options.bool,
 				options: { 'true': 'Enabled', 'false': "Disabled" }
@@ -462,7 +462,7 @@ SettingsPage.Settings = {
 		name: 'Team Autoload',
 		description: 'Whether or not to automatically select a team when you login to the IDE.',
 		options: {
-			'default': 'Last selected',
+			'default': 'team.last',
 			type: Setting.Type.single,
 			options: {'team.last':'Last selected', 0:'None', 'team.load':'Specify manually'}
 		}
