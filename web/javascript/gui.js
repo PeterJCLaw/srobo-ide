@@ -357,6 +357,18 @@ function User() {
 	}
 
 	this.get_setting = function(sname) {
+		var value = this.get_raw_setting(sname);
+		if (value != null) {
+			return value;
+		}
+		var setting = SettingsPage.Settings[sname];
+		if (setting != null) {
+			value = setting.options['default'];
+		}
+		return value;
+	}
+
+	this.get_raw_setting = function(sname) {
 		return this._settings[sname];
 	}
 

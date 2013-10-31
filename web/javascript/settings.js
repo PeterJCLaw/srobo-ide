@@ -50,8 +50,9 @@ SettingsPage.prototype.init = function() {
 				SettingsPage.Settings[id].description,
 				SettingsPage.Settings[id].options
 			);
-			if(user.get_setting(id) != null) {
-				this._settings[id].setValue(user.get_setting(id));
+			var raw_value = user.get_raw_setting(id);
+			if(raw_value != null) {
+				this._settings[id].setValue(raw_value);
 			}
 		}
 
