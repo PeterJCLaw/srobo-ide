@@ -87,10 +87,14 @@ class JasmineNodeRunner extends BaseRunner
 
 		$name = $this->name . '.spec.js';
 		$res = parent::runCommand("jasmine-node tests/$name", $inFile);
-		foreach (explode("\n", $res[1]) as $line) {
-			if (strpos($line, 'Error: Cannot find module') !== FALSE) {
-				$res[0] = -1;
-				$res[1] .= "\n" . $line;
+		if (strpos($res[1], 'Exception loading:') !== FALSE) {
+			$res[0] = -1;
+		} else {
+			foreach (explode("\n", $res[1]) as $line) {
+				if (strpos($line, 'Error: Cannot find module') !== FALSE) {
+					$res[0] = -1;
+					$res[1] .= "\n" . $line;
+				}
 			}
 		}
 		return $res;
