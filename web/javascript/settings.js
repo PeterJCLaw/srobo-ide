@@ -439,6 +439,15 @@ SettingsPage.Settings = {
 			optionsCallback: function(){ return projpage.list_projects(); }
 		}
 	},
+	'project.list-sort' : {
+		name: 'Project list sort',
+		description: 'How to sort the projects list on the project page.',
+		options: {
+			'default': 'alpha',
+			type: Setting.Type.single,
+			options: {'alpha':'Alphabetically', 'usage':'By usage'}
+		}
+	},
 	'save.autoerrorcheck' : {
 		name: 'Syntax check on save',
 		description: 'Whether or not to automatically syntax check a file after you save it.',

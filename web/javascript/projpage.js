@@ -825,6 +825,9 @@ function ProjSelect(plist, elem) {
 	// The 'please select a project' prompt
 	this._prompt = null;
 
+	// The project list sorter
+	this._usage_sorter = new UsageSorter([], function(){});
+
 	// Signals:
 	//  - onchange: when the project selection changes.
 	//              Handler passed the name of the new project.
@@ -844,11 +847,26 @@ function ProjSelect(plist, elem) {
 ProjSelect.prototype._init = function() {
 	this._jqElem.chosen({ width: '190px' }).change( bind( this._onchange, this ) );
 	connect( this._plist, "onchange", bind( this._plist_onchange, this ) );
-	connect( this, "onchange", function(p) { user.set_settings({'project.last':p}); } );
 
 	// If the list is already loaded when we're called, force update
 	if( this._plist.loaded )
 		this._plist_onchange();
+}
+
+ProjSelect.prototype._init_sorter = function(team) {
+	var recent = user.get_raw_setting('project.recent');
+	var team_list = []
+	if (recent != null && recent[team] != null) {
+		team_list = recent[team];
+	}
+	this._usage_sorter = new UsageSorter(team_list , function(list) {
+			var recent = user.get_raw_setting('project.recent');
+			if (recent == null) {
+				recent = {};
+			}
+			recent[team] = list;
+			user.set_settings({'project.last':list[list.length - 1], 'project.recent':recent});
+		});
 }
 
 // Called when the project list changes
@@ -865,6 +883,12 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	}
 
 	var projects = this._plist.projects;
+
+	// optionally sort them by usage, rather the default alphabetical
+	if (user.get_setting('project.list-sort') == 'usage') {
+		this._init_sorter(team);
+		projects = this._usage_sorter.sort(projects);
+	}
 
 	// Find the project to select
 	if( this.trans_project != ""
@@ -945,6 +969,11 @@ ProjSelect.prototype.select = function(project) {
 		this.project = project;
 		this._elem.value = project;
 		signal(this, "onchange", project, this._team);
+		// record the selection
+		this._usage_sorter.notify_use(project);
+		// do this after signalling the usage sorter, since that also
+		// records this we thus avoid a duplicate http request.
+		user.set_settings({'project.last':project});
 	}
 }
 

@@ -64,6 +64,7 @@ TEST js/test-skip
 TEST js/basic
 TEST js/search
 TEST js/search-results
+TEST js/usage-sorter
 
 TEST code-style/shell-var-names
 TEST code-style/no-selenium
