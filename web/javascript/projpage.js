@@ -865,6 +865,8 @@ ProjSelect.prototype._plist_onchange = function(team) {
 		this._prompt = null;
 	}
 
+	var projects = this._plist.projects;
+
 	// Find the project to select
 	if( this.trans_project != ""
 	    && this._plist.project_exists( this.trans_project ) ) {
@@ -891,8 +893,8 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	this._team = team;
 
 	// Rebuild the select box options
-	for( var i=0; i < this._plist.projects.length; i++ ) {
-		var pname = this._plist.projects[i];
+	for( var i=0; i < projects.length; i++ ) {
+		var pname = projects[i];
 		var props = { "value" : pname };
 
 		if( pname == this.project )
