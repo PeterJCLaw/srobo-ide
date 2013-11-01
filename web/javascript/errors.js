@@ -51,7 +51,7 @@ function ErrorsPage() {
 			if(findValue(filelist, file) == -1 && this.eflist[file] != null) {
 				log('Resetting '+file);
 				this.eflist[file].reset();
-			} else if(this.eflist[file] == null) {	//if it's null the initialise it
+			} else if(this.eflist[file] == null) {	//if it's null then initialise it
 				this.eflist[file] = new ErrorFile(file);
 				log('file '+file+' has been added');
 			}
