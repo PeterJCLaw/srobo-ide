@@ -64,7 +64,7 @@ ProjPage.prototype._init = function() {
 	this._list = new ProjList();
 
 	// The selection box for selecting a project
-	this._selector = new ProjSelect(this._list, getElement("project-select"), jQuery("#project-select"));
+	this._selector = new ProjSelect(this._list, getElement("project-select"));
 	connect( this._selector, "onchange", bind( this._on_proj_change, this ) );
 
 	// Selection operations
@@ -805,10 +805,9 @@ ProjList.prototype.project_exists = function(pname) {
 // Arguments:
 //  - plist: The project list (ProjList)
 //  - elem: The DOM node for the select box.
-//  - jqElem: The jQuery node for the select box.
-function ProjSelect(plist, elem, jqElem) {
+function ProjSelect(plist, elem) {
 	this._elem = elem;
-	this._jqElem = jqElem;
+	this._jqElem = jQuery(elem);
 	this._plist = plist;
 
 	// The project that's selected
