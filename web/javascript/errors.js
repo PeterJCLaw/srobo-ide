@@ -148,7 +148,6 @@ function ErrorsPage() {
 			if (cb) {
 				opts.callback('codefail', info.errors.length);
 			}
-			editpage.mark_errors(file, info.errors);
 		} else {
 			if (cb) {
 				opts.callback('pass');
@@ -265,6 +264,7 @@ function ErrorFile(name) {
 			appendChildNodes( this._items_elem, li );
 		}
 		this.show_msgs();
+		editpage.mark_errors(this.label, this._items);
 	}
 
 	this.reset = function() {
