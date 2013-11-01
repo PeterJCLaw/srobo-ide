@@ -63,4 +63,19 @@ describe("The usage sorter", function() {
 		s.notify_use('bacon');
 		expect(actual_list).toEqual(['a', 'bacon']);
 	});
+	it("should only consider up to the maximum length of the original list, ignoring the oldest", function() {
+		var s = new sort.UsageSorter(['z', 'y', 'x'], function(){}, 2);
+		var result = s.sort(['y', 'jam', 'x', 'z'])
+		expect(result).toEqual(['x', 'y', 'jam', 'z']);
+	});
+	it("should limit the size of the save the list, removing the oldest usages first", function() {
+		var actual_list = [];
+		var saver = function(list) {
+			actual_list = list;
+		}
+		var s = new sort.UsageSorter(['z', 'y', 'x'], saver, 4);
+		s.notify_use('bacon');
+		s.notify_use('jam');
+		expect(actual_list).toEqual(['y', 'x', 'bacon', 'jam']);
+	});
 });
