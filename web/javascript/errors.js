@@ -306,6 +306,7 @@ function ErrorFile(name) {
 		if (line != null) {
 			etab.setSelectionRange(line, 0, -1);
 		}
+		etab.mark_errors(this._items);
 	}
 
 	this._expand_onclick = function() {

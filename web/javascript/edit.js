@@ -789,6 +789,14 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 	// Marks the given set of errors in the editor.
 	this.mark_errors = function(errors) {
+		if (this._loaded) {
+			this._mark_errors(errors);
+		} else {
+			this._after_load_actions.push(bind(this._mark_errors, this, errors));
+		}
+	}
+
+	this._mark_errors = function(errors) {
 		var annotations = [];
 		for ( var i=0; i < errors.length; i++) {
 			var error = errors[i];
