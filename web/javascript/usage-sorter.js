@@ -1,6 +1,13 @@
 
+/**
+ * Class to sort a list based on a usage pattern of members in that list.
+ * @param initial: An array of items to seed the usage history, usually
+ *          from a previous save.
+ * @param save_handler: A function accepting a single array argument, which
+ *          will be called to store the current usage history whenever it changes.
+ */
 function UsageSorter(initial, save_hanlder) {
-        // ensure we don't modify the original list
+    // ensure we don't modify the original list
     this._list = initial.concat([]);
     this._save_hanlder = save_hanlder;
 
