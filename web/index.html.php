@@ -56,13 +56,14 @@
 	$javaScripts[] = "web/javascript/ace/src/ace.js";
 	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
 
-	// external jQuery via google's CDN
-	js_tag('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-
 	// external selector box - jquery chosen
 	$javaScripts[] = "web/javascript/chosen.jquery.min.js";
 
 	output_statics($styleSheets, 'css_tag', 'web/cache/combined.css');
+
+	// external jQuery via google's CDN -- after all the stylesheets
+	js_tag('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+
 	output_statics($javaScripts, 'js_tag', 'web/cache/combined.js');
 
 	$root_url = $config->getConfig('host_root_url');
