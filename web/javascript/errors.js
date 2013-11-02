@@ -40,7 +40,7 @@ function ErrorsPage() {
 			this._prompt = null;
 		}
 		var path = '/' + project + '/';
-		var filelist = new Array();
+		var seenFiles = {};
 		this._init();
 		log('Loading the ErrorPage');
 
@@ -49,21 +49,20 @@ function ErrorsPage() {
 			var file = path + item.file;
 
 			//if we've not seen this file before, but it has a listing already, reset it
-			if (findValue(filelist, file) == -1 && this.eflist[file] != null) {
+			if (seenFiles[file] == null && this.eflist[file] != null) {
 				log('Resetting '+file);
 				this.eflist[file].reset();
 			} else if (this.eflist[file] == null) {	//if it's null then initialise it
 				this.eflist[file] = new ErrorFile(file);
 				log('file '+file+' has been added');
 			}
-			if (findValue(filelist, file) == -1) {	//add it to our list if it's not there
-				filelist.push(file);
-			}
+			// add it to our list
+			seenFiles[file] = true;
 
 			this.eflist[file].add_item(item);
 		}
-		for (var i = 0; i < filelist.length; i++) {
-			this.eflist[filelist[i]].load_items();
+		for (var file in seenFiles) {
+			this.eflist[file].load_items();
 		}
 
 		if (opts != null) {
