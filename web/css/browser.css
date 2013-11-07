@@ -29,6 +29,10 @@
 #save-path select {
 	font-size: 0.9em;
 }
+#save-path select,
+#save-path .chosen-container {
+	color: black;
+}
 #left-pane, #right-pane {
 	display: block;
 	width: 40%;
