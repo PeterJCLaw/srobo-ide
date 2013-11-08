@@ -136,7 +136,7 @@ class TeamStatus
 		$item = $this->statusData->$name;
 		if ($item->draft != $reviewedValue)
 		{
-			throw new Exception('Cannot set review for non-existent draft', E_MALFORMED_REQUEST);
+			throw new Exception("Cannot set review of '$name' for non-existent draft", E_MALFORMED_REQUEST);
 		}
 
 		$item->reviewed = true;
