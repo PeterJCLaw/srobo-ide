@@ -54,6 +54,19 @@ class ResizableImage
 	}
 
 	/**
+	 * Convenience wrapper which saves a resized copy into the target file.
+	 * @param width The (maximum) width of the new image.
+	 * @param height The (maximum) height of the new image.
+	 * @param dest The path to save the image into.
+	 */
+	public function resizeInto($width, $height, $dest)
+	{
+		$newImageResource = $this->createResizedImage($width, $height);
+		imagepng($newImageResource, $dest);
+		imagedestroy($newImageResource);
+	}
+
+	/**
 	 * Convenience function that delegates to self::fitInBox.
 	 * See that function for full details.
 	 */

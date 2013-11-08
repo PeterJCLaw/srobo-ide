@@ -131,25 +131,17 @@ class TeamModule extends Module
 
 		// grab a resource of the image resized
 		$image = new ResizableImage($path);
-		$newImageResource = $image->createResizedImage($width, $height);
-		$newThumbResource = $image->createResizedImage($thumbWidth, $thumbHeight);
+		$dest = path_change_extension($path, 'png');
+		$image->resizeInto($width, $height, $dest);
+		$thumbPath = str_insert($dest, '_thumb', -4);
+		$image->resizeInto($thumbWidth, $thumbHeight, $thumbPath);
 
 		// remove the original
 		unlink($path);
 
-		// save, with .png extension
-		$path = path_change_extension($path, 'png');
-		imagepng($newImageResource, $path);
-		$thumbPath = str_insert($path, '_thumb', -4);
-		imagepng($newThumbResource, $thumbPath);
-
-		// free up the resource.
-		imagedestroy($newImageResource);
-		imagedestroy($newThumbResource);
-
 		// update the status store
 		$status = new TeamStatus($team);
-		$md5 = md5_file($path);
+		$md5 = md5_file($dest);
 		$status->setDraft(self::IMAGE, $md5);
 		return $this->saveStatus($status, ' image');
 	}
