@@ -133,8 +133,6 @@ class TeamModule extends Module
 		$image = new ResizableImage($path);
 		$dest = path_change_extension($path, 'png');
 		$image->resizeInto($width, $height, $dest);
-		$thumbPath = str_insert($dest, '_thumb', -4);
-		$image->resizeInto($thumbWidth, $thumbHeight, $thumbPath);
 
 		// remove the original
 		unlink($path);

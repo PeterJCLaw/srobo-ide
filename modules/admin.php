@@ -113,16 +113,19 @@ class AdminModule extends Module
         {
             throw new Exception('Failed to save review', E_INTERNAL_ERROR);
         }
+        if ($item == 'image' && $isValid)
+        {
+            self::saveImageFromReview($team, $value);
+        }
         return true;
     }
 
     /**
-     * Get the image data to review.
-     * This contains a base64 encoded version of the image and the md5.
+     * Load a team's pre-review image.
      * @param team: The team to get the image for.
      * @returns: An object containing the image data, or null.
      */
-    private static function getImageForReview($team)
+    private static function loadImage($team)
     {
         $config = Configuration::getInstance();
         $uploadLocation = $config->getConfig('team.status_images.dir');
@@ -136,6 +139,24 @@ class AdminModule extends Module
         {
             return null;
         }
+
+        return $fileData;
+    }
+
+    /**
+     * Get the image data to review.
+     * This contains a base64 encoded version of the image and the md5.
+     * @param team: The team to get the image for.
+     * @returns: An object containing the image data, or null.
+     */
+    private static function getImageForReview($team)
+    {
+        $fileData = self::loadImage($team);
+        if ($fileData == null)
+        {
+            return null;
+        }
+
         $fileData64 = base64_encode($fileData);
 
         $md5 = md5($fileData);
@@ -145,5 +166,48 @@ class AdminModule extends Module
         $info->base64 = $fileData64;
 
         return $info;
+    }
+
+    /**
+     * Copy a reviewed image that is valid into the destination folder.
+     * @param team: The team to move the image for.
+     * @param reviewed_md5: The md5 of the image that the reviewer checked.
+     */
+    private static function saveImageFromReview($team, $reviewed_md5)
+    {
+        $fileData = self::loadImage($team);
+        if ($fileData == null)
+        {
+            var_dump('no file data');
+            return false;
+        }
+
+        $current_md5 = md5($fileData);
+        if ($current_md5 != $reviewed_md5)
+        {
+            var_dump("bad md5 - current: $current_md5 != reviewed: $reviewed_md5");
+            return false;
+        }
+
+        $config = Configuration::getInstance();
+        $liveLocation = $config->getConfig('team.status_images.live_dir');
+        if (!is_dir($liveLocation) && !mkdir_full($liveLocation)
+         || !is_writable($liveLocation))
+        {
+            var_dump("bad target location '$liveLocation'");
+            return false;
+        }
+
+        $imagePath = "$liveLocation/$team.png";
+        file_put_contents($imagePath, $fileData);
+
+        $height = $config->getConfig('team.status_thumbs.height');
+        $width = $config->getConfig('team.status_thumbs.width');
+
+        $image = new ResizableImage($imagePath);
+        $dest = str_insert($imagePath, '_thumb', -4);
+        $image->resizeInto($width, $height, $dest);
+
+        return true;
     }
 }
