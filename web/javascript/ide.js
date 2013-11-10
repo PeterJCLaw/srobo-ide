@@ -100,6 +100,18 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 	xhr.send(rq);
 }
 
+function IDE_backend_request_with_retry(endpoint, args, success, retry_msg, fail) {
+	var retry = function() {
+		status_button(retry_msg, LEVEL_ERROR, "retry", function() {
+			IDE_backend_request_with_retry(endpoint, args, success, retry_msg, fail);
+		});
+		if (fail) {
+			fail();
+		}
+	};
+	IDE_backend_request(endpoint, args, success, retry);
+}
+
 /// Shrink a (git) hashes to a common and more size for display
 function IDE_hash_shrink(hash) {
 	var hash_length = 9;
