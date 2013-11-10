@@ -83,6 +83,15 @@ function EditPage() {
 		etab.mark_errors(errors);
 	}
 
+	// Clear all given errors from the named file
+	this.clear_errors = function( file ) {
+		if (!this.is_open(file))
+			return;
+
+		var etab = this._file_get_etab(file);
+		etab.clear_errors();
+	}
+
 	//Is the given file open?
 	this.is_open = function( file ) {
 		return this._open_files[file] != null;

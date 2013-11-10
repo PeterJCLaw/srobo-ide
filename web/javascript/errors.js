@@ -272,6 +272,7 @@ function ErrorFile(name) {
 	}
 
 	this.remove = function() {
+		editpage.clear_errors(this.label);
 		this.reset();
 		if (this._name_elem != null) {
 			removeElement(this._name_elem);
