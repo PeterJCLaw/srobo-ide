@@ -62,6 +62,7 @@ TEST http/proj
 #XFAIL js/xfail
 TEST js/test-skip
 TEST js/basic
+TEST js/errors-model
 TEST js/search
 TEST js/search-results
 TEST js/usage-sorter

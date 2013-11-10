@@ -42,6 +42,7 @@
 	$javaScripts[] = "web/javascript/diff.js";
 	$javaScripts[] = "web/javascript/edit.js";
 	$javaScripts[] = "web/javascript/errors.js";
+	$javaScripts[] = "web/javascript/errors-model.js";
 	$javaScripts[] = "web/javascript/log.js";
 	$javaScripts[] = "web/javascript/poll.js";
 	$javaScripts[] = "web/javascript/projpage.js";

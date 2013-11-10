@@ -170,3 +170,18 @@ if (typeof String.prototype.endsWith !== 'function') {
 		return this.indexOf(suffix, this.length - suffix.length) !== -1;
 	};
 }
+
+/**
+ * Object which can be used to access common helper methods.
+ * At the moment, this is just a plain wrapper on the above functions,
+ * but can be used in classes that want to be unit-testable as it can be
+ * mocked or injected.
+ */
+Helpers = {
+	'backend_request': IDE_backend_request,
+	'backend_request_with_retry': IDE_backend_request_with_retry,
+	'hash_shrink': IDE_hash_shrink,
+	'hash_compare': IDE_hash_compare,
+	'path_get_project': IDE_path_get_project,
+	'path_get_file': IDE_path_get_file,
+};

@@ -34,35 +34,41 @@ function ErrorsPage() {
 	}
 
 	//load a new set of errors
-	this.load = function(info, opts, project) {
+	this.load = function(info, opts) {
 		if (this._prompt != null) {
 			this._prompt.close();
 			this._prompt = null;
 		}
-		var path = '/' + project + '/';
 		var seenFiles = {};
 		this._init();
 		log('Loading the ErrorPage');
 
-		for (var i = 0; i < info.errors.length; i++) {
-			var item = info.errors[i];
-			var file = path + item.file;
+		for (var file in info.details) {
+			var errors = info.details[file];
 
-			//if we've not seen this file before, but it has a listing already, reset it
-			if (seenFiles[file] == null && this.eflist[file] != null) {
+			if (errors.length == 0) {
+				var ef = this.eflist[file];
+				if (ef != null) {
+					ef.remove();
+					this.eflist[file] = null;
+				}
+				continue;
+			}
+
+			var ef = null;
+			if (this.eflist[file] != null) {
 				log('Resetting '+file);
-				this.eflist[file].reset();
-			} else if (this.eflist[file] == null) {	//if it's null then initialise it
-				this.eflist[file] = new ErrorFile(file);
+				ef = this.eflist[file];
+				ef.reset();
+			} else {
+				ef = this.eflist[file] = new ErrorFile(file);
 				log('file '+file+' has been added');
 			}
-			// add it to our list
-			seenFiles[file] = true;
 
-			this.eflist[file].add_item(item);
-		}
-		for (var file in seenFiles) {
-			this.eflist[file].load_items();
+			for (var i=0; i < errors.length; i++) {
+				ef.add_item(errors[i]);
+			}
+			ef.load_items();
 		}
 
 		if (opts != null) {
@@ -71,7 +77,7 @@ function ErrorsPage() {
 			}
 			if (opts.alert) {
 				var cb = bind(tabbar.switch_to, tabbar, this.tab);
-				var msg = info.errors.length + " errors found!";
+				var msg = info.total + " errors found!";
 				this._prompt = status_button(msg, LEVEL_WARN, 'view errors', cb);
 			}
 		}
@@ -129,26 +135,25 @@ function ErrorsPage() {
 	 * use autosave parameter if to check against autosave or normal save
 	 */
 	this.check = function(file, opts, autosave, revision) {
-		var project = IDE_path_get_project(file);
-		IDE_backend_request("file/lint", {team: team,
-		                                  project: project,
-		                                  path: IDE_path_get_file(file),
-		                                  rev: revision,
-		                                  autosave: autosave
-		                                 },
-		                                  bind(this._done_check, this, file, opts, project),
-		                                  bind(this._fail_check, this, file, opts, autosave, revision));
+		var callback = bind(this._done_check, this, file, opts);
+		var em = ErrorsModel.GetInstance();
+		em.check(file, callback, autosave, revision);
 	}
 
-	this._done_check = function(file, opts, project, info) {
+	this._done_check = function(file, opts, result_type, detail) {
 		var opts = opts || {};
 		var cb = opts.callback;
-		if ( info.errors.length > 0 ) {
-			this.load(info, opts, project);
+
+		if (result_type == 'checkfail') {
 			if (cb) {
-				cb('codefail', info.errors.length);
+				cb('checkfail');
 			}
-		} else {
+		} else if (result_type == 'codefail') {
+			this.load(detail, opts);
+			if (cb) {
+				cb('codefail', detail.total);
+			}
+		} else if (result_type == 'pass') {
 			if (cb) {
 				cb('pass');
 			}
@@ -157,16 +162,6 @@ function ErrorsPage() {
 				this._prompt = status_msg( "No errors found", LEVEL_OK );
 			}
 			this._clear_file(file);
-		}
-	}
-
-	this._fail_check = function(file, opts, autosave, revision) {
-		this._prompt = status_button( "Failed to check code", LEVEL_ERROR,
-		                              "retry", bind( this.check, this, file, opts, autosave, revision ) );
-
-		//run the callback, after our status message so they can overwrite it if they desire
-		if (opts != null &&  opts.callback != null && typeof opts.callback == 'function') {
-			opts.callback('checkfail');
 		}
 	}
 
