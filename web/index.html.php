@@ -388,7 +388,7 @@
 					<td>
 						<input type="text" name="team-status-url-input" id="team-status-url-input" />
 						<p class="info">
-							If you have a website please give us the full URL to it (including the http://)
+							If you have a website please give us the full URL to it (including the http://).
 						</p>
 					</td>
 				</tr>
