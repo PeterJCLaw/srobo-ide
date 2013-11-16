@@ -403,6 +403,28 @@
 						</p>
 					</td>
 				</tr>
+				<tr>
+					<td colspan="2">
+						<p class="info">
+							If you have accounts on any of the following services, please give us the full URL to it (including the http://).
+							Please only use these for accounts on each service, as they will be represented using each service's icon.
+						</p>
+					</td>
+				</tr>
+				<?php
+				foreach (array('facebook', 'youtube', 'twitter') as $brand)
+				{
+					$brandUpper = ucwords($brand);
+					echo <<<BRANDED
+				<tr id="team-status-$brand">
+					<th>$brandUpper:</th>
+					<td>
+						<input type="text" name="team-status-$brand-input" id="team-status-$brand-input" />
+					</td>
+				</tr>
+BRANDED;
+				}
+				?>
 			</table>
 		</div> <!-- end of "team-status-page" -->
 

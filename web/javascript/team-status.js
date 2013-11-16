@@ -19,7 +19,7 @@ function TeamStatus()
 	this._saveError = false;
 
 	// list of text fields
-	this._fields = ['name', 'description', 'feed', 'url'];
+	this._fields = ['name', 'description', 'feed', 'url', 'facebook', 'youtube', 'twitter'];
 }
 
 /* *****	Initialization code	***** */

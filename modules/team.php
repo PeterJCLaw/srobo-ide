@@ -3,7 +3,7 @@
 class TeamModule extends Module
 {
 	const IMAGE = 'image';
-	static $statusTextFields = array('feed', 'url', 'description', 'name');
+	static $statusTextFields = array('feed', 'url', 'facebook', 'youtube', 'twitter', 'description', 'name');
 
 	public function __construct()
 	{

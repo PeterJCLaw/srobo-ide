@@ -133,7 +133,7 @@ Admin.prototype.GetTeamsToReview = function() {
 /* *****	Items to review display code	***** */
 Admin.prototype._receiveGetItemsToReview = function(nodes) {
 
-	var linkable = ['feed', 'url'];
+	var linkable = ['feed', 'url', 'facebook', 'youtube', 'twitter'];
 
 	for ( var field in nodes.items ) {
 		var th = TH(null, 'Team '+field+':');
