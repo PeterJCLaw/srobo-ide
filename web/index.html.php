@@ -399,6 +399,7 @@
 						<p class="info">
 							Enter the URL (including the http://) of your blog's RSS/Atom feed here to make it easier for other teams to find out about your progress.
 							If you do not have a blog there are many free sites where you can create one, such as <a href="http://www.blogger.com" target="_blank">Blogger</a> and <a href="http://wordpress.com/" target="_blank">Wordpress</a>.
+							The most recent post from the blog will be shown on your teams' page.
 						</p>
 					</td>
 				</tr>
