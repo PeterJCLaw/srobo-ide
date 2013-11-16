@@ -470,6 +470,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		getElement("check-syntax").disabled = false;
 		getElement("edit-diff").disabled = false;
 		this._update_contents();
+		this._iea.focus();
 	}
 
 	//ajax event handler for saving to server
