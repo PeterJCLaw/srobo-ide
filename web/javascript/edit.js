@@ -669,6 +669,12 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	}
 
 	this._update_contents = function() {
+		// setting the content often moves the caret,
+		// so don't do it if we don't need to
+		if (this.contents == this._session.getValue()) {
+			return;
+		}
+
 		this._settingValue = true;
 		this._session.setValue( this.contents );
 		this._settingValue = false;
