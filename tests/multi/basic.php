@@ -81,7 +81,8 @@ $input->setInput('commands', array(
 	array('cmd' => 'fake/no-op'),
 	array('cmd' => 'fake/exception', array()),
 	array('cmd' => 'fake/second',
-	      'data' => array('b' => true, 'c' => false))
+	      'data' => array('b' => true, 'c' => false)),
+	array('cmd' => 'multi/independent')
 ));
 
 section('Dispatch Command');
@@ -110,3 +111,7 @@ test_equal($actual['my-cmd'], 'exception', "Exception output should still contai
 $err = $actual['error'];
 array_pop($err); // ignore the stack trace as it'd be very hard to validate cleanly
 test_equal($err, array(42, 'Whatever'), "Exception output should contain error details");
+
+$actual = $output->getOutput("multi/independent");
+$err = $actual['error'];
+test_equal($err[0], E_MALFORMED_REQUEST, "Should have raised E_MALFORMED_REQUEST exception for re-entrant command 'multi/independent'.");

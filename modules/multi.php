@@ -105,6 +105,14 @@ class MultiModule extends Module
 
 		list($module, $command) = Input::parseRequest($cmd);
 
+		// avoid re-entrant calls which we don't (yet?) support
+		$mod = $this->manager->getModule($module);
+		if ($mod === $this)
+		{
+			// no need for this to be inside the below try block since there can be no output yet.
+			throw new Exception("Cannot call '$cmd' inside another MultiModule command", E_MALFORMED_REQUEST);
+		}
+
 		// PHP < 5.5 doesn't support finally, so we need to mock it.
 		// rely on the assumption that this isn't going to throw itself
 		$that = $this;
