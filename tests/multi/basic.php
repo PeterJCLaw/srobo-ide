@@ -45,6 +45,13 @@ $fake->setHandler(function($cmd) use ($input, $output, $wasCalled) {
 			$output->setOutput('bees', 'something');
 			break;
 		}
+		case 'no-op':
+		{
+			test_null($a, "Input 'a' in the $cmd command");
+			test_null($b, "Input 'b' in the $cmd command");
+			test_null($c, "Input 'c' in the $cmd command");
+			break;
+		}
 		case 'second':
 		{
 			test_null($a, "Input 'a' in the $cmd command");
@@ -67,6 +74,7 @@ $input->setInput('c', 'c');
 $input->setInput('commands', array(
 	array('cmd' => 'fake/first',
 	      'data' => array('a' => true, 'b' => false)),
+	array('cmd' => 'fake/no-op'),
 	array('cmd' => 'fake/second',
 	      'data' => array('b' => true, 'c' => false))
 ));
@@ -76,7 +84,7 @@ test_true($multi->dispatchCommand('independent'), "Failed to dispatch command mu
 
 section('Check commands were executed');
 $subCommandsDispatched = $fake->getCommands();
-$expectedCommands = array('first', 'second');
+$expectedCommands = array('first', 'no-op', 'second');
 test_equal($subCommandsDispatched, $expectedCommands, "Wrong sub-commands dispatched");
 
 section('Check overall output');
@@ -88,4 +96,5 @@ function checkFakeOutput($cmd, $expected = array()) {
 }
 
 checkFakeOutput('first', array('bees' => 'something'));
+checkFakeOutput('no-op');
 checkFakeOutput('second', array('cheese' => 'something-else'));

@@ -84,9 +84,13 @@ class MultiModule extends Module
 	private function dispatch($request)
 	{
 		$this->input->clear();
-		foreach ($request['data'] as $key => $value)
+		$rqData = $request['data'];
+		if ($rqData != null)
 		{
-			$this->input->setInput($key, $value);
+			foreach ($request['data'] as $key => $value)
+			{
+				$this->input->setInput($key, $value);
+			}
 		}
 
 		// TODO: hierarchy levels?
