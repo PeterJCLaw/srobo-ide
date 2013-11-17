@@ -22,7 +22,7 @@ function ide_log($level, $message)
 
 function parts_for_output($exception)
 {
-	return array($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+	return array($exception->getCode(), $exception->getMessage(), $exception->getTraceAsString());
 }
 
 setlocale(LC_CTYPE, 'en_GB.UTF-8');
