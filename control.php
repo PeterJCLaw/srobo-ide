@@ -51,13 +51,14 @@ try
 	$mm = ModuleManager::getInstance();
 	$mm->importModules(false);	// core modules only
 
-	$modname = $input->getRequestModule();
-	if (!$mm->moduleExists($modname))
+	$modName = $input->getRequestModule();
+	if (!$mm->moduleExists($modName))
 	{
-		throw new Exception("module $modname not found", E_MALFORMED_REQUEST);
+		throw new Exception("module $modName not found", E_MALFORMED_REQUEST);
 	}
-	$mod = $mm->getModule($modname);
-	$result = $mod->dispatchCommand($input->getRequestCommand());
+	$mod = $mm->getModule($modName);
+	$commandName = $input->getRequestCommand();
+	$result = $mod->dispatchCommand($commandName);
 	if ($result === false)
 	{
 		throw new Exception('command dispatch failed', 1);
