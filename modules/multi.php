@@ -34,6 +34,7 @@ class MultiModule extends Module
 	{
 		$commands = $this->input->getInput('commands');
 		$this->dispatchSequence($commands);
+		$this->setOutputs();
 		return true;
 	}
 
