@@ -46,6 +46,12 @@ class MultiModule extends Module
 		}
 	}
 
+	private function setException($command, $exception)
+	{
+		ide_log_exception($exception);
+		$this->cmd_outputs[$command['cmd']]['error'] = parts_for_output($exception);
+	}
+
 	private function safeDispatch($command)
 	{
 		try
@@ -54,7 +60,7 @@ class MultiModule extends Module
 		}
 		catch (Exception $e)
 		{
-			$command['error'] = $e;
+			$this->setException($command, $e);
 		}
 	}
 
@@ -69,8 +75,7 @@ class MultiModule extends Module
 		}
 		catch (Exception $e)
 		{
-			// TODO: something better!
-			$sequence['error'] = $e;
+			$this->setException($command, $e);
 		}
 	}
 
@@ -83,6 +88,7 @@ class MultiModule extends Module
 	 */
 	private function dispatch($request)
 	{
+		$this->cmd_outputs[$command['cmd']] = array();
 		$this->input->clear();
 		$rqData = $request['data'];
 		if ($rqData != null)
@@ -99,11 +105,25 @@ class MultiModule extends Module
 
 		list($module, $command) = Input::parseRequest($cmd);
 
-		$this->manager->dispatchCommand($module, $command);
-		$output = json_decode($this->output->encodeOutput(), true);
-		$this->cmd_outputs[$cmd] = $output;
+		// PHP < 5.5 doesn't support finally, so we need to mock it.
+		// rely on the assumption that this isn't going to throw itself
+		$that = $this;
+		$finally = function() use($that, $cmd)
+		{
+			$output = json_decode($that->output->encodeOutput(), true);
+			$that->cmd_outputs[$cmd] = $output;
+			$that->output->clear();
+		};
 
-		// TODO: this needs to be in a finally block
-		$this->output->clear();
+		try
+		{
+			$this->manager->dispatchCommand($module, $command);
+			$finally();
+		}
+		catch (Exception $e)
+		{
+			$finally();
+			throw $e;
+		}
 	}
 }
