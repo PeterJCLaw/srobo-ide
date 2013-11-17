@@ -81,6 +81,14 @@ class MultiModule extends Module
 		return false;
 	}
 
+	/**
+	 * Dispatch a given command request in a manner that simulates a top
+	 * level dispatch, and should be transparent for any command.
+	 * @param request: An array containing:
+	 *         'cmd' - the full name of the command to run, eg: file/get
+	 *        'data' - a map of the input variables for that command.
+	 * @returns: The return value from the command dispatch.
+	 */
 	private function dispatch($request)
 	{
 		$this->input->clear();
