@@ -145,4 +145,24 @@ class ModuleManager
 		}
 		return $this->modules[$mod];
 	}
+
+	/**
+	 * Helper method to dispatch a command.
+	 * Will throw if the module doesn't exist, or the dispatch returns false.
+	 * @param modName: The name of the module the command is within.
+	 * @param commandName: The name of the command to dispatch.
+	 */
+	public function dispatchCommand($modName, $commandName)
+	{
+		if (!$this->moduleExists($modName))
+		{
+			throw new Exception("module $modName not found", E_MALFORMED_REQUEST);
+		}
+		$mod = $this->getModule($modName);
+		$result = $mod->dispatchCommand($commandName);
+		if ($result === false)
+		{
+			throw new Exception('command dispatch failed', 1);
+		}
+	}
 }
