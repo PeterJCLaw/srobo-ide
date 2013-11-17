@@ -97,7 +97,7 @@ function checkFakeOutput($cmd, $expected = array()) {
 	$output = Output::getInstance();
 	$actual = $output->getOutput("fake/$cmd");
 	$expected['my-cmd'] = $cmd;
-	test_equal($expected, $actual, "Wrong output for $cmd command");
+	test_equal($actual, $expected, "Wrong output for $cmd command");
 }
 
 checkFakeOutput('first', array('bees' => 'something'));
@@ -106,7 +106,7 @@ checkFakeOutput('second', array('cheese' => 'something-else'));
 
 $output = Output::getInstance();
 $actual = $output->getOutput("fake/exception");
-test_equal('exception', $actual['my-cmd'], "Exception output should still contain items output before error");
+test_equal($actual['my-cmd'], 'exception', "Exception output should still contain items output before error");
 $err = $actual['error'];
 array_pop($err); // ignore the stack trace as it'd be very hard to validate cleanly
-test_equal(array(42, 'Whatever'), $err, "Exception output should contain error details");
+test_equal($err, array(42, 'Whatever'), "Exception output should contain error details");
