@@ -62,7 +62,7 @@ try
 catch (Exception $e)
 {
 	ide_log_exception($e);
-	$output->setOutput('error', array($e->getCode(), $e->getMessage(), $e->getTraceAsString()));
+	$output->setOutput('error', parts_for_output($e);
 }
 
 if ($config->getConfig('debug'))

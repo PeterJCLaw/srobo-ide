@@ -20,6 +20,11 @@ function ide_log($level, $message)
 		Logger::log($level, $message);
 }
 
+function parts_for_output($exception)
+{
+	return array($e->getCode(), $e->getMessage(), $e->getTraceAsString());
+}
+
 setlocale(LC_CTYPE, 'en_GB.UTF-8');
 
 if (!IN_TESTS)
