@@ -45,7 +45,6 @@ foreach ($data as $key => $value)
 	$input->setInput($key, $value);
 }
 
-// install all modules
 try
 {
 	$mm = ModuleManager::getInstance();
