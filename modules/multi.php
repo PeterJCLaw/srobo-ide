@@ -26,10 +26,7 @@ class MultiModule extends Module
 		{
 			$this->safeDispatch($command);
 		}
-		foreach ($this->cmd_outputs as $key => $value)
-		{
-			$this->output->setOutput($key, $value);
-		}
+		$this->setOutputs();
 		return true;
 	}
 
@@ -38,6 +35,14 @@ class MultiModule extends Module
 		$commands = $this->input->getInput('commands');
 		$this->dispatchSequence($commands);
 		return true;
+	}
+
+	private function setOutputs()
+	{
+		foreach ($this->cmd_outputs as $key => $value)
+		{
+			$this->output->setOutput($key, $value);
+		}
 	}
 
 	private function safeDispatch($command)
