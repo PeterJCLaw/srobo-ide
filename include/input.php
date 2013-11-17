@@ -31,11 +31,19 @@ class Input
 		return $this->requestCommand;
 	}
 
-	public function setRequest($newRequest)
+	public static function parseRequest($newRequest)
 	{
 		$parts = explode('/', $newRequest);
-		$this->requestCommand = array_pop($parts);
-		$this->requestModule = implode('/', $parts);
+		$requestCommand = array_pop($parts);
+		$requestModule = implode('/', $parts);
+		return array($requestModule, $requestCommand);
+	}
+
+	public function setRequest($newRequest)
+	{
+		$parts = self::parseRequest($newRequest);
+		$this->requestModule  = $parts[0];
+		$this->requestCommand = $parts[1];
 	}
 
 	public function getInput($key, $optional = false)
