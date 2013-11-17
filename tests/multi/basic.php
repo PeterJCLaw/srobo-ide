@@ -39,17 +39,17 @@ $fake->setHandler(function($cmd) use ($input, $output, $wasCalled) {
 	{
 		case 'first':
 		{
-			test_true($a, "Input 'a' should be true in the first command");
-			test_false($b, "Input 'b' should be false in the first command");
-			test_null($c, "Input 'c' should be null in the first command");
+			test_true($a, "Input 'a' in the $cmd command");
+			test_false($b, "Input 'b' in the $cmd command");
+			test_null($c, "Input 'c' in the $cmd command");
 			$output->setOutput('bees', 'something');
 			break;
 		}
 		case 'second':
 		{
-			test_null($a, "Input 'a' should be null in the second command");
-			test_true($b, "Input 'b' should be true in the second command");
-			test_false($c, "Input 'c' should be false in the second command");
+			test_null($a, "Input 'a' in the $cmd command");
+			test_true($b, "Input 'b' in the $cmd command");
+			test_false($c, "Input 'c' in the $cmd command");
 			$output->setOutput('cheese', 'something-else');
 			break;
 		}
