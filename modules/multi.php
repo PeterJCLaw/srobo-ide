@@ -49,14 +49,12 @@ class MultiModule extends Module
 	{
 		try
 		{
-			$ret = $this->dispatch($command);
-			return $ret;
+			$this->dispatch($command);
 		}
 		catch (Exception $e)
 		{
 			$command['error'] = $e;
 		}
-		return false;
 	}
 
 	private function dispatchSequence($sequence)
@@ -65,20 +63,14 @@ class MultiModule extends Module
 		{
 			foreach ($sequence as $command)
 			{
-				$ret = $this->dispatch($command);
-				if (!$ret)
-				{
-					return false;
-				}
+				$this->dispatch($command);
 			}
-			return true;
 		}
 		catch (Exception $e)
 		{
 			// TODO: something better!
 			$sequence['error'] = $e;
 		}
-		return false;
 	}
 
 	/**
@@ -87,7 +79,6 @@ class MultiModule extends Module
 	 * @param request: An array containing:
 	 *         'cmd' - the full name of the command to run, eg: file/get
 	 *        'data' - a map of the input variables for that command.
-	 * @returns: The return value from the command dispatch.
 	 */
 	private function dispatch($request)
 	{
@@ -103,19 +94,11 @@ class MultiModule extends Module
 
 		list($module, $command) = Input::parseRequest($cmd);
 
-		$mod = $this->manager->getModule($module);
-		if ($mod == false || $mod == null)
-		{
-			// TODO: error handling
-			fail();
-		}
-		$ret = $mod->dispatchCommand($command);
+		$this->manager->dispatchCommand($module, $command);
 		$output = json_decode($this->output->encodeOutput(), true);
 		$this->cmd_outputs[$cmd] = $output;
 
 		// TODO: this needs to be in a finally block
 		$this->output->clear();
-
-		return $ret;
 	}
 }
