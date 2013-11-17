@@ -32,6 +32,8 @@ TEST auth/single
 TEST auth/read-only
 SKIP auth/ldap
 
+TEST multi/basic
+
 TEST proj/commit
 TEST proj/create
 TEST proj/cron
