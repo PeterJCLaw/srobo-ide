@@ -45,4 +45,9 @@ class Output
 			return '{}';
 		return json_encode($this->outputs);
 	}
+
+	public function clear()
+	{
+		$this->outputs = array();
+	}
 }

@@ -81,4 +81,9 @@ class Input
 	{
 		$this->setInput($key, null);
 	}
+
+	public function clear()
+	{
+		$this->inputs = array();
+	}
 }
