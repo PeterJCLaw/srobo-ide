@@ -80,11 +80,12 @@ $expectedCommands = array('first', 'second');
 test_equal($subCommandsDispatched, $expectedCommands, "Wrong sub-commands dispatched");
 
 section('Check overall output');
-$firstOut = $output->getOutput('fake/first');
-$expectedFirstOut = array('my-cmd' => 'first', 'bees' => 'something');
-test_equal($firstOut, $expectedFirstOut, 'Wrong output for first command');
+function checkFakeOutput($cmd, $expected = array()) {
+	$output = Output::getInstance();
+	$actual = $output->getOutput("fake/$cmd");
+	$expected['my-cmd'] = $cmd;
+	test_equal($expected, $actual, "Wrong output for $cmd command");
+}
 
-$secondOut = $output->getOutput('fake/second');
-$expectedSecondOut = array('my-cmd' => 'second', 'cheese' => 'something-else');
-test_equal($secondOut, $expectedSecondOut, 'Wrong output for second command');
-
+checkFakeOutput('first', array('bees' => 'something'));
+checkFakeOutput('second', array('cheese' => 'something-else'));
