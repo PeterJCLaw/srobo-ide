@@ -10,6 +10,11 @@ class SingleAuth extends SecureTokenAuth
 		parent::__construct();
 	}
 
+	protected function normaliseUsername($username)
+	{
+		return strtolower($username);
+	}
+
 	public function checkAuthentication($username, $password)
 	{
 		return $username != null && $password != null;

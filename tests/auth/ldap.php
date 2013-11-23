@@ -17,6 +17,9 @@ test_null($auth->getCurrentUserName(), "without authentication the user was not 
 test_true($auth->authUser($input->getInput("user"), $input->getInput("password")), "failed to auth user");
 test_equal($auth->getCurrentUserName(), $input->getInput("user"), "the authed user was not the user passed to the auth module");
 
+test_true($auth->authUser('IDE', $input->getInput("password")), "Failed to auth uppercased user");
+test_equal($auth->getCurrentUserName(), $input->getInput("user"), "Should have normalised the user's casing.");
+
 //TODO: check the users teams versus ldap
 
 $token = $auth->getNextAuthToken();

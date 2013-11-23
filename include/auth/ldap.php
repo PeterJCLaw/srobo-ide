@@ -32,6 +32,21 @@ class LDAPAuth extends SecureTokenAuth
 		return $this->ldapManager->getAuthed();
 	}
 
+	/**
+	 * Override to use LDAP casing.
+	 */
+	protected function normaliseUsername($username)
+	{
+		if (!$this->ldapManager->getAuthed())
+		{
+			throw new Exception('Cannot normalise username without LDAP authentication.', E_INTERNAL_ERROR);
+		}
+
+		$info = $this->ldapManager->getUserInfo($username);
+		var_dump($info);
+		return $info['username'];
+	}
+
 	public function getTeams($username)
 	{
 		ide_log(LOG_INFO, "Getting teams for '$username'.");

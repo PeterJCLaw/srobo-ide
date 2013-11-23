@@ -48,8 +48,6 @@ class AuthModule extends Module
 		{
 			throw new Exception('username/password not provided', E_AUTH_FAILED);
 		}
-		// SR standard is lowercase, but LDAP is insensitive, so this might otherwise give odd results.
-		$username = strtolower($username);
 		if (!$this->authModule->authUser($username, $password))
 		{
 			throw new Exception('authentication failed', E_AUTH_DENIED);

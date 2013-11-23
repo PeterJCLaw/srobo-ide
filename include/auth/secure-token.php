@@ -66,6 +66,16 @@ abstract class SecureTokenAuth extends AuthBackend
 		return openssl_encrypt($data, self::METHOD, $this->key, self::RAW_OUTPUT, $this->iv);
 	}
 
+	/**
+	 * Helper to normalise a username if needed.
+	 * Called after the user is known to be authenticated.
+	 * Can optionally be overridden, default behaviour is no change.
+	 */
+	protected function normaliseUsername($username)
+	{
+		return $username;
+	}
+
 	public function authUser($username, $password)
 	{
 		// NB: This is a bit hacky!
@@ -74,6 +84,7 @@ abstract class SecureTokenAuth extends AuthBackend
 			return false;
 		if (!$this->checkAuthentication($username, $password))
 			return false;
+		$username = $this->normaliseUsername($username);
 		$this->user = $username;
 		$this->teams = $this->getTeams($username);
 		$this->read_only_teams = $this->getReadOnlyTeams($username);
