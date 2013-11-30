@@ -837,13 +837,19 @@ class GitRepository extends ReadOnlyGitRepository
 	}
 
 	/**
-	 * Writes content to a file
+	 * Writes content to a file.
+	 * @returns FALSE on error, or the number of bytes wriiten (from file_put_contents)
 	 */
 	public function putFile($path, $content)
 	{
 		// ensure that the file exists before writing to it.
-		$ret = $this->createFile($path);
-		return $ret && file_put_contents($this->workingPath() . "/$path", $content);
+		$created = $this->createFile($path);
+		if (!$created)
+		{
+			return false;
+		}
+		$put = file_put_contents($this->workingPath() . "/$path", $content);
+		return $put;
 	}
 
 	/**
