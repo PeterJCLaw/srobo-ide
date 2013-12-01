@@ -376,9 +376,12 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 }
 
 ProjPage.prototype._exportProject = function() {
-	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {}, function(errno, errcode) {
-		alert("checkout-induced death: " + errcode);
-	});
+	var fail_retry = bind(function() {
+		status_button('Error exporting project', LEVEL_ERROR, 'retry',
+			bind(this._exportProject, this)
+		);
+	}, this);
+	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {}, fail_retry);
 }
 
 ProjPage.prototype.clickCheckCode = function() {
