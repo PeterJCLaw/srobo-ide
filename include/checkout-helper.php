@@ -39,14 +39,16 @@ class CheckoutHelper
 		$libRobotHash = self::getLibRobotRevisionFor($this->team);
 		$zipBuilder = self::getArchiveBuilder($libRobotHash, $tmpDir);
 
-		self::createZip($zipBuilder, $userTmpDir, $destFile);
-
-		// log exactly what we've done,
+		// log exactly what we're doing,
 		// so that we can easily track which teams have been served what
-		ide_log(LOG_INFO, "Created ZipFile for team '$this->team' based on lib_robot '$libRobotHash' and team repo '$projName' at '$revision'.");
+		ide_log(LOG_INFO, "Creating ZipFile for team '$this->team' based on lib_robot '$libRobotHash' and team repo '$projName' at '$revision'.");
+
+		$created = self::createZip($zipBuilder, $userTmpDir, $destFile);
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
+
+		return $created;
 	}
 
 	/**
@@ -103,13 +105,14 @@ class CheckoutHelper
 	 * Creates a servable zip file from the given user code.
 	 * @param userCodeDir: the location of the users code to include in the zip.
 	 * @param destFile: the location to save the resulting zip in.
+	 * @returns: Whether or not the zip was successfully created.
 	 */
 	private static function createZip($zipBuilder, $userCodeDir, $destFile)
 	{
 		$s_userCodeDir = escapeshellarg($userCodeDir);
 		$s_destFile = escapeshellarg($destFile);
 		$s_builder = escapeshellarg($zipBuilder);
-		$ret = shell_exec("$s_builder $s_userCodeDir $s_destFile");
-		return $ret;
+		$ret = proc_exec("$s_builder $s_userCodeDir $s_destFile");
+		return $ret !== false;
 	}
 }

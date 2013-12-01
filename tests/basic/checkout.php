@@ -98,11 +98,11 @@ $config->override('lib_robot.team', array());
 $helper = new CheckoutHelper($teamRepo, 'ABC');
 
 $zipPath = $test_zip_path.'/robot.zip';
-$helper->buildZipFile($zipPath, $hash1);
+test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
 validateZip($zipPath, $projectName, $hash1, $robotData1);
 
 $zipPath2 = $test_zip_path.'/robot2.zip';
-$helper->buildZipFile($zipPath2, $hash2);
+test_true($helper->buildZipFile($zipPath2, $hash2), "Failed to build zip");
 validateZip($zipPath2, $projectName, $hash2, $robotData2);
 
 section('per-team libRobot testing');
@@ -115,7 +115,7 @@ $config->override('lib_robot.team', array('ABC' => $oldLibRobotHash));
 $helper = new CheckoutHelper($teamRepo, 'ABC');
 
 $zipPath = $test_zip_path.'/per-team-libRobot-test.zip';
-$helper->buildZipFile($zipPath, $hash1);
+test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
 
 $zip = validateZip($zipPath, $projectName, $hash1, $robotData1);
 // validate that this the old revision by ensuring that the second file isn't there.
@@ -128,8 +128,24 @@ $config->override('lib_robot.team', array('ABC' => 'bacon'));
 $helper = new CheckoutHelper($teamRepo, 'ABC');
 
 $zipPath = $test_zip_path.'/per-team-libRobot-bad-rev.zip';
-$helper->buildZipFile($zipPath, $hash1);
+test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
 
 $zip = validateZip($zipPath, $projectName, $hash1, $robotData1);
 // validate that this the old revision by ensuring that the second file isn't there.
 test_true($zip->locateName('b-file') !== false, "Failed to find file 'b-file' in the archive -- bad revisions should fall back to the default.");
+
+section('catch archive builder failures');
+
+// setup a failing zip maker
+$filePath = $libRobotPath.'/make-zip';
+file_put_contents($filePath, "#!/bin/false");
+$libRobotRepo->stage('make-zip');
+$libRobotRepo->commit('Make make-zip fail', 'John Smith', 'JS@bacon.net');
+$failingLibRobotHash = $libRobotRepo->getCurrentRevision();
+$config->override('lib_robot.team', array('ABC' => $failingLibRobotHash));
+
+$helper = new CheckoutHelper($teamRepo, 'ABC');
+
+$zipPath = $test_zip_path.'/creation-should-fail.zip';
+
+test_false($helper->buildZipFile($zipPath, $hash1), "Shuold have reported that the zip creation failed");

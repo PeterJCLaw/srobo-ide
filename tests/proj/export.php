@@ -5,7 +5,8 @@ $output = Output::getInstance();
 $config = Configuration::getInstance();
 
 cleanCreate($testWorkPath.'/wd');
-cleanCreate($testWorkPath.'/test-repos');
+$test_repos_path = $testWorkPath.'/test-repos';
+cleanCreate($test_repos_path);
 $test_zip_path = $testWorkPath.'/ide-test-zip';
 cleanCreate($test_zip_path);
 
@@ -76,3 +77,22 @@ test_existent($testWorkPath.'wd/user/robot.py', 'Zip failed to contain user code
 
 $python_ret = shell_exec("cd $s_wd && python user/robot.py");
 test_equal($python_ret, $robot_print."\n", 'Running the robot code produced the wrong output.');
+
+section('zip creation failure');
+
+// setup a failing zip maker
+$libRobotPath = $test_repos_path.'/libRobot';
+cleanCreate($libRobotPath);
+$s_libRobotPath = escapeshellarg($libRobotPath);
+shell_exec("cd $s_libRobotPath && git init");
+$libRobotRepo = GitRepository::GetOrCreate($libRobotPath);
+$filePath = $libRobotPath.'/make-zip';
+file_put_contents($filePath, "#!/bin/false");
+$libRobotRepo->stage('make-zip');
+$libRobotRepo->commit('Make make-zip fail', 'John Smith', 'JS@bacon.net');
+$failingLibRobotHash = $libRobotRepo->getCurrentRevision();
+$config->override('lib_robot.dir', $libRobotPath);
+$config->override('lib_robot.archive_script', 'make-zip');
+$config->override('lib_robot.team', array(1 => $failingLibRobotHash));
+
+test_false($proj->dispatchCommand('co'), 'export command should fail when zip fails to be created');

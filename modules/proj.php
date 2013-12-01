@@ -230,14 +230,14 @@ class ProjModule extends Module
 		}
 
 		$helper = new CheckoutHelper($repo, $this->team);
-		$helper->buildZipFile("$servePath/robot.zip", $hash);
+		$gotZip = $helper->buildZipFile("$servePath/robot.zip", $hash);
 
 		$output->setOutput('url', "$serveUrl/robot.zip");
 		// NB: this is intentionally also returned -- if they ask for HEAD,
 		// this will contain the actual hash.
 		$output->setOutput('rev', $hash);
 
-		return true;
+		return $gotZip;
 	}
 
 	public function redirectToZip()
