@@ -98,7 +98,7 @@ function Tab(label, opts) {
 	}
 
 	this._remove_flash_style = function() {
-		status_msg( "TODO: Remove flash style", LEVEL_WARN );
+		removeNodeAttribute(this._a, 'style');
 	}
 
 	this.set_label = function( l ) {
