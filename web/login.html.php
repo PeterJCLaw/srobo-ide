@@ -32,7 +32,7 @@
 		<br />
 		<a id="forgotten-password-button" class="smaller" href="#">&raquo; Forgotten password</a>
 		<p id="forgotten-password-help" class="smaller">
-			If you have forogtten your password, you should contact your
+			If you have forgotten your password, you should contact your
 			<a href="<?=$root_url ?>/schools/team-leaders/">team leader</a>.
 			Team leaders can reset passwords for users in the teams they lead using Student Robotics'
 			<a href="<?=$root_url ?>/userman/">User Management Page</a>.
