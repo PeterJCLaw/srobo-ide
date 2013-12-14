@@ -333,13 +333,22 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this._original = "";
 			getElement("check-syntax").disabled = true;
 			getElement("edit-diff").disabled = true;
+			// force default to python for new files
+			this._update_highlight('new.py');
 		} else {
 			// Existing file
 			this._load_contents();
 			getElement("check-syntax").disabled = false;
 			getElement("edit-diff").disabled = false;
+			this._update_highlight();
 		}
 	}
+
+	this._update_highlight = function(path) {
+		// update the syntax highlight if needed
+		var mode = this._iea.getTextModeForPath(path || this.path);
+		this._session.setMode(mode);
+	};
 
 	// Start load the file contents
 	this._load_contents = function() {
@@ -419,6 +428,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this.path = fpath;
 			this._commitMsg = commitMsg;
 			this._repo_save();
+			this._update_highlight();
 		} else
 			status_msg( "No project specified", LEVEL_ERROR );
 	}
@@ -852,10 +862,9 @@ function ide_editarea(id) {
 	}
 
 	this.newSession = function() {
-		var PythonMode = require( "ace/mode/python" ).Mode;
 		var UndoManager = require("ace/undomanager").UndoManager;
 		var EditSession = require( "ace/edit_session" ).EditSession;
-		var session = new EditSession( "" , new PythonMode );
+		var session = new EditSession( "" , null );
 		session.setUndoManager( new UndoManager );
 		this._ace.setSession( session );
 		return session;
@@ -880,6 +889,12 @@ function ide_editarea(id) {
 
 	this.focus = function() {
 		return this._ace.focus();
+	}
+
+	this.getTextModeForPath = function(path) {
+		var modelist = require("ace/ext/modelist");
+		var textMode = modelist.getModeForPath(path).mode;
+		return textMode;
 	}
 
 	this._init();

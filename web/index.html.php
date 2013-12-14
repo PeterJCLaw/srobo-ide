@@ -56,6 +56,7 @@
 	// external editor component - ACE - http://ace.ajax.org
 	$javaScripts[] = "web/javascript/ace/src/ace.js";
 	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
+	$javaScripts[] = "web/javascript/ace/src/ext-modelist.js";
 
 	// external selector box - jquery chosen
 	$javaScripts[] = "web/javascript/chosen.jquery.min.js";
