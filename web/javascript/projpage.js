@@ -1389,16 +1389,19 @@ function ProjOps() {
 	}
 
 	this.check_code = function() {
-		if(projpage.flist.selection.length == 0) {
+		var selection = projpage.flist.selection;
+		if (selection.length == 0) {
 			status_msg("There are no files selected for checking", LEVEL_ERROR);
 			return;
 		}
 
-		for( var i=0; i<projpage.flist.selection.length; i++) {
-			if(projpage.flist.selection[i].substr(projpage.flist.selection[i].length-3) == '.py')
-				errorspage.check(projpage.flist.selection[i], {switch_to : true, projpage_multifile : true});
-			else
+		for (var i=0; i < selection.length; i++) {
+			var filePath = selection[i];
+			if (filePath.substr(filePath.length-3) == '.py') {
+				errorspage.check(filePath, {switch_to : true, projpage_multifile : true});
+			} else {
 				status_msg("Please select valid individual files, not folders", LEVEL_WARN);
+			}
 		}
 	}
 
