@@ -1397,10 +1397,10 @@ function ProjOps() {
 
 		for (var i=0; i < selection.length; i++) {
 			var filePath = selection[i];
-			if (filePath.substr(filePath.length-3) == '.py') {
+			if (errorspage.can_check(filePath)) {
 				errorspage.check(filePath, {switch_to : true, projpage_multifile : true});
 			} else {
-				status_msg("Please select valid individual files, not folders", LEVEL_WARN);
+				status_msg("Only Python files can have their syntax checked.", LEVEL_WARN);
 			}
 		}
 	}

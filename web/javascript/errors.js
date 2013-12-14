@@ -132,9 +132,20 @@ function ErrorsPage() {
 	}
 
 	/**
+	 * Ask if the given file path can be checked, ie, is it a python file.
+	 */
+	this.can_check = function(file) {
+		return file.endsWith('.py');
+	}
+
+	/**
 	 * use autosave parameter if to check against autosave or normal save
 	 */
 	this.check = function(file, opts, autosave, revision) {
+		if (!this.can_check(file)) {
+			logError("Should not be attempting to check a file that cannot be checked: " + file);
+			return;
+		}
 		var callback = bind(this._done_check, this, file, opts);
 		var em = ErrorsModel.GetInstance();
 		em.check(file, callback, autosave, revision);

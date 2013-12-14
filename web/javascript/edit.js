@@ -338,7 +338,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		} else {
 			// Existing file
 			this._load_contents();
-			getElement("check-syntax").disabled = false;
+			getElement("check-syntax").disabled = !this._can_check_syntax();
 			getElement("edit-diff").disabled = false;
 			this._update_highlight();
 		}
@@ -349,6 +349,10 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		var mode = this._iea.getTextModeForPath(path || this.path);
 		this._session.setMode(mode);
 	};
+
+	this._can_check_syntax = function() {
+		return !this._isNew && errorspage.can_check(this.path);
+	}
 
 	// Start load the file contents
 	this._load_contents = function() {
@@ -395,6 +399,9 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	}
 
 	this._check_syntax = function() {
+		if (!this._can_check_syntax()) {
+			return;
+		}
 		//tell the log and grab the latest contents
 		logDebug( "Checking syntax of " + this.path );
 
@@ -467,7 +474,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this._original = this.contents;
 			this.tab.set_label(this.path);
 			this._autosaved = "";
-			if (user.get_setting('save.autoerrorcheck') != false)
+			if (user.get_setting('save.autoerrorcheck') != false && this._can_check_syntax())
 			{
 				errorspage.check(this.path, { alert: true, quietpass: true }, false);
 			}
@@ -477,7 +484,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		}
 		this._isNew = false;
 		this.rev = nodes.commit;
-		getElement("check-syntax").disabled = false;
+		getElement("check-syntax").disabled = !this._can_check_syntax();
 		getElement("edit-diff").disabled = false;
 		this._update_contents();
 		this._iea.focus();
@@ -626,11 +633,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 					     bind( this.close, this, false ) ) );
 		// Check syntax handler
 		var checkSyntaxElem = getElement("check-syntax");
-		if(this._isNew) {
-			checkSyntaxElem.disabled = true;
-		} else {
-			checkSyntaxElem.disabled = false;
-		}
+		checkSyntaxElem.disabled = !this._can_check_syntax();
 		this._signals.push( connect( checkSyntaxElem,
 					     "onclick",
 					     bind( this._check_syntax, this ) ) );
