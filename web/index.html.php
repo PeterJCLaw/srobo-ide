@@ -408,7 +408,7 @@
 
 		<div id="admin-page" class="page">
 			<div class="menu-bar">
-				Teams with content to reivew:
+				Teams with content to review:
 				<select id="admin-page-team-select">
 					<option value="dummy">Please select..</option>
 				</select>
