@@ -135,6 +135,10 @@ class ProjectManager
 		$fileTimes = array();
 		foreach ($unstaged as $key)
 		{
+			if ($userRepo->isFolder($key))
+			{
+				continue;
+			}
 			$unstagedFiles[$key] = $userRepo->getFile($key);
 			$fileTimes[$key] = $userRepo->fileMTime($key);
 		}
