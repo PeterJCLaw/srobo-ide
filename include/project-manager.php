@@ -201,7 +201,12 @@ class ProjectManager
 	{
 		$master_path = $this->getMasterRepoPath($team, $project);
 		delete_recursive($master_path);
-		$users = scandir($this->rootProjectPath . "/$team/users");
+		$users_root = $this->rootProjectPath . "/$team/users";
+		if (!is_dir($users_root))
+		{
+			return;
+		}
+		$users = scandir($users_root);
 		foreach ($users as $user)
 		{
 			if ($user[0] != '.')
