@@ -54,7 +54,7 @@ class LDAPManager
 			throw new Exception('cannot search groups, not the IDE user', E_LDAP_NOT_AUTHED);
 		//do an ldap search
 		$attrs = array('cn');
-		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', $ldap_filter, $attrs);
+		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', $ldap_filter, $attrs, 0, 0);
 		$results = ldap_get_entries($this->connection, $resultsID);
 		$saneGroups = array();
 		for ($i = 0; $i < $results['count']; $i++)
