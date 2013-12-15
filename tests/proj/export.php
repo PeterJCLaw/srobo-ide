@@ -56,7 +56,11 @@ $input->setInput('rev', 'HEAD');
 // we can't actually create the situation where the webserver doesn't have write access,
 // since we're running as ourselves during the tests.
 touch($zipPathBase);
+// kill off the tests-failing error handler, because we know that this will error
+set_error_handler(function($a, $b) {});
 test_false($proj->dispatchCommand('co'), 'export command should have failed when export folder missing');
+// restore the previous handler
+restore_error_handler();
 // remove our get-in-the-way file
 unlink($zipPathBase);
 test_nonexistent($zipPathBase, "removed after failure mode testing complete.");
