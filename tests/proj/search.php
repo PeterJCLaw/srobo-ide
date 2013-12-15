@@ -6,6 +6,7 @@ $config->override("repopath", $testWorkPath);
 $config->override("user.default", "bees");
 $config->override("user.default.teams", array('ABC'));
 $config->override("auth_module", "single");
+$config->override("keyfile", "$testWorkPath/test.key");
 $config->override("modules", array("proj"));
 
 //do a quick authentication

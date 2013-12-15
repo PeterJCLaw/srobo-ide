@@ -6,6 +6,7 @@ $config->override("team.status_images.dir", $testWorkPath.'/images/');
 $config->override("user.default", "bees");
 $config->override("user.default.is_admin", false);
 $config->override("auth_module", "single");
+$config->override("keyfile", "$testWorkPath/test.key");
 $config->override('modules.always', array("admin"));
 
 //do a quick authentication

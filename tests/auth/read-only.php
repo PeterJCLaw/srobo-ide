@@ -8,6 +8,7 @@ $config->override('user.default.teams', array('ABC'));
 // the read-only teams will be a collection of all teams.
 $config->override('user.default.read_only_teams', array('ROT', 'ABC'));
 $config->override('auth_module', 'single');
+$config->override("keyfile", "$testWorkPath/test.key");
 $config->override('modules', array('user', 'file', 'proj', 'team'));
 
 //do a quick authentication

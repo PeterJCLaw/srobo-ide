@@ -1,6 +1,7 @@
 <?php
 $config = Configuration::getInstance();
 $config->override('auth_module', 'ldap');
+$config->override("keyfile", "$testWorkPath/test.key");
 if (!$config->getConfig("ldap.host"))
 	skip_test();
 $config->override('ldap.host', 'localhost');
