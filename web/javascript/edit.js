@@ -777,7 +777,8 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		logDebug("retrieving file history");
 		this._receive_revisions({log: []});
 		// Don't even try to get revisions if we know that it's a new file
-		if(this._isNew) {
+		// or if it's not loaded yet (we'll be called again once it is)
+		if (this._isNew || !this._loaded) {
 			return;
 		}
         IDE_backend_request('file/log', {
