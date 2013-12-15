@@ -139,9 +139,9 @@ function test_exception($callback, $code, $message)
 
 error_reporting(E_ALL | E_STRICT);
 
-function __error_handler($errno, $errstr)
+function __error_handler($errno, $errstr, $errfile, $errline)
 {
-	__test($errno == 0, "PHP error: $errstr", 2, true);
+	__test($errno == 0, "PHP error: $errstr (line $errline in $errfile)", 2, true);
 }
 
 set_error_handler('__error_handler');

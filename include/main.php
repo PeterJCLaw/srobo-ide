@@ -28,9 +28,9 @@ function parts_for_output($exception)
 setlocale(LC_CTYPE, 'en_GB.UTF-8');
 
 if (!IN_TESTS)
-	set_error_handler(function ($errno, $error) {
+	set_error_handler(function ($errno, $error, $errfile, $errline) {
 		if ($errno <= error_reporting())
-			ide_log(LOG_ERR, "PHP error: $error");
+			ide_log(LOG_ERR, "PHP error: $error (line $errline in $errfile)");
 	});
 
 require_once('include/errors.php');
