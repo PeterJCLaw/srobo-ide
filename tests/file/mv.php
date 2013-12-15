@@ -45,15 +45,6 @@ function createAndAssertFileMoved($newPath)
 	echo 'team: ', $input->getInput('team'), ', project: ', $input->getInput('project'), ".\n";
 	$repopath = getRepoPath();
 
-	// need this for testing, not for the actual implementation.
-	$subDir = '.';
-	if (($pos = strrpos($newPath, '/')) !== FALSE)
-	{
-		$subDir = substr($newPath, 0, $pos);
-	}
-	mkdir_full("$repopath/$subDir");
-	$input->setInput('path', $subDir);
-
 	// get the modules
 	$mm = ModuleManager::getInstance();
 	test_true($mm->moduleExists('file'), 'file module does not exist');
@@ -86,6 +77,8 @@ function createAndAssertFileMoved($newPath)
 
 	// get the file-list to check that it's really moved
 	subsection('Assert listing');
+	$subDir = dirname($newPath);
+	$input->setInput('path', $subDir);
 	test_true($file->dispatchCommand('list'), "Failed to get file list after: $moveMsg.");
 	$list = $output->getOutput('files');
 	var_dump($list);
@@ -100,8 +93,10 @@ function createAndAssertFileMoved($newPath)
 
 createAndAssertFileMoved('simple-file-name');
 createAndAssertFileMoved('spacey path');
+mkdir_full("$repopath/subdir");
 createAndAssertFileMoved('subdir/file');
 createAndAssertFileMoved('subdir/spacey path');
+mkdir_full("$repopath/spacey subdir");
 createAndAssertFileMoved('spacey subdir/other spacey path');
 createAndAssertFileMoved('variable $file name');
 
