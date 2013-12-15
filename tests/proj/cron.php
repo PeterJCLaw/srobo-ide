@@ -2,6 +2,8 @@
 
 $config = Configuration::getInstance();
 $config->override('modules.always', array('proj'));
+// while we don't do an auth, the proj module always checks for one
+$config->override("keyfile", "$testWorkPath/test.key");
 $zipRoot = $testWorkPath . 'zips';
 $config->override('zipurl', $zipRoot);
 $config->override('zips.max_age', 20);
