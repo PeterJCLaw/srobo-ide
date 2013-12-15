@@ -10,9 +10,9 @@ cleanCreate($test_repos_path);
 $test_zip_path = $testWorkPath.'/ide-test-zip';
 cleanCreate($test_zip_path);
 
-// remove the folder so that we can test the failure mode
+// ensure the folder is missing so that we can test the failure mode
 $zipPathBase = $testWorkPath.'/ide-zips';
-delete_recursive($zipPathBase);
+test_nonexistent($zipPathBase, "before failure mode testing");
 
 $config->override('repopath', $testWorkPath.'/test-repos');
 
@@ -59,7 +59,7 @@ touch($zipPathBase);
 test_false($proj->dispatchCommand('co'), 'export command should have failed when export folder missing');
 // remove our get-in-the-way file
 unlink($zipPathBase);
-test_false(file_exists($zipPathBase), "$zipPathBase Must not exist after failure mode testing complete.");
+test_nonexistent($zipPathBase, "removed after failure mode testing complete.");
 
 section('Success testing');
 test_true($proj->dispatchCommand('co'), 'export command should succeed');

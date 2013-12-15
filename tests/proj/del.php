@@ -20,11 +20,11 @@ $input->setInput("project", "ponies");
 
 $mm = ModuleManager::getInstance();
 $mm->importModules();
-test_equal($mm->moduleExists("proj"), true, "proj module does not exist");
+test_true($mm->moduleExists("proj"), "proj module does not exist");
 
 $repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
 
 $proj = $mm->getModule("proj");
 $proj->dispatchCommand("del");
 
-test_false(is_dir($repopath), "deleted repo existed");
+test_nonexistent($repopath, "deleted repo existed");
