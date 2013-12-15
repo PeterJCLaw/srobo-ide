@@ -72,6 +72,10 @@ class TeamStatus
 	 */
 	public function setDraft($name, $value)
 	{
+		if (!isset($this->statusData->$name))
+		{
+			$this->statusData->$name = new stdClass();
+		}
 		if (!isset($this->statusData->$name->draft) || $this->statusData->$name->draft != $value)
 		{
 			$this->statusData->$name->draft = $value;
@@ -133,12 +137,12 @@ class TeamStatus
 	 */
 	public function setReviewState($name, $reviewedValue, $isValid)
 	{
-		$item = $this->statusData->$name;
-		if ($item->draft != $reviewedValue)
+		if (!isset($this->statusData->$name) || $this->statusData->$name->draft != $reviewedValue)
 		{
 			throw new Exception("Cannot set review of '$name' for non-existent draft", E_MALFORMED_REQUEST);
 		}
 
+		$item = $this->statusData->$name;
 		$item->reviewed = true;
 
 		if ($isValid === true)

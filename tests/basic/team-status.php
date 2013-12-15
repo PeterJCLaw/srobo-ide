@@ -37,7 +37,7 @@ $status = new TeamStatus($team);
 test_equal($status->getDraftOrLive($field), $content, "Loaded wrong draft content for $field.");
 
 section("review state when empty");
-$reviewState = $status->getReviewState($field2);
+$reviewState = $status->getReviewState(null);
 test_null($reviewState, "Missing items should appear un-reviewed");
 
 section("partial update");
