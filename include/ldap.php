@@ -55,7 +55,7 @@ class LDAPManager
 		//do an ldap search
 		$attrs = array('cn');
 		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', $ldap_filter, $attrs);
-		$results = ldap_get_entries($this->connection , $resultsID);
+		$results = ldap_get_entries($this->connection, $resultsID);
 		$saneGroups = array();
 		for ($i = 0; $i < $results['count']; $i++)
 		{
