@@ -21,6 +21,11 @@ $repo->putFile('ninjas/nuns', "the cake is a lie\n");
 $repo->gitMKDir('ninjas/z-ninjaChildren');
 $repo->putFile('ninjas/z-ninjaChildren/pirates', 'Captain Jack');
 
+test_false($repo->isFolder('nope'), "should not claim a missing file is a folder");
+test_false($repo->isFolder('ninjas/nuns'), "should not claim a file is a folder");
+test_true($repo->isFolder('ninjas'), "should claim a folder is a folder");
+test_true($repo->isFolder('ninjas/z-ninjaChildren'), "should claim a sub-folder is a folder");
+
 $rev = $repo->getCurrentRevision();
 test_true(preg_match('/^[a-f0-9]{7,40}$/', $rev),
           "revision contained extraneous characters ($rev)");

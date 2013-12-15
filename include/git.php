@@ -292,6 +292,14 @@ class ReadOnlyGitRepository
 	}
 
 	/**
+	 * Whether or not the given path exists within the repo, and is a folder.
+	 */
+	public function isFolder($path)
+	{
+		return is_dir($this->workingPath() . "/$path");
+	}
+
+	/**
 	 * Returns a list of folders in the repo's file tree.
 	 */
 	public function listFolders()
