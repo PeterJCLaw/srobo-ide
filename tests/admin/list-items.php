@@ -30,7 +30,7 @@ $propertyValue = 'jam';
 
 $statusABC = new TeamStatus('ABC');
 $statusABC->setDraft($property, $propertyValue);
-$statusABC->save();
+$statusABC->save('test');
 var_dump($statusABC);
 
 section('single team to review');
@@ -41,7 +41,7 @@ test_equal($items, array($property => $propertyValue), 'Should contain the corre
 
 section('post review');
 $statusABC->setReviewState($property, $propertyValue, true);
-$statusABC->save();
+$statusABC->save('test');
 
 $admin->dispatchCommand('review-items-get');
 $items = $output->getOutput('items');
@@ -50,7 +50,7 @@ test_equal($items, array(), 'After review should be an empty list that need revi
 
 section('images not reviewed through IDE');
 $statusABC->setDraft('image', $propertyValue);
-$statusABC->save();
+$statusABC->save('test');
 
 $admin->dispatchCommand('review-items-get');
 $items = $output->getOutput('items');

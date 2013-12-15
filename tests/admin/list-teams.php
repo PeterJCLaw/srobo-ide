@@ -26,13 +26,13 @@ $propertyValue = 'jam';
 
 $statusABC = new TeamStatus('ABC');
 $statusABC->setDraft($property, $propertyValue);
-$statusABC->save();
+$statusABC->save('test');
 var_dump($statusABC);
 
 $status13 = new TeamStatus(13);
 $status13->setDraft($property, $propertyValue);
 $status13->setReviewState($property, $propertyValue, true);
-$status13->save();
+$status13->save('test');
 var_dump($status13);
 
 section('single team to review');
@@ -43,7 +43,7 @@ test_equal($teams, array('ABC'), 'The only member of the teams list should be "A
 
 section('post review');
 $statusABC->setReviewState($property, $propertyValue, true);
-$statusABC->save();
+$statusABC->save('test');
 
 $admin->dispatchCommand('review-teams-get');
 $teams = $output->getOutput('teams');

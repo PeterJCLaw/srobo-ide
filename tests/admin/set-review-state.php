@@ -41,7 +41,7 @@ $statusABC = new TeamStatus('ABC');
 
 section('set true');
 $statusABC->setDraft($property, $propertyValue);
-$statusABC->save();
+$statusABC->save('test');
 
 $input->setInput('valid', true);
 test_true(setValue(), 'Command should succeed.');
@@ -49,7 +49,7 @@ test_true(setValue(), 'Command should succeed.');
 section('set false');
 // NB: this currently relies on us overwriting the value already in the file from the previous section.
 $statusABC->setDraft($property, $propertyValue);
-$statusABC->save();
+$statusABC->save('test');
 
 $input->setInput('valid', false);
 test_true(setValue(), 'Command should succeed.');
@@ -68,7 +68,7 @@ function grab_image($dest) {
 	$source = dirname(__file__).'/../../web/images/static.png';
 	$source = realpath($source);
 	test_existent($source, "Need a source image to 'upload'");
-	mkdir_full(dirname($dest));
+	cleanCreate(dirname($dest));
 	test_true(copy($source, $dest), "Failed to copy '$source' to '$dest'.");
 }
 
@@ -77,7 +77,7 @@ grab_image($dest);
 $md5 = md5_file($dest);
 
 $statusABC->setDraft('image', $md5);
-$statusABC->save();
+$statusABC->save('test');
 
 $input->setInput('item', 'image');
 
