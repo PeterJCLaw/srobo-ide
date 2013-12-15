@@ -24,11 +24,12 @@ test_false(is_dir($repopath), 'created repo with / in the name!');
 
 
 section('slashes in name: copy');
-$repopath2 = $config->getConfig("repopath") . "/1/master/" . 'cake' . ".git";
-$projectManager->createRepository(1, 'cake');
+$srcName = 'the-src';
+$repopath2 = $config->getConfig("repopath") . "/1/master/" . $srcName . ".git";
+$projectManager->createRepository(1, $srcName);
 test_true(is_dir($repopath2), 'Failed to create repo to copy');
 
-$ret = $projectManager->copyRepository('cake', $projName);
+$ret = $projectManager->copyRepository(1, $srcName, $projName);
 
 test_false($ret, 'did not block copying of a project with / in the name');
 test_false(is_dir($repopath), 'copied repo with / in the name!');
