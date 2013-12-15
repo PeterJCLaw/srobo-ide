@@ -1,5 +1,7 @@
 TEST basic/sanity
 TEST basic/test-skip
+# Test that we fail tests as a result of PHP warnings - run manually
+# XFAIL basic/test-php-warning
 TEST basic/config
 TEST basic/cron
 TEST basic/html
