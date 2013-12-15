@@ -164,6 +164,12 @@ function subsection($label)
 
 function cleanCreate($path)
 {
-	delete_recursive($path);
+	// while it's not nice to have conditionals in tests,
+	// this avoids an error about the target not existing
+	// without hiding other failure modes of the deletion.
+	if (file_exists($path))
+	{
+		delete_recursive($path);
+	}
 	mkdir_full($path);
 }
