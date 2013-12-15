@@ -154,6 +154,8 @@ class ProjectManager
 		{
 			$userRepo->gitMKDir($path);
 		}
+	//	echo 'unstagedFiles after mkdirs: ';
+	//	var_dump($unstagedFiles);
 		// rewrite files
 		foreach ($unstagedFiles as $path => $data)
 		{
