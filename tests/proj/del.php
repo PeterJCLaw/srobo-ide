@@ -24,6 +24,9 @@ test_true($mm->moduleExists("proj"), "proj module does not exist");
 
 $repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
 
+GitRepository::createRepository($repopath, true);
+test_existent($repopath, "must have created repo to be deleted");
+
 $proj = $mm->getModule("proj");
 $proj->dispatchCommand("del");
 
