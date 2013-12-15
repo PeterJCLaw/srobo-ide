@@ -9,7 +9,7 @@ $config->override('user.default.teams', array('ABC'));
 $config->override('user.default.read_only_teams', array('ROT', 'ABC'));
 $config->override('auth_module', 'single');
 $config->override("keyfile", "$testWorkPath/test.key");
-$config->override('modules', array('user', 'file', 'proj', 'team'));
+$config->override('modules.always', array('user', 'file', 'proj', 'team'));
 
 //do a quick authentication
 $auth = AuthBackend::getInstance();

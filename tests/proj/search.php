@@ -7,7 +7,7 @@ $config->override("user.default", "bees");
 $config->override("user.default.teams", array('ABC'));
 $config->override("auth_module", "single");
 $config->override("keyfile", "$testWorkPath/test.key");
-$config->override("modules", array("proj"));
+$config->override('modules.always', array("proj"));
 
 //do a quick authentication
 $auth = AuthBackend::getInstance();

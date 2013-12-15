@@ -1,7 +1,7 @@
 <?php
 
 $config = Configuration::getInstance();
-$config->override('modules', array('proj'));
+$config->override('modules.always', array('proj'));
 $zipRoot = $testWorkPath . 'zips';
 $config->override('zipurl', $zipRoot);
 $config->override('zips.max_age', 20);

@@ -7,7 +7,7 @@ $project = 'wasps';
 
 $config = Configuration::getInstance();
 $config->override('repo_clone_url', $repo_clone_url);
-$config->override('modules', array('proj'));
+$config->override('modules.always', array('proj'));
 
 $config->override("user.default", "death");
 $config->override("user.default.teams", array(1, 2, $team));
