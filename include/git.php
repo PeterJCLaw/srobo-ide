@@ -222,7 +222,7 @@ class ReadOnlyGitRepository
 	 * @param file: The file to limit the revisions to.
 	 * @returns: An array of the revisions in the given range.
 	 */
-	public function log($oldCommit, $newCommit, $file=null)
+	public function log($oldCommit=null, $newCommit=null, $file=null)
 	{
 		$log = null;
 		$s_logCommand = "log -M -C --pretty='format:%H;%aN <%aE>;%at;%s'";
