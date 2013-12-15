@@ -60,7 +60,14 @@ class CheckoutHelper
 	public static function getLibRobotRevisionFor($team)
 	{
 		$teams = Configuration::getInstance()->getConfig('lib_robot.team');
-		return @$teams[$team];
+		if (isset($teams[$team]))
+		{
+			return $teams[$team];
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 
