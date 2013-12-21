@@ -10,3 +10,6 @@
 [submodule "web/javascript/ace"]
 	path = web/javascript/ace
 	url = git://github.com/ajaxorg/ace-builds.git
+[submodule "tests/js/jasmine-data-provider"]
+	path = tests/js/jasmine-data-provider
+	url = git://github.com/PeterJCLaw/jasmine-data-provider.git
