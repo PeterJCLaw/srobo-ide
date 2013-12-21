@@ -68,6 +68,7 @@ TEST js/errors-model
 TEST js/search
 TEST js/search-results
 TEST js/usage-sorter
+TEST js/validation
 
 TEST code-style/shell-var-names
 TEST code-style/no-selenium

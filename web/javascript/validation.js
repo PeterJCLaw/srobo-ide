@@ -1,10 +1,10 @@
 
 var Validation = {
 	'is_url': function(text) {
-		return true;
+		return /^https?:\/\//.test(text);
 	},
 	'is_feed': function(text) {
-		return true;
+		return /^(https?|feed):\/\//.test(text);
 	}
 }
 
