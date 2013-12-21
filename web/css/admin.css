@@ -35,6 +35,9 @@
 .valid {
 	background: url(../images/icons/tick.png) right no-repeat !important;
 }
+.invalid {
+	background-color: #FF7E7E !important;
+}
 .rejected {
 	background: url(../images/icons/cross.png) right no-repeat !important;
 }

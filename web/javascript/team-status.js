@@ -20,6 +20,15 @@ function TeamStatus()
 
 	// list of text fields
 	this._fields = ['name', 'description', 'feed', 'url', 'facebook', 'youtube', 'twitter'];
+
+	// collection of validation checks
+	this._validation = {
+		'feed': Validation.is_feed,
+		'url': Validation.is_url,
+		'facebook': Validation.is_url,
+		'youtube': Validation.is_url,
+		'twitter': Validation.is_url
+	};
 }
 
 /* *****	Initialization code	***** */
@@ -179,6 +188,33 @@ TeamStatus.prototype._getFields = function()
 }
 /* *****	End Field Handling		***** */
 
+/* *****	Validation Checks	***** */
+TeamStatus.prototype._isValid = function()
+{
+	var data = this._getFields();
+	var all_valid = true;
+	for (var field in data)
+	{
+		var validator = this._validation[field];
+		if (validator != null && !validator(data[field]))
+		{
+			// isn't valid
+			all_valid = false;
+			addElementClass(this._getField(field), 'invalid');
+		}
+		else
+		{
+			removeElementClass(this._getField(field), 'invalid');
+		}
+	}
+	if (!all_valid)
+	{
+		this._prompt = status_msg("Team status not saved - some fields have invalid values", LEVEL_ERROR);
+	}
+	return all_valid;
+}
+/* *****	End Validation Checks		***** */
+
 /* *****	Team status fetch code	***** */
 TeamStatus.prototype._receiveGetStatus = function(nodes)
 {
@@ -276,7 +312,10 @@ TeamStatus.prototype.saveStatus = function()
 	this._saveError = false;
 
 	// TODO: up-to-date checking?
-	this._putStatus();
+	if (this._isValid())
+	{
+		this._putStatus();
+	}
 
 	var imageInput = this._getField('image');
 	if (!IDE_string_empty(imageInput.value))	// not null or whitespace

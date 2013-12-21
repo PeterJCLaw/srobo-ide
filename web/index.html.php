@@ -52,6 +52,7 @@
 	$javaScripts[] = "web/javascript/status.js";
 	$javaScripts[] = "web/javascript/tabs.js";
 	$javaScripts[] = "web/javascript/usage-sorter.js";
+	$javaScripts[] = "web/javascript/validation.js";
 
 	// external editor component - ACE - http://ace.ajax.org
 	$javaScripts[] = "web/javascript/ace/src/ace.js";
