@@ -44,15 +44,20 @@ def raiseOnRequestError(response_data):
 
 def makeIDERequest(endPoint, data = None):
 
-	auth_token = getCurrentToken()
-
 	if data is None:
 		data = dict()
 	data_string = json.dumps(data)
 
 	url = getURLForEnpoint(endPoint)
 
-	req = urllib2.Request(url, data_string)
+	return makeIDERequest2(url, data_string)
+
+def makeIDERequest2(url, data = None, headers = None):
+
+	auth_token = getCurrentToken()
+	headers = headers or {}
+
+	req = urllib2.Request(url, data, headers)
 	if auth_token is not None:
 		req.add_header('Cookie', 'token=%s' % auth_token)
 

@@ -59,6 +59,7 @@ TEST ping/ping
 TEST http/auth
 TEST http/files
 TEST http/proj
+TEST http/upload
 
 # Some Jasmine tests!
 #XFAIL js/xfail
