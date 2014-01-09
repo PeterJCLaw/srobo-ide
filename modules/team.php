@@ -134,8 +134,11 @@ class TeamModule extends Module
 		$dest = path_change_extension($path, 'png');
 		$image->resizeInto($width, $height, $dest);
 
-		// remove the original
-		unlink($path);
+		// remove the original, if different
+		if ($path != $dest)
+		{
+			unlink($path);
+		}
 
 		// update the status store
 		$status = new TeamStatus($team);

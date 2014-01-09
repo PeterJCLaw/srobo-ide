@@ -3,6 +3,8 @@
 # You'll almost definitely want to override this one -- see below for details.
 URL = "https://www.studentrobotics.org/ide/"
 
+team_status_image_dir = '/tmp/ide-team-status-images/'
+
 # The user details to login with
 username = 'py-test'
 password = 'py-test'

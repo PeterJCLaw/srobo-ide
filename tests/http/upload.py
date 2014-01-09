@@ -42,14 +42,24 @@ class UploadTests(unittest.TestCase):
 		image_path = os.path.join(images_dir, image)
 		return open(image_path, 'r')
 
-	def test_canUpload(self):
+	def do_upload(self, image):
 		values = dict(team = self._team, _command = 'team/status-put-image')
-		values['team-status-image-input'] = self.get_imageData('static.png')
+		values['team-status-image-input'] = self.get_imageData(image)
 
 		data, headers = multipart_encode(values)
 
 		url = config.URL + 'upload.php'
 		resp = util.makeIDERequest2(url, data, headers)
+
+		expected_image_path = os.path.join(config.team_status_image_dir, self._team + '.png')
+		exists = os.path.exists(expected_image_path)
+		assert exists, "Uploaded file '%s' should exist" % expected_image_path
+
+	def test_canUploadPNG(self):
+		self.do_upload('static.png')
+
+	def test_canUploadGif(self):
+		self.do_upload('anim.gif')
 
 if __name__ == '__main__':
 	unittest.main(buffer=True)
