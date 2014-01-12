@@ -347,7 +347,8 @@
 			</div>
 			<p class="info">
 				The following information will be publicly available on the SR website, in the <a href="<?=$root_url ?>/teams/">Teams Area</a>.
-				Be sensible with the information you add on this page, avoid anything objectionable/obscene. All content is moderated before appearing on the website and the following icons will appear to the right of the field after moderation:
+				Be sensible with the information you add on this page, avoid anything objectionable/obscene.
+				All content is moderated before appearing on the website and the following icons will appear to the right of the field after moderation:
 			</p>
 			<ul class="info">
 				<li><img src="web/images/icons/tick.png" alt="Tick" /> The change has been accepted and is now visible on the website.</li>
@@ -364,7 +365,10 @@
 						<form action="./upload.php" target="upload-helper" id="team-status-image-upload-form" method="POST" enctype="multipart/form-data">
 							<input type="file" name="team-status-image-input" id="team-status-image-input" />
 							<p class="info">
-								Upload an image to show on your Team page. It can be of anything you wish, within reason. Ideally it'd show the current state of your robot to keep the other teams on their toes! Please avoid faces appearing in the image.
+								Upload an image to show on your Team page.
+								It can be of anything you wish, within reason.
+								Ideally it'd show the current state of your robot to keep the other teams on their toes!
+								Please avoid faces appearing in the image.
 							</p>
 							<p class="info">
 								Max. file size:
