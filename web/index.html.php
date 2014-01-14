@@ -348,6 +348,8 @@
 			<p class="info">
 				The following information will be publicly available on the SR website, in the <a href="<?=$root_url ?>/teams/">Teams Area</a>.
 				Be sensible with the information you add on this page, avoid anything objectionable/obscene.
+				Please also ensure that you have permission to use the content you upload,
+					for example ensure that you either own the copyright, or have an appropriate license, for any images or text.
 				All content is moderated before appearing on the website and the following icons will appear to the right of the field after moderation:
 			</p>
 			<ul class="info">
