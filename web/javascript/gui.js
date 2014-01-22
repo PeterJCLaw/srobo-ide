@@ -502,8 +502,20 @@ function TeamSelector() {
 			signal( this, "onchange", team );
 	}
 
+	var team_sort = function(a, b) {
+		if (a.id == b.id) {
+			return 0;
+		} else if (a.id < b.id) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+
 	this._build_options = function() {
 		var olist = [];
+
+		user.teams.sort(team_sort);
 
 		for( var i=0; i < user.teams.length; i++ ) {
 			var team_id = user.teams[i].id;
