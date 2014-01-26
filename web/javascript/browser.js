@@ -180,24 +180,26 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 	this.commitMsg = getElement("new-commit-msg").value;
 	this.newFname = getElement("new-file-name").value;
 
-	switch(this.type) {
-		case 'isFile':
-			var type = 'file';
-			break;
-		case 'isDir':
-			var type = 'directory';
-			break;
-		case 'isProj':
-			var type = 'project';
-			break;
-		case 'isTag':
-			var type = 'tag';
-			break;
-	}
-
 	//don't allow null strings or pure whitespace
 	if(this._badFname(this.newFname)) {
-		getElement("browser-status").innerHTML = "Please specify a valid "+type+" name:";
+		var human_type;
+		switch (this.type) {
+			case 'isDir':
+				human_type = 'directory';
+				break;
+			case 'isProj':
+				human_type = 'project';
+				break;
+			case 'isTag':
+				human_type = 'tag';
+				break;
+			case 'isFile':
+			default:
+				human_type = 'file';
+				break;
+		}
+
+		getElement("browser-status").innerHTML = "Please specify a valid "+human_type+" name:";
 		getElement("new-file-name").focus();
 		return;
 	}
