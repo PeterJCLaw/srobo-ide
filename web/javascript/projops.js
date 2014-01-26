@@ -268,7 +268,7 @@ function ProjOps() {
 				message: "File deletion"
 			};
 			var commit_success = bind(function() {
-				status_msg("files deleted succesfully", LEVEL_OK);
+				status_msg("Files deleted successfully", LEVEL_OK);
 				projpage.flist.refresh();
 			}, this);
 			IDE_backend_request("proj/commit", args, commit_success, del_fail);
