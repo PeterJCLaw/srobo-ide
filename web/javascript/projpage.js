@@ -1179,14 +1179,15 @@ function ProjOps() {
 
 	this.mv = function() {
 		//we can only deal with one file/folder at a time, so ignore all but the first
-		if(projpage.flist.selection.length == 0 || projpage.flist.selection.length > 1) {
+		if (projpage.flist.selection.length != 1) {
 			status_msg("You must select a single file/folder", LEVEL_ERROR);
 			return;
 		}
 
 		//the file must be closed!
-		if(!editpage.close_tab( projpage.flist.selection[0] )) {
-			log('Cannot move open file: '+projpage.flist.selection[0]);
+		var file = projpage.flist.selection[0];
+		if (!editpage.close_tab(file)) {
+			log('Cannot move open file: ' + file);
 			return;
 		}
 
