@@ -183,11 +183,11 @@ if (typeof String.prototype.endsWith !== 'function') {
  * but can be used in classes that want to be unit-testable as it can be
  * mocked or injected.
  */
-Helpers = {
+var Helpers = {
 	'backend_request': IDE_backend_request,
 	'backend_request_with_retry': IDE_backend_request_with_retry,
 	'hash_shrink': IDE_hash_shrink,
 	'hash_compare': IDE_hash_compare,
 	'path_get_project': IDE_path_get_project,
-	'path_get_file': IDE_path_get_file,
+	'path_get_file': IDE_path_get_file
 };
