@@ -40,7 +40,9 @@
 	$javaScripts[] = "web/javascript/calendar.js";
 	$javaScripts[] = "web/javascript/checkout.js";
 	$javaScripts[] = "web/javascript/diff.js";
-	$javaScripts[] = "web/javascript/edit.js";
+	$javaScripts[] = "web/javascript/editorwrapper.js";
+	$javaScripts[] = "web/javascript/editpage.js";
+	$javaScripts[] = "web/javascript/edittab.js";
 	$javaScripts[] = "web/javascript/errors.js";
 	$javaScripts[] = "web/javascript/errors-model.js";
 	$javaScripts[] = "web/javascript/log.js";
