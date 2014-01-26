@@ -319,8 +319,7 @@ ProjPage.prototype.CreateNewProject = function(newProjName) {
 
 ProjPage.prototype._createProjectSuccess = function(newProjName) {
 	status_msg("Created project successfully", LEVEL_OK);
-	// TODO: what exactly is being updated here?
-	update(team);
+
 	// Transition to the new project once the project list has loaded
 	this._selector.trans_project = newProjName;
 	this._list.update(team);
