@@ -10,34 +10,36 @@ function Login() {
 
 		// Connect up the onclick event to the login button
 		disconnectAll( "login-button" );
-		connect( "login-button", "onclick", bind( this._do_login, this ) );
+		connect( "login-button", "onclick", bind(this._do_login, this) );
 
 		// Do stuff when the user presses enter
 		disconnectAll( "login-box" );
-		connect( "login-box", "onsubmit", bind( this._do_login, this ) );
+		connect( "login-box", "onsubmit", bind(this._do_login, this) );
 
 		// Show the user some help when the click the forgotten password link
 		disconnectAll( "forgotten-password-button" );
-		connect( "forgotten-password-button", "onclick", bind( this._forgotten_password_help, this ) );
+		connect( "forgotten-password-button", "onclick", bind(this._forgotten_password_help, this) );
 
 		var userBox = getElement("username");
 
 		//clear box on focus, replace with 'username' on blur.
 		connect("username","onfocus",function(){
-			if (userBox.value == userBox.defaultValue)
+			if (userBox.value == userBox.defaultValue) {
 				userBox.value='';
+			}
 		});
 		connect("username","onblur",function(){
-			if (!userBox.value)
+			if (!userBox.value) {
 				userBox.value = userBox.defaultValue;
+			}
 		});
 		//and focus the username
 		userBox.focus();
-	}
+	};
 
 	// Grab the username and password from the login form and start the login
 	this._do_login = function(ev) {
-		if( ev != null ) {
+		if (ev != null) {
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
@@ -53,7 +55,7 @@ function Login() {
 				getElement("password").focus();
 			}, this)
 		);
-	}
+	};
 
 	// Grab the username and password from the login form and start the login
 	this._forgotten_password_help = function(ev) {
@@ -63,7 +65,7 @@ function Login() {
 		}
 
 		toggleElementClass('visible', 'forgotten-password-help');
-	}
+	};
 }
 
 // onload function

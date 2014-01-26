@@ -42,7 +42,7 @@ function EditPage() {
 		connect( window, 'onresize', bind(this._window_resize, this) );
 
 		this._iea = new ide_editarea('editpage-acebox');
-	}
+	};
 
 	// Resize the edit box to cope.
 	this._window_resize = function() {
@@ -62,41 +62,43 @@ function EditPage() {
 
 		var aboveHeight = pos.y + dims.h + marginBottom;
 		setStyle(this.textbox, {'top': aboveHeight + 'px'});
-	}
+	};
 
 	// Show the edit page
 	this._show = function() {
 		showElement('edit-mode');
 		this._window_resize();
-	}
+	};
 
 	// Hide the edit page
 	this._hide = function() {
 		hideElement('edit-mode');
-	}
+	};
 
 	// Mark the given errors in the named file
 	this.mark_errors = function( file, errors ) {
-		if (!this.is_open(file))
+		if (!this.is_open(file)) {
 			return;
+		}
 
 		var etab = this._file_get_etab(file);
 		etab.mark_errors(errors);
-	}
+	};
 
 	// Clear all given errors from the named file
 	this.clear_errors = function( file ) {
-		if (!this.is_open(file))
+		if (!this.is_open(file)) {
 			return;
+		}
 
 		var etab = this._file_get_etab(file);
 		etab.clear_errors();
-	}
+	};
 
 	//Is the given file open?
 	this.is_open = function( file ) {
 		return this._open_files[file] != null;
-	}
+	};
 
 	// Open the given file and switch to the tab
 	// or if the file is already open, just switch to the tab
@@ -120,14 +122,14 @@ function EditPage() {
 			etab.open_revision(rev, false);
 		}
 		return etab;
-	}
+	};
 
 	// Create a new tab with a new file open in it
 	this.new_file = function() {
 		if (!validate_team()) {
 			return;
 		}
-		if(!projpage.projects_exist()) {
+		if (!projpage.projects_exist()) {
 			status_msg("You must create a project before creating a file", LEVEL_ERROR);
 			return;
 		}
@@ -135,96 +137,101 @@ function EditPage() {
 		var fname = "New File " + this._new_count;
 		var etab = this._new_etab( team, null, fname, 0, false );
 		tabbar.switch_to( etab.tab );
-	}
+	};
 
 	this.rename_tab = function(old, New) {
 		this._open_files[New] = this._open_files[old];
 		this._open_files[old] = null;
 		this._open_files[New].tab.set_label( New );
-	}
+	};
 
 	//close a tab, if it's open, return true if it's closed, false otherwise
 	this.close_tab = function(name, override) {
-		if(this.is_open(name))
+		if (this.is_open(name)) {
 			return this._open_files[name].close(override);
-		else
+		} else {
 			return true;
-	}
+		}
+	};
 
 	this.close_all_tabs = function(override) {
-		mod_count	= 0;
-		for ( var i in this._open_files ) {	//find which are modified and close the others
-			if(this._open_files[i] !== null) {
+		mod_count = 0;
+		for (var i in this._open_files) {	//find which are modified and close the others
+			if (this._open_files[i] !== null) {
 				logDebug('checking '+i);
-				if(this._open_files[i].is_modified() && override != true) {
+				if (this._open_files[i].is_modified() && override != true) {
 					logDebug(i+' is modified, logging');
-					mod_count	+= 1;
-					mod_file	= i;
+					mod_count += 1;
+					mod_file = i;
 				} else {
 					logDebug('closing '+i);
 					this._open_files[i].close(override);
 				}
 			}
 		}
-		if(mod_count > 0) {
-			if(mod_count == 1)
+		if (mod_count > 0) {
+			if (mod_count == 1) {
 				this._open_files[mod_file].close(false);
-			else
+			} else {
 				status_button(mod_count+' files have been modified!', LEVEL_WARN, 'Close Anyway', bind(this.close_all_tabs, this, true));
+			}
 			return false;
-		} else
+		} else {
 			return true;
-	}
+		}
+	};
 
 	// Create a new tab that's one of ours
 	// Doesn't load the tab
 	this._new_etab = function(team, project, path, rev, isReadOnly, mode) {
 		var etab = new EditTab(this._iea, team, project, path, rev, isReadOnly, mode);
 
-		connect( etab, "onclose", bind( this._on_tab_close, this ) );
+		connect( etab, "onclose", bind(this._on_tab_close, this) );
 
 		this._open_files[path] = etab;
 		return etab;
-	}
+	};
 
 	// Return the tab for the given file path
 	// returns null if not open
-	this._file_get_etab = function( path ) {
-		for( var i in this._open_files ) {
-			if( i == path && this._open_files[i] !== null )
+	this._file_get_etab = function(path) {
+		for (var i in this._open_files) {
+			if (i == path && this._open_files[i] !== null) {
 				return this._open_files[i];
+			}
 		}
 		return null;
-	}
+	};
 
 	// Handler for when the tab has been closed
-	this._on_tab_close = function( etab ) {
+	this._on_tab_close = function(etab) {
 		// Remove tab from our list
-		for( var i in this._open_files ) {
-			if( this._open_files[i] === etab ) {
+		for (var i in this._open_files) {
+			if (this._open_files[i] === etab) {
 				this._open_files[i] = null;
 				break;
 			}
 		}
-	}
+	};
 
-	this._tab_switch = function( fromtab, totab ) {
-		if( !this._is_edit( totab ) ) {
+	this._tab_switch = function(fromtab, totab) {
+		if (!this._is_edit(totab)) {
 			this._hide();
 			return;
 		}
 
-		if( !this._is_edit( fromtab ) )
+		if (!this._is_edit(fromtab)) {
 			this._show();
-	}
+		}
+	};
 
 	// Return true if the given tab is an edit tab
 	this._is_edit = function(tab) {
-		if( tab !== null && tab !== undefined
-		    && tab.__edit === true )
+		if (tab !== null && tab !== undefined && tab.__edit === true) {
 			return true;
+		}
 		return false;
-	}
+	};
 
 	this._init();
 }

@@ -27,20 +27,20 @@ function ErrorsModel(helpers, team) {
 	};
 
 	this.subscribe = function(callback) {
-		if (this._disposed) return;
+		if (this._disposed) { return; }
 
 		this._subscribers.push(callback);
 		return this._subscribers.length - 1;
 	};
 
 	this.unsubscribe = function(index) {
-		if (this._disposed) return;
+		if (this._disposed) { return; }
 
 		this._subscribers[index] = null;
 	};
 
 	this.get_current = function(file) {
-		if (this._disposed) return;
+		if (this._disposed) { return; }
 
 		var errors = this._map[file];
 		if (errors) {
@@ -50,7 +50,7 @@ function ErrorsModel(helpers, team) {
 	};
 
 	this.check = function(file, callback, autosave, revision) {
-		if (this._disposed) return;
+		if (this._disposed) { return; }
 
 		var project = helpers.path_get_project(file);
 		var opts = opts || {};
@@ -78,7 +78,7 @@ function ErrorsModel(helpers, team) {
 	};
 
 	var done_check = function(project, file, callback, nodes) {
-		if (that._disposed) return;
+		if (that._disposed) { return; }
 
 		var errors = nodes.errors;
 		var seen_files = {};

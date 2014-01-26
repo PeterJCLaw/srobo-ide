@@ -16,43 +16,43 @@ function ide_editarea(id) {
 
 	this._init = function() {
 		this._ace = ace.edit( this._id );
-	}
+	};
 
 	this.newSession = function() {
 		var UndoManager = require("ace/undomanager").UndoManager;
 		var EditSession = require( "ace/edit_session" ).EditSession;
 		var session = new EditSession( "" , null );
-		session.setUndoManager( new UndoManager );
+		session.setUndoManager( new UndoManager() );
 		this._ace.setSession( session );
 		return session;
-	}
+	};
 
 	this.setSession = function( session ) {
-		if( session != null ) {
+		if (session != null) {
 			this._ace.setSession( session );
 		}
-	}
+	};
 
 	this.setSelectionRange = function( range ) {
-		if( range != null ) {
+		if (range != null) {
 			this._ace.selection.setSelectionRange( range );
 		}
-	}
+	};
 
 	this.setReadOnly = function(isReadOnly) {
 		this._ace.setReadOnly(isReadOnly);
 		setReadOnly(this._id, isReadOnly);
-	}
+	};
 
 	this.focus = function() {
 		return this._ace.focus();
-	}
+	};
 
 	this.getTextModeForPath = function(path) {
 		var modelist = require("ace/ext/modelist");
 		var textMode = modelist.getModeForPath(path).mode;
 		return textMode;
-	}
+	};
 
 	this._init();
 }

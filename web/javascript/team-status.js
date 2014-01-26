@@ -4,7 +4,7 @@ function TeamStatus()
 	this.tab = null;
 
 	//hold signals for the page
-	this._signals = new Array();
+	this._signals = [];
 
 	//hold status message for the page
 	this._prompt = null;
@@ -32,10 +32,8 @@ function TeamStatus()
 }
 
 /* *****	Initialization code	***** */
-TeamStatus.prototype.init = function()
-{
-	if(this._inited == false)
-	{
+TeamStatus.prototype.init = function() {
+	if (this._inited == false) {
 		logDebug("TeamStatus: Initializing");
 
 		if (!validate_team()) {
@@ -43,19 +41,19 @@ TeamStatus.prototype.init = function()
 		}
 
 		var teamInfo = user.get_team(team);
-		var isReadOnly = teamInfo.readOnly == true
+		var isReadOnly = teamInfo.readOnly == true;
 		this._set_read_only(isReadOnly);
 
 		/* Initialize a new tab for switchboard - Do this only once */
 		this.tab = new Tab( "Team Status" );
-		this._signals.push(connect( this.tab, "onfocus", bind( this._onfocus, this ) ));
-		this._signals.push(connect( this.tab, "onblur", bind( this._onblur, this ) ));
-		this._signals.push(connect( this.tab, "onclickclose", bind( this._close, this ) ));
+		this._signals.push(connect( this.tab, "onfocus", bind(this._onfocus, this) ));
+		this._signals.push(connect( this.tab, "onblur", bind(this._onblur, this) ));
+		this._signals.push(connect( this.tab, "onclickclose", bind(this._close, this) ));
 		var saveElem = getElement('team-status-save');
 		saveElem.disabled = isReadOnly;
 		if (!isReadOnly) {
-			this._signals.push(connect( saveElem, 'onclick', bind( this.saveStatus, this ) ));
-			this._signals.push(connect( 'upload-helper', "onload", bind( this._uploadHelperLoad, this ) ));
+			this._signals.push(connect( saveElem, 'onclick', bind(this.saveStatus, this) ));
+			this._signals.push(connect( 'upload-helper', "onload", bind(this._uploadHelperLoad, this) ));
 		}
 		tabbar.add_tab( this.tab );
 
@@ -69,10 +67,9 @@ TeamStatus.prototype.init = function()
 
 	/* now switch to it */
 	tabbar.switch_to(this.tab);
-}
+};
 
-TeamStatus.prototype._set_read_only = function(isReadOnly)
-{
+TeamStatus.prototype._set_read_only = function(isReadOnly) {
 	if (this._read_only == isReadOnly) {
 		return;
 	}
@@ -86,29 +83,26 @@ TeamStatus.prototype._set_read_only = function(isReadOnly)
 	setReadOnly('team-status-page', isReadOnly);
 
 	this._read_only = isReadOnly;
-}
-/* *****	End Initialization Code 	***** */
+};
+/* *****	End Initialization Code		***** */
 
-/* ***** Tab events: onfocus, onblur and close		***** */
-TeamStatus.prototype._onfocus = function()
-{
+/* *****	Tab events: onfocus, onblur and close		***** */
+TeamStatus.prototype._onfocus = function() {
 	showElement('team-status-page');
-}
+};
 
-TeamStatus.prototype._onblur = function()
-{
+TeamStatus.prototype._onblur = function() {
 	/* Clear any prompts */
-	if( this._prompt != null ) {
+	if (this._prompt != null) {
 		this._prompt.close();
 		this._prompt = null;
 	}
 	hideElement('team-status-page');
-}
+};
 
-TeamStatus.prototype._close = function()
-{
+TeamStatus.prototype._close = function() {
 	/* Clear any prompts */
-	if( this._prompt != null ) {
+	if (this._prompt != null) {
 		this._prompt.close();
 		this._prompt = null;
 	}
@@ -117,36 +111,33 @@ TeamStatus.prototype._close = function()
 	this.events = null;
 
 	/* Disconnect all signals */
-	for(var i = 0; i < this._signals.length; i++) {
+	for (var i = 0; i < this._signals.length; i++) {
 		disconnect(this._signals[i]);
 	}
-	this._signals = new Array();
+	this._signals = [];
 
 	/* Close tab */
 	this._onblur();
 	this.tab.close();
 	this._inited = false;
-}
+};
 /* *****	End Tab events		***** */
 
 /* *****	Field Handling		***** */
 // Gets the input field the user may have edited
-TeamStatus.prototype._getField = function(name)
-{
+TeamStatus.prototype._getField = function(name) {
 	return getElement('team-status-'+name+'-input');
-}
+};
 // Gets the element that the review state class will be set on.
-TeamStatus.prototype._getField2 = function(name)
-{
+TeamStatus.prototype._getField2 = function(name) {
 	logDebug('getting field: '+name);
 	if (name == 'image')
 	{
 		return getElement('team-status-image-upload-form');
 	}
 	return this._getField(name);
-}
-TeamStatus.prototype._setReviewState = function(reviewed)
-{
+};
+TeamStatus.prototype._setReviewState = function(reviewed) {
 	var fields = this._fields;
 	fields.push('image');
 	for (var i=0; i < fields.length; i++) {
@@ -158,25 +149,20 @@ TeamStatus.prototype._setReviewState = function(reviewed)
 			removeElementClass(this._getField2(field), 'rejected');
 		}
 	}
-}
-TeamStatus.prototype._setFields = function(data)
-{
-	for (var i=0; i < this._fields.length; i++)
-	{
+};
+TeamStatus.prototype._setFields = function(data) {
+	for (var i = 0; i < this._fields.length; i++) {
 		var field = this._fields[i];
 		this._getField(field).value = data[field] || '';
 	}
-}
-TeamStatus.prototype._clearFields = function()
-{
+};
+TeamStatus.prototype._clearFields = function() {
 	this._setFields({});
 	this._setReviewState({});
-}
-TeamStatus.prototype._getFields = function()
-{
+};
+TeamStatus.prototype._getFields = function() {
 	var data = {};
-	for (var i=0; i < this._fields.length; i++)
-	{
+	for (var i = 0; i < this._fields.length; i++) {
 		var field = this._fields[i];
 		var value = this._getField(field).value;
 		if (!IDE_string_empty(value))	// not null or whitespace
@@ -185,66 +171,55 @@ TeamStatus.prototype._getFields = function()
 		}
 	}
 	return data;
-}
+};
 /* *****	End Field Handling		***** */
 
 /* *****	Validation Checks	***** */
-TeamStatus.prototype._isValid = function()
-{
+TeamStatus.prototype._isValid = function() {
 	var data = this._getFields();
 	var all_valid = true;
-	for (var field in data)
-	{
+	for (var field in data) {
 		var validator = this._validation[field];
-		if (validator != null && !validator(data[field]))
-		{
+		if (validator != null && !validator(data[field])) {
 			// isn't valid
 			all_valid = false;
 			addElementClass(this._getField(field), 'invalid');
-		}
-		else
-		{
+		} else {
 			removeElementClass(this._getField(field), 'invalid');
 		}
 	}
-	if (!all_valid)
-	{
+	if (!all_valid) {
 		this._prompt = status_msg("Team status not saved - some fields have invalid values", LEVEL_ERROR);
 	}
 	return all_valid;
-}
+};
 /* *****	End Validation Checks		***** */
 
 /* *****	Team status fetch code	***** */
-TeamStatus.prototype._receiveGetStatus = function(nodes)
-{
-	if (nodes.error)
-	{
+TeamStatus.prototype._receiveGetStatus = function(nodes) {
+	if (nodes.error) {
 		this._errorGetStatus();
 		return;
 	}
 	this._setFields(nodes.items);
 	this._setReviewState(nodes.reviewed);
-}
-TeamStatus.prototype._errorGetStatus = function()
-{
+};
+TeamStatus.prototype._errorGetStatus = function() {
 	this._clearFields();
 	this._prompt = status_msg("Unable to get team status", LEVEL_ERROR);
 	logDebug("TeamStatus: Failed to retrieve info");
 	return;
-}
-TeamStatus.prototype.GetStatus = function()
-{
+};
+TeamStatus.prototype.GetStatus = function() {
 	logDebug("TeamStatus: Retrieving team status");
 	IDE_backend_request("team/status-get", { team: team },
 	                    bind(this._receiveGetStatus, this),
 	                    bind(this._errorGetStatus, this));
-}
+};
 /* *****    End Team Status fetch code	***** */
 
 /* *****    Hidden iframe Wrapping	***** */
-TeamStatus.prototype._uploadHelperLoad = function(ev)
-{
+TeamStatus.prototype._uploadHelperLoad = function(ev) {
 	var frame = ev.src();
 	// If you serve json to Firefox then it shows you a download box, so we need to serve it as text.
 	// This means that it then wraps it in <pre>, which we need to get the contents of.
@@ -253,52 +228,45 @@ TeamStatus.prototype._uploadHelperLoad = function(ev)
 	IDE_handle_backend_response(content, {},
 	                            bind(this._receivePutStatusImage, this),
 	                            bind(this._errorPutStatusImage, this));
-}
-TeamStatus.prototype._receivePutStatusImage = function(nodes)
-{
-	if (this._saveError)
-	{
+};
+TeamStatus.prototype._receivePutStatusImage = function(nodes) {
+	if (this._saveError) {
 		return;
 	}
 
-	if (nodes.error)
-	{
+	if (nodes.error) {
 		this._errorPutStatusImage();
 		return;
 	}
+
 	this._prompt = status_msg("Saved robot image successfully", LEVEL_OK);
 	this._getField('image').value = '';
-}
-TeamStatus.prototype._errorPutStatusImage = function()
-{
+};
+TeamStatus.prototype._errorPutStatusImage = function() {
 	this._saveError = true;
 	this._prompt = status_msg("Unable to save robot image", LEVEL_ERROR);
 	logDebug("TeamStatus: Failed to upload robot image");
 	return;
-}
+};
 /* *****    End Hidden iframe Wrapping	***** */
 
 /* *****    Team Status save code	***** */
 
-TeamStatus.prototype._receivePutStatus = function(nodes)
-{
-	if (nodes.error || this._saveError)
-	{
+TeamStatus.prototype._receivePutStatus = function(nodes) {
+	if (nodes.error || this._saveError) {
 		this._errorPutStatus();
 		return;
 	}
 	this._prompt = status_msg("Saved team status successfully", LEVEL_OK);
 	this.GetStatus();
-}
-TeamStatus.prototype._errorPutStatus = function()
-{
+};
+TeamStatus.prototype._errorPutStatus = function() {
 	this._saveError = true;
 	this._prompt = status_msg("Unable to save team status", LEVEL_ERROR);
 	logDebug("TeamStatus: Failed to put info");
 	return;
-}
-TeamStatus.prototype._putStatus = function()
-{
+};
+TeamStatus.prototype._putStatus = function() {
 	var data = this._getFields();
 	data.team = team;
 	logDebug("TeamStatus: saving team status");
@@ -306,24 +274,21 @@ TeamStatus.prototype._putStatus = function()
 	                    bind(this._receivePutStatus, this),
 	                    bind(this._errorPutStatus, this));
 	this._setReviewState({});
-}
-TeamStatus.prototype.saveStatus = function()
-{
+};
+TeamStatus.prototype.saveStatus = function() {
 	this._saveError = false;
 
 	// TODO: up-to-date checking?
-	if (this._isValid())
-	{
+	if (this._isValid()) {
 		this._putStatus();
 	}
 
 	var imageInput = this._getField('image');
-	if (!IDE_string_empty(imageInput.value))	// not null or whitespace
-	{
+	if (!IDE_string_empty(imageInput.value)) {	// not null or whitespace
 		// TODO: verify that it looks like an image
 		getElement('team-status-image-command').value = 'team/status-put-image';
 		getElement('team-status-image-team').value = team;
 		getElement('team-status-image-upload-form').submit();
 	}
-}
+};
 /* *****    End Team Status save code	***** */

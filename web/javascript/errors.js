@@ -2,11 +2,11 @@ function ErrorsPage() {
 
 	//hold the tab object
 	this.tab = null;
-	//Array of ErrorFiles
-	this.eflist = new Object();
+	//Mapping of path to ErrorFile
+	this.eflist = {};
 
 	//hold signals for the page
-	this._signals = new Array();
+	this._signals = [];
 
 	//hold status message for the page
 	this._prompt = null;
@@ -19,9 +19,9 @@ function ErrorsPage() {
 		}
 
 		this.tab = new Tab( "Errors" );
-		connect( this.tab, "onfocus", bind( this._onfocus, this ) );
-		connect( this.tab, "onblur", bind( this._onblur, this ) );
-		connect( this.tab, "onclickclose", bind( this._close, this ) );
+		connect( this.tab, "onfocus", bind(this._onfocus, this) );
+		connect( this.tab, "onblur", bind(this._onblur, this) );
+		connect( this.tab, "onclickclose", bind(this._close, this) );
 
 		tabbar.add_tab( this.tab );
 
@@ -31,7 +31,7 @@ function ErrorsPage() {
 		this._signals.push(connect("expand-errors-page", "onclick", bind(this._expand_all, this) ));
 
 		this._inited = true;
-	}
+	};
 
 	//load a new set of errors
 	this.load = function(info, opts) {
@@ -39,15 +39,15 @@ function ErrorsPage() {
 			this._prompt.close();
 			this._prompt = null;
 		}
-		var seenFiles = {};
+
 		this._init();
 		log('Loading the ErrorPage');
 
 		for (var file in info.details) {
 			var errors = info.details[file];
 
+			var ef = this.eflist[file];
 			if (errors.length == 0) {
-				var ef = this.eflist[file];
 				if (ef != null) {
 					ef.remove();
 					this.eflist[file] = null;
@@ -55,17 +55,15 @@ function ErrorsPage() {
 				continue;
 			}
 
-			var ef = null;
-			if (this.eflist[file] != null) {
-				log('Resetting '+file);
-				ef = this.eflist[file];
+			if (ef != null) {
+				log('Resetting ' + file);
 				ef.reset();
 			} else {
 				ef = this.eflist[file] = new ErrorFile(file);
-				log('file '+file+' has been added');
+				log('file ' + file + ' has been added');
 			}
 
-			for (var i=0; i < errors.length; i++) {
+			for (var i = 0; i < errors.length; i++) {
 				ef.add_item(errors[i]);
 			}
 			ef.load_items();
@@ -81,27 +79,27 @@ function ErrorsPage() {
 				this._prompt = status_button(msg, LEVEL_WARN, 'view errors', cb);
 			}
 		}
-	}
+	};
 
 	this._expand_all = function() {
 		for (var i in this.eflist) {
 			this.eflist[i].show_msgs();
 		}
-	}
+	};
 
 	this._collapse_all = function() {
 		for (var i in this.eflist) {
 			this.eflist[i].hide_msgs();
 		}
-	}
+	};
 
 	this._onfocus = function() {
 		showElement('errors-page');
-	}
+	};
 
 	this._onblur = function() {
 		hideElement('errors-page');
-	}
+	};
 
 	this._file_count = function() {
 		var count = 0;
@@ -111,7 +109,7 @@ function ErrorsPage() {
 			}
 		}
 		return count;
-	}
+	};
 
 	this._clear_file = function(file) {
 		if (this.eflist[file] != null) {
@@ -121,7 +119,7 @@ function ErrorsPage() {
 		if (this._file_count() == 0) {
 			this._close();
 		}
-	}
+	};
 
 	this._check_all = function() {
 		for (var f in this.eflist) {
@@ -129,14 +127,14 @@ function ErrorsPage() {
 				this.check(f);
 			}
 		}
-	}
+	};
 
 	/**
 	 * Ask if the given file path can be checked, ie, is it a python file.
 	 */
 	this.can_check = function(file) {
 		return file.endsWith('.py');
-	}
+	};
 
 	/**
 	 * use autosave parameter if to check against autosave or normal save
@@ -149,10 +147,10 @@ function ErrorsPage() {
 		var callback = bind(this._done_check, this, file, opts);
 		var em = ErrorsModel.GetInstance();
 		em.check(file, callback, autosave, revision);
-	}
+	};
 
 	this._done_check = function(file, opts, result_type, detail) {
-		var opts = opts || {};
+		opts = opts || {};
 		var cb = opts.callback;
 
 		if (result_type == 'checkfail') {
@@ -174,19 +172,19 @@ function ErrorsPage() {
 			}
 			this._clear_file(file);
 		}
-	}
+	};
 
 	this._close = function() {
 		if (!this._inited) {
 			return;
 		}
 
-		for (var i in this.eflist) {
-			if (this.eflist[i] != null) {
-				this.eflist[i].remove();
+		for (var k in this.eflist) {
+			if (this.eflist[k] != null) {
+				this.eflist[k].remove();
 			}
 		}
-		this.eflist = new Array();
+		this.eflist = {};
 
 		this.tab.close();
 
@@ -198,21 +196,21 @@ function ErrorsPage() {
 		for (var i = 0; i < this._signals.length; i++) {
 			disconnect(this._signals[i]);
 		}
-		this._signals = new Array();
+		this._signals = [];
 
 		this._inited = false;
-	}
+	};
 
 	this.show_only = function(file) {
 		this.hide_all_files();
 		this.eflist[file].show_errs();
-	}
+	};
 
 	this.hide_all_files = function() {
 		for (var i in this.eflist) {
 			this.eflist[i].hide_errs();
 		}
-	}
+	};
 }
 
 function ErrorFile(name) {
@@ -220,7 +218,7 @@ function ErrorFile(name) {
 	this.label = name;
 
 	//array for the warnings in a file
-	this._items = new Array();
+	this._items = [];
 
 	//the HTML element for the title
 	this._name_elem = null;
@@ -232,9 +230,9 @@ function ErrorFile(name) {
 	this._msgs_shown = true;
 
 	//hold the main signals for the file
-	this._signals = new Array();
+	this._signals = [];
 	//hold the signals for double-clicking on the items
-	this._item_signals = new Array();
+	this._item_signals = [];
 
 	this._init = function() {
 		logDebug('initing file: '+this.label);
@@ -255,11 +253,11 @@ function ErrorFile(name) {
 		this._signals.push(connect( this._view_link, 'onclick', bind(this._view_onclick, this, null) ));
 		this._signals.push(connect( this._expand_elem, 'onclick', bind(this._expand_onclick, this) ));
 		this._signals.push(connect( this._refresh_elem, 'onclick', bind(errorspage.check, errorspage, this.label, null, false, null) ));
-	}
+	};
 
 	this.add_item = function(w) {
 		this._items.push(w);
-	}
+	};
 
 	this.load_items = function() {
 		for (var i=0; i<this._items.length; i++) {
@@ -271,11 +269,11 @@ function ErrorFile(name) {
 		}
 		this.show_msgs();
 		editpage.mark_errors(this.label, this._items);
-	}
+	};
 
 	this.reset = function() {
 		this.clear_items();
-	}
+	};
 
 	this.remove = function() {
 		editpage.clear_errors(this.label);
@@ -291,19 +289,19 @@ function ErrorFile(name) {
 		for (var i = 0; i < this._signals.length; i++) {
 			disconnect(this._signals[i]);
 		}
-		this._signals = new Array();
-	}
+		this._signals = [];
+	};
 
 	this.clear_items = function() {
 		if (this._items_elem != null) {
 			replaceChildNodes(this._items_elem, null);
 		}
-		this._items = new Array();
+		this._items = [];
 		for (var i=0; i<this._item_signals.length; i++) {
 			disconnect(this._item_signals[i]);
 		}
-		this._item_signals = new Array();
-	}
+		this._item_signals = [];
+	};
 
 	this._view_onclick = function(line) {
 		var etab = editpage.edit_file( team, IDE_path_get_project(this.label), this.label, null, 'REPO' );
@@ -314,7 +312,7 @@ function ErrorFile(name) {
 			etab.setSelectionRange(line, 0, -1);
 		}
 		etab.mark_errors(this._items);
-	}
+	};
 
 	this._expand_onclick = function() {
 		if (!this._msgs_shown) {
@@ -322,7 +320,7 @@ function ErrorFile(name) {
 		} else {
 			this.hide_msgs();
 		}
-	}
+	};
 
 	this.show_msgs = function() {
 		if (!this._msgs_shown) {
@@ -330,7 +328,7 @@ function ErrorFile(name) {
 			this._expand_elem.innerHTML = 'Collapse';
 			this._msgs_shown = true;
 		}
-	}
+	};
 
 	this.hide_msgs = function() {
 		if (this._msgs_shown) {
@@ -338,7 +336,7 @@ function ErrorFile(name) {
 			this._expand_elem.innerHTML = 'Expand';
 			this._msgs_shown = false;
 		}
-	}
+	};
 
 	this._init();
 }

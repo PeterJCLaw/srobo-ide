@@ -34,12 +34,12 @@ function Poll(command, args, delay, retry) {
 
 Poll.prototype.cancel = function() {
 	this._deferred.cancel();
-}
+};
 
 Poll.prototype._setupPoll = function(delay) {
-	var delay = delay || this._delay;
+	delay = delay || this._delay;
 	this._deferred = callLater( delay, bind(this._doPoll, this, 1) );
-}
+};
 
 Poll.prototype._pollResponse = function(nodes) {
 	if (JSON.stringify(nodes) != JSON.stringify(this._prevData)) {
@@ -47,7 +47,7 @@ Poll.prototype._pollResponse = function(nodes) {
 		signal(this, 'onchange', nodes);
 	}
 	this._setupPoll();
-}
+};
 
 Poll.prototype._pollResponseError = function(retryNum, nodes) {
 	logDebug('Poll for "'+this._command+'" failed (attempt '+retryNum+').');
@@ -57,11 +57,11 @@ Poll.prototype._pollResponseError = function(retryNum, nodes) {
 	} else {
 		this._setupPoll();
 	}
-}
+};
 
 Poll.prototype._doPoll = function(retryNum) {
 	IDE_backend_request(this._command, this._args,
 		bind(this._pollResponse, this),
 		bind(this._pollResponseError, this, retryNum)
 	);
-}
+};

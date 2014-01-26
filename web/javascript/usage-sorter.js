@@ -18,11 +18,11 @@ function UsageSorter(initial, save_hanlder, max_len) {
         this._list.push(item);
         this._trim();
         this._save_hanlder(this._list);
-    }
+    };
 
     this.sort = function(items) {
         // ensure we don't modify the original list
-        var items = items.concat([]);
+        items = items.concat([]);
         var sorted = [];
         for (var i = this._list.length - 1; i >= 0 ; i--) {
             var item = this._list[i];
@@ -34,14 +34,14 @@ function UsageSorter(initial, save_hanlder, max_len) {
             }
         }
         return sorted.concat(items);
-    }
+    };
 
     this._trim = function() {
         var extra = this._list.length - this._max_len;
         if (extra > 0) {
             this._list = this._list.slice(extra);
         }
-    }
+    };
 
     // ensure that we start with an initial list that's the right size
     this._trim();

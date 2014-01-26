@@ -48,13 +48,14 @@ ProjSelect.prototype._init = function() {
 	connect( this._plist, "onchange", bind( this._plist_onchange, this ) );
 
 	// If the list is already loaded when we're called, force update
-	if( this._plist.loaded )
+	if (this._plist.loaded) {
 		this._plist_onchange();
-}
+	}
+};
 
 ProjSelect.prototype._init_sorter = function(team) {
 	var recent = user.get_raw_setting('project.recent');
-	var team_list = []
+	var team_list = [];
 	if (recent != null && recent[team] != null) {
 		team_list = recent[team];
 	}
@@ -66,7 +67,7 @@ ProjSelect.prototype._init_sorter = function(team) {
 			recent[team] = list;
 			user.set_settings({'project.last':list[list.length - 1], 'project.recent':recent});
 		});
-}
+};
 
 // Called when the project list changes
 ProjSelect.prototype._plist_onchange = function(team) {
@@ -76,7 +77,7 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	var items = [];
 	this._tmp_select = null;
 
-	if( this._prompt != null ) {
+	if (this._prompt != null) {
 		this._prompt.close();
 		this._prompt = null;
 	}
@@ -90,38 +91,39 @@ ProjSelect.prototype._plist_onchange = function(team) {
 	}
 
 	// Find the project to select
-	if( this.trans_project != ""
-	    && this._plist.project_exists( this.trans_project ) ) {
+	if (this.trans_project != "" &&
+	    this._plist.project_exists( this.trans_project )) {
 		this.project = this.trans_project;
 
 		// Clear the transition default
 		this.trans_project = "";
 
-	} else if( this.project == ""
-	    || !this._plist.project_exists( this.project )
-	    || team != this._team ) {
+	} else if (this.project == "" || team != this._team ||
+	           !this._plist.project_exists( this.project )) {
 		this.project = "";
 
 		var dp = this._get_default();
-		if( dp == null ) {
+		if (dp == null) {
 			// Add "Please select..."
 			this._prompt = status_msg( "Please select a project", LEVEL_INFO );
 			var opts = { value: -1, selected: "selected" };
 			this._tmp_select = OPTION(opts, "Select a project.");
 			items.unshift(this._tmp_select);
-		} else
+		} else {
 			this.project = dp;
+		}
 	}
 	this._team = team;
 
 	// Rebuild the select box options
-	for( var i=0; i < projects.length; i++ ) {
+	for (var i = 0; i < projects.length; i++) {
 		var pname = projects[i];
 		var props = { "value" : pname };
 
-		if( pname == this.project )
-			props["selected"] = "selected";
-		items[items.length] = ( OPTION( props, pname ) );
+		if (pname == this.project) {
+			props.selected = "selected";
+		}
+		items[items.length] = OPTION(props, pname);
 	}
 
 	replaceChildNodes( this._elem, items );
@@ -129,18 +131,18 @@ ProjSelect.prototype._plist_onchange = function(team) {
 
 	logDebug( "ProjList._plist_onchange: Now on project " + this._team + "." + this.project );
 
-	if( startproj != this.project
-	    || startteam != this._team )
+	if (startproj != this.project || startteam != this._team) {
 		signal( this, "onchange", this.project, this._team );
-}
+	}
+};
 
 // Handler for the onchange event of the select element
-ProjSelect.prototype._onchange = function(ev) {
+ProjSelect.prototype._onchange = function() {
 	//hide the status bar - anything there is now obselete
 	status_hide();
 
 	this.select(this._elem.value);
-}
+};
 
 /**
  * Select the given project.
@@ -174,18 +176,19 @@ ProjSelect.prototype.select = function(project) {
 		// records this we thus avoid a duplicate http request.
 		user.set_settings({'project.last':project});
 	}
-}
+};
 
 ProjSelect.prototype._get_default = function() {
-	if( this._plist.projects.length == 1 )
+	if (this._plist.projects.length == 1) {
 		return this._plist.projects[0];
+	}
 
 	var p_autoload = user.get_setting( 'project.autoload' );
 	var dp = user.get_setting( p_autoload );
 
-	if( dp != undefined
-	    && this._plist.project_exists( dp ) )
+	if (dp != undefined && this._plist.project_exists( dp )) {
 		return dp;
+	}
 
 	return null;
-}
+};

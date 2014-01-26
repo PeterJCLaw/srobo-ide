@@ -7,11 +7,11 @@ function Checkout() {
 }
 
 Checkout.GetInstance = function() {
-	if(Checkout.Instance == null) {
+	if (Checkout.Instance == null) {
 		Checkout.Instance = new Checkout();
 	}
 	return Checkout.Instance;
-}
+};
 
 Checkout.prototype._basic = function(url, rev, successCallback, errorCallback) {
 	logDebug('Checking out code using basic file transfer');
@@ -20,13 +20,13 @@ Checkout.prototype._basic = function(url, rev, successCallback, errorCallback) {
 	var span = SPAN(null, 'Exporting ', revLink, '.');
 	status_msg(span, LEVEL_INFO);
 	successCallback();
-}
+};
 
 Checkout.prototype._download = function(successCallback, errorCallback, nodes) {
 	var url = nodes.url;
 	var rev = IDE_hash_shrink(nodes.rev);
 	this._basic(url, rev, successCallback, errorCallback);
-}
+};
 
 /**
  * Initiates a checkout.
@@ -36,4 +36,4 @@ Checkout.prototype.checkout = function(team, project, rev, successCallback, erro
 	IDE_backend_request("proj/co", {team: team, project: project, rev: rev},
 	                    bind(this._download, this, successCallback, errorCallback),
 	                    errorCallback);
-}
+};

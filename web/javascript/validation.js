@@ -6,7 +6,7 @@ var Validation = {
 	'is_feed': function(text) {
 		return /^(https?|feed):\/\//.test(text);
 	}
-}
+};
 
 // node require() based exports.
 if (typeof(exports) != 'undefined') {

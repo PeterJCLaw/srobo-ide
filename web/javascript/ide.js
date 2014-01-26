@@ -6,26 +6,32 @@
    This example is based on findings at:
    http://blogs.msdn.com/xmlteam/archive/2006/10/23/using-the-right-version-of-msxml-in-internet-explorer.aspx
 */
-if (typeof XMLHttpRequest == "undefined")
-  XMLHttpRequest = function () {
-    try { return new ActiveXObject("Msxml2.XMLHTTP.6.0"); }
-      catch (e) {}
-    try { return new ActiveXObject("Msxml2.XMLHTTP.3.0"); }
-      catch (e) {}
-    try { return new ActiveXObject("Msxml2.XMLHTTP"); }
-      catch (e) {}
-    //Microsoft.XMLHTTP points to Msxml2.XMLHTTP.3.0 and is redundant
-    throw new Error("This browser does not support XMLHttpRequest.");
-  };
+if (typeof XMLHttpRequest == "undefined") {
+	XMLHttpRequest = function () {
+		try { return new ActiveXObject("Msxml2.XMLHTTP.6.0"); }
+			catch (e) {}
+		try { return new ActiveXObject("Msxml2.XMLHTTP.3.0"); }
+			catch (e) {}
+		try { return new ActiveXObject("Msxml2.XMLHTTP"); }
+			catch (e) {}
+		//Microsoft.XMLHTTP points to Msxml2.XMLHTTP.3.0 and is redundant
+		throw new Error("This browser does not support XMLHttpRequest.");
+	};
+}
 
 var IDE_clone = function(object) {
-  var newObj = (object instanceof Array) ? [] : {};
-  for (var i in object) {
-    if (i == 'clone') continue;
-    if (object[i] && typeof object[i] == "object") {
-      newObj[i] = IDE_clone(object[i]);
-    } else newObj[i] = object[i]
-  } return newObj;
+	var newObj = (object instanceof Array) ? [] : {};
+	for (var i in object) {
+		if (i == 'clone') {
+			continue;
+		}
+		if (object[i] && typeof object[i] == "object") {
+			newObj[i] = IDE_clone(object[i]);
+		} else {
+			newObj[i] = object[i];
+		}
+	}
+	return newObj;
 };
 
 var IDE_base = "control.php";
@@ -58,9 +64,9 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 	var rq = JSON.stringify(args);
 	var xhr = new XMLHttpRequest();
 	var cb = function() {
-		if (xhr.readyState != 4) return;
+		if (xhr.readyState != 4) { return; }
 		IDE_async_count--;
-		if( IDE_async_count == 0 ) {
+		if (IDE_async_count == 0) {
 			hideElement('rotating-box');
 		}
 		if (xhr.status == 200) {
@@ -88,7 +94,7 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 					piwikTracker.setCustomUrl(ep);
 					piwikTracker.trackPageView();
 				} catch( err ) {}
-			default:
+				break;
 		}
 	}
 
@@ -136,7 +142,7 @@ function IDE_hash_compare(a, b) {
 	var min_len = Math.min(a.length, b.length);
 	var short_a = a.substring(0, min_len);
 	var short_b = b.substring(0, min_len);
-	return (short_a == short_b)
+	return (short_a == short_b);
 }
 
 function IDE_path_get_project(path) {

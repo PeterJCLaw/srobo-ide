@@ -32,7 +32,7 @@ function Browser(cback, options) {
 	this._DEFAULT_PNAME = "new-project";
 	this._DEFAULT_TNAME = "new-tag";
 
-	this._List = new Array();
+	this._list = [];
 	this.type = options.type;
 	this.title = options.title;
 
@@ -71,9 +71,7 @@ Browser.prototype._init = function() {
 	this.display();
 
 	//get file listings - if not just commit message
-	if (this.type == 'isFile'
-	 || this.type == 'isDir'
-	) {
+	if (this.type == 'isFile' || this.type == 'isDir') {
 		var projlist = new ProjList();
 		projlist.update(team);
 		// The selection box for selecting a project
@@ -97,14 +95,12 @@ Browser.prototype._init = function() {
 	connect("new-file-name","onfocus", bind(this._fname_focus, this));
 	connect("left-pane","onclick", bind(this.rootSelected, this));
 
-	if(this.type == 'isProj'
-	 || this.type == 'isTag'
-	) {
+	if(this.type == 'isProj' || this.type == 'isTag') {
 		getElement("new-file-name").focus();
 	} else {
 		getElement("new-commit-msg").focus();
 	}
-}
+};
 
 // show the diff as part of the commit
 // should only be called for isCommit
@@ -115,21 +111,21 @@ Browser.prototype.showDiff = function(path, rev, code) {
 	var diff = Diff.Create('browser-diff', path, rev, code);
 	this._show_diff = connect(diff, 'ready', partial(showElement, 'browser-diff'));
 	return diff;
-}
+};
 
 Browser.prototype._new_file_keypress = function(ev) {
-	if(ev._event.keyCode == 13 && ev._modifier == null) {
-		log('Enter pressed - browser saving')
+	if (ev._event.keyCode == 13 && ev._modifier == null) {
+		log('Enter pressed - browser saving');
 		signal("save-new-file", 'onclick');
 	}
-}
+};
 
 Browser.prototype._window_keydown = function(ev) {
-	if(ev._event.keyCode == 27 && ev._modifier == null) {
-		log('Escape pressed - hiding browser')
+	if (ev._event.keyCode == 27 && ev._modifier == null) {
+		log('Escape pressed - hiding browser');
 		signal("cancel-new-file", 'onclick');
 	}
-}
+};
 
 Browser.prototype._receiveTree = function(nodes) {
 	this.fileTree = nodes.tree;
@@ -140,12 +136,12 @@ Browser.prototype._receiveTree = function(nodes) {
 	this._processTree(getElement("left-pane-list"), this.fileTree, "");
 	//fake a click on the LHS root to show the root files on the RHS
 	signal("left-pane", 'onclick');
-}
+};
 
 Browser.prototype._errorReceiveTree = function(a) {
 	getElement("browser-status").innerHTML = "ERROR :: Unable to retrieve file list for "+a;
 	signal("left-pane", 'onclick');
-}
+};
 
 Browser.prototype._getFileTree = function(project, tm) {
 	// Initial load
@@ -159,12 +155,12 @@ Browser.prototype._getFileTree = function(project, tm) {
 	IDE_backend_request("file/compat-tree", {team: tm, project: project},
 	                                        bind(this._receiveTree, this),
 	                                        bind(this._errorReceiveTree, this, project));
-}
+};
 
 Browser.prototype._badCommitMsg = function(msg) {
 	//test for is-nothing or is-only-whitespace
 	return this.commitMsg == this._DEFAULT_MSG || /^$|^\s+$/.test(msg);
-}
+};
 
 Browser.prototype._badFname = function(name) {
 	//test for is-nothing or starts-with-whitespace or starts-with-a-dot
@@ -172,7 +168,7 @@ Browser.prototype._badFname = function(name) {
 	//      or contains-double-quotes
 	//      or contains-forward-slash
 	return /^$|^\s|^[.]|:|"|\//.test(name);
-}
+};
 
 //when user clicks save
 Browser.prototype.clickSaveFile = function(noMsg) {
@@ -181,7 +177,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 	this.newFname = getElement("new-file-name").value;
 
 	//don't allow null strings or pure whitespace
-	if(this._badFname(this.newFname)) {
+	if (this._badFname(this.newFname)) {
 		var human_type;
 		switch (this.type) {
 			case 'isDir':
@@ -194,6 +190,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 				human_type = 'tag';
 				break;
 			case 'isFile':
+			/* falls through */
 			default:
 				human_type = 'file';
 				break;
@@ -205,23 +202,24 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 	}
 
 	//fail if the file list is requested, but hasn't loaded
-	if((this.type == 'isFile' || this.type == 'isDir') && this.fileTree == null) {
+	if ((this.type == 'isFile' || this.type == 'isDir') && this.fileTree == null) {
 		getElement("browser-status").innerHTML = "Unable to save - file list not yet loaded";
 		return;
 	}
 
 	//file, dir or project name already exists
-	logDebug('Checking file existence: '+this.newFname+' in '+this._List+' : '+(findValue(this._List, this.newFname) > -1) );
-	if( ( ( this.type == 'isFile' || this.type == 'isDir' ) && findValue(this._List, this.newFname) > -1 ) ||
+	logDebug('Checking file existence: '+this.newFname+' in '+this._list+' : '+(findValue(this._list, this.newFname) > -1) );
+	if( ( ( this.type == 'isFile' || this.type == 'isDir' ) && findValue(this._list, this.newFname) > -1 ) ||
 		( this.type == 'isProj' && projpage.project_exists(this.newFname) )
 	) {
 		var warn = '"'+this.newFname+'" already exists';
-		if(this.type == 'isProj')
+		if (this.type == 'isProj') {
 			warn = 'Project '+warn;
-		else if(this.type == 'isTag')
+		} else if (this.type == 'isTag') {
 			warn = 'Tag '+warn;
-		else
+		} else {
 			warn += ' in "'+this.newDirectory.substr(1)+'"';
+		}
 
 		getElement("browser-status").innerHTML = warn+"!";
 		getElement("new-file-name").focus();
@@ -233,7 +231,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 		this.type != 'isTag' &&
 		this._badCommitMsg(this.commitMsg) );
 
-	if(commitErrFlag) {
+	if (commitErrFlag) {
 		getElement("browser-status").innerHTML = "No commit message added - click to ignore";
 		connect("browser-status", 'onclick', bind(this.clickSaveFile, this, true));
 		getElement("new-commit-msg").focus();
@@ -256,7 +254,7 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 			break;
 	}
 	this.hide();
-}
+};
 
 //cancel save operation
 Browser.prototype.clickCancelSave = function() {
@@ -264,7 +262,7 @@ Browser.prototype.clickCancelSave = function() {
 	this.commitMsg = "";
 	this.newFilePath = "";
 	this.hide();
-}
+};
 
 //Recursive function to convert filetree into valid DOM tree
 Browser.prototype._processTree = function(parentDOM, tree, pathSoFar) {
@@ -287,16 +285,17 @@ Browser.prototype._processTree = function(parentDOM, tree, pathSoFar) {
 		}
 	}
 	return parentDOM;
-}
+};
 
 Browser.prototype.rootSelected = function() {
 	log('Browser: root folder selected');
 	this.dirSelected('/', this.fileTree);
-}
+};
 
 Browser.prototype.dirSelected = function(directory, thingsInside, ev) {
-	if(ev != undefined)
+	if (ev != undefined) {
 		ev.stop();
+	}
 	logDebug("Folder selected :"+directory);
 	//update selected directory
 	this.newDirectory = directory;
@@ -306,16 +305,16 @@ Browser.prototype.dirSelected = function(directory, thingsInside, ev) {
 	replaceChildNodes("right-pane-list");
 
 	//populate file list with only files from all the things contained within this directory
-	this._List = new Array();
+	this._list = [];
 	for (var j = 0; j < thingsInside.length; j++) {
-		if(thingsInside[j].kind == "FILE") {	//build li and append to pane
+		if (thingsInside[j].kind == "FILE") {	//build li and append to pane
 			var li = LI(null, "");
 			li.innerHTML = thingsInside[j].name;
 			appendChildNodes("right-pane-list", li);
 		}
-		this._List.push(thingsInside[j].name);	//add to the list of all things regardless
+		this._list.push(thingsInside[j].name);	//add to the list of all things regardless
 	}
-}
+};
 
 Browser.prototype.display = function() {
 	showElement("file-browser");
@@ -369,7 +368,7 @@ Browser.prototype.display = function() {
 			showElement("new-file-name");
 			break;
 	}
-}
+};
 Browser.prototype.hide = function() {
 	logDebug("Hiding File Browser");
 	disconnectAll("save-new-file");
@@ -384,20 +383,22 @@ Browser.prototype.hide = function() {
 	hideElement("grey-out");
 	replaceChildNodes("left-pane-list");
 	replaceChildNodes("right-pane-list");
-}
+};
 
 Browser.prototype._msg_focus = function() {
 	var t = getElement("new-commit-msg");
 
-	if( t.value == this._DEFAULT_MSG )
+	if (t.value == this._DEFAULT_MSG) {
 		// Select all
 		t.select();
-}
+	}
+};
 
 Browser.prototype._fname_focus = function() {
 	var t = getElement("new-file-name");
 
-	if( t.value == this._DEFAULT_FNAME )
+	if (t.value == this._DEFAULT_FNAME) {
 		// Select all
 		t.select();
-}
+	}
+};

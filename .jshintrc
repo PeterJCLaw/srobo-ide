@@ -1,0 +1,7 @@
+{
+  "curly": true,
+  "jquery": true,
+  "smarttabs": true,
+  "undef": false,
+  "unused": true
+}

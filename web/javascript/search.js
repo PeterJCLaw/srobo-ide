@@ -9,16 +9,16 @@ function SearchPage(results_handler) {
 	this._tab = null;
 
 	//hold signals for the page
-	this._signals = new Array();
+	this._signals = [];
 
 	//hold status message for the page
 	this._prompt = null;
 
 	// Hold the list of search providers
-	this._providers = new Array();
+	this._providers = [];
 
 	// Hold a list of the current async searching providers
-	this._async_results = new Array();
+	this._async_results = [];
 
 	this._results = results_handler;
 
@@ -27,8 +27,9 @@ function SearchPage(results_handler) {
 	this._inited = false;
 
 	this.init = function() {
-		if (this._inited)
+		if (this._inited) {
 			return;
+		}
 
 		if (!validate_team()) {
 			return;
@@ -49,43 +50,43 @@ function SearchPage(results_handler) {
 
 		this.clear_results();
 		tabbar.switch_to(this._tab);
-	}
+	};
 
 	this._onfocus = function() {
 		showElement(this._root);
-	}
+	};
 
 	this._onblur = function() {
 		hideElement(this._root);
-	}
+	};
 
-	this._clear = function(ev) {
+	this._clear = function() {
 		this.clear_results();
-	}
+	};
 
 	this.clear_results = function() {
 		this._results.clear();
-	}
+	};
 
 	this.cancel_searches = function() {
-		for (var i=0; i < this._async_results.length; i++) {
+		for (var i = 0; i < this._async_results.length; i++) {
 			var provider = this._async_results[i];
 			provider.cancel();
 		}
-		this._async_results = new Array();
-	}
+		this._async_results = [];
+	};
 
 	this.mark_complete = function(provider) {
 		// Ruddy IE 8 doesn't support indexOf
 		var index = findValue(this._async_results, provider);
 		this._async_results.splice(index, 1);
-	}
+	};
 
 	this._search = function(ev) {
 		kill_event(ev);
 		var query = getElement('search-query').value;
 		this.search(query);
-	}
+	};
 
 	this.search = function(query) {
 		this.cancel_searches();
@@ -97,19 +98,20 @@ function SearchPage(results_handler) {
 				this._async_results.push(provider);
 			}
 		}
-	}
+	};
 
 	this.add_result = function(section, result) {
 		this._results.add(section, result);
-	}
+	};
 
 	this.add_provider = function(provider) {
 		this._providers.push(provider);
-	}
+	};
 
 	this._close = function() {
-		if (!this._inited)
+		if (!this._inited) {
 			return;
+		}
 
 		this._onblur();
 		this._clear();
@@ -117,7 +119,7 @@ function SearchPage(results_handler) {
 
 		this._tab.close();
 
-		if( this._prompt != null ) {
+		if (this._prompt != null) {
 			this._prompt.close();
 			this._prompt = null;
 		}
@@ -125,10 +127,10 @@ function SearchPage(results_handler) {
 		for (var i = 0; i < this._signals.length; i++) {
 			disconnect(this._signals[i]);
 		}
-		this._signals = new Array();
+		this._signals = [];
 
 		this._inited = false;
-	}
+	};
 }
 
 SearchPage.GetInstance = function() {
@@ -140,7 +142,7 @@ SearchPage.GetInstance = function() {
 		SearchPage.Instance.add_provider(contentSearch);
 	}
 	return SearchPage.Instance;
-}
+};
 
 function SearchResults(root) {
 	this._root = root || getElement('search-results');
@@ -156,7 +158,7 @@ function SearchResults(root) {
 			disconnect(this._signals[i]);
 		}
 		this._signals = [];
-	}
+	};
 
 	/**
 	 * Adds a search result to the given result section.
@@ -175,7 +177,7 @@ function SearchResults(root) {
 		}
 		var section_ul = this._get_section(section);
 		appendChildNodes(section_ul, result_li);
-	}
+	};
 
 	this._get_section = function(section) {
 		var ul = this._sections[section];
@@ -183,7 +185,7 @@ function SearchResults(root) {
 			this._sections[section] = ul = this._make_section(section);
 		}
 		return ul;
-	}
+	};
 
 	this._make_section = function(section) {
 		var container_dl = this._get_container();
@@ -192,7 +194,7 @@ function SearchResults(root) {
 		var dd = DD(null, ul);
 		appendChildNodes(container_dl, dt, dd);
 		return ul;
-	}
+	};
 
 	this._get_container = function() {
 		if (this._container == null) {
@@ -200,7 +202,7 @@ function SearchResults(root) {
 			appendChildNodes(this._root, this._container);
 		}
 		return this._container;
-	}
+	};
 }
 
 function MockProvider() {
@@ -208,7 +210,7 @@ function MockProvider() {
 		page.add_result('Mock', { text: 'foo ' + query + ' bar' });
 		page.add_result('Mock', { text: 'second ' + query + ' bar' });
 		return false;
-	}
+	};
 }
 
 function MockAsyncProvider(delay) {
@@ -220,12 +222,12 @@ function MockAsyncProvider(delay) {
 			page.add_result('MockAsync', { text: 'foo ' + query + ' bar' });
 		});
 		return true;
-	}
+	};
 
 	this.cancel = function() {
 		this._def.cancel();
 		this._def = null;
-	}
+	};
 }
 
 function ProjectNameSearchProvider(proj_source, selector) {
@@ -234,7 +236,7 @@ function ProjectNameSearchProvider(proj_source, selector) {
 
 	this.search = function(page, query) {
 		var projects = this._proj_source.list_projects();
-		for (var i=0; i < projects.length; i++) {
+		for (var i = 0; i < projects.length; i++) {
 			var project = projects[i];
 			if (project.indexOf(query) != -1) {
 				var result = { text: project,
@@ -243,12 +245,12 @@ function ProjectNameSearchProvider(proj_source, selector) {
 			}
 		}
 		return false;
-	}
+	};
 
 	this._select_project = function(project) {
 		this._proj_selector.select(project);
 		this._proj_source.switch_to();
-	}
+	};
 }
 
 function FileNameSearchProvider(proj_source, selector) {
@@ -261,28 +263,28 @@ function FileNameSearchProvider(proj_source, selector) {
 		this._cancelled = true;
 		this._page = null;
 		this._query = null;
-	}
+	};
 
 	this.search = function(page, query) {
 		this._cancelled = false;
 		this._page = page;
 		this._query = query;
 		var projects = this._proj_source.list_projects();
-		for (var i=0; i < projects.length; i++) {
+		for (var i = 0; i < projects.length; i++) {
 			this._get_files(projects[i]);
 		}
 		return projects.length > 0;
-	}
+	};
 
 	this._got_files = function(project, nodes) {
 		if (this._cancelled) {
 			return;
 		}
 		this._search_tree(project, nodes.tree);
-	}
+	};
 
 	this._search_tree = function(project, tree) {
-		for (var i=0; i < tree.length; i++) {
+		for (var i = 0; i < tree.length; i++) {
 			var node = tree[i];
 			logDebug('FNSP checking ' + JSON.stringify(node));
 			if (node.name.indexOf(this._query) != -1) {
@@ -294,7 +296,7 @@ function FileNameSearchProvider(proj_source, selector) {
 				this._search_tree(project, node.children);
 			}
 		}
-	}
+	};
 
 	this._get_files = function(project, isRetry) {
 		if (this._cancelled) {
@@ -310,7 +312,7 @@ function FileNameSearchProvider(proj_source, selector) {
 		IDE_backend_request("file/compat-tree", opts,
 		                    bind(this._got_files, this, project),
 		                    err_handler);
-	}
+	};
 
 	this._select_file = function(project, path) {
 		logDebug('before switching project');
@@ -321,7 +323,7 @@ function FileNameSearchProvider(proj_source, selector) {
 		flist.select(path);
 		logDebug('files selected');
 		this._proj_source.switch_to();
-	}
+	};
 }
 
 function FileContentSearchProvider(proj_source) {
@@ -333,7 +335,7 @@ function FileContentSearchProvider(proj_source) {
 		this._cancelled = true;
 		this._page = null;
 		this._query = null;
-	}
+	};
 
 	this.search = function(page, query) {
 		this._cancelled = false;
@@ -344,7 +346,7 @@ function FileContentSearchProvider(proj_source) {
 			this._search_project(projects[i]);
 		}
 		return projects.length > 0;
-	}
+	};
 
 	this._search_project = function(project, isRetry) {
 		if (this._cancelled) {
@@ -360,7 +362,7 @@ function FileContentSearchProvider(proj_source) {
 		IDE_backend_request("proj/search", args,
 		                    bind(this._handle_results, this, project),
 		                    err_handler);
-	}
+	};
 
 	this._handle_results = function(project, nodes) {
 		if (this._cancelled) {
@@ -376,12 +378,12 @@ function FileContentSearchProvider(proj_source) {
 				this._page.add_result('File Contents', result);
 			}
 		}
-	}
+	};
 
 	this._open_file_line = function(project, file, line) {
 		var etab = editpage.edit_file(team, project, file, null, 'AUTOSAVE');
 		etab.setSelectionRange(line, 0, -1);
-	}
+	};
 }
 
 // node require() based exports.

@@ -32,7 +32,7 @@ function ProjPage(team_selector) {
 	// records the current revision of the project we're looking at
 	this._projectRev = "";
 
-	this.last_updated	= new Date();
+	this.last_updated = new Date();
 
 	this._read_only = false;
 
@@ -55,8 +55,9 @@ function ProjPage(team_selector) {
 
 // Initialise the project page -- but don't show it
 ProjPage.prototype._init = function() {
-	if( this._initted )
+	if (this._initted) {
 		return;
+	}
 
 	// Hide the right-hand whilst we're loading
 	this._rpane_hide();
@@ -108,7 +109,7 @@ ProjPage.prototype._init = function() {
 	// This triggers the tab to be shown, our hanlder for which (correctly)
 	// verifies that we're inited, so we need to do this after setting the flag.
 	tabbar.switch_to( this._tab );
-}
+};
 
 ProjPage.prototype._createTab = function() {
 	// Projects tab
@@ -116,39 +117,38 @@ ProjPage.prototype._createTab = function() {
 	connect( this._tab, "onfocus", bind( this.show, this ) );
 	connect( this._tab, "onblur", bind( this.hide, this ) );
 	tabbar.add_tab( this._tab );
-}
+};
 
 ProjPage.prototype.has_focus = function() {
 	return this._tab != null && this._tab.has_focus();
-}
+};
 
 ProjPage.prototype.switch_to = function() {
 	this._init();
 	// only actually needed if we're not inited, but it's simpler to just call both
 	tabbar.switch_to(this._tab);
-}
+};
 
 ProjPage.prototype._setupPolling = function() {
-	if ( this._poll != null ) {
+	if (this._poll != null) {
 		this._poll.cancel();
 	}
 	// 30 second delay, retry once.
 	this._poll = new Poll('poll/poll', { team: team }, 30, 1);
 	connect(this._poll, 'onchange', bind(this._pollChanged, this));
-}
+};
 
 ProjPage.prototype._pollChanged = function(nodes) {
 	logDebug('projpage: Poll changed');
 
 	var projects = keys(nodes.projects);
-	if (projects.length != this._list.projects.length)
-	{
+	if (projects.length != this._list.projects.length) {
 		// TODO: don't assume that this is a good enough check.
 		this._list.projects = projects;
 		signal(this._list, 'onchange', team);
 	}
 
-	if ( IDE_string_empty(this.project) ) {
+	if (IDE_string_empty(this.project)) {
 		return;
 	}
 
@@ -160,58 +160,55 @@ ProjPage.prototype._pollChanged = function(nodes) {
 		this._calendar.getDates();
 		this.flist.mark_dirty();
 	}
-}
+};
 
 ProjPage.prototype.show = function() {
 	logDebug( "Projpage.show: Current project is \"" + this.project + "\"" );
 	this._init();
 
 	showElement('projects-page');
-}
+};
 
 ProjPage.prototype.hide = function() {
 	logDebug( "Hiding the projects page" );
 	hideElement('projects-page');
-}
+};
 
 ProjPage.prototype.hide_filelist = function() {
 	logDebug( "Hiding the file list" );
 	this.flist._hide();
-}
+};
 
 ProjPage.prototype.project_readonly = function(pname) {
 	return this._read_only;
-}
+};
 
 ProjPage.prototype.project_exists = function(pname) {
 	return this._list != null && this._list.project_exists(pname);
-}
+};
 
 ProjPage.prototype.projects_exist = function() {
-	if (this.list_projects().length > 0)
-		return true;
-	else
-		return false;
-}
+	return (this.list_projects().length > 0);
+};
 
 ProjPage.prototype.list_projects = function() {
 	if (this._list == null || this._list.projects == null) {
 		return [];
 	}
 	return this._list.projects;
-}
+};
 
 ProjPage.prototype._got_proj_info = function(nodes) {
 	getElement('proj-info').innerHTML = nodes.repoUrl;
-}
+};
 
 ProjPage.prototype._on_proj_change = function(proj, team) {
 	logDebug( "ProjPage._on_proj_change(\"" + proj + "\", " + team + ")" );
 	this.project = proj;
 
-	if( proj == "" )
+	if (proj == "") {
 		this._rpane_hide();
-	else {
+	} else {
 		IDE_backend_request('proj/info',
 		                    { team: team, project: proj },
 		                    bind(this._got_proj_info, this),
@@ -221,12 +218,13 @@ ProjPage.prototype._on_proj_change = function(proj, team) {
 		getElement("proj-name").innerHTML = "Project " + this.project;
 		this._rpane_show();
 	}
-}
+};
 
 ProjPage.prototype.set_team = function(team) {
 	logDebug( "ProjPage.set_team( " + team + " )" );
-	if( team == null || team == 0 )
+	if (team == null || team == 0) {
 		return;
+	}
 
 	this._rpane_hide();
 	this._init();
@@ -234,13 +232,13 @@ ProjPage.prototype.set_team = function(team) {
 	this._setupPolling();
 
 	// Start the chain of updates
- 	this._list.update(team);
+	this._list.update(team);
 	// The selector and filelist are connected to onchange on the list,
 	// so they will update when it's updated
 
 	var teamInfo = user.get_team(team);
 	this._set_readonly(teamInfo.readOnly == true);
-}
+};
 
 ProjPage.prototype._set_readonly = function(isReadOnly) {
 	if (this._read_only != isReadOnly) {
@@ -250,51 +248,52 @@ ProjPage.prototype._set_readonly = function(isReadOnly) {
 	}
 	this._read_only = isReadOnly;
 	setReadOnly('projects-page', isReadOnly);
-}
+};
 
 // ***** Project Page Right Hand pane *****
 ProjPage.prototype._rpane_hide = function() {
 	hideElement('proj-rpane');
-}
+};
 
 ProjPage.prototype._rpane_show = function() {
 	showElement('proj-rpane');
-}
+};
 
 ProjPage.prototype.clickArchiveProject = function() {
 	return;
-}
+};
 
 ProjPage.prototype.clickCopyProject = function() {
-	if( this.project == null || this.project == "" )
+	if (this.project == null || this.project == "") {
 		status_msg( "Please select a project to copy", LEVEL_INFO );
-	else
-		var b = new Browser(bind(this.CreateCopyProject, this), {'type' : 'isProj', 'title' : 'Copy Project'});
-}
+	} else {
+		var cb = bind(this.CreateCopyProject, this);
+		var args = {'type' : 'isProj', 'title' : 'Copy Project'};
+		var b = new Browser(cb, args);
+	}
+};
 
 ProjPage.prototype.CreateCopyProject = function(newProjName) {
-	cMsg = 'Copying project '+this.project+' to '+newProjName;
-	log(cMsg);
+	log('Copying project ' + this.project + ' to ' + newProjName);
 
-    IDE_backend_request("proj/copy",
-                        {
-                            "team":team,
-                            "project":this.project,
-                            "new-name":newProjName
-                        },
-                        bind( partial(this._CopyProjectSuccess, newProjName), this),
-	                    bind( function() {
-                		    status_button( "Copy Project: Error contacting server", LEVEL_ERROR, "retry",
-                			bind(this.CreateCopyProject, this, newProjName) );
-                    	}, this ) );
+	var args = { "team": team,
+	          "project": this.project,
+	         "new-name": newProjName
+	           };
 
-
-}
+	var failback = function() {
+		status_button( "Copy Project: Error contacting server", LEVEL_ERROR, "retry",
+		               bind(this.CreateCopyProject, this, newProjName) );
+	};
+	IDE_backend_request("proj/copy", args,
+	                    bind( partial(this._CopyProjectSuccess, newProjName), this ),
+	                    bind( failback, this ));
+};
 
 ProjPage.prototype._CopyProjectSuccess = function(newProjName, nodes) {
-	if(nodes.status > 0)
+	if (nodes.status > 0) {
 		status_msg("ERROR COPYING: "+nodes.message, LEVEL_ERROR);
-	else {
+	} else {
 		status_msg("Project copy successful", LEVEL_OK);
 		if (this.has_focus()) {
 			log('Project Copied, need to update the list...');
@@ -303,78 +302,77 @@ ProjPage.prototype._CopyProjectSuccess = function(newProjName, nodes) {
 			this._list.update(team);
 		}
 	}
-}
+};
 
 ProjPage.prototype.clickNewProject = function() {
 	var b = new Browser(bind(this.CreateNewProject, this), {'type' : 'isProj'});
-}
+};
 
 ProjPage.prototype.CreateNewProject = function(newProjName) {
 	/* Postback to create a new project - then what? */
-
 
 	IDE_backend_request("proj/new", {team: team, project: newProjName},
 		bind(this._createProjectSuccess, this, newProjName),
 		bind(this._createProjectFailure, this, newProjName)
 	);
-}
+};
 
 ProjPage.prototype._createProjectSuccess = function(newProjName) {
 	status_msg("Created project successfully", LEVEL_OK);
-	update(team)
+	// TODO: what exactly is being updated here?
+	update(team);
 	// Transition to the new project once the project list has loaded
 	this._selector.trans_project = newProjName;
 	this._list.update(team);
-}
+};
 
 ProjPage.prototype._createProjectFailure = function(newProjName) {
 	/* XXX - check for preexisting projects perhaps */
 	status_button('Error creating project', LEVEL_ERROR, 'retry',
 		bind(this.CreateNewProject, this, newProjName)
 	);
-}
+};
 
 ProjPage.prototype.clickExportProject = function() {
 	var tmpItem = getElement('projlist-tmpitem');
-	if( tmpItem != null && tmpItem.selected == true ) {
+	if (tmpItem != null && tmpItem.selected == true) {
 		status_msg( "No project selected, please select a project", LEVEL_ERROR );
 		return;
 	}
 
-	if( !this.flist.robot ) {	//if there's no robot.py script then it's going to fail
+	if (!this.flist.robot) {	//if there's no robot.py script then it's going to fail
 		status_msg( "A robot.py file is required for project code export", LEVEL_ERROR );
 		return false;
 	}
 
 	var options = {'switch_to':true, 'alert':false, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)};
 	errorspage.check("/"+this.project+"/robot.py", options, false, this.flist.rev);
-}
+};
 
 ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
-	if(result == 'pass') {
+	if (result == 'pass') {
 		this._exportProject();
 		return;
 	}
 
+	var message;
 	var exportAnyway = {text:"export anyway", callback:bind( this._exportProject, this )};
 
 	// check has failed
-	if(result == 'checkfail') {
-		var message = "Failed to check code";
-		status_options( message, LEVEL_WARN,
-				[{text:"retry", callback:bind( this.clickExportProject, this )},
-				 exportAnyway]
-		);
+	if (result == 'checkfail') {
+		message = "Failed to check code";
+		var retry = {text:"retry", callback:bind( this.clickExportProject, this )};
+		status_options(message, LEVEL_WARN, [retry, exportAnyway]);
 	}
 
 	// user's code has failed
-	if(result == 'codefail') {
-		var message = num_errors + " errors found!";
-		status_options( message, LEVEL_WARN, [exportAnyway]);
+	if (result == 'codefail') {
+		message = num_errors + " errors found!";
+		status_button(message, LEVEL_WARN, exportAnyway);
 	}
 
 	log('_exportProjectCheckResult:'+message);
-}
+};
 
 ProjPage.prototype._exportProject = function() {
 	var fail_retry = bind(function() {
@@ -383,18 +381,18 @@ ProjPage.prototype._exportProject = function() {
 		);
 	}, this);
 	Checkout.GetInstance().checkout(team, this.project, this.flist.rev, function() {}, fail_retry);
-}
+};
 
 ProjPage.prototype.clickCheckCode = function() {
-	if( this.project == null || this.project == "" ) {	//if there's no project selected what's the point
+	if (this.project == null || this.project == "") {	//if there's no project selected what's the point
 		status_msg( "Please select a project for code checking", LEVEL_INFO );
 		return false;
 	}
 
-	if( !this.flist.robot ) {	//if there's no robot.py script then it's going to fail
+	if (!this.flist.robot) {	//if there's no robot.py script then it's going to fail
 		status_msg( "A robot.py file is required for project code checking", LEVEL_ERROR );
 		return false;
 	}
 
 	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true}, false, this.flist.rev);
-}
+};

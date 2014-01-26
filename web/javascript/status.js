@@ -24,21 +24,18 @@ function status_clearclass() {
 function status_hide() {
 	hideElement('status-span');
 
-	var s = getElement(status_id);
 	status_clearclass();
 }
 
 // Show the status bar with the given message, and prepend "warning" or "error"
 function status_msg( message, level ) {
 	switch(level) {
-	case LEVEL_WARN:
-		message = [ createDOM( "STRONG", null, "Warning: " ),
-			    message ];
-		break;
-	case LEVEL_ERROR:
-		message = [ createDOM( "STRONG", null, "Error: " ),
-			    message ];
-		break;
+		case LEVEL_WARN:
+			message = [ createDOM( "STRONG", null, "Warning: " ), message ];
+			break;
+		case LEVEL_ERROR:
+			message = [ createDOM( "STRONG", null, "Error: " ), message ];
+			break;
 	}
 
 	return status_rich_show( message, level );
@@ -49,7 +46,7 @@ function status_rich_show( obj, level ) {
 	var s = getElement(status_id);
 
 	var o = createDOM( "SPAN", { "id" : "status-span",
-				     "display" : "" }, obj );
+	                        "display" : "" }, obj );
 	replaceChildNodes( status_id, o );
 
 	status_clearclass();
@@ -70,8 +67,9 @@ function status_rich_show( obj, level ) {
 	}
 
 	// Give it a shake if it's not OK
-	if( level > LEVEL_OK )
+	if (level > LEVEL_OK) {
 		shake(s);
+	}
 
 	status_num ++;
 	var close_f = partial( status_close, status_num );
@@ -81,8 +79,9 @@ function status_rich_show( obj, level ) {
 
 // Hide the status if message id is still displayed
 function status_close(id) {
-	if( status_num == id )
+	if (status_num == id) {
 		status_hide();
+	}
 }
 
 function status_click() {
@@ -97,13 +96,15 @@ function status_click() {
 //             text: The button text
 //         callback: The function to call when the button is clicked.
 function status_options( message, level, opt_list ) {
-	var m = [ message, " -- " ]
-	for( var i=0; i < opt_list.length; i++) {
+	var m = [ message, " -- " ];
+	var click = function(cb) { status_click(); cb(); };
+	for (var i=0; i < opt_list.length; i++) {
 		var b = A({ "href" : "#" }, opt_list[i].text );
-		connect( b, "onclick", partial(function(cb) { status_click(); cb(); }, opt_list[i].callback) );
+		connect( b, "onclick", partial(click, opt_list[i].callback) );
 		m.push(b);
-		if(i+1 < opt_list.length)
+		if (i+1 < opt_list.length) {
 			m.push(' | ');
+		}
 	}
 
 	return status_msg( m, level );
@@ -119,7 +120,7 @@ function status_button( message, level, btext, bfunc ) {
 	var b = createDOM( "A", { "href" : "#" }, btext );
 	connect( b, "onclick", function() { status_click(); bfunc(); } );
 
-	var m = [ message, " -- ", b ]
+	var m = [ message, " -- ", b ];
 
 	return status_msg( m, level );
 }

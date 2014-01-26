@@ -4,7 +4,7 @@ function DiffPage() {
 	this.tab = null;
 
 	//hold signals for the page
-	this._signals = new Array();
+	this._signals = [];
 
 	//hold status message for the page
 	this._prompt = null;
@@ -24,7 +24,7 @@ function DiffPage() {
 
 /* *****	Initialization code	***** */
 DiffPage.prototype.init = function() {
-	if(!this._inited) {
+	if (!this._inited) {
 		logDebug("Diff: Initializing");
 
 		/* Initialize a new tab for Diff - Do this only once */
@@ -40,36 +40,36 @@ DiffPage.prototype.init = function() {
 
 	/* now switch to it */
 	tabbar.switch_to(this.tab);
-}
-/* *****	End Initialization Code 	***** */
+};
+/* *****	End Initialization Code		***** */
 
 /* *****	Tab events: onfocus, onblur and close	***** */
 DiffPage.prototype._onfocus = function() {
 	showElement('diff-page');
-}
+};
 
 DiffPage.prototype._onblur = function() {
 	/* Clear any prompts */
-	if( this._prompt != null ) {
+	if (this._prompt != null) {
 		this._prompt.close();
 		this._prompt = null;
 	}
 	/* hide Diff page */
 	hideElement('diff-page');
-}
+};
 
 DiffPage.prototype._close = function() {
 	/* Disconnect all signals */
-	for(var i = 0; i < this._signals.length; i++) {
+	for (var i = 0; i < this._signals.length; i++) {
 		disconnect(this._signals[i]);
 	}
-	this._signals = new Array();
+	this._signals = [];
 
 	/* Close tab */
 	this._onblur();
 	this.tab.close();
 	this._inited = false;
-}
+};
 /* *****	End Tab events	***** */
 
 /* *****	Facade the Diff objects	**** */
@@ -80,18 +80,18 @@ DiffPage.prototype._diffReady = function () {
 	} else {
 		description = 'from your modifications, based on';
 	}
-	description += ' '+IDE_hash_shrink(this.revhash);
-	getElement('diff-page-summary').innerHTML = 'Displaying differences on '
-			+this.file+' '+description;
+	description += ' ' + IDE_hash_shrink(this.revhash);
+	getElement('diff-page-summary').innerHTML =
+		'Displaying differences on ' + this.file + ' ' + description;
 	this.init();
-}
+};
 
 DiffPage.prototype.diff = function (file, rev, code) {
 	this.file = file;
 	this.revhash = rev;
 	this._diff = Diff.Create('diff-page-diff', file, rev, code);
 	this._signals.push(connect( this._diff, "ready", bind( this._diffReady, this ) ));
-}
+};
 /* *****	End Facade the Diff objects	**** */
 
 /// Diff object that handles drawing the diffs in a given location
@@ -122,7 +122,7 @@ Diff.Create = function(elem, file, rev, code) {
 	var diff = new Diff(getElement(elem), file, rev);
 	diff.makeDiff(code);
 	return diff;
-}
+};
 
 /* *****	Diff loading Code	***** */
 Diff.prototype._recieveDiff = function(nodes) {
@@ -137,9 +137,9 @@ Diff.prototype._recieveDiff = function(nodes) {
 	};
 	var mode = '=';
 	var group = '';
-	for( var i=0; i < difflines.length; i++) {
+	for (var i = 0; i < difflines.length; i++) {
 		line = difflines[i];
-		if(line.substring(0,1) == mode) {
+		if (line.substring(0,1) == mode) {
 			group += line+'\n';
 		} else {
 			appendChildNodes(this._elem, DIV({'class': modeclasses[mode]}, group));
@@ -149,15 +149,15 @@ Diff.prototype._recieveDiff = function(nodes) {
 	}
 	logDebug('diff ready, signalling');
 	signal(this, 'ready');
-}
+};
 
 Diff.prototype._errDiff = function(code) {
 	status_button("Error retrieving diff", LEVEL_WARN, "Retry", bind(this.diff, this, code));
-}
+};
 
 Diff.prototype.makeDiff = function(code) {
-	var recieve = bind( this._recieveDiff, this );
-	var err = bind( this._errDiff, this, code );
+	var recieve = bind(this._recieveDiff, this);
+	var err = bind(this._errDiff, this, code);
 
 	var args = {
 		   team: team,
@@ -166,7 +166,7 @@ Diff.prototype.makeDiff = function(code) {
 		   hash: this.revhash
 	};
 
-	if( code == undefined ) {
+	if (code == undefined) {
 		this.logpatch = true;
 	} else {
 		args.code = code;
@@ -174,5 +174,5 @@ Diff.prototype.makeDiff = function(code) {
 	}
 
 	IDE_backend_request("file/diff", args, recieve, err);
-}
+};
 /* *****	End Diff loading Code	***** */

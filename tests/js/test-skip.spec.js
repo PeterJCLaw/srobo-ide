@@ -1,2 +1,2 @@
 
-console.log('___SKIP_TEST')
+console.log('___SKIP_TEST');

@@ -1,0 +1,5 @@
+web/javascript/ace
+web/javascript/json2.js
+web/javascript/*jquery*js
+web/javascript/MochiKit.js
+tests/js/jasmine-data-provider

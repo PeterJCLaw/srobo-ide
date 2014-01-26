@@ -33,10 +33,11 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	//  - _onblur: Handler for when the tab is blurred.
 
 	// *** Public Properties ***
-	if (rev == null || rev == undefined)
+	if (rev == null || rev == undefined) {
 		this.rev = 'HEAD';
-	else
+	} else {
 		this.rev = rev;
+	}
 
 	// The team
 	this.team = team;
@@ -58,8 +59,6 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	this._original = "";
 	// All our current signal connection idents
 	this._signals = [];
-	// The "Failed to load contents" of file status message:
-	this._stat_contents = null;
 	// the ide_editarea instance
 	this._iea = iea;
 	// the ace session for this tab
@@ -97,7 +96,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		// change events from our editor
 		this._session.on( 'change', bind( this._on_change, this ) );
 
-		if( this.project == null ) {
+		if (this.project == null) {
 			// New file
 			this._isNew = true;
 			this.contents = "";
@@ -113,7 +112,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			getElement("edit-diff").disabled = false;
 			this._update_highlight();
 		}
-	}
+	};
 
 	this._update_highlight = function(path) {
 		// update the syntax highlight if needed
@@ -123,17 +122,20 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 	this._can_check_syntax = function() {
 		return !this._isNew && errorspage.can_check(this.path);
-	}
+	};
 
 	// Start load the file contents
 	this._load_contents = function() {
-		IDE_backend_request("file/get", { team : this.team,
-		                   project: this.project,
-						   path : IDE_path_get_file(this.path),
-						   rev : this.rev },
-						   bind(this._recv_contents, this),
-						   bind(this._recv_contents_err, this));
-	}
+		var args = {
+			team: this.team,
+			project: this.project,
+			path: IDE_path_get_file(this.path),
+			rev: this.rev
+		};
+		IDE_backend_request("file/get", args,
+		                    bind(this._recv_contents, this),
+		                    bind(this._recv_contents_err, this));
+	};
 
 	// Handler for the reception of file contents
 	this._recv_contents = function(nodes) {
@@ -160,14 +162,13 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			}
 			this._after_load_actions = null;
 		}
-	}
+	};
 
 	// Handler for errors in receiving the file contents
 	this._recv_contents_err = function() {
-		this._stat_contents = status_button( "Failed to load contents of file " + this.path,
-						     LEVEL_ERROR,
-						     "retry", bind( this._load_contents, this ) );
-	}
+		status_button( "Failed to load contents of file " + this.path,
+		               LEVEL_ERROR, "retry", bind(this._load_contents, this) );
+	};
 
 	this._check_syntax = function() {
 		if (!this._can_check_syntax()) {
@@ -180,9 +181,9 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		this._autosave(
 			bind( errorspage.check, errorspage, this.path, { alert: true },true ),
 			partial( status_button, "Unable to check syntax", LEVEL_WARN,
-				"retry", bind(this._check_syntax, this) )
+			         "retry", bind(this._check_syntax, this) )
 		);
-	}
+	};
 
 	this._diff = function() {
 		//tell the log and grab the latest contents
@@ -190,12 +191,12 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		this._capture_code();
 
 		//throw the contents to the diff page, if changed
-		if(this._original != this.contents)
+		if (this._original != this.contents) {
 			diffpage.diff(this.path, this.rev, this.contents);
-		else
+		} else {
 			status_msg("File not modified", LEVEL_OK);
-
-	}
+		}
+	};
 
 	this._receive_new_fname = function(fpath, commitMsg) {
 		var a = fpath.split( "/", 2 );
@@ -207,37 +208,38 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this._commitMsg = commitMsg;
 			this._repo_save();
 			this._update_highlight();
-		} else
+		} else {
 			status_msg( "No project specified", LEVEL_ERROR );
-	}
+		}
+	};
 
 	this._receive_commit_msg = function(commitMsg) {
 		this._commitMsg = commitMsg;
 		this._repo_save();
-	}
+	};
 
 	this._save = function() {
 		//do an update
 		this._capture_code();
 
 		//no point saving an unmodified file
-		if(this._original == this.contents) {
+		if (this._original == this.contents) {
 			log('File not modified!');
 			status_msg("File not modified!", LEVEL_WARN);
 			return;
 		}
 
 		//if new file	-- TODO
-		if(this._isNew) {
+		if (this._isNew) {
 			var fileBrowser = new Browser(bind(this._receive_new_fname, this), {'type' : 'isFile'});
 		} else {
 			var fileBrowser = new Browser(bind(this._receive_commit_msg, this), {'type' : 'isCommit'});
 			fileBrowser.showDiff(this.path, this.rev, this.contents);
 		}
-	}
+	};
 
 	//ajax event handler for saving to server
-	this._receive_repo_save = function(nodes){
+	this._receive_repo_save = function(nodes) {
 		projpage.flist.refresh();
 
 		if (nodes.merges.length == 0) {
@@ -245,8 +247,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this._original = this.contents;
 			this.tab.set_label(this.path);
 			this._autosaved = "";
-			if (user.get_setting('save.autoerrorcheck') != false && this._can_check_syntax())
-			{
+			if (user.get_setting('save.autoerrorcheck') != false && this._can_check_syntax()) {
 				errorspage.check(this.path, { alert: true, quietpass: true }, false);
 			}
 		} else {
@@ -259,65 +260,75 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		getElement("edit-diff").disabled = false;
 		this._update_contents();
 		this._iea.focus();
-	}
+	};
 
 	//ajax event handler for saving to server
 	this._error_receive_repo_save = function() {
 		status_button("Could not save file", LEVEL_ERROR, "retry", bind(this._repo_save, this));
-	}
+	};
 
 	//save file contents to server as new revision
 	this._repo_save = function() {
-		IDE_backend_request("file/put", {team: team,
-		                                 project: IDE_path_get_project(this.path),
-		                                 path: IDE_path_get_file(this.path),
-		                                 data: this.contents},
-		                    bind(function() {
-		                    	IDE_backend_request("proj/commit", {team: team,
-		                    	                                 project: IDE_path_get_project(this.path),
-                                                                 paths: [IDE_path_get_file(this.path)],
-		                    	                                 message: this._commitMsg},
-		                    	                                 bind(this._receive_repo_save, this),
-		                    	                                 bind(this._error_receive_repo_save, this));
-
-		                    }, this),
+		var put_success = bind(function() {
+			var args = {
+				team: team,
+				project: IDE_path_get_project(this.path),
+				paths: [IDE_path_get_file(this.path)],
+				message: this._commitMsg
+			};
+			IDE_backend_request("proj/commit", args,
+				bind(this._receive_repo_save, this),
+				bind(this._error_receive_repo_save, this));
+		}, this);
+		var args = {
+			team: team,
+			project: IDE_path_get_project(this.path),
+			path: IDE_path_get_file(this.path),
+			data: this.contents
+		};
+		IDE_backend_request("file/put", args, put_success,
 		                    bind(this._error_receive_repo_save, this));
-	}
+	};
 
 	this._on_keydown = function(ev) {
 		//since this call could come from EditArea we have to disregard mochikit nicities
-		if(ev != 'auto' && typeof ev._event == 'object')
-			var e = ev._event;
-		else
-			var e = ev;
+		var e;
+		if (ev != 'auto' && typeof ev._event == 'object') {
+			e = ev._event;
+		} else {
+			e = ev;
+		}
 
 		//Ctrl+s or Cmd+s: do a save
-		if( (e.ctrlKey || e.metaKey) && e.keyCode == 83 ) {
+		if ( (e.ctrlKey || e.metaKey) && e.keyCode == 83 ) {
 			this._save();
 			// try to prevent the browser doing something else
 			kill_event(ev);
 		}
-	}
+	};
 
 	this._on_change = function(e) {
 		if (!this._settingValue) {
 			this._show_modified();
 
 			// Trigger an autosave
-			if( this._timeout != null )
+			if (this._timeout != null) {
 				this._timeout.cancel();
-			if( e == 'auto' )
-				var delay = this._autosave_retry_delay;
-			else
-				var delay = this._autosave_delay;
+			}
+			var delay;
+			if (e == 'auto') {
+				delay = this._autosave_retry_delay;
+			} else {
+				delay = this._autosave_delay;
+			}
 			this._timeout = callLater(delay, bind(this._autosave, this));
 		}
-	}
+	};
 
 	//called when the code in the editarea changes. TODO: get the autosave to use this interface too
 	this._on_keyup = function() {
 		this._show_modified();
-	}
+	};
 
 	this._show_modified = function() {
 		//Handle modified notifications
@@ -326,35 +337,35 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		} else {
 			this.tab.set_label(this.path);
 		}
-	}
+	};
 
 	this._autosave = function(cb, errCb) {
-		var cb = cb || null;
-		var errCb = errCb || bind(this._on_keydown, this, 'auto');
+		cb = cb || null;
+		errCb = errCb || bind(this._on_keydown, this, 'auto');
 		this._timeout = null;
 		// do an update (if we have focus) and check to see if we need to autosave
-		if(this.tab.has_focus())
-		{
+		if(this.tab.has_focus()) {
 			this._capture_code();
 		}
 
 		// If there's no change and no callback then bail
-		if( (this.contents == this._original || this.contents == this._autosaved)
-		  && cb == null )
-		{
+		var unchanged = this.contents == this._original || this.contents == this._autosaved;
+		if (cb == null && unchanged) {
 			return;
 		}
 
 		logDebug('EditTab: Autosaving '+this.path);
 
-		IDE_backend_request("file/put", {team: team,
-		                                 project: this.project,
-		                                 path: IDE_path_get_file(this.path),
-		                                 rev: this.rev,
-		                                 data: this.contents},
-		                                 bind(this._receive_autosave, this, this.contents, cb),
-		                                 errCb);
-	}
+		var args = {
+			team: team,
+			project: this.project,
+			path: IDE_path_get_file(this.path),
+			rev: this.rev,
+			data: this.contents
+		};
+		var successback = bind(this._receive_autosave, this, this.contents, cb);
+		IDE_backend_request("file/put", args, successback, errCb);
+	};
 
 	//ajax event handler for autosaving to server, based on the one for commits
 	this._receive_autosave = function(code, cb){
@@ -363,21 +374,23 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		if (typeof cb == 'function') {
 			cb();
 		}
-	}
+	};
 
 	this.is_modified = function() {
-		if(this.tab.has_focus())	//if we have focus update the code
+		if (this.tab.has_focus()) {	//if we have focus update the code
 			this._capture_code();
+		}
 
-		if(this.contents != this._original)	//compare to the original
+		if (this.contents != this._original) {	//compare to the original
 			return true;
-		else
+		} else {
 			return false;
-	}
+		}
+	};
 
 	//try to close a file, checking for modifications, return true if it's closed, false if not
 	this.close = function(override) {
-		if( override != true && this.is_modified() ) {
+		if (override != true && this.is_modified()) {
 			tabbar.switch_to(this.tab);
 			status_button(this.path+" has been modified!", LEVEL_WARN, "Close Anyway", bind(this._close, this));
 			return false;
@@ -385,7 +398,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this._close();
 			return true;
 		}
-	}
+	};
 
 	//actually close the tab
 	this._close = function() {
@@ -394,7 +407,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		this._session.removeAllListeners('change');
 		disconnectAll(this);
 		status_hide();
-	}
+	};
 
 	// Handler for when the tab receives focus
 	this._onfocus = function() {
@@ -440,7 +453,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		this._show_contents();
 		this._iea.setReadOnly(this._read_only);
 		this._iea.focus();
-	}
+	};
 
 	// Handler for when the tab loses focus
 	this._onblur = function() {
@@ -450,7 +463,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 		//don't loose changes to file content
 		this._capture_code();
-	}
+	};
 
 	this._update_contents = function() {
 		// setting the content often moves the caret,
@@ -462,43 +475,45 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		this._settingValue = true;
 		this._session.setValue( this.contents );
 		this._settingValue = false;
-	}
+	};
 
 	this._show_contents = function() {
-	 	this._get_revisions();
+		this._get_revisions();
 
 		this._iea.setSession( this._session );
 
 		// Display file path
 		var t = this.path;
-		if( this.rev != 0 )
+		if (this.rev != 0) {
 			t = t + " - " + IDE_hash_shrink(this.rev);
-		if (this._read_only)
+		}
+		if (this._read_only) {
 			t += ' [read-only]';
+		}
 		replaceChildNodes( "tab-filename", t );
-	}
+	};
 
 	//call this to update this.contents with the current contents of the edit area and to grab the current cursor position
 	this._capture_code = function() {
 		this.contents = this._session.getValue();
-	}
+	};
 
 	this._change_revision = function() {
 		var rev = getElement("history").value;
 		switch(rev) {
-		case "-2":
-			var d = new Log(this.path);
-			break;
-		case "-1":
-			break;
-		default:
-			this.open_revision(rev, false)
+			case "-2":
+				var d = new Log(this.path);
+				break;
+			case "-1":
+				break;
+			default:
+				this.open_revision(rev, false);
 		}
-	}
+	};
 
 	this.open_revision = function(rev, override) {
 		this._capture_code();
-		if( override != true && this.contents != this._original ) {
+		if (override != true && this.contents != this._original) {
 			status_button(this.path + " has been modified!", LEVEL_WARN,
 				"Go to revision " + IDE_hash_shrink(rev) + " anyway",
 				bind(this.open_revision, this, rev, true)
@@ -509,16 +524,16 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			status_msg("Opening history .. " + rev, LEVEL_OK);
 			this._load_contents();
 		}
-	}
+	};
 
 	this._receive_revisions = function(nodes) {
 		var histDate = function(which) {
 			var stamp = nodes.log[which].time;
 			var d = new Date(stamp*1000);
 			return d.toDateString();
-		}
+		};
 
-		if(nodes.log.length == 0) {
+		if (nodes.log.length == 0) {
 			replaceChildNodes("history", OPTION({'value' : -1}, "No File History!"));
 		} else {
 			replaceChildNodes("history", OPTION({'value' : -1}, "Select File Revision"));
@@ -538,11 +553,11 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 			appendChildNodes("history", OPTION({'value' : -2}, "--View Full History--"));
 		}
-	}
+	};
 
 	this._error_receive_revisions = function() {
 		status_msg("Couldn't retrieve file history", LEVEL_ERROR);
-	}
+	};
 
 	this._get_revisions = function() {
 		logDebug("retrieving file history");
@@ -552,15 +567,16 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		if (this._isNew || !this._loaded) {
 			return;
 		}
-        IDE_backend_request('file/log', {
-                team: team,
-             project: IDE_path_get_project(this.path),
-                path: IDE_path_get_file(this.path)
-            },
-            bind(this._receive_revisions, this),
-            bind(this._error_receive_revisions, this)
-        );
-    }
+		var args = {
+		    team: team,
+		 project: IDE_path_get_project(this.path),
+		    path: IDE_path_get_file(this.path)
+		};
+		IDE_backend_request('file/log', args,
+			bind(this._receive_revisions, this),
+			bind(this._error_receive_revisions, this)
+		);
+	};
 
 	// Sets the selection in the editor as a line relative position.
 	// If length is -1 this is treated as the end of the line.
@@ -572,7 +588,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		} else {
 			this._after_load_actions.push(bind(this._setSelectionRange, this, lineNumber, startIndex, length));
 		}
-	}
+	};
 
 	this._setSelectionRange = function(lineNumber, startIndex, length) {
 		var Range = require("ace/range").Range;
@@ -586,7 +602,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		}
 		var range = new Range(lineNumber, startIndex, lineNumber, endIndex);
 		this._iea.setSelectionRange(range);
-	}
+	};
 
 	// Marks the given set of errors in the editor.
 	this.mark_errors = function(errors) {
@@ -595,11 +611,11 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		} else {
 			this._after_load_actions.push(bind(this._mark_errors, this, errors));
 		}
-	}
+	};
 
 	this._mark_errors = function(errors) {
 		var annotations = [];
-		for ( var i=0; i < errors.length; i++) {
+		for (var i = 0; i < errors.length; i++) {
 			var error = errors[i];
 			annotations.push({ row: error.lineNumber - 1,
 			                column: 0,
@@ -607,12 +623,12 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			                  type: error.level });
 		}
 		this._session.setAnnotations(annotations);
-	}
+	};
 
 	// Clears all the marked errors from the editor
 	this.clear_errors = function() {
 		this._session.clearAnnotations();
-	}
+	};
 
 	//initialisation
 	this._init();

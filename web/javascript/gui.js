@@ -139,13 +139,15 @@ function load_gui() {
 
 function on_doc_keydown(ev) {
 	//since this call could come from EditArea we have to disregard mochikit nicities
-	if(typeof ev._event == 'object')
-		var e = ev._event;
-	else
-		var e = ev;
+	var e;
+	if (typeof ev._event == 'object') {
+		e = ev._event;
+	} else {
+		e = ev;
+	}
 
 	var stop = false;
-	if( e.altKey ) {
+	if (e.altKey) {
 		switch(e.keyCode) {
 			case 33://PageUp
 				tabbar.prev_tab();
@@ -156,7 +158,7 @@ function on_doc_keydown(ev) {
 				stop = true;
 				break;
 		}
-	} else if( e.ctrlKey ) {
+	} else if (e.ctrlKey) {
 		switch(e.keyCode) {
 			case 69://E
 				projpage.clickExportProject();
@@ -164,7 +166,7 @@ function on_doc_keydown(ev) {
 				break;
 		}
 	}
-	if(stop) {
+	if (stop) {
 		// try to prevent the browser doing something else
 		kill_event(ev);
 	}
@@ -175,20 +177,23 @@ function on_doc_keydown(ev) {
   - they only work on some events
  */
 function kill_event(e) {
-	if(typeof e.preventDefault == 'function')
+	if (typeof e.preventDefault == 'function') {
 		e.preventDefault();
-	if(typeof e.stopPropagation == 'function')
+	}
+	if (typeof e.stopPropagation == 'function') {
 		e.stopPropagation();
+	}
 }
 
 function beforeunload(e) {
-	if(tabbar != null && !tabbar.close_all_tabs())
+	if (tabbar != null && !tabbar.close_all_tabs()) {
 		e.confirmUnload("You should close tabs before closing this window");
+	}
 }
 
 // Create drop down list TODO: make this a generic function?
 function populate_shortcuts_box() {
-	var shortcuts = new Array();
+	var shortcuts = [];
 
 	function newShortcut(name, description, callback) {
 		var a = A( {"title": description}, name );
@@ -230,7 +235,7 @@ function populate_shortcuts_box() {
 	}
 
 	var new_ul = UL(null);
-	for( var i=0; i<shortcuts.length; i++) {
+	for (var i = 0; i<shortcuts.length; i++) {
 		appendChildNodes(new_ul, shortcuts[i]);
 	}
 
@@ -246,30 +251,30 @@ function dropDownBox (id, children) {
 		connect( this.id, "onmouseleave", bind( this.hideBox, this ) );		// when mouse leaves dropbox hide it
 		connect( this.id, "onclick", bind( this.hideBox, this ) );
 		this._timer = null;	// timeout for box
-	}
+	};
 	this.showBox = function() {	// show the box and set a timeout to make it go away
 		removeElementClass( this.id, "hidden" );
 		var xid = this.id;	// local to allow us to pass it inside setTimeout
 		this._timer = setTimeout(function(){addElementClass(xid, "hidden");} ,1500);
-	}
+	};
 	this.hideBox = function() {
-		addElementClass( this.id, "hidden" );
-	}
+		addElementClass(this.id, "hidden");
+	};
 
 	this.toggleBox = function() {
-		if ( hasElementClass( this.id, "hidden" ) ) {	// is the box visible?
+		if (hasElementClass(this.id, "hidden")) {	// is the box visible?
 			this.showBox();
 		} else {
 			this.hideBox();
 		}
-	}
+	};
 
 	this._clearTimeout = function() {
 		if (this._timer) {
 			clearTimeout(this._timer);
 			this._timer = null;
 		}
-	}
+	};
 
 	this._init(id, children);
 }
@@ -280,31 +285,32 @@ function AboutBox() {
 		this.box = getElement('about-box');
 		connect( this.box, "onclick", bind( this.hideBox, this ) );
 		this.got_info = false;
-	}
+	};
 	this.get_info = function() {
-		if(this.got_info)
+		if(this.got_info) {
 			return;
+		}
 		IDE_backend_request('info/about', {}, bind(this._got_info, this), function() {});
-	}
+	};
 	this._got_info = function(nodes) {
 		var dl = createDOM('dl', {id:'about-list'});
-		for(var i in nodes.info) {
+		for (var i in nodes.info) {
 			var dt = createDOM('dt', null, i+':');
 			var dd = createDOM('dd', null, nodes.info[i]);
 			appendChildNodes(dl, dt, dd);
 		}
 		swapDOM('about-list', dl);
 		this.got_info = true;
-	}
+	};
 	this.showBox = function() {
 		this.get_info();
 		removeElementClass( this.box, "hidden" );
 		showElement("grey-out");
-	}
+	};
 	this.hideBox = function() {
 		addElementClass( this.box, "hidden" );
 		hideElement("grey-out");
-	}
+	};
 
 	this._init();
 }
@@ -327,34 +333,36 @@ function User() {
 
 		this._info_deferred = retd;
 		return this._info_deferred;
-	}
+	};
 
 	this._request_info = function() {
-		IDE_backend_request("user/info", {}, bind(this._got_info, this), bind(function() {
-			status_button( "Failed to load user information", LEVEL_ERROR,
-			               "retry", bind( this._request_info, this ) ) }, this));
-	}
+		IDE_backend_request("user/info", {}, bind(this._got_info, this),
+			bind(function() {
+				status_button( "Failed to load user information", LEVEL_ERROR,
+				               "retry", bind(this._request_info, this) );
+			}, this));
+	};
 
-	this._got_info = function( info ) {
+	this._got_info = function(info) {
 		logDebug( "Got user information" );
 
-		this.teams = info["teams"];
+		this.teams = info.teams;
 
 		this._settings = (info.settings instanceof Array) ? {} : info.settings;
-		for( var k in this._settings ) {
-			logDebug( k + " = " + this._settings[k] );
+		for (var k in this._settings) {
+			logDebug(k + " = " + this._settings[k]);
 		}
 
-		if(info["is-admin"]) {
-			this.can_admin = function() { return true;};
+		if (info["is-admin"]) {
+			this.can_admin = function() { return true; };
 		}
 
 		// Connect up the logout button
 		disconnectAll( "logout-button" );
-		connect( "logout-button", "onclick", bind( this._logout_click, this ) );
+		connect( "logout-button", "onclick", bind(this._logout_click, this) );
 
- 		this._info_deferred.callback(null);
-	}
+		this._info_deferred.callback(null);
+	};
 
 	this.get_setting = function(sname) {
 		var value = this.get_raw_setting(sname);
@@ -366,15 +374,16 @@ function User() {
 			value = setting.options['default'];
 		}
 		return value;
-	}
+	};
 
 	this.get_raw_setting = function(sname) {
 		return this._settings[sname];
-	}
+	};
 
 	this.get_team = function(teamId) {
-		if (teamId == null)
+		if (teamId == null) {
 			return null;
+		}
 
 		var teams = user.teams;
 		for (var i=0; i < teams.length; i++) {
@@ -384,13 +393,13 @@ function User() {
 			}
 		}
 		return null;
-	}
+	};
 
 	// Set user settings.
 	this.set_settings = function(settings, opts) {
 		var changed = false;
 		log('Setting user settings');
-		for( var s in settings ) {
+		for (var s in settings) {
 			if (this._settings[s] !== settings[s] || changed) {
 				changed = true;
 			}
@@ -401,32 +410,33 @@ function User() {
 		} else if(opts == 'loud') {
 			status_msg( 'User settings unchanged', LEVEL_INFO );
 		}
-	}
+	};
 
 	// Save user settings. Called right after they're set.
 	this._save_settings = function(opts) {
 		log('Saving user settings');
-		if(opts == 'loud') {
-			var cb = partial( status_msg, 'User settings saved', LEVEL_OK );
-			var eb = partial( status_button, 'Could not save user settings', LEVEL_ERROR, 'retry', bind(this._save_settings, this, opts) );
+		var cb, eb;
+		if (opts == 'loud') {
+			cb = partial( status_msg, 'User settings saved', LEVEL_OK );
+			eb = partial( status_button, 'Could not save user settings', LEVEL_ERROR, 'retry', bind(this._save_settings, this, opts) );
 		} else {
-			var cb = eb = function(){};
+			cb = eb = function(){};
 		}
 
 		IDE_backend_request('user/settings-put', {settings: this._settings}, cb, eb);
-	}
+	};
 
 	this._logout_success = function(nodes) {
 		window.location.reload();
-	}
+	};
 
 	this._logout_error = function(nodes) {
 		status_button("Failed to log out", LEVEL_ERROR, "retry",
 		              bind( this._logout_click, this ));
-	}
+	};
 
 	this._logout_click = function(ev) {
-		if( ev != null ) {
+		if (ev != null) {
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
@@ -435,13 +445,13 @@ function User() {
 		                    bind(this._logout_success, this),
 		                    bind(this._logout_error, this)
 		                   );
-	}
+	};
 
 	// do they have admin priviledges - this gets overwirtten by the info collecter if they do
 	this.can_admin = function() {
 		return false;
-	}
-};
+	};
+}
 
 function TeamSelector() {
 	this._prompt = null;
@@ -449,23 +459,20 @@ function TeamSelector() {
 	this.load = function() {
 		var teambox = [];
 
-		if( user.teams.length == 1 )
+		if (user.teams.length == 1) {
 			team = user.teams[0].id;
-		else if ( user.teams.length == 0 )
-		{
+		} else if (user.teams.length == 0) {
 			replaceChildNodes( "teaminfo", SPAN("You are not in any teams!") );
 			return;
-		}
-		else
-		{
+		} else {
 			var olist = [];
 
 			if( !this._team_exists(team) ) {
 				// Work out what team we should be in
 				var team_load = user.get_setting('team.autoload');
 				var team_to_load = user.get_setting(team_load);
-				if( team_to_load != undefined
-				    && this._team_exists( team_to_load ) ) {
+				if (team_to_load != undefined &&
+				    this._team_exists( team_to_load )) {
 					team = team_to_load;
 					logDebug( "Defaulting to team " + team );
 				}
@@ -473,7 +480,7 @@ function TeamSelector() {
 
 			olist = this._build_options();
 
-			if( !this._team_exists(team) ) {
+			if (!this._team_exists(team)) {
 				// Add a "please select a team" option
 				olist.unshift( OPTION( { id: 'teamlist-tmpitem',
 				                   selected: 'selected' },
@@ -498,9 +505,10 @@ function TeamSelector() {
 		replaceChildNodes( "teaminfo", teambox );
 		this._update_name();
 
-		if( this._team_exists(team) )
-			signal( this, "onchange", team );
-	}
+		if (this._team_exists(team)){
+			signal(this, "onchange", team);
+		}
+	};
 
 	var team_sort = function(a, b) {
 		if (a.id == b.id) {
@@ -510,33 +518,34 @@ function TeamSelector() {
 		} else {
 			return 1;
 		}
-	}
+	};
 
 	this._build_options = function() {
 		var olist = [];
 
 		user.teams.sort(team_sort);
 
-		for( var i=0; i < user.teams.length; i++ ) {
+		for (var i = 0; i < user.teams.length; i++) {
 			var team_id = user.teams[i].id;
 			var props = { "value" : team_id };
 
-			if( team_id == team )
-				props["selected"] = "selected";
+			if (team_id == team) {
+				props.selected = "selected";
+			}
 
 			olist.push( OPTION(props, team_id) );
 		}
 
 		return olist;
-	}
+	};
 
 	// Returns true if the given team number exists for this user
 	this._team_exists = function(teamId) {
 		return user.get_team(teamId) != null;
-	}
+	};
 
 	this._selected = function(ev) {
-		if( this._prompt != null ) {
+		if (this._prompt != null) {
 			this._prompt.close();
 			this._prompt = null;
 		}
@@ -544,12 +553,13 @@ function TeamSelector() {
 		var src = ev.src();
 
 		//if it's not changed (webkit does weirdness)
-		if(src.value == team)
+		if (src.value == team) {
 			return;
+		}
 
 		//close tabs from other teams before changing
 		log('Team changed - closing all tabs');
-		if(tabbar != null && !tabbar.close_all_tabs()) {
+		if (tabbar != null && !tabbar.close_all_tabs()) {
 			src.value = team;
 			alert('Open files must be closed before changing teams');
 			return;
@@ -557,15 +567,16 @@ function TeamSelector() {
 
 		// Remove the "please select a team" item from the list
 		var tmpitem = getElement("teamlist-tmpitem");
-		if( tmpitem != null && src != tmpitem )
-			removeElement( tmpitem );
+		if (tmpitem != null && src != tmpitem) {
+			removeElement(tmpitem);
+		}
 
 		team = src.value;
-		logDebug( "team changed to " + team );
+		logDebug("team changed to " + team);
 		this._update_name();
 
-		signal( this, "onchange", team );
-	}
+		signal(this, "onchange", team);
+	};
 
 	this._update_name = function() {
 		var name = "";
@@ -583,17 +594,14 @@ function TeamSelector() {
 		}
 
 		replaceChildNodes( "teamname", " " + name );
-	}
+	};
 }
 
 function setReadOnly(elem, isReadOnly)
 {
-	if (isReadOnly)
-	{
+	if (isReadOnly) {
 		addElementClass(elem, 'read-only');
-	}
-	else
-	{
+	} else {
 		removeElementClass(elem, 'read-only');
 	}
 }
