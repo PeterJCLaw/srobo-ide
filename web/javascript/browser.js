@@ -52,14 +52,20 @@ Browser.prototype._init = function() {
 
 	getElement("new-commit-msg").value = this._DEFAULT_MSG;
 	var newFileNameElem = getElement("new-file-name");
-	if(this.type == 'isDir')
-		newFileNameElem.value = this._DEFAULT_DNAME;
-	else if(this.type == 'isProj')
-		newFileNameElem.value = this._DEFAULT_PNAME;
-	else if(this.type == 'isTag')
-		newFileNameElem.value = this._DEFAULT_TNAME;
-	else
-		newFileNameElem.value = this._DEFAULT_FNAME;
+	switch (this.type) {
+		case 'isDir':
+			newFileNameElem.value = this._DEFAULT_DNAME;
+			break;
+		case 'isProj':
+			newFileNameElem.value = this._DEFAULT_PNAME;
+			break;
+		case 'isTag':
+			newFileNameElem.value = this._DEFAULT_TNAME;
+			break;
+		default:
+			newFileNameElem.value = this._DEFAULT_FNAME;
+			break;
+	}
 
 	//make visible
 	this.display();
