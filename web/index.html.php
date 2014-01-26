@@ -46,6 +46,10 @@
 	$javaScripts[] = "web/javascript/log.js";
 	$javaScripts[] = "web/javascript/poll.js";
 	$javaScripts[] = "web/javascript/projpage.js";
+	$javaScripts[] = "web/javascript/projfilelist.js";
+	$javaScripts[] = "web/javascript/projlist.js";
+	$javaScripts[] = "web/javascript/projops.js";
+	$javaScripts[] = "web/javascript/projselect.js";
 	$javaScripts[] = "web/javascript/settings.js";
 	$javaScripts[] = "web/javascript/team-status.js";
 	$javaScripts[] = "web/javascript/search.js";
