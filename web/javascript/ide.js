@@ -121,10 +121,10 @@ function IDE_backend_request_with_retry(endpoint, args, success, retry_msg, fail
 /// Shrink a (git) hashes to a common and more size for display
 function IDE_hash_shrink(hash) {
 	var hash_length = 9;
-	if(hash == null) {
+	if (hash == null) {
 		return false;
 	}
-	if(hash.length < hash_length) {
+	if (hash.length < hash_length) {
 		return hash;
 	}
 	return hash.substring(0, hash_length);
@@ -133,10 +133,10 @@ function IDE_hash_shrink(hash) {
 /// Compare (git) hashes of potentially unequal length
 function IDE_hash_compare(a, b) {
 	var min_hash_length = 6;
-	if(a.length < min_hash_length || b.length < min_hash_length) {
+	if (a.length < min_hash_length || b.length < min_hash_length) {
 		return false;
 	}
-	if(a == b) {
+	if (a == b) {
 		return true;
 	}
 	var min_len = Math.min(a.length, b.length);
@@ -148,7 +148,7 @@ function IDE_hash_compare(a, b) {
 function IDE_path_get_project(path) {
 	// index of '/' starting from char 1 onwards
 	var idx = path.indexOf('/', 1);
-	if(idx < 0) {
+	if (idx < 0) {
 		return path;
 	}
 	// return a substring to that point
@@ -158,7 +158,7 @@ function IDE_path_get_project(path) {
 function IDE_path_get_file(path) {
 	// index of '/' starting from char 1 onwards
 	var idx = path.indexOf('/', 1);
-	if(idx < 0) {
+	if (idx < 0) {
 		return path;
 	}
 	// return a substring from that point
