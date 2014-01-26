@@ -2,10 +2,10 @@
 // Arguments:
 //  - cback: Callback for when things happen.
 //  - options: Dictionary of settings:
-// 		- "type" 	'isFile' 	- renders file browser with file name box
-// 				'isDir' 	- renders file browser with folder name box
-// 				'isCommit' 	- renders file browser without file view, just commit box
-// 				'isProj' 	- renders file browser without file view, just project name box
+//    - "type"  'isFile'    - renders file browser with file name box (default)
+//              'isDir'     - renders file browser with folder name box
+//              'isCommit'  - renders file browser without file view, just commit box
+//              'isProj'    - renders file browser without file view, just project name box
 
 function Browser(cback, options) {
 	// Public functions:
