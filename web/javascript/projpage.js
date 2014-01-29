@@ -367,7 +367,7 @@ ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
 	// user's code has failed
 	if (result == 'codefail') {
 		message = num_errors + " errors found!";
-		status_button(message, LEVEL_WARN, exportAnyway);
+		status_button(message, LEVEL_WARN, exportAnyway.text, exportAnyway.callback);
 	}
 
 	log('_exportProjectCheckResult:'+message);
