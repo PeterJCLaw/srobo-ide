@@ -1,4 +1,7 @@
-Copyright (c) 2010 Alistair Lynn, Sam Phippen
+Copyright (c) 2010-2011 Alistair Lynn, Sam Phippen, Peter Law
+Copyright (c) 2012 Peter Law, Sam Phippen, Richard Barlow
+Copyright (c) 2013 Peter Law, Richard Barlow, Alex Monk, Andrew Cottrell
+Copyright (c) 2014 Peter Law
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -19,5 +22,9 @@ Copyright (c) 2010 Alistair Lynn, Sam Phippen
  THE SOFTWARE.
 
 
- this license only applies to files not in /web/ licensing for those can be
- found in /web/LICENSE
+ This license only applies to files not in /web/. Licensing for those can be
+ found in /web/LICENSE.
+
+ The above copyright dates apply only to the sources within this repository.
+ Neither the dates nor this license necessarily apply to the contents of
+ submodules referenced by this repository.
