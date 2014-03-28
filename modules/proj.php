@@ -82,6 +82,17 @@ class ProjModule extends Module
 	{
 		$this->verifyTeam();
 		AuthBackend::ensureWrite($this->team);
+
+		// Project deletion isn't really supported yet, but is used in a limited way
+		// in some of the tests. Rather than have them need to do something else,
+		// requiring that the user is an admin is a quick way to prevent unauthorised
+		// access to this unsupported endpoint.
+		$auth = AuthBackend::getInstance();
+		if (!$auth->isCurrentUserAdmin())
+		{
+			throw new Exception('You are not allowed to delete projects.', E_PERM_DENIED);
+		}
+
 		$this->projectManager->deleteRepository($this->team, $this->projectName);
 		return true;
 	}

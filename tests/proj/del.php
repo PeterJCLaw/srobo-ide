@@ -28,6 +28,19 @@ GitRepository::createRepository($repopath, true);
 test_existent($repopath, "must have created repo to be deleted");
 
 $proj = $mm->getModule("proj");
-$proj->dispatchCommand("del");
+$del = function() use($proj) {
+	$proj->dispatchCommand("del");
+};
+
+$del();
 
 test_nonexistent($repopath, "deleted repo existed");
+
+// Prove that it's admin-only
+GitRepository::createRepository($repopath, true);
+test_existent($repopath, "must have created repo to be deleted");
+
+$config->override("user.default.is_admin", false);
+
+test_exception($del, E_PERM_DENIED, "Non-admins must not be able to delete projects.");
+test_existent($repopath, "Repo should have still existed after delete was blocked.");
