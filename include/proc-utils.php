@@ -24,6 +24,15 @@ function proc_exec($s_command, $base = null, $input = null, $env = array(), $cat
 	$stderr = stream_get_contents($pipes[2]);
 	$status = proc_close($proc);
 	ide_log(LOG_DEBUG, "$s_command result: status: $status, stdout: $stdout, stderr: $stderr.");
+	if ($catchResult)
+	{
+		// build result dictionary
+		$resultDict = array('exitcode' => $status,
+		                    'stdout'   => $stdout,
+		                    'stderr'   => $stderr,
+		                    'success'  => $status == 0,
+		                   );
+	}
 	if ($status != 0)
 	{
 		ide_log(LOG_ERR, "$s_command [cwd = $base]");
@@ -32,14 +41,14 @@ function proc_exec($s_command, $base = null, $input = null, $env = array(), $cat
 		ide_log(LOG_ERR, "$stderr");
 		ide_log(LOG_ERR, "-- END LOG --");
 		if ($catchResult)
-			return array(false, $stdout);
+			return $resultDict;
 		else
 			return false;
 	}
 	else
 	{
 		if ($catchResult)
-			return array(true, $stdout);
+			return $resultDict;
 		else
 			return $stdout;
 	}

@@ -169,6 +169,11 @@ class ReadOnlyGitRepository
 		$s_bin = escapeshellarg(self::gitBinaryPath());
 		$s_buildCommand = "$s_bin $s_command";
 		$ret = proc_exec($s_buildCommand, $base, $input, $env, $catchResult);	// SHELL SAFE
+		if ($catchResult)
+		{
+			// convert back to the expected 2 param array format it expects
+			$ret = array($ret['success'], $ret['stdout']);
+		}
 		return $ret;
 	}
 
