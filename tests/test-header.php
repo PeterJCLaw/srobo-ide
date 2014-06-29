@@ -80,6 +80,12 @@ function test_nonnull($a, $message)
 	test_notsame($a, null, $message);
 }
 
+function test_between($actual, $lower, $upper, $message)
+{
+	__test($actual > $lower && $actual < $upper,
+	       $message . " (expected between " . __test_value($lower) . " and " . __test_value($upper) . ", got " . __test_value($actual) . ")");
+}
+
 function test_same($a, $b, $message)
 {
 	__test($a === $b, $message . " (expected same as " . __test_value($b) . ", got " . __test_value($a) . ")");
