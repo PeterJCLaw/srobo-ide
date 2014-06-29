@@ -8,7 +8,11 @@
  * @parm env: An array with the environment variables for the command that will be run.
  * @parm catchResult: Whether or not to catch the result in the event of failure.
  * @returns: If not catching failures (see catchResult) then either the process's stdout if the call succeeds or False otherwise.
- *           If catching failures then an array whose first element is a boolean success indicator, and whose second contains the process's stdout.
+ *           If catching failures then a keyed array of:
+ *            * exitcode: the exit code of the process,
+ *            * stdout: the stdout from the process,
+ *            * stderr: the stderr from the process,
+ *            * success: a boolean success indicator
  */
 function proc_exec($s_command, $base = null, $input = null, $env = array(), $catchResult = false)
 {
