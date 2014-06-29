@@ -118,7 +118,7 @@ class PyLint extends Lint
 	 */
 	public static function ConvertToMessage($line)
 	{
-		$pattern = '/([^:]+):(\d+): \[(E|W) ?\d*(, (?P<hint>[^\]]+))?\] (?P<msg>.*)/';
+		$pattern = '/([^:]+):(\d+): \[(E|W) ?\d*(\((?P<type>[^\)]+)\))?(, (?P<hint>[^\]]+)?)?\] (?P<msg>.*)/';
 		$matches = array();
 		if (preg_match($pattern, $line, $matches))
 		{
