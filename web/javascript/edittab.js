@@ -348,9 +348,13 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			this._capture_code();
 		}
 
-		// If there's no change and no callback then bail
+		// If there's no change don't bother going to the backend
 		var unchanged = this.contents == this._original || this.contents == this._autosaved;
-		if (cb == null && unchanged) {
+		if (unchanged) {
+			// even if there isn't a change, we still need to fire the callback
+			if (typeof cb == 'function') {
+				cb();
+			}
 			return;
 		}
 
