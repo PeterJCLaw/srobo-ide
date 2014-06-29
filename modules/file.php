@@ -464,7 +464,7 @@ class FileModule extends Module
 					// remove the temporary folder
 					delete_recursive($tmpDir);
 
-					// Both sets of linting failed, so fail overall.
+					// Code linting failed, so fail overall.
 					return False;
 				}
 			}
