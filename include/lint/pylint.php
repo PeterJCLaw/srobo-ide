@@ -49,24 +49,16 @@ class PyLint extends Lint
 		return $valid ? $err : False;
 	}
 
-	public function lintFile($working, $file)
+	public function lintFile($s_working, $file)
 	{
 		$s_file = escapeshellarg($file);
 		$s_pylintBinary = escapeshellarg($this->binary);
-		$proc = proc_open("$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_file",
-			array(0 => array("file", "/dev/null", "r"),
-			      1 => array("pipe", "w"),
-			      2 => array("pipe", "w")),
-			$pipes,
-			$working,
-			array('PYLINTHOME' => $this->pylintHome)
-		);
 
-		// get stdout and stderr, then we're done with the process, so close it
-		$stdout = stream_get_contents($pipes[1]);
-		$stderr = stream_get_contents($pipes[2]);
-		$status = proc_close($proc);
+		$s_cmd = "$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_file";
+		$s_env = array('PYLINTHOME' => $this->pylintHome);
+		$output = proc_exec($s_cmd, $s_working, null, $s_env, true);
 
+		$status = $output['exitcode'];
 		// status code zero indicates success, so return empty errors
 		if ($status === 0)
 		{
@@ -76,8 +68,7 @@ class PyLint extends Lint
 		// status code one indicates something went wrong with the linting
 		if ($status === 1)
 		{
-			// echo stderr for debug.
-			echo "PyLint fell over!\n", $stderr;
+			$stderr = $output['stderr'];
 			if (strpos($stderr, 'IndentationError') === False)
 			{
 				return False;
@@ -91,8 +82,8 @@ class PyLint extends Lint
 			return array($err);
 		}
 
-		// otherwise, process stderr and stdout
-		$lines = explode("\n", $stdout);
+		// otherwise, process stdout
+		$lines = explode("\n", $output['stdout']);
 		$errors = array();
 		foreach ($lines as $line)
 		{

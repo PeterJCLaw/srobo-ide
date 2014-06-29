@@ -46,35 +46,24 @@ class ImportLint extends Lint
 		return $err;
 	}
 
-	public function lintFile($working, $file)
+	public function lintFile($s_working, $file)
 	{
 		$this->touched = array();
 		$s_file = escapeshellarg($file);
 		$s_pythonBinary = escapeshellarg($this->binary);
 		$s_script = escapeshellarg($this->script);
-		$proc = proc_open("$s_pythonBinary $s_script $s_file"
-			,array(0 => array("file", "/dev/null", "r")
-			      ,1 => array("pipe", "w")
-			      ,2 => array("pipe", "w")
-			      )
-			,$pipes
-			,$working
-		);
-
-		// get stdout and stderr, then we're done with the process, so close it
-		$stdout = stream_get_contents($pipes[1]);
-		$stderr = stream_get_contents($pipes[2]);
-		$status = proc_close($proc);
+		$s_cmd = "$s_pythonBinary $s_script $s_file";
+		$output = proc_exec($s_cmd, $s_working, null, array(), true);
 
 		// status code non-zero says something went very wrong
-		// probably threw an exception - TODO: log this!
-		if ($status !== 0)
+		// probably threw an exception (will have been logged by proc_exec)
+		if ($output['exitcode'] !== 0)
 		{
 			return False;
 		}
 
 		// otherwise, process stderr and stdout
-		$info = json_decode($stdout, true);
+		$info = json_decode($output['stdout'], true);
 		$errors = array();
 		foreach ($info as $file => $imports)
 		{
