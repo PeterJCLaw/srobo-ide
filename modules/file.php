@@ -454,6 +454,13 @@ class FileModule extends Module
 				$errors = $importErrors;
 				$more_files = $importlint->getTouchedFiles();
 
+				// Don't bother to check the reference file
+				$dummy_key = array_search(basename($dummy), $more_files);
+				if ($dummy_key !== False)
+				{
+					unset($more_files[$dummy_key]);
+				}
+
 				$pyErrors = $pylint->lintFiles($working, $more_files);
 				if ($pyErrors !== False)
 				{
