@@ -4,6 +4,7 @@ class PyLint extends Lint
 {
 	private $binary = null;
 	private $pylintHome = null;
+	private $maxDuration = null;
 
 	public function __construct()
 	{
@@ -22,6 +23,8 @@ class PyLint extends Lint
 		{
 			mkdir($this->pylintHome);
 		}
+
+		$this->maxDuration = $config->getConfig('pylint.maxDuration');
 	}
 
 	public function lintFiles($working, $files)
@@ -56,13 +59,19 @@ class PyLint extends Lint
 
 		$s_cmd = "$s_pylintBinary --rcfile=/dev/null --errors-only --output-format=parseable --reports=n $s_file";
 		$s_env = array('PYLINTHOME' => $this->pylintHome);
-		$output = proc_exec($s_cmd, $s_working, null, $s_env, true);
+		$s_timeout = $this->maxDuration;
+		$output = proc_exec($s_cmd, $s_working, null, $s_env, true, $s_timeout);
 
 		$status = $output['exitcode'];
 		// status code zero indicates success, so return empty errors
 		if ($status === 0)
 		{
 			return array();
+		}
+
+		if ($output['timedout'])
+		{
+			return False;
 		}
 
 		// status code one indicates something went wrong with the linting
