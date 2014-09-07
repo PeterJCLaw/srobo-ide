@@ -32,12 +32,17 @@ class LockHandler
 		if (!isset($this->handles[$lockfile]))
 		{
 			$resource = file_lock($lockfile);
-			$this->handles[$lockfile] = new stdClass();
-			$this->handles[$lockfile]->count = 0;
-			$this->handles[$lockfile]->handle = $resource;
+			$wrapper = new stdClass();
+			$wrapper->count = 0;
+			$wrapper->handle = $resource;
+			$this->handles[$lockfile] = $wrapper;
 		}
-		$this->handles[$lockfile]->count++;
-		return $this->handles[$lockfile]->handle;
+		else
+		{
+			$wrapper = $this->handles[$lockfile];
+		}
+		$wrapper->count++;
+		return $wrapper->handle;
 	}
 
 	/**
