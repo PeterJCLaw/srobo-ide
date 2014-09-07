@@ -74,7 +74,7 @@ class ReadOnlyGitRepository
 	 */
 	public static function GetOrCreate($path)
 	{
-		$repo = new ReadOnlyGitRepository($path);
+		$repo = new ReadOnlyGitRepository($path, false);
 		return $repo;
 	}
 
@@ -100,7 +100,7 @@ class ReadOnlyGitRepository
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository
 	 */
-	protected function __construct($path)
+	protected function __construct($path, $exclusiveLock)
 	{
 		if (!file_exists("$path/.git") || !is_dir("$path/.git"))
 		{
@@ -116,9 +116,9 @@ class ReadOnlyGitRepository
 			$this->git_path = "$path/.git";
 		}
 
-		/* Acquire an exclusive lock on the git repository */
+		/* Acquire a lock on the git repository */
 		$lockfile = "$this->git_path/cyanide-lock";
-		$this->lock_fd = LockHandler::getInstance()->lock($lockfile);
+		$this->lock_fd = LockHandler::getInstance()->lock($lockfile, $exclusiveLock);
 	}
 
 	public function __destruct()
@@ -458,7 +458,7 @@ class GitRepository extends ReadOnlyGitRepository
 	 */
 	public static function GetOrCreate($path)
 	{
-		$repo = new GitRepository($path);
+		$repo = new GitRepository($path, true);
 		return $repo;
 	}
 
