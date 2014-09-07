@@ -5,7 +5,9 @@ php:
 before_install:
   - sudo apt-get update -qq
 install:
-  - sudo apt-get install -y git-core, pylint, php5-cli, nodejs
+  # PHP-CLI, Git & NodeJS are pre-installed, no need to include them
+  - sudo apt-get install -y pylint
+  - npm install jasmine-node
 before_script:
   - make dev
 script: ./run-tests
