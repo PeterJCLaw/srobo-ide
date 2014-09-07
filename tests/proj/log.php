@@ -33,7 +33,7 @@ $repo->commit($firstMessage, $commitUser, $commitEmail);
 $repo->putFile("ponies.py", "print 'spoons'\n");
 $repo->stage("ponies.py");
 $repo->commit($secondMessage, $commitUser, $commitEmail);
-$projectManager->updateRepository(1, 'monkies', 'bees');
+$projectManager->updateRepository($repo, 'bees');
 
 //get a project instance
 $mm = ModuleManager::getInstance();

@@ -73,7 +73,7 @@ sleep(1);
 // clear the caches... PHP needs this to get sane answers from fileXtime or stat-related functions
 clearstatcache();
 // update
-$projectManager->updateRepository(1, $projName, 'jim');
+$projectManager->updateRepository($repo, 'jim');
 clearstatcache();
 
 // test the result

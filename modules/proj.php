@@ -151,8 +151,7 @@ class ProjModule extends Module
 		{
 			return false;
 		}
-		$conflicts = $this->projectManager->updateRepository($this->team,
-		                                                     $this->projectName,
+		$conflicts = $this->projectManager->updateRepository($repo,
 		                                                     $currentUser);
 		$output->setOutput('merges', $conflicts);
 		$output->setOutput('commit', $repo->getCurrentRevision());

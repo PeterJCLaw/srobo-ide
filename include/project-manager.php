@@ -120,10 +120,8 @@ class ProjectManager
 		}
 	}
 
-	public function updateRepository($team, $project, $user)
+	public function updateRepository($userRepo, $user)
 	{
-		// grab the repo
-		$userRepo = $this->getUserRepository($team, $project, $user);
 		// grab unstaged changes
 		$unstaged = $userRepo->unstagedChanges();
 	//	echo 'unstaged: ';
