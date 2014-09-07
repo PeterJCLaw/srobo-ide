@@ -36,12 +36,20 @@ pcntl_signal(SIGINT,  "sig_handler");
 $workPath = tmpdir(null, 'ide-test-');
 
 $single = false;
+$full_output = false;
 if ($test_restrict != null)
 {
 	$tmp = array_diff($test_restrict, array('-s', '--single'));
 	if (count($tmp) != count($test_restrict))
 	{
 		$single = true;
+		$full_output = true;
+		$test_restrict = $tmp;
+	}
+	$tmp = array_diff($test_restrict, array('--full-output'));
+	if (count($tmp) != count($test_restrict))
+	{
+		$full_output = true;
 		$test_restrict = $tmp;
 	}
 }
@@ -117,7 +125,7 @@ foreach ($sched as $value)
 			++$fails;
 			echo "FAIL    $tn\n";
 			$lines = explode("\n", $output);
-			if (count($lines) > 10 && !$single)
+			if (count($lines) > 10 && !$full_output)
 			{
 				$tmpfile = tempnam("/tmp", "ide-test-");
 				file_put_contents($tmpfile, "$output\n");

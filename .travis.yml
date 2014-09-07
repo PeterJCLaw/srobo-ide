@@ -10,4 +10,4 @@ install:
   - npm install jasmine-node
 before_script:
   - make dev
-script: ./run-tests
+script: ./run-tests --full-output
