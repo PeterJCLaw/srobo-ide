@@ -150,7 +150,12 @@ function file_lock($lockfile)
 	{
 		$gotLock = flock( $resource, LOCK_EX | LOCK_NB );
 		ide_log(LOG_DEBUG, "flock(LOCK_EX | LOCK_NB) returned: $gotLock.");
-		usleep(10000); // 10 milliseconds
+		if (!$gotLock)
+		{
+			// If we didn't get the lock, pause to give whoever is holding
+			// it time to do whatever they're doing before we try again
+			usleep(10000); // 10 milliseconds
+		}
 	}
 	while ( microtime(true) < $end && !$gotLock );
 
