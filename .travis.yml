@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get update -qq
 install:
   # PHP-CLI, Git & NodeJS are pre-installed, no need to include them
-  - sudo apt-get install -y pylint
+  - sudo apt-get install -y pylint python-poster
   - npm install jasmine-node
 before_script:
   - make dev

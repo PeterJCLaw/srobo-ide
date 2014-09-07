@@ -28,6 +28,7 @@ Dependencies:
  * Git
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
+ * python-poster # for running HTTP tests.
  * pylint  # syntax checker
  * php-ldap
  * NodeJS         # for running JS tests
