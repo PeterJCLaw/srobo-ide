@@ -41,8 +41,7 @@ $(_FOLDERS):
 	mkdir -p -m 777 $@
 
 submodules:
-	git submodule init
-	git submodule update
+	git submodule update --init --recursive
 
 srobo-ide.deb: metapackages/deb/srobo-ide.deb
 	cp metapackages/deb/srobo-ide.deb .
