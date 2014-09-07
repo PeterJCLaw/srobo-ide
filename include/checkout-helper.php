@@ -8,7 +8,7 @@ class CheckoutHelper
 	private $repo;
 	private $team;
 
-	public function __construct(GitRepository $repo, $team)
+	public function __construct(ReadOnlyGitRepository $repo, $team)
 	{
 		$this->repo = $repo;
 		$this->team = $team;

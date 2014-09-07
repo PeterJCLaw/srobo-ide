@@ -87,7 +87,7 @@ class ProjectManager
 	public function getMasterRepository($team, $project)
 	{
 		$path = $this->getMasterRepoPath($team, $project);
-		return GitRepository::GetOrCreate($path);
+		return ReadOnlyGitRepository::GetOrCreate($path);
 	}
 
 	public function getUserRepository($team, $project, $user)
