@@ -4,9 +4,8 @@ php:
   - 5.4
 before_install:
   - sudo apt-get update -qq
-  - make deb submodules
 install:
-  - sudo dpkg -i srobo-ide.deb
+  - sudo apt-get install -y git-core, pylint, php5-cli, nodejs
 before_script:
   - make dev
 script: ./run-tests
