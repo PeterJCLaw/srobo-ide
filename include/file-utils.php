@@ -137,7 +137,6 @@ function file_lock($lockfile)
 {
 	ide_log(LOG_INFO, "Creating a lock on '$lockfile'.");
 	$resource = fopen( $lockfile, "w" );
-	$ret = true;
 
 	$maxWait = Configuration::getInstance()->getConfig('lock.max_wait');
 	$maxWait /= 1000; // convert milliseconds to seconds
@@ -146,22 +145,23 @@ function file_lock($lockfile)
 	$end = microtime(true) + $maxWait;
 
 	// loop until we get a lock or maxWait time has passed
+	$gotLock = false;
 	do
 	{
-		$ret = flock( $resource, LOCK_EX | LOCK_NB );
-		ide_log(LOG_DEBUG, "flock(LOCK_EX | LOCK_NB) returned: $ret.");
+		$gotLock = flock( $resource, LOCK_EX | LOCK_NB );
+		ide_log(LOG_DEBUG, "flock(LOCK_EX | LOCK_NB) returned: $gotLock.");
 		usleep(10000); // 10 milliseconds
 	}
-	while ( microtime(true) < $end && !$ret );
+	while ( microtime(true) < $end && !$gotLock );
 
-	if ($ret !== true)
+	if ($gotLock !== true)
 	{
 		ide_log(LOG_ERR, "flock(LOCK_EX) failed to get lock on '$resource:$lockfile'.");
 		throw new Exception("Failed to get a lock on '$lockfile'.", E_INTERNAL_ERROR);
 	}
 
-	$ret = fwrite( $resource, getmypid() );
-	ide_log(LOG_DEBUG, "fwrite(pid) returned: $ret.");
+	$bytesWritten = fwrite( $resource, getmypid() );
+	ide_log(LOG_DEBUG, "fwrite(pid) returned: $bytesWritten.");
 
 	ide_log(LOG_INFO, "Got a lock on '$lockfile': '$resource'.");
 	return $resource;
@@ -172,16 +172,16 @@ function file_unlock($resource)
 	/* Free our lock on the file - manually since PHP 5.3.2 */
 	ide_log(LOG_INFO, "Dropping lock on '$resource'.");
 
-	$ret = flock($resource, LOCK_UN);
-	ide_log(LOG_DEBUG, "flock(LOCK_UN) returned: $ret.");
-	if ($ret !== true)
+	$releasedLock = flock($resource, LOCK_UN);
+	ide_log(LOG_DEBUG, "flock(LOCK_UN) returned: $releasedLock.");
+	if ($releasedLock !== true)
 	{
 		ide_log(LOG_ERR, "flock(LOCK_UN) failed to release lock on '$resource'.");
 	}
 
-	$ret = fclose( $resource );
-	ide_log(LOG_DEBUG, "fclose returned: $ret.");
+	$closed = fclose( $resource );
+	ide_log(LOG_DEBUG, "fclose returned: $closed.");
 
 	ide_log(LOG_INFO, "Closed '$resource'.");
-	return $ret;
+	return $closed;
 }
