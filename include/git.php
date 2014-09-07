@@ -118,7 +118,7 @@ class ReadOnlyGitRepository
 
 		/* Acquire an exclusive lock on the git repository */
 		$lockfile = "$this->git_path/cyanide-lock";
-		$this->lock_fd = LockHandler::getInstance()->lock( $lockfile, "w" );
+		$this->lock_fd = LockHandler::getInstance()->lock($lockfile);
 	}
 
 	public function __destruct()
