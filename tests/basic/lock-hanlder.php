@@ -28,3 +28,11 @@ test_equal($lh->handleCount(), 1, 'Getting another lock on the file should be st
 $lh->unlock($file);
 
 test_equal($lh->handleCount(), 0, 'Releasing third lock on the file should remove the lock completely');
+
+test_exception(function() use($lh, $file) {
+    $lh->unlock($file);
+}, E_INTERNAL_ERROR, "Should error about trying to unlock file (by name) not already locked");
+
+test_exception(function() use($lh, $lock3) {
+    $lh->unlock($lock3);
+}, E_INTERNAL_ERROR, "Should error about trying to unlock file (by resource) not already locked");

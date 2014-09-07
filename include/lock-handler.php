@@ -65,7 +65,10 @@ class LockHandler
 		else if (is_string($resource))
 		{
 			$lockfile = $resource;
-			$wrapper = @$this->handles[$lockfile];
+			if (isset($this->handles[$lockfile]))
+			{
+				$wrapper = $this->handles[$lockfile];
+			}
 		}
 
 		if ($wrapper === null)
