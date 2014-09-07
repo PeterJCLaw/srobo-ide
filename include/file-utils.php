@@ -133,10 +133,24 @@ function move_uploaded_file_id($id, $move_to_base)
 	return $move_to_base;
 }
 
-function file_lock($lockfile)
+function file_lock($lockfile, $exclusive = true)
 {
-	ide_log(LOG_INFO, "Creating a lock on '$lockfile'.");
-	$resource = fopen( $lockfile, "w" );
+	if ($exclusive)
+	{
+		$open_mode = 'w';
+		$lock_mode = LOCK_EX;
+		$lm_label = 'LOCK_EX';
+		$comment = 'n ';
+	}
+	else
+	{
+		$open_mode = 'r';
+		$lock_mode = LOCK_SH;
+		$lm_label = 'LOCK_SH';
+		$comment = ' non-';
+	}
+	ide_log(LOG_INFO, "Creating a${comment}exclusive lock on '$lockfile'.");
+	$resource = fopen( $lockfile, $open_mode );
 
 	$maxWait = Configuration::getInstance()->getConfig('lock.max_wait');
 	$maxWait /= 1000; // convert milliseconds to seconds
@@ -148,8 +162,8 @@ function file_lock($lockfile)
 	$gotLock = false;
 	do
 	{
-		$gotLock = flock( $resource, LOCK_EX | LOCK_NB );
-		ide_log(LOG_DEBUG, "flock(LOCK_EX | LOCK_NB) returned: $gotLock.");
+		$gotLock = flock( $resource, $lock_mode | LOCK_NB );
+		ide_log(LOG_DEBUG, "flock($lm_label | LOCK_NB) returned: $gotLock.");
 		if (!$gotLock)
 		{
 			// If we didn't get the lock, pause to give whoever is holding
@@ -161,14 +175,14 @@ function file_lock($lockfile)
 
 	if ($gotLock !== true)
 	{
-		ide_log(LOG_ERR, "flock(LOCK_EX) failed to get lock on '$resource:$lockfile'.");
+		ide_log(LOG_ERR, "flock($lm_label) failed to get lock on '$resource:$lockfile'.");
 		throw new Exception("Failed to get a lock on '$lockfile'.", E_INTERNAL_ERROR);
 	}
 
 	$bytesWritten = fwrite( $resource, getmypid() );
 	ide_log(LOG_DEBUG, "fwrite(pid) returned: $bytesWritten.");
 
-	ide_log(LOG_INFO, "Got a lock on '$lockfile': '$resource'.");
+	ide_log(LOG_INFO, "Got a${comment}exclusive lock on '$lockfile': '$resource'.");
 	return $resource;
 }
 
