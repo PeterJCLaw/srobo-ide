@@ -110,6 +110,7 @@ class CheckoutHelper
 
 	/**
 	 * Creates a servable zip file from the given user code.
+	 * @param zipBuilder: the path to the program which will create the zip.
 	 * @param userCodeDir: the location of the users code to include in the zip.
 	 * @param destFile: the location to save the resulting zip in.
 	 * @returns: Whether or not the zip was successfully created.
