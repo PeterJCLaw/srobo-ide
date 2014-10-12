@@ -13,6 +13,7 @@ section('Setup');
 
 subsection('Setup: User Code');
 
+$team = 'ABC';
 $projectName = 'team-repo';
 
 $teamRepo = GitRepository::createRepository($test_repos_path.'/'.$projectName);
@@ -95,7 +96,7 @@ section('basic test');
 
 $config->override('lib_robot.team', array());
 
-$helper = new CheckoutHelper($teamRepo, 'ABC');
+$helper = new CheckoutHelper($teamRepo, $team);
 
 $zipPath = $test_zip_path.'/robot.zip';
 test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
@@ -110,9 +111,9 @@ section('per-team libRobot testing');
 cleanCreate($test_zip_path);
 
 subsection('old revision');
-$config->override('lib_robot.team', array('ABC' => $oldLibRobotHash));
+$config->override('lib_robot.team', array($team => $oldLibRobotHash));
 
-$helper = new CheckoutHelper($teamRepo, 'ABC');
+$helper = new CheckoutHelper($teamRepo, $team);
 
 $zipPath = $test_zip_path.'/per-team-libRobot-test.zip';
 test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
@@ -123,9 +124,9 @@ test_true($zip->locateName('b-file') === false, "Should not find second file 'b-
 
 subsection('non-existent revision');
 
-$config->override('lib_robot.team', array('ABC' => 'bacon'));
+$config->override('lib_robot.team', array($team => 'bacon'));
 
-$helper = new CheckoutHelper($teamRepo, 'ABC');
+$helper = new CheckoutHelper($teamRepo, $team);
 
 $zipPath = $test_zip_path.'/per-team-libRobot-bad-rev.zip';
 test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
@@ -142,9 +143,9 @@ file_put_contents($filePath, "#!/bin/false");
 $libRobotRepo->stage('make-zip');
 $libRobotRepo->commit('Make make-zip fail', 'John Smith', 'JS@bacon.net');
 $failingLibRobotHash = $libRobotRepo->getCurrentRevision();
-$config->override('lib_robot.team', array('ABC' => $failingLibRobotHash));
+$config->override('lib_robot.team', array($team => $failingLibRobotHash));
 
-$helper = new CheckoutHelper($teamRepo, 'ABC');
+$helper = new CheckoutHelper($teamRepo, $team);
 
 $zipPath = $test_zip_path.'/creation-should-fail.zip';
 
