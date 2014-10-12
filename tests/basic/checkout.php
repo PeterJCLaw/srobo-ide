@@ -47,13 +47,14 @@ $libRobotRepo = GitRepository::GetOrCreate($libRobotPath);
 $filePath = $libRobotPath.'/make-zip';
 
 // our local dummy zip maker -- makes this test not reliant on pyenv.
-// usage: $script USER_CODE_DIR OUTPUT_ARCHIVE
+// usage: $script TLA USER_CODE_DIR OUTPUT_ARCHIVE
 $makeZipData = <<<MAKEZIP
 #!/bin/sh
-echo $0 $1 $2
+echo $0 $1 $2 $3
 cd `dirname $0`     # TODO: remove this requirement -- we should run from the right folder
-cp -r $1 user
-zip -r $2 *
+echo -n $1 > team-id
+cp -r $2 user
+zip -r $3 *
 MAKEZIP;
 file_put_contents($filePath, $makeZipData.PHP_EOL);
 chmod($filePath, 0755);
@@ -79,13 +80,14 @@ function assertZippedFileContent($zip, $filePath, $content, $message)
 	test_equal($actualContent, $content, "File '$filePath' contained wrong content: $message.");
 }
 
-function validateZip($zipPath, $project, $hash, $robotData)
+function validateZip($zipPath, $team, $project, $hash, $robotData)
 {
 	test_existent($zipPath, "Zip should exist at target location after creating it.");
 
 	$zip = new ZipArchive;
 	test_true($zip->open($zipPath), "Failed to open the created zip.");
 
+	assertZippedFileContent($zip, 'team-id', $team, 'team id');
 	assertZippedFileContent($zip, 'user/.user-rev', $project.' @ '.$hash, 'user code revision');
 	assertZippedFileContent($zip, 'user/robot.py', $robotData, 'user code');
 
@@ -100,11 +102,11 @@ $helper = new CheckoutHelper($teamRepo, $team);
 
 $zipPath = $test_zip_path.'/robot.zip';
 test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
-validateZip($zipPath, $projectName, $hash1, $robotData1);
+validateZip($zipPath, $team, $projectName, $hash1, $robotData1);
 
 $zipPath2 = $test_zip_path.'/robot2.zip';
 test_true($helper->buildZipFile($zipPath2, $hash2), "Failed to build zip");
-validateZip($zipPath2, $projectName, $hash2, $robotData2);
+validateZip($zipPath2, $team, $projectName, $hash2, $robotData2);
 
 section('per-team libRobot testing');
 
@@ -118,7 +120,7 @@ $helper = new CheckoutHelper($teamRepo, $team);
 $zipPath = $test_zip_path.'/per-team-libRobot-test.zip';
 test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
 
-$zip = validateZip($zipPath, $projectName, $hash1, $robotData1);
+$zip = validateZip($zipPath, $team, $projectName, $hash1, $robotData1);
 // validate that this the old revision by ensuring that the second file isn't there.
 test_true($zip->locateName('b-file') === false, "Should not find second file 'b-file' in the archive when it's based on the older libRobot.");
 
@@ -131,7 +133,7 @@ $helper = new CheckoutHelper($teamRepo, $team);
 $zipPath = $test_zip_path.'/per-team-libRobot-bad-rev.zip';
 test_true($helper->buildZipFile($zipPath, $hash1), "Failed to build zip");
 
-$zip = validateZip($zipPath, $projectName, $hash1, $robotData1);
+$zip = validateZip($zipPath, $team, $projectName, $hash1, $robotData1);
 // validate that this the old revision by ensuring that the second file isn't there.
 test_true($zip->locateName('b-file') !== false, "Failed to find file 'b-file' in the archive -- bad revisions should fall back to the default.");
 

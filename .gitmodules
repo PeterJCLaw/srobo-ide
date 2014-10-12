@@ -1,9 +1,6 @@
 [submodule "lint-reference"]
 	path = lint-reference
 	url = git://srobo.org/pyenv-dummy.git
-[submodule "pyenv"]
-	path = pyenv
-	url = git://srobo.org/pyenv.git
 [submodule "include/pipebot"]
 	path = include/pipebot
 	url = git://srobo.org/pipebot.git
@@ -13,3 +10,6 @@
 [submodule "tests/js/jasmine-data-provider"]
 	path = tests/js/jasmine-data-provider
 	url = git://github.com/PeterJCLaw/jasmine-data-provider.git
+[submodule "zip-packager"]
+	path = zip-packager
+	url = git://srobo.org/brain/zip-packager.git

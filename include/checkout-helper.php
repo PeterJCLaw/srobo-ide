@@ -43,7 +43,7 @@ class CheckoutHelper
 		// so that we can easily track which teams have been served what
 		ide_log(LOG_INFO, "Creating ZipFile for team '$this->team' based on lib_robot '$libRobotHash' and team repo '$projName' at '$revision'.");
 
-		$created = self::createZip($zipBuilder, $userTmpDir, $destFile);
+		$created = self::createZip($zipBuilder, $this->team, $userTmpDir, $destFile);
 
 		// remove our temporary folder so that we don't fill up /tmp
 		delete_recursive($tmpDir);
@@ -111,16 +111,18 @@ class CheckoutHelper
 	/**
 	 * Creates a servable zip file from the given user code.
 	 * @param zipBuilder: the path to the program which will create the zip.
+	 * @param team: the team the zip is being created for.
 	 * @param userCodeDir: the location of the users code to include in the zip.
 	 * @param destFile: the location to save the resulting zip in.
 	 * @returns: Whether or not the zip was successfully created.
 	 */
-	private static function createZip($zipBuilder, $userCodeDir, $destFile)
+	private static function createZip($zipBuilder, $team, $userCodeDir, $destFile)
 	{
+		$s_team = escapeshellarg($team);
 		$s_userCodeDir = escapeshellarg($userCodeDir);
 		$s_destFile = escapeshellarg($destFile);
 		$s_builder = escapeshellarg($zipBuilder);
-		$ret = proc_exec("$s_builder $s_userCodeDir $s_destFile");
+		$ret = proc_exec("$s_builder $s_team $s_userCodeDir $s_destFile");
 		return $ret !== false;
 	}
 }
