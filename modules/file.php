@@ -428,7 +428,7 @@ class FileModule extends Module
 			$dummy_copy = $working.'/'.basename($dummy);
 			echo "dummy copy\n";
 			var_dump($dummy_copy);
-			copy($dummy, $dummy_copy);
+			copy_recursive($dummy, $dummy_copy);
 
 			$errors = array();
 
