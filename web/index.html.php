@@ -360,7 +360,7 @@
 			</p>
 			<ul class="info">
 				<li><img src="web/images/icons/tick.png" alt="Tick" /> The change has been accepted and is now visible on the website.</li>
-				<li><img src="web/images/icons/cross.png" alt="Cross" /> The change has been rejected. Please contact us if you would like to know why.</li>
+				<li><img src="web/images/icons/cross.png" alt="Cross" /> The change has been rejected. Please see the "Team Status Feedback" thread in the <a href="<?=$root_url ?>/forum/">forums</a> to see why.</li>
 			</ul>
 			<table>
 				<tr id="team-status-name">
