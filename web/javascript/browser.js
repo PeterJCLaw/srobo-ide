@@ -218,7 +218,15 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 		} else if (this.type == 'isTag') {
 			warn = 'Tag '+warn;
 		} else {
-			warn += ' in "'+this.newDirectory.substr(1)+'"';
+			var where = '';
+			var dirName = this.newDirectory.substr(1);
+			if (dirName.length == 0) {
+				where = 'project root';
+			} else {
+				where = '"'  + dirName + '"';
+			}
+
+			warn += ' in ' + where;
 		}
 
 		getElement("browser-status").innerHTML = warn+"!";
