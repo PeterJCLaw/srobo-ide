@@ -256,6 +256,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		}
 		this._isNew = false;
 		this.rev = nodes.commit;
+		this._get_revisions();
 		getElement("check-syntax").disabled = !this._can_check_syntax();
 		getElement("edit-diff").disabled = false;
 		this._update_contents();
@@ -482,6 +483,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	};
 
 	this._show_contents = function() {
+		this._receive_revisions({log: []});
 		this._get_revisions();
 
 		this._iea.setSession( this._session );
@@ -565,7 +567,6 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 	this._get_revisions = function() {
 		logDebug("retrieving file history");
-		this._receive_revisions({log: []});
 		// Don't even try to get revisions if we know that it's a new file
 		// or if it's not loaded yet (we'll be called again once it is)
 		if (this._isNew || !this._loaded) {
