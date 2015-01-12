@@ -35,10 +35,10 @@ test_true(is_dir($repopath), "created repo did not exist");
 $goodData = 'import sr.robot as sr
 
 R = sr.Robot()
-print R.usbkey
-print R.startfifo
-print R.mode
-print R.zone
+print(R.usbkey)
+print(R.startfifo)
+print(R.mode)
+print(R.zone)
 ';
 
 $input->setInput('path', 'robot.py');

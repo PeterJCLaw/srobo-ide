@@ -6,8 +6,12 @@ before_install:
   - sudo apt-get update -qq
 install:
   # PHP-CLI, Git & NodeJS are pre-installed, no need to include them
-  - sudo apt-get install -y pylint python-poster
+  # PyYaml needed for the real 'make-zip' script
+  - sudo apt-get install -y python-poster python-yaml
+  # Pylint from pip to ensure the same version as deployed
+  - sudo pip install pylint==1.2.0
   - npm install jasmine-node
 before_script:
+  - pylint --version
   - make dev
 script: ./run-tests --full-output
