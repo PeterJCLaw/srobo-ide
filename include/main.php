@@ -7,6 +7,7 @@ require_once('include/config.php');
 require_once('include/input.php');
 require_once('include/logger.php');
 require_once('include/logger/file-emitter.php');
+require_once('include/logger/syslog-emitter.php');
 
 function ide_log_exception($e, $message = null)
 {

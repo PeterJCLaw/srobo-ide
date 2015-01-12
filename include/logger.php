@@ -23,11 +23,27 @@ class Logger
 			$config = Configuration::getInstance();
 
 			$location = $config->getConfig('log.location');
-			$emitter  = new FileEmitter($location);
+			$emitter_class = $config->getConfig('log.emitter');
+			if (!class_exists($emitter_class))
+			{
+				$emitter_class = 'FileEmitter';
+				$location = '/tmp/ide-log';
+				$bad_emitter = true;
+			}
+			$emitter  = new $emitter_class($location);
 
 			$level = $config->getConfig('log.level');
 
 			self::$instance = new Logger($emitter, $level);
+
+			// must do this after assigning self::$instance
+			if ($bad_emitter)
+			{
+				$bad_class = $config->getConfig('log.emitter');
+				trigger_error("Invalid log emitter class '$bad_class' provided."
+				            . "Falling back to '$emitter_class' (location: '$location')."
+				            , E_WARNING);
+			}
 		}
 		return self::$instance;
 	}
