@@ -1,14 +1,21 @@
 <?php
 
+class TestLogger extends Logger
+{
+	public function __construct($level)
+	{
+		parent::__construct(null, $level);
+	}
+}
+
 function test_level($logLevel, $data)
 {
-	$config = Configuration::getInstance();
-	$config->override('log.level', $logLevel);
+	$logger = new TestLogger($logLevel);
 	foreach ($data as $level => $shouldLog)
 	{
 		$levelName = Logger::$names[$level];
 		$logLevelName = Logger::$names[$logLevel];
-		test_equal(Logger::isLogging($level), $shouldLog, "Logging '$levelName' item with config at '$logLevelName'");
+		test_equal($logger->isLogging($level), $shouldLog, "Logging '$levelName' item with config at '$logLevelName'");
 	}
 }
 

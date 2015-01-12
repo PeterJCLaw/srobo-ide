@@ -17,7 +17,7 @@ function ide_log($level, $message)
 	if (IN_TESTS)
 		echo "$level|$message\n";
 	else
-		Logger::log($level, $message);
+		Logger::getInstance()->log($level, $message);
 }
 
 function parts_for_output($exception)

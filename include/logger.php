@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A (static) helper class that contains logging related functionality.
+ * A helper class that contains logging related functionality.
  */
 class Logger
 {
@@ -11,19 +11,43 @@ class Logger
 	                             LOG_WARNING => 'warning',
 	                             LOG_ERR => 'error');
 
-	public static function log($level, $message)
+	private static $instance = null;
+
+	private $location;
+	private $level;
+	private $file;
+
+	public static function getInstance()
 	{
-		if (!self::isLogging($level))
-			return;
-		static $file = null;
-		if ($file === null)
+		if (self::$instance === null)
 		{
-			$path = Configuration::getInstance()->getConfig('log.location');
-			$file = fopen($path, 'a');
+			$config = Configuration::getInstance();
+
+			$location = $config->getConfig('log.location');
+			$level    = $config->getConfig('log.level');
+
+			self::$instance = new Logger($location, $level);
+		}
+		return self::$instance;
+	}
+
+	protected function __construct($location, $level)
+	{
+		$this->location = $location;
+		$this->level = $level;
+	}
+
+	public function log($level, $message)
+	{
+		if (!$this->isLogging($level))
+			return;
+		if ($this->file === null)
+		{
+			$this->file = fopen($this->location, 'a');
 		}
 		$prefix = self::locationData($level);
-		fwrite($file, "[$prefix] $message\n");
-		fflush($file);
+		fwrite($this->file, "[$prefix] $message\n");
+		fflush($this->file);
 	}
 
 	private static function locationData($level)
@@ -54,13 +78,12 @@ class Logger
 	}
 
 	/**
-	 * Is the IDE logging a given level?
+	 * Is this logger logging a given level?
 	 * @param level: The level to test.
 	 * @returns: (bool) Whether or not that level is being logged
 	 */
-	public static function isLogging($level)
+	public function isLogging($level)
 	{
-		$loggingLevel = Configuration::getInstance()->getConfig('log.level');
-		return $loggingLevel >= $level;
+		return $this->level >= $level;
 	}
 }
