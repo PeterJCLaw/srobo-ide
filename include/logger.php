@@ -13,9 +13,8 @@ class Logger
 
 	private static $instance = null;
 
-	private $location;
+	private $emitter;
 	private $level;
-	private $file;
 
 	public static function getInstance()
 	{
@@ -24,16 +23,18 @@ class Logger
 			$config = Configuration::getInstance();
 
 			$location = $config->getConfig('log.location');
-			$level    = $config->getConfig('log.level');
+			$emitter  = new FileEmitter($location);
 
-			self::$instance = new Logger($location, $level);
+			$level = $config->getConfig('log.level');
+
+			self::$instance = new Logger($emitter, $level);
 		}
 		return self::$instance;
 	}
 
-	protected function __construct($location, $level)
+	protected function __construct($emitter, $level)
 	{
-		$this->location = $location;
+		$this->emitter = $emitter;
 		$this->level = $level;
 	}
 
@@ -41,13 +42,7 @@ class Logger
 	{
 		if (!$this->isLogging($level))
 			return;
-		if ($this->file === null)
-		{
-			$this->file = fopen($this->location, 'a');
-		}
-		$prefix = self::locationData($level);
-		fwrite($this->file, "[$prefix] $message\n");
-		fflush($this->file);
+		$this->emitter->emit($level, $message);
 	}
 
 	private static function locationData($level)

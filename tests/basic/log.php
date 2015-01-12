@@ -63,13 +63,30 @@ test_level(LOG_ERR,	// errors only
 section("Test Output");
 $dest = $testWorkPath . "out.log";
 
-$logger = new TestLogger($dest, LOG_DEBUG);
+class FakeEmitter
+{
+	public $hasEmitted;
+	public $lastLevel;
+	public $lastMessage;
+
+	public function emit($level, $message)
+	{
+		$this->hasEmitted = true;
+		$this->lastLevel = $level;
+		$this->lastMessage = $message;
+	}
+}
+
+$emitter = new FakeEmitter();
+$logger = new TestLogger($emitter, LOG_DEBUG);
 
 $msg = "bacon";
 $logger->log(LOG_INFO, $msg);
 
-test_existent($dest, "Should have created output log");
+test_true($emitter->hasEmitted, "Should have called the emitter");
 
-$content = file_get_contents($dest);
+$content = $emitter->lastMessage;
 $wasLogged = strpos($content, $msg) !== FALSE;
 test_true($wasLogged, "Failed to log '$msg', got: '$content'.");
+
+test_equal(LOG_INFO, $emitter->lastLevel, "Wrong log level emitted");
