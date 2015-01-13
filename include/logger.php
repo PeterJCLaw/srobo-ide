@@ -24,6 +24,7 @@ class Logger
 
 			$location = $config->getConfig('log.location');
 			$emitter_class = $config->getConfig('log.emitter');
+			$bad_emitter = false;
 			if (!class_exists($emitter_class))
 			{
 				$emitter_class = 'FileEmitter';
