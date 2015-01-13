@@ -8,6 +8,12 @@ class FileEmitter
 	private $file;
 	private $location;
 
+	/**
+	 * Create a new instance.
+	 * @param location: The path to a writable file to output the log
+	 *                  lines into. Each emit() call will be separated
+	 *                  by a 'PHP_EOL' character.
+	 */
 	public function __construct($location)
 	{
 		$this->location = $location;

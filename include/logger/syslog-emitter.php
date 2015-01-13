@@ -5,6 +5,11 @@
  */
 class SyslogEmitter
 {
+	/**
+	 * Create a new instance.
+	 * @param facility: The syslog facility to use. One of PHP's LOG_
+	 *                  constants suitable for passing to 'openlog'.
+	 */
 	public function __construct($facility)
 	{
 		openlog("", LOG_ODELAY, $facility);
