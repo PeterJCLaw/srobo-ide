@@ -5,9 +5,8 @@
  */
 class SyslogEmitter
 {
-	public function __construct($facility_name)
+	public function __construct($facility)
 	{
-		$facility = constant($facility_name);
 		openlog("", LOG_ODELAY, $facility);
 	}
 
