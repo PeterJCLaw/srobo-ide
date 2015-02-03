@@ -59,7 +59,8 @@ class Logger
 	{
 		if (!$this->isLogging($level))
 			return;
-		$this->emitter->emit($level, $message);
+		$prefix = self::locationData($level);
+		$this->emitter->emit($level, "[$prefix] $message");
 	}
 
 	private static function locationData($level)
