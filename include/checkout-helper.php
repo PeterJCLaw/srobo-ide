@@ -100,9 +100,16 @@ class CheckoutHelper
 
 		$path = $tmpDir.'/libRobot';
 		$libRobotRepo = GitRepository::cloneRepository($libRobotPath.'/.git', $path);
-		if ($hash !== null && $libRobotRepo->commitExists($hash))
+		if ($hash !== null)
 		{
-			$libRobotRepo->checkoutRepo($hash);
+			if ($libRobotRepo->commitExists($hash))
+			{
+				$libRobotRepo->checkoutRepo($hash);
+			}
+			else
+			{
+				ide_log(LOG_ERR, "Unable to checkout lib_robot '$hash' -- falling back to HEAD.");
+			}
 		}
 		$path .= '/'.$archiveScript;
 		return $path;
