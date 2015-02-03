@@ -25,6 +25,7 @@ You can run tests on CyanIDE by running `./run-tests`.
 Dependencies:
  * A web server
  * PHP 5.3.3
+ * PHP-GD # for uploaded image resizing
  * Git
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
@@ -35,7 +36,7 @@ Dependencies:
  * Jasmine Node   # for running JS tests
 
 In Ubuntu these can be achieved by installing the following packages:
- apache2 php5 doxygen php5-cli git-core pylint nodejs
+ apache2 php5 php5-gd doxygen php5-cli git-core pylint nodejs
 
 Jasmine Node can be installed via npm:
  npm install jasmine-node -g
