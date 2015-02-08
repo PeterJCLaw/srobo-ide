@@ -60,11 +60,6 @@
 	$javaScripts[] = "web/javascript/usage-sorter.js";
 	$javaScripts[] = "web/javascript/validation.js";
 
-	// external editor component - ACE - http://ace.ajax.org
-	$javaScripts[] = "web/javascript/ace/src/ace.js";
-	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
-	$javaScripts[] = "web/javascript/ace/src/ext-modelist.js";
-
 	// external selector box - jquery chosen
 	$javaScripts[] = "web/javascript/chosen.jquery.min.js";
 
@@ -72,6 +67,15 @@
 
 	// external jQuery via google's CDN -- after all the stylesheets
 	js_tag('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+
+	// external editor component - ACE - http://ace.ajax.org
+	// Keep ACE itself separate from our combined JS -- it uses its own
+	// location to reference things it dynamically loads
+	js_tag('web/javascript/ace/src/ace.js');
+
+	// It seems OK to fold the extensions into our combined file though
+	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
+	$javaScripts[] = "web/javascript/ace/src/ext-modelist.js";
 
 	output_statics($javaScripts, 'js_tag', 'web/cache/combined.js');
 
