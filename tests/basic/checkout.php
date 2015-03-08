@@ -13,10 +13,18 @@ section('Setup');
 
 subsection('Setup: User Code');
 
+function make_repo($dir) {
+	cleanCreate($dir);
+	$s_dir = escapeshellarg($dir);
+	shell_exec("cd $s_dir && git init");
+	$repo = GitRepository::GetOrCreate($dir);
+	return $repo;
+}
+
 $team = 'ABC';
 $projectName = 'team-repo';
 
-$teamRepo = GitRepository::createRepository($test_repos_path.'/'.$projectName);
+$teamRepo = make_repo($test_repos_path.'/'.$projectName);
 $filePath = $teamRepo->workingPath().'/robot.py';
 
 $robotData1 = "print 'I am a robot.'";
@@ -36,14 +44,11 @@ $hash2 = $teamRepo->getCurrentRevision();
 subsection('Setup: LibRobot');
 
 $libRobotPath = $test_repos_path.'/libRobot';
-cleanCreate($libRobotPath);
 
 $config->override('lib_robot.dir', $libRobotPath);
 $config->override('lib_robot.archive_script', 'make-zip');
 
-$s_libRobotPath = escapeshellarg($libRobotPath);
-shell_exec("cd $s_libRobotPath && git init");
-$libRobotRepo = GitRepository::GetOrCreate($libRobotPath);
+$libRobotRepo = make_repo($libRobotPath);
 $filePath = $libRobotPath.'/make-zip';
 
 // our local dummy zip maker -- makes this test not reliant on pyenv.
