@@ -24,7 +24,7 @@ test_true($mm->moduleExists("proj"), "proj module does not exist");
 
 $repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/master/" . $input->getInput("project") . ".git";
 
-GitRepository::createRepository($repopath, true);
+GitRepository::createBareRepository($repopath);
 test_existent($repopath, "must have created repo to be deleted");
 
 $proj = $mm->getModule("proj");
@@ -37,7 +37,7 @@ $del();
 test_nonexistent($repopath, "deleted repo existed");
 
 // Prove that it's admin-only
-GitRepository::createRepository($repopath, true);
+GitRepository::createBareRepository($repopath);
 test_existent($repopath, "must have created repo to be deleted");
 
 $config->override("user.default.is_admin", false);

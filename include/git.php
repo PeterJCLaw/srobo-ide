@@ -470,37 +470,18 @@ class GitRepository extends ReadOnlyGitRepository
 	/**
 	 * Creates a git repository on a specified path, fails if the path exists
 	 */
-	public static function createRepository($path, $bare = false, $source = null)
+	public static function createBareRepository($path)
 	{
 		self::checkPath($path);
-		ide_log(LOG_INFO, "Creating a repository at $path (" . ($source ? "cloned" : "initial") . ")");
+		ide_log(LOG_INFO, "Creating a bare repository at $path");
 		if (!is_dir($path))
 		{
 			mkdir_full($path);
 		}
 
-		$s_path   = escapeshellarg($path);
-		$s_bare   = ($bare ? ' --bare' : '');
-
-		// Clone an existing master repo
-		if ($source !== null)
-		{
-			if (is_object($source))
-			{
-				$source = $source->gitPath();
-			}
-
-			$s_source = escapeshellarg($source);
-			self::gitExecuteInternal(null, 'clone --shared --quiet'.$s_bare.' '.$s_source.' '. $s_path);
-			self::gitExecuteInternal($path, 'config core.sharedRepository all');
-			self::gitExecuteInternal($path, 'config receive.denyNonFastForwards true');
-		}
 		// Make a shiny new master repo
-		else
-		{
-			self::gitExecuteInternal($path, 'init --shared=all' . $s_bare);
-			self::addInitialCommit($path);
-		}
+		self::gitExecuteInternal($path, 'init --shared=all  --bare');
+		self::addInitialCommit($path);
 
 		return self::GetOrCreate($path);
 	}

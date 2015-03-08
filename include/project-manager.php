@@ -190,7 +190,7 @@ class ProjectManager
 			return FALSE;
 		}
 		$path = $this->getMasterRepoPath($team, $project);
-		$repo = GitRepository::createRepository($path, true);
+		$repo = GitRepository::createBareRepository($path);
 		ide_log(LOG_INFO, "Created a project $project for team $team");
 		return $repo;
 	}
