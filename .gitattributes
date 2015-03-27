@@ -1,0 +1,5 @@
+web/css/chosen.min.css linguist-vendored
+
+web/javascript/chosen.jquery.min.js linguist-vendored
+web/javascript/json2.js linguist-vendored
+web/javascript/MochiKit.js linguist-vendored
