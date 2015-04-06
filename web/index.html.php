@@ -149,6 +149,11 @@
 			<li>
 				<a href="<?=$root_url ?>/tickets/" title="Get your ticket now!">Ticket System</a>
 			</li>
+<?php endif;
+      if ($config->getConfig('gui.comp_team_info_link')): ?>
+			<li>
+				<a href="<?=$root_url ?>/comp/team" title="Get live information about your team's matches and scores at the competition">Competition Info</a>
+			</li>
 <?php endif ?>
 			<li>
 				<a href="<?=$root_url ?>/forum/" title="Meet other competitors, get help from mentors and share ideas in the forums">Forum</a>
