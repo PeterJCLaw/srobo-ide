@@ -1,5 +1,92 @@
 <?php
 
+class ProcUtilsMonitor
+{
+	/**
+	 * List process handles and information about them.
+	 */
+	private $processes = array();
+
+	public static function getInstance()
+	{
+		static $instance;
+		if ($instance === null)
+		{
+			$c = __CLASS__;
+			$instance = new $c();
+		}
+		return $instance;
+	}
+
+	private function __construct()
+	{
+	}
+
+	function __destruct()
+	{
+		$this->kill();
+	}
+
+	public static function closePipes($pipes)
+	{
+		foreach ($pipes as $p)
+		{
+			fclose($p);
+		}
+	}
+
+	public function kill()
+	{
+		foreach ($this->processes as $info)
+		{
+			list($proc, $cmd, $base, $pipes) = $info;
+			$desc = "$cmd [cwd = $base]";
+
+			// Close all the pipes (PHP docs say we need to do this
+			// before calling proc_close).
+			self::closePipes($pipes);
+
+			$status = proc_get_status($proc);
+			$running = $status['running'];
+			if ($running)
+			{
+				ide_log(LOG_WARNING, "Process still running at end of script! $desc");
+
+				// still running, but we're being closed -- force kill it
+				proc_terminate($proc, SIGKILL);
+
+				// Wait for the process to end properly
+				$ret = proc_close($proc);
+				if ($ret < 0)
+				{
+					ide_log(LOG_ERR, "Failed to close process: $desc");
+				}
+				elseif ($ret > 0)
+				{
+					ide_log(LOG_INFO, "Process exited with $ret: $desc");
+				}
+				else
+				{
+					ide_log(LOG_DEBUG, "Successfully closed process: $desc");
+				}
+			}
+			else
+			{
+				// It's already closed, nothing to do. If we call
+				// proc_close here we get back an error (-1), so just log.
+				ide_log(LOG_DEBUG, "Process already closed: $desc");
+			}
+		}
+		$this->processes = array();
+	}
+
+	public function register($process, $command, $base, $pipes)
+	{
+		$this->processes[] = array($process, $command, $base, $pipes);
+	}
+}
+
+
 /**
  * Execute a command with the specified environment variables.
  * @param base: The path to use as the current directory for the command.
@@ -33,10 +120,13 @@ function proc_exec($s_command, $base = null, $input = null, $env = array(), $cat
 		// No limit
 		$stdout = stream_get_contents($pipes[1]);
 		$stderr = stream_get_contents($pipes[2]);
+		ProcUtilsMonitor::closePipes($pipes);
 		$status = proc_close($proc);
 	}
 	else
 	{
+		ProcUtilsMonitor::getInstance()->register($proc, $s_command, $base, $pipes);
+
 		$end = microtime(true) + $timeoutSeconds;
 		stream_set_blocking($pipes[1], 0);
 		stream_set_blocking($pipes[2], 0);
@@ -59,6 +149,7 @@ function proc_exec($s_command, $base = null, $input = null, $env = array(), $cat
 		// if still running, then timed out
 		if ($proc_status['running'])
 		{
+			var_dump('terminating');
 			proc_terminate($proc);
 			$status = null;
 			$timedOut = true;

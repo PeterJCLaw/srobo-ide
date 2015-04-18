@@ -16,6 +16,7 @@ TEST basic/notifications
 TEST basic/compat-tree
 TEST basic/checkout
 TEST basic/proc-utils
+TEST basic/proc-utils-monitor
 TEST basic/settings
 TEST basic/file-locks
 TEST basic/git
