@@ -100,6 +100,16 @@ class ProjModule extends Module
 	public function projectInfo()
 	{
 		$this->verifyTeam();
+
+		//bail if we aren't in a repo
+		$repo = $this->projectManager->getMasterRepository($this->team, $this->projectName);
+		if ($repo == null)
+		{
+			return false;
+		}
+
+		$headRevision = $repo->getCurrentRevision();
+
 		$config = Configuration::getInstance();
 		$repo_clone_url = $config->getConfig('repo_clone_url');
 
@@ -111,6 +121,7 @@ class ProjModule extends Module
 
 		$output = Output::getInstance();
 		$output->setOutput('repoUrl', $repo_clone_url);
+		$output->setOutput('revision', $headRevision);
 		return true;
 	}
 

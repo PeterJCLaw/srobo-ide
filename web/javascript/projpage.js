@@ -210,11 +210,13 @@ ProjPage.prototype.list_projects = function() {
 
 ProjPage.prototype._got_proj_info = function(nodes) {
 	getElement('proj-info').innerHTML = nodes.repoUrl;
+	this._projectRev = nodes.revision;
 };
 
 ProjPage.prototype._on_proj_change = function(proj, team) {
 	logDebug( "ProjPage._on_proj_change(\"" + proj + "\", " + team + ")" );
 	this.project = proj;
+	this._projectRev = null;
 
 	// setup polling for the new project
 	this._setupPolling();
