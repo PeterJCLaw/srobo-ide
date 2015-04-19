@@ -40,6 +40,10 @@ class PollModule extends Module
 		$output = Output::getInstance();
 
 		$team = $input->getInput('team');
+		// optional parameter which causes us to only look up the revision
+		// for a single project. This enables the front-end to focus its
+		// request and offers a substantial performance benefit on the backend.
+		$detailProject = $input->getInput('detail-project', true);
 
 		$manager = ProjectManager::getInstance();
 		$projects = $manager->listRepositories($team);
@@ -47,10 +51,18 @@ class PollModule extends Module
 		$projectRevs = array();
 		foreach ($projects as $project)
 		{
-			$repo = $manager->getMasterRepository($team, $project);
-			$projectRevs[$project] = $repo->getCurrentRevision();
-			// ensure that we release this repo before trying to grab the next
-			$repo = null;
+			if (empty($detailProject) || $project == $detailProject)
+			{
+				$repo = $manager->getMasterRepository($team, $project);
+				$revision = $repo->getCurrentRevision();
+				// ensure that we release this repo before trying to grab the next
+				$repo = null;
+			}
+			else
+			{
+				$revision = null;
+			}
+			$projectRevs[$project] = $revision;
 		}
 
 		$output->setOutput('projects', $projectRevs);

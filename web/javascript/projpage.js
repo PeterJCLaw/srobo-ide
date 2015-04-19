@@ -130,11 +130,21 @@ ProjPage.prototype.switch_to = function() {
 };
 
 ProjPage.prototype._setupPolling = function() {
+	logDebug("Setting up polling");
 	if (this._poll != null) {
+		logDebug("Clearing previous poll");
 		this._poll.cancel();
 	}
+	if (!team || !this.project) {
+		logDebug("Not creating new poll -- invalid team (" + team + ") or project (" + this.project + ").");
+		return;
+	}
+	var poll_args = {
+		'team': team,
+		'detail-project': this.project
+	};
 	// 30 second delay, retry once.
-	this._poll = new Poll('poll/poll', { team: team }, 30, 1);
+	this._poll = new Poll('poll/poll', poll_args, 30, 1);
 	connect(this._poll, 'onchange', bind(this._pollChanged, this));
 };
 
@@ -205,6 +215,9 @@ ProjPage.prototype._got_proj_info = function(nodes) {
 ProjPage.prototype._on_proj_change = function(proj, team) {
 	logDebug( "ProjPage._on_proj_change(\"" + proj + "\", " + team + ")" );
 	this.project = proj;
+
+	// setup polling for the new project
+	this._setupPolling();
 
 	if (proj == "") {
 		this._rpane_hide();
