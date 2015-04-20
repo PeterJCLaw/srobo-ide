@@ -122,7 +122,7 @@ class TeamModule extends Module
 		}
 
 		$uploadPath = "$uploadLocation/$team";
-		$path = move_uploaded_file_id('team-status-image-input', $uploadPath);
+		move_uploaded_file_id('team-status-image-input', $uploadPath);
 
 		$height = $config->getConfig('team.status_images.height');
 		$width = $config->getConfig('team.status_images.width');
@@ -130,15 +130,12 @@ class TeamModule extends Module
 		$thumbWidth = $config->getConfig('team.status_thumbs.width');
 
 		// grab a resource of the image resized
-		$image = new ResizableImage($path);
-		$dest = path_change_extension($path, 'png');
+		$image = new ResizableImage($uploadPath);
+		$dest = $uploadPath . '.png';
 		$image->resizeInto($width, $height, $dest);
 
-		// remove the original, if different
-		if ($path != $dest)
-		{
-			unlink($path);
-		}
+		// remove the original
+		unlink($uploadPath);
 
 		// update the status store
 		$status = new TeamStatus($team);
