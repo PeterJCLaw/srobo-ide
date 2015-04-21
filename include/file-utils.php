@@ -96,11 +96,10 @@ function path_change_extension($path, $ext)
 /**
  * Helper that moves an uploaded file, preserving the original extension.
  * @param id: The id to look for in the $_FILES array.
- * @param move_to_base: The base path to move the uploaded file to.
- *                      The original file extension (including a dot) will be appended.
+ * @param move_to: The path to move the uploaded file to.
  * @returns: The resulting name of the file.
  */
-function move_uploaded_file_id($id, $move_to_base)
+function move_uploaded_file_id($id, $move_to)
 {
 	if (!isset($_FILES[$id]))
 	{
@@ -118,19 +117,11 @@ function move_uploaded_file_id($id, $move_to_base)
 		throw new Exception("Error in file '$id': $error.", E_MALFORMED_REQUEST);
 	}
 
-	$name = $file['name'];
-	if (($pos = strrpos($name, '.')) !== FALSE)
-	{
-		$ext = substr($name, $pos);
-		$move_to_base .= $ext;
-	}
-
 	$tmp_name = $file['tmp_name'];
-	if (!move_uploaded_file($tmp_name, $move_to_base))
+	if (!move_uploaded_file($tmp_name, $move_to))
 	{
-		throw new Exception("Failed to move uploaded file '$tmp_name' to '$move_to_base'", E_INTERNAL_ERROR);
+		throw new Exception("Failed to move uploaded file '$tmp_name' to '$move_to'", E_INTERNAL_ERROR);
 	}
-	return $move_to_base;
 }
 
 function file_lock($lockfile, $exclusive = true)
