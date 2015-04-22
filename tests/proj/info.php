@@ -6,6 +6,7 @@ $team = 'ABC';
 $project = 'wasps';
 
 $config = Configuration::getInstance();
+$config->override("repopath", $testWorkPath);
 $config->override('repo_clone_url', $repo_clone_url);
 $config->override('modules.always', array('proj'));
 
@@ -23,6 +24,11 @@ $input = Input::getInstance();
 $input->setInput("team", $team);
 
 function check_project($project, $expected_url) {
+    global $team;
+    $projectManager = ProjectManager::getInstance();
+    $masterRepo = $projectManager->createRepository($team, $project);
+    test_nonnull($masterRepo, "Failed to create project '$project' for '$team'");
+
     $input = Input::getInstance();
     $input->setInput("project", $project);
 
@@ -40,6 +46,5 @@ function check_project($project, $expected_url) {
 
 check_project('wasps', "{ user: \"$user\", team: \"$team\", project: \"wasps\" }");
 check_project('spacey project', "{ user: \"$user\", team: \"$team\", project: \"spacey%20project\" }");
-check_project('<html></html>', "{ user: \"$user\", team: \"$team\", project: \"%3Chtml%3E%3C%2Fhtml%3E\" }");
+check_project('<html>', "{ user: \"$user\", team: \"$team\", project: \"%3Chtml%3E\" }");
 check_project("quote's", "{ user: \"$user\", team: \"$team\", project: \"quote%27s\" }");
-check_project('quote"s', "{ user: \"$user\", team: \"$team\", project: \"quote%22s\" }");
