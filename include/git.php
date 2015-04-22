@@ -68,6 +68,19 @@ class ReadOnlyGitRepository
 		}
 	}
 
+	public static function checkName($name)
+	{
+		$badChars = self::badCharacters();
+		$badChars[] = '/';
+		foreach ($badChars as $char)
+		{
+			if (strpos($name, $char) !== FALSE)
+			{
+				throw new Exception("Invalid character ($char) found in name.", E_MALFORMED_REQUEST);
+			}
+		}
+	}
+
 	/**
 	 * Constructs a git repo object on the path, will fail if the path isn't a git repository.
 	 * This factory method manages caching of the handles such that threads can't deadlock.

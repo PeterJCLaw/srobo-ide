@@ -17,9 +17,10 @@ $projectManager = ProjectManager::getInstance();
 section('slashes in name: create');
 $projName = 'cake/face';
 $repopath = $config->getConfig("repopath") . "/1/master/" . $projName . ".git";
-$ret = $projectManager->createRepository(1, $projName);
+test_exception(function () use ($projectManager, $projName) {
+    $projectManager->createRepository(1, $projName);
+}, E_MALFORMED_REQUEST, "Should reject project name containting slash: $projName.");
 
-test_false($ret, 'did not block creation of a project with / in the name');
 test_false(is_dir($repopath), 'created repo with / in the name!');
 
 

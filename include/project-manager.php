@@ -185,10 +185,9 @@ class ProjectManager
 
 	public function createRepository($team, $project)
 	{
-		if (strpos($project, '/') !== FALSE)
-		{
-			return FALSE;
-		}
+		// throws if bad
+		GitRepository::checkName($project);
+
 		$path = $this->getMasterRepoPath($team, $project);
 		$repo = GitRepository::createBareRepository($path);
 		ide_log(LOG_INFO, "Created a project $project for team $team");
