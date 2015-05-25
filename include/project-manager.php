@@ -122,6 +122,18 @@ class ProjectManager
 
 	public function updateRepository($userRepo, $user)
 	{
+		// fetch
+		$userRepo->fetch();
+		$upstreamName = 'origin/master';
+
+		$headRevision = $userRepo->getCurrentRevision();
+		$upstreamRevision = $userRepo->expandRevision($upstreamName);
+		if ($headRevision == $upstreamRevision)
+		{
+			// nothing to do
+			return array();
+		}
+
 		// grab unstaged changes
 		$unstaged = $userRepo->unstagedChanges();
 	//	echo 'unstaged: ';
@@ -146,11 +158,9 @@ class ProjectManager
 	//	var_dump($fileTimes);
 		// reset --hard
 		$userRepo->reset();
-		// fetch
-		$userRepo->fetch();
 		// merge
 		$email = UserInfo::makeCommitterEmail($user);
-		$conflicts = $userRepo->merge(array('origin/master'), $user, $email);
+		$conflicts = $userRepo->merge(array($upstreamName), $user, $email);
 		// rewrite folders
 		foreach ($folders as $path)
 		{
