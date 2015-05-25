@@ -178,14 +178,14 @@ class AdminModule extends Module
         $fileData = self::loadImage($team);
         if ($fileData == null)
         {
-            var_dump('no file data');
+            ide_log(LOG_ERR, "Failed to load image for '$team'");
             return false;
         }
 
         $current_md5 = md5($fileData);
         if ($current_md5 != $reviewed_md5)
         {
-            var_dump("bad md5 - current: $current_md5 != reviewed: $reviewed_md5");
+            ide_log(LOG_INFO, "Bad md5 - current: $current_md5 != reviewed: $reviewed_md5");
             return false;
         }
 
@@ -194,7 +194,7 @@ class AdminModule extends Module
         if (!is_dir($liveLocation) && !mkdir_full($liveLocation)
          || !is_writable($liveLocation))
         {
-            var_dump("bad target location '$liveLocation'");
+            ide_log(LOG_ERR, "Cannot copy status image to bad location '$liveLocation'");
             return false;
         }
 

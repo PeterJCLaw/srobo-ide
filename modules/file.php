@@ -396,8 +396,8 @@ class FileModule extends Module
 
 			// Grab a temp folder that we can work in. We'll remove it later.
 			$tmpDir = tmpdir();
-			echo "base, path, tmp\n";
-			var_dump($base, $path, $tmpDir);
+			//echo "base, path, tmp\n";
+			//var_dump($base, $path, $tmpDir);
 
 			// Copy the user's files to the temp folder
 			copy_recursive($base, $tmpDir);
@@ -426,8 +426,8 @@ class FileModule extends Module
 
 			// Copy the reference file to the temp folder
 			$dummy_copy = $working.'/'.basename($dummy);
-			echo "dummy copy\n";
-			var_dump($dummy_copy);
+			//echo "dummy copy\n";
+			//var_dump($dummy_copy);
 			copy_recursive($dummy, $dummy_copy);
 
 			$errors = array();

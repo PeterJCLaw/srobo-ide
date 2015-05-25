@@ -149,7 +149,7 @@ function proc_exec($s_command, $base = null, $input = null, $env = array(), $cat
 		// if still running, then timed out
 		if ($proc_status['running'])
 		{
-			var_dump('terminating');
+			ide_log(LOG_WARNING, "Terminating $s_command");
 			proc_terminate($proc);
 			$status = null;
 			$timedOut = true;

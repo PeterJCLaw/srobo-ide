@@ -212,10 +212,10 @@ class ReadOnlyGitRepository
 	 */
 	public function expandRevision($hash)
 	{
-		var_dump($hash);
+		//var_dump($hash);
 		$s_hash = escapeshellarg($hash);
 		$rawRevision = $this->gitExecute(false, "rev-list --abbrev-commit --max-count=1 $s_hash");
-		var_dump($rawRevision);
+		//var_dump($rawRevision);
 		return trim($rawRevision);
 	}
 

@@ -204,7 +204,7 @@ class ProjModule extends Module
 
 		$output = Output::getInstance();
 		$raw_results = $repo->grep($query, $is_regex);
-		var_dump($raw_results);
+		//var_dump($raw_results);
 		$results = array();
 		foreach ($raw_results as $fileName => $matches)
 		{

@@ -43,7 +43,7 @@ class LDAPAuth extends SecureTokenAuth
 		}
 
 		$info = $this->ldapManager->getUserInfo($username);
-		var_dump($info);
+		//var_dump($info);
 		return $info['username'];
 	}
 
