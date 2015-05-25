@@ -32,7 +32,6 @@ class ProjModule extends Module
 		$this->installCommand('co', array($this, 'checkoutProject'));
 		$this->installCommand("copy", array($this, "copyProject"));
 		$this->installCommand('zip', array($this, 'redirectToZip'));
-		$this->installCommand('update', array($this, 'updateProject'));
 		$this->installCommand('search', array($this, 'searchProject'));
 	}
 
