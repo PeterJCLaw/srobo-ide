@@ -412,6 +412,7 @@
 						<input type="text" name="team-status-url-input" id="team-status-url-input" />
 						<p class="info">
 							If you have a website please give us the full URL to it (including the http://).
+							This should not be your school or college's website as that will appear on your team's page automatically.
 						</p>
 					</td>
 				</tr>
