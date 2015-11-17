@@ -158,7 +158,7 @@ function on_doc_keydown(ev) {
 				stop = true;
 				break;
 		}
-	} else if (e.ctrlKey) {
+	} else if (e.ctrlKey || e.metaKey) {
 		switch(e.keyCode) {
 			case 69://E
 				projpage.clickExportProject();
