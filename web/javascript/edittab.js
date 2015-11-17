@@ -301,7 +301,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		}
 
 		//Ctrl+s or Cmd+s: do a save
-		if ( (e.ctrlKey || e.metaKey) && e.keyCode == 83 ) {
+		if ( ((e.ctrlKey && !e.altKey) || e.metaKey)  && e.keyCode == 83 ) {
 			this._save();
 			// try to prevent the browser doing something else
 			kill_event(ev);
