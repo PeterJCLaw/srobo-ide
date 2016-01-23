@@ -287,6 +287,8 @@ class ProjModule extends Module
 
 	private function openProject($team, $project, $createOnDemand = false)
 	{
+		$this->verifyTeam();
+
 		if (!in_array($project, $this->projectManager->listRepositories($team)))
 		{
 			if ($createOnDemand)
@@ -300,7 +302,6 @@ class ProjModule extends Module
 			}
 		}
 
-		$this->verifyTeam();
 		$userName = AuthBackend::getInstance()->getCurrentUserName();
 		$repo = $this->projectManager->getUserRepository($this->team, $this->projectName, $userName);
 		return $repo;
