@@ -8,7 +8,7 @@ all: dev docs submodules config
 
 # Actual targets
 clean:
-	rm -rf $(_FOLDERS) html latex
+	rm -rf $(_FOLDERS) lint-venv html latex
 	rm -f config/automagic.ini
 	rm -f srobo-ide.deb metapackages/deb/srobo-ide.deb
 
@@ -23,6 +23,10 @@ deb: srobo-ide.deb
 
 # Helpers
 lint-reference/sr.py: submodules
+
+lint-venv:
+	virtualenv $@
+	$@/bin/pip install -r pylint-requirements.txt
 
 config/automagic.ini:
 	/bin/echo -n "pylint.path = " > $@

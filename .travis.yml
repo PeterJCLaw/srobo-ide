@@ -8,10 +8,16 @@ install:
   # PHP-CLI, Git & NodeJS are pre-installed, no need to include them
   # PyYaml needed for the real 'make-zip' script
   - sudo apt-get install -y python-poster python-yaml
-  # Pylint from pip to ensure the same version as deployed
-  - sudo pip install pylint==1.2.0
   - npm install jasmine-node
+  # Pylint from pip to ensure the same version as deployed
+  - sudo apt-get install -y python-virtualenv
 before_script:
-  - pylint --version
+  # Install the virtualenv and configure the IDE to use it
+  - make lint-venv
+  - echo "python.path = $(which python)" > config/automagic.ini
+  - echo "pylint.path = $PWD/lint-venv/bin/pylint" >> config/automagic.ini
+  # Create the other necessary folders
   - make dev
+  # Check the config
+  - cat config/automagic.ini
 script: ./run-tests --full-output
