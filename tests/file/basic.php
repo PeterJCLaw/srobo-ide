@@ -87,10 +87,26 @@ $file->dispatchCommand('mv');
 test_true(file_exists("$repopath/wut"), 'target did not exist after move');
 test_false(file_exists("$repopath/huh"), 'old file still exists after move');
 // commit the result to clean the tree
+$repo->stage('wut');
 $repo->commit("bees","bees","bees@example.com");
 
+section("Check the file listings");
 $input->setInput('path', '.');
 $file->dispatchCommand('list');
 test_equal($output->getOutput('files'), array('robot.py', 'wut'), 'incorrect file list');
 $file->dispatchCommand('compat-tree');
-test_equal($output->getOutput('files'), array('robot.py', 'wut'), 'incorrect file tree');
+$expected = array(
+    array('kind' => 'FILE',
+          'name' => 'robot.py',
+          'path' => '/monkies/robot.py',
+          'children' => array(),
+          'autosave' => 0,
+         ),
+    array('kind' => 'FILE',
+          'name' => 'wut',
+          'path' => '/monkies/wut',
+          'children' => array(),
+          'autosave' => 0,
+         ),
+);
+test_equal($output->getOutput('tree'), $expected, 'incorrect file tree');
