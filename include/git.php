@@ -199,15 +199,6 @@ class ReadOnlyGitRepository
 	}
 
 	/**
-	 * Gets the hash of the oldest revision
-	 */
-	public function getFirstRevision()
-	{
-		$revisions = explode("\n", trim($this->gitExecute(false, 'rev-list --all')));
-		return $revisions[count($revisions)-1];
-	}
-
-	/**
 	 * Expand a revision, or revision-ish, to a full hash.
 	 */
 	public function expandRevision($hash)
