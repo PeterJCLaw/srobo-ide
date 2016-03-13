@@ -32,9 +32,8 @@ $projectManager->createRepository($input->getInput("team"), $input->getInput("pr
 $repo = $projectManager->getUserRepository(1, 'monkies', 'bees');
 test_true(is_dir($repopath), "created repo did not exist");
 
+section("Set file content");
 $input->setInput('path', 'wut');
-$file->dispatchCommand('new');
-test_true(file_exists("$repopath/wut"), 'failed to create file');
 $input->setInput('data', 'deathcakes');
 $file->dispatchCommand('put');
 test_equal(file_get_contents("$repopath/wut"), 'deathcakes', 'wrong content in file');

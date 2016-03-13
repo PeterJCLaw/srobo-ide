@@ -44,7 +44,7 @@ function createAndAssertFile($path)
 	$config = Configuration::getInstance();
 	$input = Input::getInstance();
 
-	section("Testing creation of file '$path' for team " . $input->getInput('team') . ', project ' . $input->getInput('project'));
+	section("Testing setting of content of file '$path' for team " . $input->getInput('team') . ', project ' . $input->getInput('project'));
 	$input->setInput('path', $path);
 	$repopath = getRepoPath();
 
@@ -56,17 +56,13 @@ function createAndAssertFile($path)
 	$file = $mm->getModule('file');
 	test_nonnull($file, 'file module does not exist');
 
-	subsection('create the file');
-	$input->setInput('path', $path);
-	$file->dispatchCommand('new');
-	$abspath = "$repopath/$path";
-	test_true(file_exists($abspath), "failed to create file '$abspath'");
-
 	subsection('assert that content is written to it');
+	$input->setInput('path', $path);
 	$content = 'deathcakes'.$path;
 	$input->setInput('data', $content);
 	$file->dispatchCommand('put');
-	test_equal(file_get_contents($abspath), $content, 'Wrong content in file');
+	$abspath = "$repopath/$path";
+	test_equal(file_get_contents($abspath), $content, "Wrong content in file '$path'.");
 }
 
 createAndAssertFile('simple-file-name');

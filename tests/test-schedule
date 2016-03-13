@@ -48,13 +48,13 @@ TEST proj/export2
 TEST proj/search
 
 TEST file/basic
-TEST file/create
 TEST file/create-dirs
 TEST file/del
 TEST file/del2
 TEST file/lint
 TEST file/lint2
 TEST file/mv
+TEST file/put
 
 TEST ping/ping
 

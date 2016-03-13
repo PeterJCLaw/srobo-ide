@@ -72,7 +72,6 @@ checkEndpointDenied('proj', "copy");
 
 section('File Module');
 checkEndpointDenied('file', 'put');
-checkEndpointDenied('file', 'new');
 checkEndpointDenied('file', 'del');
 checkEndpointDenied('file', 'cp');
 checkEndpointDenied('file', 'mv');

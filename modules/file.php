@@ -20,7 +20,6 @@ class FileModule extends Module
 		$this->installCommand('list', array($this, 'listFiles'));
 		$this->installCommand('get', array($this, 'getFile'));
 		$this->installCommand('put', array($this, 'putFile'));
-		$this->installCommand('new', array($this, 'newFile'));
 		$this->installCommand('del', array($this, 'deleteFile'));
 		$this->installCommand('cp', array($this, 'copyFile'));
 		$this->installCommand('mv', array($this, 'moveFile'));
@@ -203,18 +202,6 @@ class FileModule extends Module
 		$path   = $input->getInput('path');
 		$data   = $input->getInput('data');
 		return $this->repository()->putFile($path, $data);
-	}
-
-	/**
-	 * Make a new file in the repository
-	 */
-	public function newFile()
-	{
-		AuthBackend::ensureWrite($this->team);
-
-		$input  = Input::getInstance();
-		$path   = $input->getInput('path');
-		return $this->repository()->createFile($path);
 	}
 
 	/**
