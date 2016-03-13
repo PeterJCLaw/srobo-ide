@@ -94,6 +94,7 @@ createAndAssertFileDeleted('subdir/file');
 createAndAssertFileDeleted('subdir/spacey path');
 createAndAssertFileDeleted('spacey subdir/spacey path');
 createAndAssertFileDeleted('variable $file name');
+createAndAssertFileDeleted('--hyphenated-file-name');
 
 $chars = '$%@~{}][()';
 for($i=0; $i < strlen($chars); $i++)

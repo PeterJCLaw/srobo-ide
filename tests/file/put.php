@@ -71,6 +71,7 @@ createAndAssertFile('subdir/file');
 createAndAssertFile('subdir/spacey path');
 createAndAssertFile('spacey subdir/spacey path');
 createAndAssertFile('variable $file name');
+createAndAssertFile('--hyphenated-file-name');
 
 $chars = '$%@~{}][()';
 for($i=0; $i < strlen($chars); $i++)

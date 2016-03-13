@@ -99,6 +99,7 @@ createAndAssertFileMoved('subdir/spacey path');
 mkdir_full("$repopath/spacey subdir");
 createAndAssertFileMoved('spacey subdir/other spacey path');
 createAndAssertFileMoved('variable $file name');
+createAndAssertFileMoved('--hyphenated-file-name');
 
 $chars = '$%@~{}][()';
 for($i=0; $i < strlen($chars); $i++)

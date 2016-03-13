@@ -205,7 +205,7 @@ class ReadOnlyGitRepository
 	{
 		//var_dump($hash);
 		$s_hash = escapeshellarg($hash);
-		$rawRevision = $this->gitExecute(false, "rev-list --abbrev-commit --max-count=1 $s_hash");
+		$rawRevision = $this->gitExecute(false, "rev-list --abbrev-commit --max-count=1 $s_hash --");
 		//var_dump($rawRevision);
 		return trim($rawRevision);
 	}
@@ -314,7 +314,7 @@ class ReadOnlyGitRepository
 	public function listFolders()
 	{
 		$s_path = escapeshellarg($this->workingPath());
-		$folders = trim(shell_exec("cd $s_path && find . -type d -name .git -prune -o -type d -print"));
+		$folders = trim(shell_exec("cd -- $s_path && find . -type d -name .git -prune -o -type d -print"));
 		$folders = explode("\n", $folders);
 		return $folders;
 	}
@@ -403,7 +403,7 @@ class ReadOnlyGitRepository
 
 		if ($file !== null)
 		{
-			$s_command .= ' '.escapeshellarg($file);
+			$s_command .= ' -- '.escapeshellarg($file);
 		}
 
 		return $this->gitExecute(true, $s_command);
@@ -510,7 +510,7 @@ class GitRepository extends ReadOnlyGitRepository
 		$s_from = escapeshellarg($from);
 		$s_to   = escapeshellarg($to);
 
-		self::gitExecuteInternal(null, "clone $s_from $s_to");
+		self::gitExecuteInternal(null, "clone -- $s_from $s_to");
 
 		return self::GetOrCreate($to);
 	}
@@ -565,7 +565,7 @@ class GitRepository extends ReadOnlyGitRepository
 		$env = self::makeGitUserEnv($name, $email);
 
 		// Create the initial commit
-		$s_hash = trim(shell_exec("cd $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
+		$s_hash = trim(shell_exec("cd -- $s_path ; cat $s_treepath | sed s/_HASH_/$s_hash/g | $s_bin mktree"));
 		$s_hash = self::gitExecuteInternal($path, "commit-tree $s_hash", $commitpath, $env);	// SHELL SAFE
 
 		// Update the branch & HEAD to point to the initial commit we just created
@@ -644,7 +644,7 @@ class GitRepository extends ReadOnlyGitRepository
 		$s_path = escapeshellarg($file);
 		if ($revision == null)
 		{
-			$this->gitExecute(true, "checkout $s_path");
+			$this->gitExecute(true, "checkout -- $s_path");
 		}
 		else
 		{
@@ -812,7 +812,7 @@ class GitRepository extends ReadOnlyGitRepository
 	public function removeFile($path)
 	{
 		$s_path = escapeshellarg($path);
-		$this->gitExecute(true, "rm -rf $s_path");
+		$this->gitExecute(true, "rm -rf -- $s_path");
 	}
 
 	/**
@@ -867,7 +867,7 @@ class GitRepository extends ReadOnlyGitRepository
 		if (file_exists($absPath))
 		{
 			$s_path = escapeshellarg($path);
-			$this->gitExecute(true, "add $s_path");
+			$this->gitExecute(true, "add -- $s_path");
 		}
 		else
 		{

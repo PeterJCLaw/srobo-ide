@@ -33,7 +33,7 @@ function copy_recursive($source, $dest)
 	$s_source = escapeshellarg($source);
 	$s_dest = escapeshellarg($dest);
 	ide_log(LOG_DEBUG, "Recursively copying '$source' to '$dest'.");
-	$res = shell_exec('cp -r '.$s_source.' '.$s_dest);
+	$res = shell_exec('cp -r -- '.$s_source.' '.$s_dest);
 	ide_log(LOG_DEBUG, "Recursively copy of '$source' to '$dest' returned '$res'.");
 	return $res;
 }

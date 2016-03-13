@@ -41,6 +41,7 @@ function createAndAssertProject($projname)
 
 createAndAssertProject('monkies');
 createAndAssertProject('spacey path');
+createAndAssertProject('--hyphenated-proj-name');
 
 $chars = '$%@~{}][()';
 for($i=0; $i < strlen($chars); $i++)
