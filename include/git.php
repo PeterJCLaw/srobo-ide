@@ -829,7 +829,6 @@ class GitRepository extends ReadOnlyGitRepository
 	 */
 	public function copyFile($src, $dst)
 	{
-		$this->createFile($dst);
 		$content = $this->getFile($src);
 		$this->putFile($dst, $content);
 	}
