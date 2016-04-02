@@ -39,6 +39,19 @@ var IDE_async_count = 0;
 var IDE_backend_debug = null;
 showElement = hideElement = function(){};
 
+function RecordAccess(url) {
+	if (typeof(Piwik) != "object") {
+		return;
+	}
+
+	try {
+		var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 4);
+		piwikTracker.setCustomVariable(1, "Team ID", team, "visit");
+		piwikTracker.setCustomUrl(url);
+		piwikTracker.trackPageView();
+	} catch( err ) {}
+}
+
 IDE_notification_callback = function(note) {
 	var object = createDOM('span');
 	object.innerHTML = note + ' [<a href="javascript:status_click();">dismiss</a>]';
@@ -83,19 +96,12 @@ function IDE_backend_request(command, args, successCallback, errorCallback) {
 	};
 	var ep = IDE_base + "/" + command;
 
-	if (typeof(Piwik) == "object") {
-		switch (command) {
-			case 'file/put':
-			case 'proj/co':
-			case 'proj/commit':
-				try {
-					var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 4);
-					piwikTracker.setCustomVariable(1, "Team ID", team, "visit");
-					piwikTracker.setCustomUrl(ep);
-					piwikTracker.trackPageView();
-				} catch( err ) {}
-				break;
-		}
+	switch (command) {
+		case 'file/put':
+		case 'proj/co':
+		case 'proj/commit':
+			RecordAccess(ep);
+			break;
 	}
 
 	xhr.open("POST", ep, true);
