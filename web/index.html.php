@@ -7,6 +7,7 @@
 	<!-- Style Sheets -->
 <?php
 	require_once('include/html-utils.php');
+	require_once('web/common-defines.php');
 	$config = Configuration::getInstance();
 	$styleSheets[] = "web/css/newstyle.css";
 	// Everything above here should be in that order so things don't explode,
@@ -63,10 +64,10 @@
 	// external selector box - jquery chosen
 	$javaScripts[] = "web/javascript/chosen.jquery.min.js";
 
-	output_statics($styleSheets, 'css_tag', 'web/cache/combined.css');
+	output_statics($styleSheets, 'css_tag', COMBINED_CSS);
 
 	// external jQuery via google's CDN -- after all the stylesheets
-	js_tag('//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+	js_tag(JQUERY_MIN_JS);
 
 	// external editor component - ACE - http://ace.ajax.org
 	// Keep ACE itself separate from our combined JS -- it uses its own
@@ -77,7 +78,10 @@
 	$javaScripts[] = "web/javascript/ace/src/mode-python.js";
 	$javaScripts[] = "web/javascript/ace/src/ext-modelist.js";
 
-	output_statics($javaScripts, 'js_tag', 'web/cache/combined.js');
+	output_statics($javaScripts, 'js_tag', COMBINED_JS);
+
+	// no need to prefetch the focus variant since that's used immediately
+	prefetch_tag('web/images/tabcorner_nofocus.png');
 
 	$root_url = $config->getConfig('host_root_url');
 

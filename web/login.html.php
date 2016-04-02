@@ -10,6 +10,7 @@
 	<!-- Javascript Source Files -->
 <?php
 	require_once('include/html-utils.php');
+	require_once('web/common-defines.php');
 	$javaScripts[] = "web/javascript/json2.js";
 	$javaScripts[] = "web/javascript/ide.js";
 	$javaScripts[] = "web/javascript/MochiKit.js";
@@ -17,6 +18,16 @@
 	$javaScripts[] = "web/javascript/login.js";
 
 	output_statics($javaScripts, 'js_tag', 'web/cache/login-combined.js');
+
+	checked_prefetch(COMBINED_CSS);
+	checked_prefetch(COMBINED_JS);
+
+	prefetch_tag(JQUERY_MIN_JS);
+	prefetch_tag(ACE_JS);
+
+	prefetch_tag('web/images/tabcorner_nofocus.png');
+	prefetch_tag('web/images/static.png');
+	prefetch_tag('web/images/anim.gif');
 
 	$root_url = Configuration::getInstance()->getConfig('host_root_url');
 ?>
