@@ -100,6 +100,42 @@ function EditPage() {
 		return this._open_files[file] != null;
 	};
 
+	// Get a list of files in the given project which are open and have modifications
+	this.get_modified_files = function( project ) {
+		var modified_files = [];
+		for (var filename in this._open_files) {
+			var etab = this._open_files[filename];
+			if (etab.project == project && etab.is_modified()) {
+				modified_files.push(filename);
+			}
+		}
+		return modified_files;
+	};
+
+	// Focus on any of the given array of files, if one of them is already
+	// focussed then do nothing.
+	// Returns: whether or not a suitable file was focussed.
+	this.focus_any = function(files) {
+		var live_tabs = [];
+		for (var i=0; i<files.length; i++) {
+			var etab = this._open_files[files[i]];
+			if (etab) {
+				if (etab.tab.has_focus()) {
+					return true;
+				} else {
+					live_tabs.push(etab);
+				}
+			}
+		}
+		// none were the current file -- focus on the first in the list
+		if (live_tabs.length > 0) {
+			tabbar.switch_to( live_tabs[0].tab );
+			return true;
+		} else {
+			return false;
+		}
+	};
+
 	// Open the given file and switch to the tab
 	// or if the file is already open, just switch to the tab
 	this.edit_file = function( team, project, path, rev, mode ) {

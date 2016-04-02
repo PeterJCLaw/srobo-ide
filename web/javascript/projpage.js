@@ -348,6 +348,10 @@ ProjPage.prototype._createProjectFailure = function(newProjName) {
 };
 
 ProjPage.prototype.clickExportProject = function() {
+	return this._handleExportProject();
+};
+
+ProjPage.prototype._handleExportProject = function(ignoreUnsaved) {
 	var tmpItem = getElement('projlist-tmpitem');
 	if (tmpItem != null && tmpItem.selected == true) {
 		status_msg( "No project selected, please select a project", LEVEL_ERROR );
@@ -356,6 +360,15 @@ ProjPage.prototype.clickExportProject = function() {
 
 	if (!this.flist.robot) {	//if there's no robot.py script then it's going to fail
 		status_msg( "A robot.py file is required for project code export", LEVEL_ERROR );
+		return false;
+	}
+
+	var unsaved_changes = editpage.get_modified_files(this.project);
+	if (unsaved_changes.length > 0 && !ignoreUnsaved) {
+		var names = unsaved_changes.join(', ');
+		var msg = "Current project '" + this.project + "' has unsaved changes in: " + names + ".";
+		status_button(msg, LEVEL_WARN, "export anyway", bind(this._handleExportProject, this, true));
+		editpage.focus_any(unsaved_changes);
 		return false;
 	}
 
