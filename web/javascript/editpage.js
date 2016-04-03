@@ -105,7 +105,7 @@ function EditPage() {
 		var modified_files = [];
 		for (var filename in this._open_files) {
 			var etab = this._open_files[filename];
-			if (etab.project == project && etab.is_modified()) {
+			if (etab && etab.project == project && etab.is_modified()) {
 				modified_files.push(filename);
 			}
 		}
