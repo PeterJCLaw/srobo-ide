@@ -24,6 +24,13 @@ try
 		exit();
 	}
 
+	// block external or inline loading of most things,
+	// allow inline styles for ACE
+	// allow JSON2 eval and jQuery
+	header("Content-Security-Policy: default-src 'self';" .
+	                                "style-src 'self' 'unsafe-inline';" .
+	                                "script-src 'self' 'unsafe-eval' ajax.googleapis.com/ajax/libs/;");
+
 	// If the user is logged in give them the main index page
 	// Else give them the login page
 	$auth = AuthBackend::getInstance();
