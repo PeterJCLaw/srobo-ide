@@ -87,8 +87,9 @@
 
 	if ($config->getConfig('usage_tracking')): ?>
 	<!-- TODO: support some form of DNT? -->
+	<!-- sha256-cGG4us2djtknhpitJBrPLUVJnGysVgkKIyL/tBN5Dls= -->
 	<script type="text/javascript">
-		var pkBaseURL = "<?=$root_url ?>/piwik/";
+		var pkBaseURL = "https://www.studentrobotics.org/piwik/";
 		document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
 	</script>
 <?php endif ?>

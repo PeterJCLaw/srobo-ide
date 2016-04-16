@@ -27,11 +27,11 @@ try
 	// block external or inline loading of most things,
 	// allow data: urls for teams-status images
 	// allow inline styles for ACE
-	// allow JSON2 eval and jQuery
+	// allow JSON2, eval, jQuery and our inline piwik hook
 	header("Content-Security-Policy: default-src 'self';" .
 	                                "img-src 'self' data:;" .
 	                                "style-src 'self' 'unsafe-inline';" .
-	                                "script-src 'self' 'unsafe-eval' ajax.googleapis.com/ajax/libs/;");
+	                                "script-src 'self' 'unsafe-eval' ajax.googleapis.com/ajax/libs/ sha256-cGG4us2djtknhpitJBrPLUVJnGysVgkKIyL/tBN5Dls=;");
 
 	// If the user is logged in give them the main index page
 	// Else give them the login page
