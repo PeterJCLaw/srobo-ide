@@ -25,6 +25,7 @@ try
 	}
 
 	// block external or inline loading of most things,
+	// allow data: urls for teams-status images
 	// allow inline styles for ACE
 	// allow JSON2 eval and jQuery
 	header("Content-Security-Policy: default-src 'self';" .
