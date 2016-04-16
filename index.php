@@ -28,6 +28,7 @@ try
 	// allow inline styles for ACE
 	// allow JSON2 eval and jQuery
 	header("Content-Security-Policy: default-src 'self';" .
+	                                "img-src 'self' data:;" .
 	                                "style-src 'self' 'unsafe-inline';" .
 	                                "script-src 'self' 'unsafe-eval' ajax.googleapis.com/ajax/libs/;");
 
