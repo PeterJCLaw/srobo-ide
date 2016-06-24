@@ -152,6 +152,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 		this._update_contents();
 		this._show_contents();
+		this._show_filename();
 		this._show_modified();
 
 		if (first_load) {
@@ -251,8 +252,11 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			status_msg("File "+this.path+" Merge required, please check and try again (Now at "+nodes.commit+")", LEVEL_ERROR);
 			this.contents = nodes.code;
 		}
-		this._isNew = false;
 		this.rev = nodes.commit;
+		if (this._isNew) {
+			this._show_filename();
+			this._isNew = false;
+		}
 		this._get_revisions();
 		getElement("check-syntax").disabled = !this._can_check_syntax();
 		getElement("edit-diff").disabled = false;
@@ -453,6 +457,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 					    bind( this._on_keydown, this ) ) );
 
 		this._show_contents();
+		this._show_filename();
 		this._iea.setReadOnly(this._read_only);
 		this._iea.focus();
 	};
@@ -485,6 +490,10 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 		this._iea.setSession( this._session );
 
+		this._show_filename();
+	};
+
+	this._show_filename = function() {
 		// Display file path
 		var t = this.path;
 		if (this.rev != 0) {
