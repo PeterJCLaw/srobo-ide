@@ -53,8 +53,6 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	// *** Private Properties ***
 	//true if file is new (unsaved)
 	this._isNew = false;
-	//The commit message
-	this._commitMsg = "Default Commit Message";
 	//the original contents (before edits)
 	this._original = "";
 	// All our current signal connection idents
@@ -205,8 +203,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			editpage.rename_tab(this.path, fpath);
 			this.project = a[1];
 			this.path = fpath;
-			this._commitMsg = commitMsg;
-			this._repo_save();
+			this._repo_save(commitMsg);
 			this._update_highlight();
 		} else {
 			status_msg( "No project specified", LEVEL_ERROR );
@@ -214,8 +211,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	};
 
 	this._receive_commit_msg = function(commitMsg) {
-		this._commitMsg = commitMsg;
-		this._repo_save();
+		this._repo_save(commitMsg);
 	};
 
 	this._save = function() {
@@ -269,13 +265,13 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	};
 
 	//save file contents to server as new revision
-	this._repo_save = function() {
+	this._repo_save = function(commit_message) {
 		var put_success = bind(function() {
 			var args = {
 				team: team,
 				project: IDE_path_get_project(this.path),
 				paths: [IDE_path_get_file(this.path)],
-				message: this._commitMsg
+				message: commit_message
 			};
 			IDE_backend_request("proj/commit", args,
 				bind(this._receive_repo_save, this),
