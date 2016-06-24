@@ -97,6 +97,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		if (this.project == null) {
 			// New file
 			this._isNew = true;
+			this._loaded = true;
 			this.contents = "";
 			this._original = "";
 			getElement("check-syntax").disabled = true;
