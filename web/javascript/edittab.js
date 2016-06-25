@@ -394,6 +394,23 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		}
 	};
 
+	// Search the files' buffer for the given query.
+	// Returns an array of objects for each line where the query item was found.
+	// The objects will have two members: "line" and "text".
+	// The array will be empty if no matches were found.
+	this.search = function(query) {
+		var matchLines = [];
+		var document = this._session.getDocument();
+		var lines = document.getAllLines();
+		for (var i=0; i<lines.length; i++) {
+			var text = lines[i];
+			if (text.indexOf(query) >= 0) {
+				matchLines.push({ line: i, text: text });
+			}
+		};
+		return matchLines;
+	};
+
 	//try to close a file, checking for modifications, return true if it's closed, false if not
 	this.close = function(override) {
 		if (override != true && this.is_modified()) {

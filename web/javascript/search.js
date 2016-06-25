@@ -138,7 +138,7 @@ SearchPage.GetInstance = function() {
 		var results = new SearchResults();
 		SearchPage.Instance = new SearchPage(results);
 
-		var contentSearch = new FileContentSearchProvider(projpage);
+		var contentSearch = new FileContentSearchProvider(projpage, editpage);
 		SearchPage.Instance.add_provider(contentSearch);
 	}
 	return SearchPage.Instance;
@@ -328,17 +328,20 @@ function FileNameSearchProvider(proj_source, selector) {
 	};
 }
 
-function FileContentSearchProvider(proj_source) {
+function FileContentSearchProvider(proj_source, open_files_source) {
 	this._proj_source = proj_source;
+	this._open_files_source = open_files_source;
 
 	this._cancelled = false;
 	this._page = null;
 	this._query = null;
+	this._local_results = {};
 
 	this.cancel = function() {
 		this._cancelled = true;
 		this._page = null;
 		this._query = null;
+		this._local_results = {};
 	};
 
 	this.search = function(page, query) {
@@ -349,6 +352,9 @@ function FileContentSearchProvider(proj_source) {
 		for (var i=0; i < projects.length; i++) {
 			this._search_project(projects[i]);
 		}
+		var local_results = this._open_files_source.search(query);
+		this._add_local_results(local_results);
+		this._local_results = local_results;
 		return projects.length > 0;
 	};
 
@@ -368,19 +374,36 @@ function FileContentSearchProvider(proj_source) {
 		                    err_handler);
 	};
 
+	this._add_local_results = function(results) {
+		if (this._cancelled) {
+			return;
+		}
+		for (var file in results) {
+			var project = IDE_path_get_project(file);
+			this._add_results(project, file, results[file]);
+		}
+	};
+
 	this._handle_results = function(project, nodes) {
 		if (this._cancelled) {
 			return;
 		}
 		var results = nodes.results;
 		for (var file in results) {
-			var matches = results[file];
-			for (var i=0; i < matches.length; i++) {
-				var match = matches[i];
-				var result = { text: file + ':' + match.line + ': ' + match.text,
-				             action: bind(this._open_file_line, this, project, file, match.line) };
-				this._page.add_result('File Contents', result);
+			if (file in this._local_results) {
+				continue;
 			}
+			var matches = results[file];
+			this._add_results(project, file, matches);
+		}
+	};
+
+	this._add_results = function(project, file, matches) {
+		for (var i=0; i < matches.length; i++) {
+			var match = matches[i];
+			var result = { text: file + ':' + match.line + ': ' + match.text,
+						 action: bind(this._open_file_line, this, project, file, match.line) };
+			this._page.add_result('File Contents', result);
 		}
 	};
 

@@ -136,6 +136,31 @@ function EditPage() {
 		}
 	};
 
+	// Perform an action on each of the open files.
+	// The callback will be passed a single argument which is the EditTab
+	// instance. The returned value from the callback will be stored in
+	// a map, using the file's path as the key.
+	// The result map will be returned when the function completes.
+	this.foreach_tab = function(callback) {
+		var results = {};
+		for (var filepath in this._open_files) {
+			var etab = this._open_files[filepath];
+			if (etab) {
+				results[filepath] = callback(etab);
+			}
+		}
+		return results;
+	};
+
+	// Search the open files for text containing the given query.
+	// Returns a map of all files to arrays of line numbers where the
+	// query item was found (which may be an empty array).
+	this.search = function(query) {
+		return this.foreach_tab(function(etab) {
+			return etab.search(query);
+		});
+	};
+
 	// Open the given file and switch to the tab
 	// or if the file is already open, just switch to the tab
 	this.edit_file = function( team, project, path, rev, mode ) {
