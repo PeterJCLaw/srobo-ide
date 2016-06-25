@@ -258,6 +258,8 @@ function FileNameSearchProvider(proj_source, selector) {
 	this._proj_selector = selector;
 
 	this._cancelled = false;
+	this._page = null;
+	this._query = null;
 
 	this.cancel = function() {
 		this._cancelled = true;
@@ -330,6 +332,8 @@ function FileContentSearchProvider(proj_source) {
 	this._proj_source = proj_source;
 
 	this._cancelled = false;
+	this._page = null;
+	this._query = null;
 
 	this.cancel = function() {
 		this._cancelled = true;
