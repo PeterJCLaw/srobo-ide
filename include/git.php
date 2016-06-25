@@ -435,7 +435,7 @@ class ReadOnlyGitRepository
 	{
 		$s_pattern = escapeshellarg($pattern);
 		$s_regex = $regex ? '' : '-F';
-		$ret = $this->gitExecute(true, "grep -n $s_regex -e $s_pattern");
+		$ret = $this->gitExecute(false, "grep -n $s_regex -e $s_pattern HEAD");
 		if ($ret === FALSE)
 		{
 			return array();
@@ -444,7 +444,7 @@ class ReadOnlyGitRepository
 		$outputLines = explode(PHP_EOL, trim($ret));
 		foreach ($outputLines as $lineText)
 		{
-			list($fname, $lineNo, $match) = explode(':', $lineText, 3);
+			list($rev, $fname, $lineNo, $match) = explode(':', $lineText, 4);
 			$matches[$fname][] = array('line' => $lineNo, 'text' => $match);
 		}
 		return $matches;
