@@ -99,13 +99,11 @@ $expected = array(
           'name' => 'robot.py',
           'path' => '/monkies/robot.py',
           'children' => array(),
-          'autosave' => 0,
          ),
     array('kind' => 'FILE',
           'name' => 'wut',
           'path' => '/monkies/wut',
           'children' => array(),
-          'autosave' => 0,
          ),
 );
 test_equal($output->getOutput('tree'), $expected, 'incorrect file tree');

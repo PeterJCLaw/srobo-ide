@@ -37,6 +37,6 @@ test_equal($tree[0]['children'][1]['children'][0]['path'], '/cake/ninjas/z-ninja
 test_equal($tree[1]['kind'], 'FILE', 'tested file had incorrect kind');
 test_equal($tree[1]['name'], 'robot.py', 'tested file had incorrect name');
 test_equal($tree[1]['path'], '/cake/robot.py', 'tested file had incorrect path');
-test_true(empty($tree[0]['autosave']), 'Folders shuoldn\'t have autosave values');
-test_true(isset($tree[0]['children'][0]['autosave']), 'Autosave not set on folder child file');
-test_true(isset($tree[1]['autosave']), 'Autosave not set on file');
+test_false(isset($tree[0]['autosave']), 'Autosave should not be set (folder)');
+test_false(isset($tree[0]['children'][0]['autosave']), 'Autosave should not be set (child file)');
+test_false(isset($tree[1]['autosave']), 'Autosave should not be set (root file)');

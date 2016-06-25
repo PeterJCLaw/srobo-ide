@@ -91,7 +91,6 @@
 }
 
 .flist-l li a { padding-left: 1em; }
-.flist-l li a.autosave { padding-left: 0; }
 
 .flist-l div div { margin-left: 0.5em; }
 
@@ -101,13 +100,6 @@
   line-height: 1.2em;
   margin-right: 1em;
   color: black;
-}
-
-#proj-filelist li a.autosave {
-  margin-top: -1.2em;
-  margin-left: 27%;
-  display: inline;
-  float: left;
 }
 
 /* The vertical bar along the side of each directory */

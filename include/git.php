@@ -734,7 +734,6 @@ class GitRepository extends ReadOnlyGitRepository
 		}
 
 		$result = array();
-		$unstagedChanges = $this->unstagedChanges();
 		for ($iterator = new FilesystemIterator($this->workingPath() . "/$subpath");
 		     $iterator->valid();
 		     $iterator->next())
@@ -753,12 +752,11 @@ class GitRepository extends ReadOnlyGitRepository
 
 			if ($fileinfo->isFile())
 			{
-				$autosave = in_array($realpath, $unstagedChanges) ? $iterator->getMTime() : 0;
 				$result[] = array('kind'     => 'FILE',
 				                  'name'     => $filename,
 				                  'path'     => "/$base/$realpath",
 				                  'children' => array(),
-				                  'autosave' => $autosave);
+				                 );
 			}
 			elseif ($fileinfo->isDir())
 			{

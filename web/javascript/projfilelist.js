@@ -198,12 +198,9 @@ ProjFileList.prototype._dir = function(level, node) {
 
 	var node_li = LI(attrs, link);
 	if (is_file) {
-		// Assemble links to available autosave, if there is one
-		var autosave_link = this._autosave_link(node);
 		if (level == 0 && node.path.endsWith('/robot.py')) {
 			this.robot = true;
 		}
-		appendChildNodes(node_li, autosave_link);
 	} else {
 		var children = map(bind(this._dir, this, level + 1), node.children.sort(flist_cmp));
 		appendChildNodes(node_li, UL({ "class" : "flist-l" }, children));
@@ -215,25 +212,6 @@ ProjFileList.prototype._dir = function(level, node) {
 	}
 
 	return node_li;
-};
-
-// Returns a DOM link for the given node's autosave, if it exists
-ProjFileList.prototype._autosave_link = function(node) {
-	if (node.kind != "FILE" || node.autosave == 0) {
-		return null;
-	}
-
-	// Assemble the link with divs in it
-	var props = {
-		"href": "#",
-		"class": 'autosave',
-		"ide_path": node.path,
-		"ide_kind": 'AUTOSAVE'
-	};
-	var label = 'Load autosave ('+(new Date(node.autosave * 1000)).toDateString()+')';
-	var link = A(props, label);
-	connect( link, "onclick", bind( this._onclick, this ) );
-	return link;
 };
 
 // The onclick event for the filelist items
@@ -257,11 +235,8 @@ ProjFileList.prototype._onclick = function(ev) {
 	} else {
 		if (kind == "FOLDER") {
 			this._toggle_dir( src );
-		} else if (kind == 'AUTOSAVE') {
-			editpage.edit_file( this._team, this._project, path, this.rev, 'AUTOSAVE' );
-			//do something special
 		} else {
-			editpage.edit_file( this._team, this._project, path, this.rev, 'REPO' );
+			editpage.edit_file( this._team, this._project, path, this.rev );
 		}
 	}
 };
