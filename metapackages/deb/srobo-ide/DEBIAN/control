@@ -1,10 +1,10 @@
 Package: srobo-ide
-Version: 0.07
+Version: 0.08
 Section: main
 Priority: optional
 Architecture: all
-Depends: apache2|lighttpd, php5, php5-gd, git-core, pylint
-Suggests: doxygen, php5-cli, nodejs, python-poster
+Depends: apache2|lighttpd, php5|php7.0, php5-gd|php7.0-gd, git-core, pylint
+Suggests: doxygen, php5-cli|php7.0-cli, nodejs, python-poster
 Installed-Size: 0
 Maintainer: Student Robotics
 Description: A metapackage for srobo-ide
