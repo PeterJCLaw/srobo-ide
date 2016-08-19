@@ -408,7 +408,7 @@ function FileContentSearchProvider(proj_source, open_files_source) {
 	};
 
 	this._open_file_line = function(project, file, line) {
-		var etab = editpage.edit_file(team, project, file, null, 'AUTOSAVE');
+		var etab = editpage.edit_file(team, project, file);
 		etab.setSelectionRange(line, 0, -1);
 	};
 }

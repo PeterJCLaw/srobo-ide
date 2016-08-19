@@ -163,7 +163,7 @@ function EditPage() {
 
 	// Open the given file and switch to the tab
 	// or if the file is already open, just switch to the tab
-	this.edit_file = function( team, project, path, rev, mode ) {
+	this.edit_file = function( team, project, path, rev ) {
 		// TODO: We don't support files of the same path being open in
 		// different teams at the moment.
 		var etab = this._file_get_etab( path );
@@ -171,7 +171,7 @@ function EditPage() {
 
 		if( etab == null ) {
 			var readOnly = projpage.project_readonly(project);
-			etab = this._new_etab( team, project, path, rev, readOnly, mode );
+			etab = this._new_etab( team, project, path, rev, readOnly );
 			newTab = true;
 		}
 
@@ -247,8 +247,8 @@ function EditPage() {
 
 	// Create a new tab that's one of ours
 	// Doesn't load the tab
-	this._new_etab = function(team, project, path, rev, isReadOnly, mode) {
-		var etab = new EditTab(this._iea, team, project, path, rev, isReadOnly, mode);
+	this._new_etab = function(team, project, path, rev, isReadOnly) {
+		var etab = new EditTab(this._iea, team, project, path, rev, isReadOnly);
 
 		connect( etab, "onclose", bind(this._on_tab_close, this) );
 
