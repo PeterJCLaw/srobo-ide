@@ -111,11 +111,14 @@ function ProjOps() {
 		var type = null;
 
 		//is it a file or a folder?
-		if(src.indexOf(".") < 0) { type = 'isDir'; }
-		else { type = 'isFile'; }
+		if (src.indexOf(".") < 0) {
+			type = 'isDir';
+		} else {
+			type = 'isFile';
+		}
 
 		//do we already have a move to location?
-		logDebug("type "+type);
+		logDebug("type " + type);
 		if (dest == "" || dest == null) {
 			logDebug("launch file browser to get move destination");
 			var b = new Browser(bind(this._mv_cback, this), {'type' : 'isFile'});
@@ -130,10 +133,10 @@ function ProjOps() {
 					}
 					break;
 				case 'isDir' :
-					if(dest[dest.length-1] == "/") {
+					if (dest[dest.length-1] == "/") {
 						dest = dest.slice(0, dest.length-2);
 					}
-					if(dest.indexOf(".") > 0) {
+					if (dest.indexOf(".") > 0) {
 						status_msg("Move destination must be a folder", LEVEL_ERROR);
 						return;
 					}

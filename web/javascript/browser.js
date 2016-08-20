@@ -95,7 +95,7 @@ Browser.prototype._init = function() {
 	connect("new-file-name","onfocus", bind(this._fname_focus, this));
 	connect("left-pane","onclick", bind(this.rootSelected, this));
 
-	if(this.type == 'isProj' || this.type == 'isTag') {
+	if (this.type == 'isProj' || this.type == 'isTag') {
 		getElement("new-file-name").focus();
 	} else {
 		getElement("new-commit-msg").focus();
@@ -275,7 +275,7 @@ Browser.prototype.clickCancelSave = function() {
 //Recursive function to convert filetree into valid DOM tree
 Browser.prototype._processTree = function(parentDOM, tree, pathSoFar) {
 	for (var i = 0; i < tree.length; i++) {
-		if(tree[i].kind == "FOLDER") {
+		if (tree[i].kind == "FOLDER") {
 			//create entry in folder list
 			var newPathSoFar = pathSoFar+"/"+tree[i].name;
 
