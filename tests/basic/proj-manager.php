@@ -69,13 +69,8 @@ $autosavedCTime = filemtime($autosavedFile);
 $committedFile = $repo->workingPath().'/committed-autosave';
 $committedCTime = filemtime($committedFile);
 
-// be sure there's a measureable time difference between before and after
-sleep(1);
-// clear the caches... PHP needs this to get sane answers from fileXtime or stat-related functions
-clearstatcache();
 // update
 $projectManager->updateRepository($repo, 'jim');
-clearstatcache();
 
 // test the result
 test_existent($autosavedFile, 'Autosaved (uncommitted) files should remain after an update');
@@ -83,6 +78,3 @@ test_existent($folder, 'Empty folders should remain after an update');
 
 test_equal($repo->getFile('autosave'), $autosaveContent, 'Content of autosaved (uncommitted) file should be preserved');
 test_equal($repo->getFile('committed-autosave'), $committedContent, 'Content of committed file plus an autosave should be preserved');
-
-test_equal(filemtime($autosavedFile), $autosavedCTime, 'Autosaved (uncommitted) file should have its modified time preserved through an update');
-test_equal(filemtime($committedFile), $committedCTime, 'Committed file plus an autosave should have its modified time preserved through an update');

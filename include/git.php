@@ -356,14 +356,6 @@ class ReadOnlyGitRepository
 	}
 
 	/**
-	 * Gets the modification time of a file
-	 */
-	public function fileMTime($path)
-	{
-		return filemtime($this->workingPath() . '/' . $path);
-	}
-
-	/**
 	 * Gets a diff:
 	 *  that a log entry provides,
 	 *  between two commits,
