@@ -88,7 +88,7 @@ foreach ($sched as $value)
 	// Create a temp folder for this test, and store it somewhere the test can see it too.
 	$testWorkPath = "$workPath/$tn/";
 	mkdir_full($testWorkPath);
-	putenv("ide-test-work-path=$testWorkPath");
+	putenv("IDE_TEST_WORK_PATH=$testWorkPath");
 
 	$runner = BaseRunner::createRunner($tn);
 	$infile = isset($exp[2]) ? $exp[2] : '/dev/null';

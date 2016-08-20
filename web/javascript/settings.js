@@ -441,7 +441,7 @@ SettingsPage.Settings = {
 		name: 'Project list sort',
 		description: 'How to sort the projects list on the project page.',
 		options: {
-			'default': 'alpha',
+			'default': 'usage',
 			type: Setting.Type.single,
 			options: {'alpha':'Alphabetically', 'usage':'By usage'}
 		}
