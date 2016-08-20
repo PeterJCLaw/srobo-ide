@@ -127,7 +127,7 @@ function ProjOps() {
 			//do some sanity checking
 			switch (type) {
 				case 'isFile' :
-					if(dest.indexOf(".") < 0) {
+					if (dest.indexOf(".") < 0) {
 						status_msg("Move destination file must have an extension", LEVEL_ERROR);
 						return;
 					}

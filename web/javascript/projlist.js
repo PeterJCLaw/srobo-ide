@@ -34,7 +34,7 @@ ProjList.prototype._grab_list = function(team) {
 	this._team = team;
 
 	//kill the error message, if it exists
-	if( this._err_prompt != null ) {
+	if (this._err_prompt != null) {
 		this._err_prompt.close();
 		this._err_prompt = null;
 	}

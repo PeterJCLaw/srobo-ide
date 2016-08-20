@@ -268,7 +268,7 @@ ProjFileList.prototype._onclick = function(ev) {
 
 ProjFileList.prototype.select_all = function() {
 	var files = getElement('proj-filelist').getElementsByTagName('li');
-	for(var i=0; i<files.length; i++) {
+	for (var i=0; i<files.length; i++) {
 		this._select_path(getNodeAttribute(files[i].firstChild, "ide_path"), files[i]);
 	}
 };
@@ -279,7 +279,7 @@ ProjFileList.prototype.select = function(path) {
 		this.selection.push(path);
 	}
 	var allNodes = root.getElementsByTagName('li');
-	for(var i=0; i < allNodes.length; i++) {
+	for (var i=0; i < allNodes.length; i++) {
 		var node = allNodes[i];
 		if (getNodeAttribute(node.firstChild, 'ide_path') == path) {
 			this._select_path(path, node);

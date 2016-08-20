@@ -21,7 +21,7 @@ function SettingsPage() {
 }
 
 SettingsPage.GetInstance = function() {
-	if(SettingsPage.Instance == null) {
+	if (SettingsPage.Instance == null) {
 		SettingsPage.Instance = new SettingsPage();
 	}
 	return SettingsPage.Instance;
@@ -50,7 +50,7 @@ SettingsPage.prototype.init = function() {
 				SettingsPage.Settings[id].options
 			);
 			var raw_value = user.get_raw_setting(id);
-			if(raw_value != null) {
+			if (raw_value != null) {
 				this._settings[id].setValue(raw_value);
 			}
 		}
@@ -118,7 +118,7 @@ SettingsPage.prototype.saveSettings = function() {
 		log(this._settings[s]);
 		log(this._settings[s].isEnabled());
 		log(val);
-		if(val == Setting.Options.select && this._settings[s].isEnabled()) {
+		if (val == Setting.Options.select && this._settings[s].isEnabled()) {
 			status_msg('Please select a value for "'+SettingsPage.Settings[s].name+'"', LEVEL_WARN);
 			return;
 		}
@@ -233,7 +233,7 @@ Setting.prototype.setValue = function(value) {
 		this._field.checked = (value == true);
 	} else if (this._options.type == Setting.Type.multiple) {
 		for (var i=0; i < this._field.options.length; i++) {
-			if(inArray(this._field.options[i].value, value)) {
+			if (inArray(this._field.options[i].value, value)) {
 				this._field.options[i].selected = true;
 			}
 		}
@@ -371,8 +371,8 @@ Setting.prototype.__connect__ = function(ident, signal, objOrFunc, funcOrStr) {
 Setting.prototype.__disconnect__ = function(ident, signal, objOrFunc, funcOrStr) {
 	disconnect(ident);
 	disconnect(this._field, signal, objOrFunc, funcOrStr);
-	for(var i=0; i < this._signals.length; i++) {
-		if(this._signals[i] == ident) {
+	for (var i=0; i < this._signals.length; i++) {
+		if (this._signals[i] == ident) {
 			disconnectAll(this._signals.splice(i,2));
 			break;
 		}

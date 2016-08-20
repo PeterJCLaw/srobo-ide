@@ -180,7 +180,7 @@ function TabBar() {
 		log('switching to the next tab');
 		var curtab_id = this._find_curtab_id();
 		if (curtab_id > -1) {
-			for(curtab_id++; curtab_id<this.tabs.length; curtab_id++) {
+			for (curtab_id++; curtab_id < this.tabs.length; curtab_id++) {
 				logDebug('curtab_id:'+curtab_id);
 				if (this.switch_to(this.tabs[curtab_id])) {
 					break;
@@ -194,7 +194,7 @@ function TabBar() {
 		log('switching to the previous tab');
 		var curtab_id = this._find_curtab_id();
 		if (curtab_id > 0) {
-			for(curtab_id--; curtab_id>-1; curtab_id--) {
+			for (curtab_id--; curtab_id > -1; curtab_id--) {
 				logDebug('curtab_id:'+curtab_id);
 				if (this.switch_to(this.tabs[curtab_id])) {
 					break;

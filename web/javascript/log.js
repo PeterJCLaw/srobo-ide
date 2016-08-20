@@ -312,7 +312,7 @@ Log.prototype._diff = function() {
 Log.prototype._open = function() {
 	this._find_selected();
 
-	if(this.selectedRevision < 0) {
+	if (this.selectedRevision < 0) {
 		//no revision selected
 		status_msg("No revision selected !", LEVEL_WARN);
 	} else {

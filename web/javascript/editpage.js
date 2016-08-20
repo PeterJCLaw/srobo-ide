@@ -144,7 +144,7 @@ function EditPage() {
 		var etab = this._file_get_etab( path );
 		var newTab = false;
 
-		if( etab == null ) {
+		if (etab == null) {
 			var readOnly = projpage.project_readonly(project);
 			etab = this._new_etab( team, project, path, rev, readOnly, mode );
 			newTab = true;
@@ -154,7 +154,7 @@ function EditPage() {
 
 		// If they've specified a revision then change to it
 		// NB: we need to do this *after* switching to the tab so that it's shown, otherwise editarea explodes
-		if ( !newTab && rev != null ) {
+		if (!newTab && rev != null) {
 			etab.open_revision(rev, false);
 		}
 

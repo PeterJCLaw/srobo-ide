@@ -227,7 +227,7 @@ function populate_shortcuts_box() {
 		bind(about.showBox, about)
 	));
 
-	if(user.can_admin()) {
+	if (user.can_admin()) {
 		shortcuts.push(newShortcut( "Administration",
 			"IDE Admin",
 			bind(adminpage.init, adminpage)
@@ -287,7 +287,7 @@ function AboutBox() {
 		this.got_info = false;
 	};
 	this.get_info = function() {
-		if(this.got_info) {
+		if (this.got_info) {
 			return;
 		}
 		IDE_backend_request('info/about', {}, bind(this._got_info, this), function() {});
@@ -407,7 +407,7 @@ function User() {
 		}
 		if (changed) {
 			this._save_settings(opts);
-		} else if(opts == 'loud') {
+		} else if (opts == 'loud') {
 			status_msg( 'User settings unchanged', LEVEL_INFO );
 		}
 	};
@@ -467,7 +467,7 @@ function TeamSelector() {
 		} else {
 			var olist = [];
 
-			if( !this._team_exists(team) ) {
+			if (!this._team_exists(team)) {
 				// Work out what team we should be in
 				var team_load = user.get_setting('team.autoload');
 				var team_to_load = user.get_setting(team_load);
@@ -581,7 +581,7 @@ function TeamSelector() {
 	this._update_name = function() {
 		var name = "";
 		var teamInfo = user.get_team(team);
-		if( teamInfo != null ) {
+		if (teamInfo != null) {
 			name = teamInfo.name;
 
 			if (user.teams.length == 1) {

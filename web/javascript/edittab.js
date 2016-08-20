@@ -334,7 +334,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 
 	this._show_modified = function() {
 		//Handle modified notifications
-		if( this.is_modified() ) {
+		if (this.is_modified()) {
 			this.tab.set_label("*" + this.path);
 		} else {
 			this.tab.set_label(this.path);
@@ -346,7 +346,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		errCb = errCb || bind(this._on_keydown, this, 'auto');
 		this._timeout = null;
 		// do an update (if we have focus) and check to see if we need to autosave
-		if(this.tab.has_focus()) {
+		if (this.tab.has_focus()) {
 			this._capture_code();
 		}
 
@@ -549,7 +549,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			replaceChildNodes("history", OPTION({'value' : -1}, "No File History!"));
 		} else {
 			replaceChildNodes("history", OPTION({'value' : -1}, "Select File Revision"));
-			for(var i=0; i < nodes.log.length; i++) {
+			for (var i=0; i < nodes.log.length; i++) {
 				var author = nodes.log[i].author;
 				var pos = author.lastIndexOf('<');
 				if (pos >= 0) {
