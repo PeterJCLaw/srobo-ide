@@ -183,8 +183,6 @@ function EditPage() {
 			etab.open_revision(rev, false);
 		}
 
-		RecordAccess("function/edit_file(...," + mode + ")");
-
 		return etab;
 	};
 
