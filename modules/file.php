@@ -70,6 +70,18 @@ class FileModule extends Module
 	}
 
 	/**
+	 * Gets a handle on the repository for the current project
+	 */
+	private function masterRepository()
+	{
+		$pm = ProjectManager::getInstance();
+		$this->verifyTeam();
+		$userName = AuthBackend::getInstance()->getCurrentUserName();
+		$repo = $pm->getMasterRepository($this->team, $this->projectName, $userName);
+		return $repo;
+	}
+
+	/**
 	 * Makes a directory in the repository
 	 */
 	public function makeDirectory()
@@ -194,7 +206,7 @@ class FileModule extends Module
 		$revision = $input->getInput('rev');
 
 		// The data the repo has stored
-		$repo = $this->repository();
+		$repo = $this->masterRepository();
 		$original = $repo->getFile($path, $revision);
 
 		$output->setOutput('original', $original);
@@ -278,9 +290,7 @@ class FileModule extends Module
 		$input = Input::getInstance();
 		$path = $input->getInput('path');
 
-		$this->verifyTeam();
-		$pm = ProjectManager::getInstance();
-		$repo = $pm->getMasterRepository($this->team, $this->projectName);
+		$repo = $this->masterRepository();
 
 		$number = $input->getInput('number', true);
 		$offset = $input->getInput('offset', true);
@@ -337,15 +347,16 @@ class FileModule extends Module
 		$path = $input->getInput('path');
 		$newCode = $input->getInput('code', true);
 
-		$repo = $this->repository();
 		// patch from log
 		if ($newCode === null)
 		{
+			$repo = $this->masterRepository();
 			$diff = $repo->historyDiff($hash);
 		}
 		// diff against changed file
 		else
 		{
+			$repo = $this->repository();
 			$repo->putFile($path, $newCode);
 			$diff = $repo->diff($path);
 		}

@@ -41,6 +41,7 @@ test_equal(file_get_contents("$repopath/wut"), 'deathcakes', 'wrong content in f
 section("Commit and test the result");
 $repo->stage($input->getInput('path'));
 $repo->commit('message', 'test-name', 'test@email.tld');
+$repo->push();
 $input->setInput('rev', 'HEAD');
 $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read unchanged original file incorrectly');
