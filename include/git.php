@@ -448,6 +448,104 @@ class ReadOnlyGitRepository
 		}
 		return $matches;
 	}
+
+	/**
+	 * Gets the file tree for the git repository
+	 *
+	 * @param hash: The hash of the tree to get, defaults to HEAD.
+	 * @returns: A tree of arrays detailing the structure of the files.
+	 */
+	public function fileTreeCompat($base, $hash = null)
+	{
+		if ($hash == null)
+		{
+			$hash = 'HEAD';
+		}
+
+		$s_hash = escapeshellarg($hash);
+		$ret = $this->gitExecute(false, "ls-tree -t -r $s_hash");
+		if ($ret === FALSE)
+		{
+			return array();
+		}
+
+		$result = array();
+		$stack = array();
+		$currentDir = '';
+
+		$outputLines = explode(PHP_EOL, trim($ret));
+		foreach ($outputLines as $lineText)
+		{
+			list($mode, $type, $rest) = explode(' ', $lineText, 3);
+			list($object, $realpath) = explode("\t", $rest, 2);
+
+			$filename = basename($realpath);
+			if ($filename    == '' ||
+			    $filename[0] == '.')
+			{
+				continue;
+			}
+
+			//echo '-----------', PHP_EOL;
+			//echo '  realpath: '; var_dump($realpath);
+			//echo 'currentDir: '; var_dump($currentDir);
+
+			while (!startswith($realpath, $currentDir))
+			{
+				//echo 'pop', PHP_EOL;
+				$lastResult = $result;
+				list($result, $currentDir) = array_pop($stack);
+				$result[count($result) - 1]['children'] = $lastResult;
+			}
+
+			//echo 'currentDir: '; var_dump($currentDir);
+
+			switch ($type)
+			{
+				case 'blob':
+				{
+					$result[] = array('kind'     => 'FILE',
+					                  'name'     => $filename,
+					                  'path'     => "/$base/$realpath",
+					                  'children' => array(),
+					                 );
+					break;
+				}
+				case 'tree':
+				{
+					$result[] = array('kind'     => 'FOLDER',
+					                  'name'     => $filename,
+					                  'path'     => "/$base/$realpath",
+					                  // Children will be filled in on pop
+					                 );
+					//echo 'push', PHP_EOL;
+					$stack[] = array($result, $currentDir);
+					$result = array();
+					$currentDir = $realpath . '/';
+					break;
+				}
+				default:
+				{
+					ide_log(LOG_WARNING, "Repo $base contains unexpected item types: $type!");
+					break;
+				}
+			}
+		}
+
+		//echo '----------', PHP_EOL;
+
+		// fill in the remaining pops to complete the children
+		while (count($stack) > 0)
+		{
+			//echo 'pop', PHP_EOL;
+			$lastResult = $result;
+			list($result, $currentDir) = array_pop($stack);
+			$result[count($result) - 1]['children'] = $lastResult;
+		}
+
+
+		return $result;
+	}
 }
 
 /**
@@ -718,74 +816,6 @@ class GitRepository extends ReadOnlyGitRepository
 		$s_committerEnv = self::makeGitUserEnv($name, $email);
 		list($result, $out) = $this->gitExecute(true, "commit --allow-empty-message -F $s_tmp", $s_committerEnv, true);
 		unlink($tmp);
-		return $result;
-	}
-
-	/**
-	 * Gets the file tree for the git repository
-	 */
-	public function fileTreeCompat($base,$subpath = '.',$hash=null)
-	{
-		if ($hash != null)
-		{
-			$stash_id = 'Stashing before fileTreeCompat of '.$hash;
-			$needs_unstash = $this->stash($stash_id);
-			$this->checkoutRepo($hash);
-		}
-
-		$result = array();
-		for ($iterator = new FilesystemIterator($this->workingPath() . "/$subpath");
-		     $iterator->valid();
-		     $iterator->next())
-		{
-			$raw_path = $iterator->key();
-			$realpath = substr($raw_path, strlen($this->workingPath() . '/'));
-			$realpath = str_replace('./', '', $realpath);
-			$filename = basename($realpath);
-			$fileinfo = $iterator->current();
-
-			if ($filename    == '' ||
-			    $filename[0] == '.')
-			{
-				continue;
-			}
-
-			if ($fileinfo->isFile())
-			{
-				$result[] = array('kind'     => 'FILE',
-				                  'name'     => $filename,
-				                  'path'     => "/$base/$realpath",
-				                  'children' => array(),
-				                 );
-			}
-			elseif ($fileinfo->isDir())
-			{
-				$result[] = array('kind'     => 'FOLDER',
-				                  'name'     => $filename,
-				                  'path'     => "/$base/$realpath",
-				                  'children' => $this->fileTreeCompat($base, $realpath),
-				                 );
-			}
-		}
-
-		usort($result, function($a, $b) {
-			$a = $a['name'];
-			$b = $b['name'];
-			if ($a < $b)  return -1;
-			if ($a > $b)  return 1;
-			if ($a == $b) return 0;
-		});
-
-		if ($hash != null)
-		{
-			// reset the tree back to tip
-			$this->checkoutRepo('master');
-			if ($needs_unstash)
-			{
-				$this->stashPop($stash_id);
-			}
-		}
-
 		return $result;
 	}
 

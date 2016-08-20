@@ -125,15 +125,10 @@ class FileModule extends Module
 		$output = Output::getInstance();
 
 		$revision = $input->getInput('rev', true);
-		// a specific revision is requested
-		if ($revision != null && $revision != 'HEAD')
-		{
-			$uncleanOut = $this->repository()->fileTreeCompat($this->projectName, '.', $revision);
-		}
-		else
-		{
-			$uncleanOut = $this->repository()->fileTreeCompat($this->projectName);
-		}
+
+		$repo = $this->masterRepository();
+
+		$uncleanOut = $repo->fileTreeCompat($this->projectName, $revision);
 		$results = $this->sanitiseFileList($uncleanOut);
 		$output->setOutput('tree', $results);
 		return true;

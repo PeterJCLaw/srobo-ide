@@ -38,7 +38,8 @@ function mkdir_and_holder($repo, $path)
     return $placeholder;
 }
 
-$tree = $repo->fileTreeCompat('cake');
+$masterRepo = $projectManager->getMasterRepository(1, 'cake');
+$tree = $masterRepo->fileTreeCompat('cake');
 check_initial($tree);
 
 $dir_holders[] = mkdir_and_holder($repo, 'ninjas');
@@ -56,7 +57,7 @@ array_map(array($repo, 'stage'), $dir_holders);
 $repo->commit('needed since we removed autosave', 'test-user', 'test@example.com');
 $repo->push();
 
-$tree = $repo->fileTreeCompat('cake');
+$tree = $masterRepo->fileTreeCompat('cake');
 
 var_dump($tree);
 
@@ -92,5 +93,5 @@ test_false(isset($tree[1]['autosave']), 'Autosave should not be set (root file)'
 
 test_equal(count($tree), 4, 'Should be four root items in the main test tree');
 
-$tree = $repo->fileTreeCompat('cake', '.', 'HEAD^');
+$tree = $masterRepo->fileTreeCompat('cake', 'HEAD^');
 check_initial($tree);
