@@ -45,20 +45,6 @@ function get_cmd_line($match, $commands)
 	return substr($match, $pos);
 }
 
-function endswith($string, $expectedEnd)
-{
-	$len = strlen($expectedEnd);
-	$end = substr($string, -1 * $len);
-	return $end == $expectedEnd;
-}
-
-function startswith($string, $expectedStart)
-{
-	$len = strlen($expectedStart);
-	$start = substr($string, 0, $len);
-	return $start == $expectedStart;
-}
-
 $results = explode("\n", $raw_results);
 $declarationsPattern = '/(private )?(static )?function (' . implode('|', $shellCommands) . ')/';
 

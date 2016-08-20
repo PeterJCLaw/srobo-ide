@@ -14,3 +14,17 @@ function str_insert($str, $insert, $pos)
 	$result = $start.$insert.$end;
 	return $result;
 }
+
+function endswith($string, $expectedEnd)
+{
+	$len = strlen($expectedEnd);
+	$end = substr($string, -1 * $len);
+	return $end == $expectedEnd;
+}
+
+function startswith($string, $expectedStart)
+{
+	$len = strlen($expectedStart);
+	$start = substr($string, 0, $len);
+	return $start == $expectedStart;
+}
