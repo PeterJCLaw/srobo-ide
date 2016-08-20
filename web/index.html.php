@@ -280,7 +280,6 @@
 							<li><a id="op-cp"           href="#">Copy</a></li>
 							<li><a id="op-rm"           href="#">Delete</a></li>
 							<li><a id="op-undel"        href="#">Undelete</a></li>
-							<li><a id="op-rm_autosaves" href="#">Delete Autosaves</a></li>
 							<li><a id="op-check"        href="#">Check Files' Syntax</a></li>
 							<li><a id="op-log"          href="#">View Log</a></li>
 						</ul>

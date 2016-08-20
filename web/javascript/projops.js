@@ -281,43 +281,6 @@ function ProjOps() {
 		IDE_backend_request("file/del", args, bind(del_success, this), del_fail);
 	};
 
-	this.rm_autosaves = function(override) {
-		if (projpage.flist.selection.length == 0) {
-			status_msg("There are no files/folders selected for deletion", LEVEL_ERROR);
-			return;
-		}
-		if (override == false) {
-			status_button("Are you sure you want to delete "+projpage.flist.selection.length+" selected Autosaves",
-						LEVEL_WARN, "delete", bind(this.rm_autosaves, this, true));
-			return;
-		}
-
-		var death_list = [];
-		var selection = projpage.flist.selection;
-		var proj_path_len = projpage.project.length + 2;
-		for (var i=0; i < selection.length; i++) {
-			death_list.push(selection[i].substr(proj_path_len));
-		}
-
-		log("Will delete autosaves: "+death_list);
-
-		var args = { "team" : team,
-			"project" : projpage.project,
-			"files" : death_list,
-			"revision": 0
-		};
-		IDE_backend_request("file/co", args,
-			bind(function(nodes) {
-				status_msg("Deleted Autosaves", LEVEL_OK);
-				projpage.flist.refresh();
-			}),
-			bind(function() {
-				status_button("Error contacting server",
-				LEVEL_ERROR, "retry", bind(this.rm_autosaves, this, true));
-			})
-		);
-	};
-
 	this._undel_callback = function(nodes) {
 		status_button("Successfully undeleted file(s)",
 		LEVEL_OK, 'goto HEAD', bind(projpage.flist.change_rev, projpage.flist, 'HEAD'));
@@ -421,12 +384,6 @@ function ProjOps() {
 	this.ops.push({ "name" : "Undelete",
 			"action" : bind(this.undel, this),
 			"handle": getElement("op-undel"),
-			'isWrite' : true,
-			"event" : null });
-
-	this.ops.push({ "name" : "Delete AutoSaves",
-			"action" : bind(this.rm_autosaves, this, false),
-			"handle": getElement("op-rm_autosaves"),
 			'isWrite' : true,
 			"event" : null });
 
