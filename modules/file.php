@@ -179,14 +179,6 @@ class FileModule extends Module
 		$repo = $this->repository();
 		$original = $repo->getFile($path, $revision);
 
-		// only bother specifying the autosave data if HEAD
-		$autosaved = null;
-		if ($revision == 'HEAD' && in_array($path, $repo->unstagedChanges()))
-		{
-			$autosaved = $repo->getFile($path);
-		}
-
-		$output->setOutput('autosaved', $autosaved);
 		$output->setOutput('original', $original);
 		return true;
 	}
