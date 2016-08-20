@@ -168,7 +168,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly) {
 			this._capture_code();
 		}
 		this._file_put(
-			bind( errorspage.check, errorspage, this.path, { alert: true }, true ),
+			bind( errorspage.check, errorspage, this.path, { alert: true }, true, null ),
 			partial( status_button, "Unable to check syntax", LEVEL_WARN,
 			         "retry", bind(this._check_syntax, this) )
 		);
