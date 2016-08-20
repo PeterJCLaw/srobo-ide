@@ -74,10 +74,12 @@ $repo->gitMKDir('some-folder');
 $repo->putFile('committed-changed', $changedContent = 'some changed content in a committed file');
 $repo->putFile('new-file', $newFileContent = 'some new file content');
 
-$folder = $repo->workingPath().'/some-folder';
+$workingPath = $repo->workingPath();
 
-$newFile = $repo->workingPath().'/new-file';
-$otherFile = $repo->workingPath().'/other-file';
+$folder = $workingPath.'/some-folder';
+$newFile = $workingPath.'/new-file';
+$committedFile = $workingPath.'/committed-changed';
+$otherFile = $workingPath.'/other-file';
 
 subsection('validate behaviour');
 $projectManager->updateRepository($repo, 'jim');
@@ -88,6 +90,6 @@ test_existent($folder, 'Empty folders should remain after an update');
 
 test_existent($otherFile, 'File added upstream should now be present');
 
-test_equal($repo->getFile('new-file'), $newFileContent, 'Content of new (uncommitted) file should be preserved');
-test_equal($repo->getFile('committed-changed'), $changedContent, 'Content of committed file with changes should be preserved');
-test_equal($repo->getFile('other-file'), $otherContent, 'Content of upstream file');
+test_equal(file_get_contents($newFile), $newFileContent, 'Content of new (uncommitted) file should be preserved');
+test_equal(file_get_contents($committedFile), $changedContent, 'Content of committed file with changes should be preserved');
+test_equal(file_get_contents($otherFile), $otherContent, 'Content of upstream file');
