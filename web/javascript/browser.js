@@ -170,6 +170,16 @@ Browser.prototype._badFname = function(name) {
 	return /^$|^\s|^[.]|:|"|\//.test(name);
 };
 
+Browser.prototype._nameExists = function(name) {
+	var name_exists = false;
+	if (this.type == 'isFile' || this.type == 'isDir') {
+		name_exists = findValue(this._list, this.newFname) > -1;
+	} else if (this.type == 'isProj') {
+		name_exists = projpage.project_exists(this.newFname);
+	}
+	return name_exists;
+};
+
 //when user clicks save
 Browser.prototype.clickSaveFile = function(noMsg) {
 	disconnectAll("browser-status");
@@ -208,10 +218,8 @@ Browser.prototype.clickSaveFile = function(noMsg) {
 	}
 
 	//file, dir or project name already exists
-	logDebug('Checking file existence: '+this.newFname+' in '+this._list+' : '+(findValue(this._list, this.newFname) > -1) );
-	if( ( ( this.type == 'isFile' || this.type == 'isDir' ) && findValue(this._list, this.newFname) > -1 ) ||
-		( this.type == 'isProj' && projpage.project_exists(this.newFname) )
-	) {
+	logDebug('Checking file existence: '+this.newFname);
+	if (this._nameExists(this.newFname)) {
 		var warn = '"'+this.newFname+'" already exists';
 		if (this.type == 'isProj') {
 			warn = 'Project '+warn;
