@@ -20,7 +20,8 @@ $repo->gitMKDir('ninjas');
 $repo->putFile('ninjas/nuns', "the cake is a lie\n");
 $repo->gitMKDir('ninjas/z-ninjaChildren');
 $repo->putFile('ninjas/z-ninjaChildren/pirates', 'Captain Jack');
-$tree = $repo->fileTreeCompat("cake");
+
+$tree = $repo->fileTreeCompat('cake');
 
 test_equal($tree[0]['kind'], 'FOLDER', 'tested folder had incorrect kind');
 test_equal($tree[0]['name'], 'ninjas', 'tested folder had incorrect name');
