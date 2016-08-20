@@ -167,11 +167,18 @@ function EditTab(iea, team, project, path, rev, isReadOnly) {
 		if(this.tab.has_focus()) {
 			this._capture_code();
 		}
-		this._file_put(
-			bind( errorspage.check, errorspage, this.path, { alert: true }, true, null ),
-			partial( status_button, "Unable to check syntax", LEVEL_WARN,
-			         "retry", bind(this._check_syntax, this) )
-		);
+
+		var check_handler = bind( errorspage.check, errorspage, this.path, { alert: true } );
+		if (this.contents == this._original) {
+			// no actual changes -- just run the check
+			check_handler(false, this.rev);
+		} else {
+			this._file_put(
+				partial( check_handler, true, null ),
+				partial( status_button, "Unable to check syntax", LEVEL_WARN,
+				         "retry", bind(this._check_syntax, this) )
+			);
+		}
 	};
 
 	this._diff = function() {
