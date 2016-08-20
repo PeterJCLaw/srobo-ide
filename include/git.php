@@ -600,14 +600,15 @@ class GitRepository extends ReadOnlyGitRepository
 	 */
 	public function merge($branches, $name, $email)
 	{
-		$mergeOptions = array('--no-stat',
-		                      '--quiet');
+		$s_mergeOptions = array('--no-stat',
+		                        '--quiet');
+		$s_branches = array_map('escapeshellarg', $branches);
 		// environment variables are safe anyway.
 		$s_committerEnv = self::makeGitUserEnv($name, $email);
 		list($success, $message) = $this->gitExecute(true, 'merge '
-		                                             . implode(' ', $mergeOptions)
+		                                             . implode(' ', $s_mergeOptions)
 		                                             . ' '
-		                                             . implode(' ', $branches),
+		                                             . implode(' ', $s_branches),
 		                                             $s_committerEnv,	// env
 		                                             true);  	// catchResult
 		if ($success)
