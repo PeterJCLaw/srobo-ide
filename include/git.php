@@ -338,21 +338,28 @@ class ReadOnlyGitRepository
 	}
 
 	/**
-	 * Gets the contents of the file, optionally of a specific revision
+	 * Gets the contents of the file, optionally of a specific revision.
+	 * @param commit: The commit to fetch. If not provided and this instance
+	 *                is a bare repo then 'HEAD' is assumed. Otherwise the
+	 *                content of the file on disk is returned.
+	 * @returns: The content of the file at the given commit.
 	 */
-	public function getFile($path, $commit = null) // pass $commit to get a particular revision
+	public function getFile($path, $commit = null)
 	{
 		if ($commit === null)
 		{
-			return file_get_contents($this->workingPath() . "/$path");
+			if (!$this->isBare())
+			{
+				return file_get_contents($this->workingPath() . "/$path");
+			}
+
+			$commit = 'HEAD';
 		}
-		else
-		{
-			$s_commit = escapeshellarg($commit);
-			$s_path = escapeshellarg($path);
-			$code = $this->gitExecute(false, "show $s_commit:$s_path");
-			return $code;
-		}
+
+		$s_commit = escapeshellarg($commit);
+		$s_path = escapeshellarg($path);
+		$code = $this->gitExecute(false, "show $s_commit:$s_path");
+		return $code;
 	}
 
 	/**
