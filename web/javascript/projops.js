@@ -95,7 +95,7 @@ function ProjOps() {
 			           };
 			IDE_backend_request("file/mkdir", args,
 			                        bind(this.receive_newfolder,this),
-			                        bind(this.error_receive_newfolder, new_name, new_msg, this)
+			                        bind(this.error_receive_newfolder, this, new_name, new_msg)
 			                    );
 		}
 	};
