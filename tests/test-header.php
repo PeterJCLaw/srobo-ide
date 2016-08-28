@@ -111,6 +111,18 @@ function test_existent($path, $message)
 	__test(file_exists($path), "Path '$path' should exist: $message");
 }
 
+function test_is_file($path, $message)
+{
+	__test(file_exists($path), "File '$path' should exist (and be a file), but didn't: $message");
+	__test(is_file($path), "Path '$path' should be a file, but was something else: $message");
+}
+
+function test_is_dir($path, $message)
+{
+	__test(file_exists($path), "Directory '$path' should exist (and be a directory), but didn't: $message");
+	__test(is_dir($path), "Path '$path' should be a directory, but was something else: $message");
+}
+
 function test_nonexistent($path, $message)
 {
 	__test(!file_exists($path), "Path '$path' shouldn't exist: $message");

@@ -30,7 +30,7 @@ $repopath = $config->getConfig("repopath") . "/" . $input->getInput("team") . "/
 $projectManager = ProjectManager::getInstance();
 $projectManager->createRepository($input->getInput("team"), $input->getInput("project"));
 $repo = $projectManager->getUserRepository(1, 'monkies', 'bees');
-test_true(is_dir($repopath), "created repo did not exist");
+test_is_dir($repopath, "created repo did not exist");
 
 section("Set file content");
 $input->setInput('path', 'wut');
@@ -92,8 +92,7 @@ $repo->commit("bees","bees","bees@example.com");
 section("Create a directory");
 $input->setInput('path', 'spacey dir/wibble');
 $file->dispatchCommand('mkdir');
-test_existent("$repopath/spacey dir/wibble", 'directoty did not exist after creation');
-test_true(is_dir("$repopath/spacey dir/wibble"), 'item was not a directoty after creation');
+test_is_dir("$repopath/spacey dir/wibble", 'after creation');
 
 section("Check the file listings");
 $input->setInput('path', '.');
