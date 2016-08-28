@@ -51,7 +51,6 @@ function commitData($repo, $file, $data)
 section("robot.py with missing import");
 commitData($repo, 'robot.py', $robotData);
 $output->setOutput('errors', null);
-$input->setInput('autosave', null);
 $file->dispatchCommand('lint');
 $expectedError1 = new StdClass;
 $expectedError1->file = 'robot.py';

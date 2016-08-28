@@ -168,17 +168,11 @@ function EditTab(iea, team, project, path, rev, isReadOnly) {
 			this._capture_code();
 		}
 
-		var check_handler = bind( errorspage.check, errorspage, this.path, { alert: true } );
-		if (this.contents == this._original) {
-			// no actual changes -- just run the check
-			check_handler(false, this.rev);
-		} else {
-			this._file_put(
-				partial( check_handler, true, null ),
-				partial( status_button, "Unable to check syntax", LEVEL_WARN,
-				         "retry", bind(this._check_syntax, this) )
-			);
+		var code = null;
+		if (this.contents != this._original) {
+			code = this.contents;
 		}
+		errorspage.check(this.path, { alert: true }, this.rev, code);
 	};
 
 	this._diff = function() {
@@ -241,7 +235,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly) {
 			this._original = this.contents;
 			this.tab.set_label(this.path);
 			if (user.get_setting('save.autoerrorcheck') != false && this._can_check_syntax()) {
-				errorspage.check(this.path, { alert: true, quietpass: true }, false);
+				errorspage.check(this.path, { alert: true, quietpass: true }, nodes.commit);
 			}
 		} else {
 			status_msg("File "+this.path+" Merge required, please check and try again (Now at "+nodes.commit+")", LEVEL_ERROR);

@@ -373,7 +373,7 @@ ProjPage.prototype._handleExportProject = function(ignoreUnsaved) {
 	}
 
 	var options = {'switch_to':true, 'alert':false, 'quietpass':true, 'callback':bind(this._exportProjectCheckResult, this)};
-	errorspage.check("/"+this.project+"/robot.py", options, false, this.flist.rev);
+	errorspage.check("/"+this.project+"/robot.py", options, this.flist.rev);
 };
 
 ProjPage.prototype._exportProjectCheckResult = function(result, num_errors) {
@@ -421,5 +421,5 @@ ProjPage.prototype.clickCheckCode = function() {
 		return false;
 	}
 
-	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true}, false, this.flist.rev);
+	errorspage.check("/"+this.project+"/robot.py", {'switch_to':true}, this.flist.rev);
 };

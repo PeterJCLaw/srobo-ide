@@ -370,7 +370,7 @@ class FileModule extends Module
 			$pylint = new PyLint();
 			$importlint = new ImportLint();
 
-			$useAutosave = $input->getInput('autosave', true);
+			$newCode = $input->getInput('code', true);
 			$revision = $input->getInput('rev', true);
 
 			// Grab a temp folder that we can work in. We'll remove it later.
@@ -383,25 +383,22 @@ class FileModule extends Module
 
 			$working = $tmpDir.'/'.basename($base);
 
+			// Tidy up the repo
+			$repo = GitRepository::GetOrCreate($working);
+			$repo->reset();
+
 			// fixed revision
 			if ($revision !== null)
 			{
-				// While this is in theory a file-level command, and we
-				// therefore shouldn't be modding the whole repo, it doesn't
-				// make any sense to just check out an old revision of just
-				// the requested file.
-				$repo = GitRepository::GetOrCreate($working);
-				$repo->reset();
 				$repo->checkoutRepo($revision);
 			}
-			// they want the current committed version of the file
-			else if (!$useAutosave)
+
+			if ($newCode !== null)
 			{
-				// TODO: do we also want to checkout the entire folder in this case?
-				$repo = GitRepository::GetOrCreate($working);
-				$repo->checkoutFile($path);
-				$repo = null;
+				$repo->putFile($path, $newCode);
 			}
+
+			unset($repo);
 
 			// Copy the reference file to the temp folder
 			$dummy_copy = $working.'/'.basename($dummy);
