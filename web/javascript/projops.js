@@ -94,7 +94,7 @@ function ProjOps() {
 			          project: IDE_path_get_project(new_name)
 			           };
 			IDE_backend_request("file/mkdir", args,
-			                        bind(this.receive_newfolder,this),
+			                        bind(this.receive_newfolder, this),
 			                        bind(this.error_receive_newfolder, this, new_name, new_msg)
 			                    );
 		}
