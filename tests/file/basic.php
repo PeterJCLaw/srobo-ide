@@ -93,6 +93,13 @@ section("Create a directory");
 $input->setInput('path', 'spacey dir/wibble');
 $file->dispatchCommand('mkdir');
 test_is_dir("$repopath/spacey dir/wibble", 'after creation');
+test_is_file("$repopath/spacey dir/wibble/.directory", 'after directory creation');
+test_is_file("$repopath/spacey dir/.directory", 'after direct sub-directory creation');
+
+// commit the result to clean the tree
+$repo->stage('spacey dir/.directory');
+$repo->stage('spacey dir/wibble/.directory');
+$repo->commit("bees","bees","bees@example.com");
 
 section("Check the file listings");
 $input->setInput('path', '.');

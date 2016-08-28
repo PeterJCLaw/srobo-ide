@@ -78,8 +78,29 @@ class FileModule extends Module
 
 		$input = Input::getInstance();
 		$output = Output::getInstance();
+
 		$path = $input->getInput("path");
-		$success = $this->repository()->gitMKDir($path);
+
+		$repo = $this->repository();
+		$success = $repo->gitMKDir($path);
+
+		$paths = array();
+		if ($success)
+		{
+			$now = time();
+			do
+			{
+				$placeholder_file = $path . '/.directory';
+				$paths[] = $placeholder_file;
+				$success = $repo->touchFile($placeholder_file, $now);
+			}
+			while (($path = dirname($path)) != '.');
+
+			if ($success)
+			{
+				$output->setOutput('$paths', $paths);
+			}
+		}
 		return $success;
 	}
 
