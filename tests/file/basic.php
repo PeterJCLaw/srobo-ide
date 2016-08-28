@@ -101,18 +101,22 @@ $repo->stage('spacey dir/.directory');
 $repo->stage('spacey dir/wibble/.directory');
 $repo->commit("bees","bees","bees@example.com");
 
+section("Remove a directory");
+$input->setInput('files', array('spacey dir/wibble'));
+$file->dispatchCommand('del');
+test_is_dir("$repopath/spacey dir", 'parent directoty should remain after child removal');
+test_nonexistent("$repopath/spacey dir/wibble", 'directoty should have been removed');
+
+// commit the result to clean the tree
+$repo->stage('spacey dir/wibble');
+$repo->commit("bees","bees","bees@example.com");
+
 section("Check the file listings");
 $input->setInput('path', '.');
 $file->dispatchCommand('list');
 $expected = array('robot.py', 'spacey dir', 'wut');
 test_equal($output->getOutput('files'), $expected, 'incorrect file list');
 $file->dispatchCommand('compat-tree');
-$inner = array('kind' => 'FOLDER',
-               'name' => 'wibble',
-               'path' => '/monkies/spacey dir/wibble',
-               'children' => array(),
-              );
-
 $expected = array(
     array('kind' => 'FILE',
           'name' => 'robot.py',
@@ -123,7 +127,7 @@ $expected = array(
     array('kind' => 'FOLDER',
           'name' => 'spacey dir',
           'path' => '/monkies/spacey dir',
-          'children' => array($inner),
+          'children' => array(),
          ),
     array('kind' => 'FILE',
           'name' => 'wut',
