@@ -89,17 +89,35 @@ test_nonexistent("$repopath/huh", 'old file still exists after move');
 $repo->stage('wut');
 $repo->commit("bees","bees","bees@example.com");
 
+section("Create a directory");
+$input->setInput('path', 'spacey dir/wibble');
+$file->dispatchCommand('mkdir');
+test_existent("$repopath/spacey dir/wibble", 'directoty did not exist after creation');
+test_true(is_dir("$repopath/spacey dir/wibble"), 'item was not a directoty after creation');
+
 section("Check the file listings");
 $input->setInput('path', '.');
 $file->dispatchCommand('list');
-test_equal($output->getOutput('files'), array('robot.py', 'wut'), 'incorrect file list');
+$expected = array('robot.py', 'spacey dir', 'wut');
+test_equal($output->getOutput('files'), $expected, 'incorrect file list');
 $file->dispatchCommand('compat-tree');
+$inner = array('kind' => 'FOLDER',
+               'name' => 'wibble',
+               'path' => '/monkies/spacey dir/wibble',
+               'children' => array(),
+              );
+
 $expected = array(
     array('kind' => 'FILE',
           'name' => 'robot.py',
           'path' => '/monkies/robot.py',
           'children' => array(),
           'autosave' => 0,
+         ),
+    array('kind' => 'FOLDER',
+          'name' => 'spacey dir',
+          'path' => '/monkies/spacey dir',
+          'children' => array($inner),
          ),
     array('kind' => 'FILE',
           'name' => 'wut',
