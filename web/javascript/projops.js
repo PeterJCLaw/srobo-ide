@@ -62,17 +62,10 @@ function ProjOps() {
 		}
 	};
 
-	this.receive_newfolder = function(nodes) {
+	this.receive_newfolder = function(new_name, nodes) {
 		logDebug("Add new folder: ajax request successful");
-		switch(nodes.success) {
-			case 1:
-				status_msg(nodes.feedback, LEVEL_OK);
-				projpage.flist.refresh();
-				break;
-			case 0:
-				status_msg(nodes.feedback, LEVEL_ERROR);
-				break;
-		}
+		status_msg("Successfully created directory '" + IDE_path_get_file(new_name) + "'", LEVEL_OK);
+		projpage.flist.refresh();
 	};
 
 	this.error_receive_newfolder = function(new_name, new_msg) {
@@ -94,7 +87,7 @@ function ProjOps() {
 			          project: IDE_path_get_project(new_name)
 			           };
 			IDE_backend_request("file/mkdir", args,
-			                        bind(this.receive_newfolder, this),
+			                        bind(this.receive_newfolder, this, new_name),
 			                        bind(this.error_receive_newfolder, this, new_name, new_msg)
 			                    );
 		}

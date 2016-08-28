@@ -80,9 +80,6 @@ class FileModule extends Module
 		$output = Output::getInstance();
 		$path = $input->getInput("path");
 		$success = $this->repository()->gitMKDir($path);
-		$output->setOutput("success", $success ? 1 : 0);
-		$text = $success ? 'Successfully created' : 'Failed to create';
-		$output->setOutput("feedback", "$text folder '$path'");
 		return $success;
 	}
 
