@@ -44,14 +44,12 @@ $repo->commit('message', 'test-name', 'test@email.tld');
 $input->setInput('rev', 'HEAD');
 $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read unchanged original file incorrectly');
-test_null($output->getOutput('autosaved'), 'read unchanged autosaved file incorrectly');
 
 section("Autosave and test the result");
 $input->setInput('data', 'bananas');
 $file->dispatchCommand('put');
 $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read changed original file incorrectly');
-test_equal($output->getOutput('autosaved'), 'bananas', 'read changed autosaved file incorrectly');
 
 section("Clear the autosave and test the result");
 $input->setInput('files', array($input->getInput('path')));
@@ -59,7 +57,6 @@ $input->setInput('revision', 0);
 $file->dispatchCommand('co');
 $file->dispatchCommand('get');
 test_equal($output->getOutput('original'), 'deathcakes', 'read checkouted original file incorrectly');
-test_null($output->getOutput('autosaved'), 'read checkouted autosaved file incorrectly');
 
 section("Copy the file and test the result");
 $input->setInput('old-path', 'wut');
@@ -122,7 +119,6 @@ $expected = array(
           'name' => 'robot.py',
           'path' => '/monkies/robot.py',
           'children' => array(),
-          'autosave' => 0,
          ),
     array('kind' => 'FOLDER',
           'name' => 'spacey dir',
@@ -133,7 +129,6 @@ $expected = array(
           'name' => 'wut',
           'path' => '/monkies/wut',
           'children' => array(),
-          'autosave' => 0,
          ),
 );
 test_equal($output->getOutput('tree'), $expected, 'incorrect file tree');

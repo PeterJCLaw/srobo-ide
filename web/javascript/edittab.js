@@ -2,7 +2,7 @@
 
 // Represents a tab that's being edited
 // Managed by EditPage -- do not instantiate outside of EditPage
-function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
+function EditTab(iea, team, project, path, rev, isReadOnly) {
 	// Member functions:
 	// Public:
 	//  - close: Handler for when the tab is closed: check the contents of the file then close
@@ -18,6 +18,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	//  - _load_contents: Start the file contents request.
 	//  - _recv_contents: Handler for file contents reception.
 	//  - _recv_contents_err: Handler for file contents reception errors.
+	//  - _file_put: Send the file contents to the server.
 
 	//  ** Save Related **
 	//  - _save: Handler for when the save button is clicked.
@@ -64,17 +65,8 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	// are we currently setting the session document value?
 	// used to avoid responding to change notifications during updates
 	this._settingValue = false;
-	//this will host the delay for the autosave
-	this._timeout = null;
-	//the time in seconds to delay before saving
-	this._autosave_delay = 25;
-	this._autosave_retry_delay = 7;
-	//the contents at the time of the last autosave
-	this._autosaved = "";
 	// Whether the file is opened read-only
 	this._read_only = isReadOnly;
-	// whether we're loading from the vcs repo or an autosave
-	this._mode = mode;
 
 	// Have we completed our initial load of the file contents?
 	this._loaded = false;
@@ -142,13 +134,7 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		this._loaded = true;
 		this._isNew = false;
 		this._original = nodes.original;
-		this._autosaved = nodes.autosaved || null;
-
-		if (this._mode == 'AUTOSAVE') {
-			this.contents = this._autosaved || this._original;
-		} else {
-			this.contents = this._original;
-		}
+		this.contents = this._original;
 
 		this._update_contents();
 		this._show_contents();
@@ -178,11 +164,15 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		logDebug( "Checking syntax of " + this.path );
 
 		// get the errors page to run the check, after autosaving the file.
-		this._autosave(
-			bind( errorspage.check, errorspage, this.path, { alert: true },true ),
-			partial( status_button, "Unable to check syntax", LEVEL_WARN,
-			         "retry", bind(this._check_syntax, this) )
-		);
+		if(this.tab.has_focus()) {
+			this._capture_code();
+		}
+
+		var code = null;
+		if (this.contents != this._original) {
+			code = this.contents;
+		}
+		errorspage.check(this.path, { alert: true }, this.rev, code);
 	};
 
 	this._diff = function() {
@@ -244,9 +234,8 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 			status_msg("File "+this.path+" Saved successfully (Now at "+nodes.commit+")", LEVEL_OK);
 			this._original = this.contents;
 			this.tab.set_label(this.path);
-			this._autosaved = "";
 			if (user.get_setting('save.autoerrorcheck') != false && this._can_check_syntax()) {
-				errorspage.check(this.path, { alert: true, quietpass: true }, false);
+				errorspage.check(this.path, { alert: true, quietpass: true }, nodes.commit);
 			}
 		} else {
 			status_msg("File "+this.path+" Merge required, please check and try again (Now at "+nodes.commit+")", LEVEL_ERROR);
@@ -282,14 +271,18 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 				bind(this._receive_repo_save, this),
 				bind(this._error_receive_repo_save, this));
 		}, this);
+		this._file_put(put_success, bind(this._error_receive_repo_save, this));
+	};
+
+	//send the content of the file to the backend in preparation for another action
+	this._file_put = function(success_cb, error_cb) {
 		var args = {
 			team: team,
 			project: IDE_path_get_project(this.path),
 			path: IDE_path_get_file(this.path),
 			data: this.contents
 		};
-		IDE_backend_request("file/put", args, put_success,
-		                    bind(this._error_receive_repo_save, this));
+		IDE_backend_request("file/put", args, success_cb, error_cb);
 	};
 
 	this._on_keydown = function(ev) {
@@ -312,22 +305,10 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 	this._on_change = function(e) {
 		if (!this._settingValue) {
 			this._show_modified();
-
-			// Trigger an autosave
-			if (this._timeout != null) {
-				this._timeout.cancel();
-			}
-			var delay;
-			if (e == 'auto') {
-				delay = this._autosave_retry_delay;
-			} else {
-				delay = this._autosave_delay;
-			}
-			this._timeout = callLater(delay, bind(this._autosave, this));
 		}
 	};
 
-	//called when the code in the editarea changes. TODO: get the autosave to use this interface too
+	//called when the code in the editarea changes.
 	this._on_keyup = function() {
 		this._show_modified();
 	};
@@ -341,47 +322,6 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		}
 	};
 
-	this._autosave = function(cb, errCb) {
-		cb = cb || null;
-		errCb = errCb || bind(this._on_keydown, this, 'auto');
-		this._timeout = null;
-		// do an update (if we have focus) and check to see if we need to autosave
-		if (this.tab.has_focus()) {
-			this._capture_code();
-		}
-
-		// If there's no change don't bother going to the backend
-		var unchanged = this.contents == this._original || this.contents == this._autosaved;
-		if (unchanged) {
-			// even if there isn't a change, we still need to fire the callback
-			if (typeof cb == 'function') {
-				cb();
-			}
-			return;
-		}
-
-		logDebug('EditTab: Autosaving '+this.path);
-
-		var args = {
-			team: team,
-			project: this.project,
-			path: IDE_path_get_file(this.path),
-			rev: this.rev,
-			data: this.contents
-		};
-		var successback = bind(this._receive_autosave, this, this.contents, cb);
-		IDE_backend_request("file/put", args, successback, errCb);
-	};
-
-	//ajax event handler for autosaving to server, based on the one for commits
-	this._receive_autosave = function(code, cb){
-		this._autosaved = code;
-		projpage.flist.refresh('auto');
-		if (typeof cb == 'function') {
-			cb();
-		}
-	};
-
 	this.is_modified = function() {
 		if (this.tab.has_focus()) {	//if we have focus update the code
 			this._capture_code();
@@ -392,6 +332,23 @@ function EditTab(iea, team, project, path, rev, isReadOnly, mode) {
 		} else {
 			return false;
 		}
+	};
+
+	// Search the files' buffer for the given query.
+	// Returns an array of objects for each line where the query item was found.
+	// The objects will have two members: "line" and "text".
+	// The array will be empty if no matches were found.
+	this.search = function(query) {
+		var matchLines = [];
+		var document = this._session.getDocument();
+		var lines = document.getAllLines();
+		for (var i=0; i<lines.length; i++) {
+			var text = lines[i];
+			if (text.indexOf(query) >= 0) {
+				matchLines.push({ line: i, text: text });
+			}
+		};
+		return matchLines;
 	};
 
 	//try to close a file, checking for modifications, return true if it's closed, false if not

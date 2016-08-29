@@ -191,7 +191,10 @@ class ProjModule extends Module
 
 	public function searchProject()
 	{
-		$repo = $this->openProject($this->team, $this->projectName);
+		$this->verifyTeam();
+
+		//bail if we aren't in a repo
+		$repo = $this->projectManager->getMasterRepository($this->team, $this->projectName);
 		if ($repo == null)
 		{
 			return false;

@@ -49,7 +49,7 @@ function ErrorsModel(helpers, team) {
 		return errors;
 	};
 
-	this.check = function(file, callback, autosave, revision) {
+	this.check = function(file, callback, revision, code) {
 		if (this._disposed) { return; }
 
 		var project = helpers.path_get_project(file);
@@ -58,7 +58,7 @@ function ErrorsModel(helpers, team) {
 				   , 'project': project
 				   , 'path': helpers.path_get_file(file)
 				   , 'rev': revision
-				   , 'autosave': autosave
+				   , 'code': code
 				   };
 
 		var success = function(nodes) {

@@ -35,8 +35,9 @@ $ret = $projectManager->copyRepository(1, $srcName, $projName);
 test_false($ret, 'did not block copying of a project with / in the name');
 test_false(is_dir($repopath), 'copied repo with / in the name!');
 
-section('updateRepository: autosave contents');
+section('Check updateRepository merges local changes with upstream');
 
+subsection('prepare repo');
 $projName = 'face';
 $repopath = $config->getConfig("repopath") . "/1/master/" . $projName . ".git";
 $projectManager->createRepository(1, $projName);
@@ -46,43 +47,47 @@ $repo = $projectManager->getUserRepository(1, $projName, 'jim');
 test_nonnull($repo, "Failed to get repo: 1/$projName/jim");
 
 $repo->putFile('committed', 'some committed content');
-$repo->putFile('committed-autosave', 'some other committed content');
+$repo->putFile('committed-changed', 'some other committed content');
 
 $repo->stage('committed');
-$repo->stage('committed-autosave');
+$repo->stage('committed-changed');
 
 $repo->commit('commit message', 'jim', 'jim@someplace.com');
 $repo->push();
 
+subsection('prepare upstream commit');
+$otherRepo = $projectManager->getUserRepository(1, $projName, 'dave');
+test_nonnull($otherRepo, "Failed to get repo: 1/$projName/dave");
+
+$otherRepo->putFile('other-file', $otherContent = 'some other content');
+$otherRepo->stage('other-file');
+
+$otherRepo->commit('other message', 'Dave', 'dave@someplace.com');
+$otherRepo->push();
+unset($otherRepo);
+
+subsection('make local changes');
 // we've now got a repo with a couple of committed files.
-// so, we modify the state of the checkout, as autosaves do
+// so, we modify the state of the checkout, as pending changes do
 
 $repo->gitMKDir('some-folder');
-$repo->putFile('committed-autosave', $committedContent = 'some autosaved content in a committed file');
-$repo->putFile('autosave', $autosaveContent = 'some autosaved content');
+$repo->putFile('committed-changed', $changedContent = 'some changed content in a committed file');
+$repo->putFile('new-file', $newFileContent = 'some new file content');
 
 $folder = $repo->workingPath().'/some-folder';
 
-$autosavedFile = $repo->workingPath().'/autosave';
-$autosavedCTime = filemtime($autosavedFile);
+$newFile = $repo->workingPath().'/new-file';
+$otherFile = $repo->workingPath().'/other-file';
 
-$committedFile = $repo->workingPath().'/committed-autosave';
-$committedCTime = filemtime($committedFile);
-
-// be sure there's a measureable time difference between before and after
-sleep(1);
-// clear the caches... PHP needs this to get sane answers from fileXtime or stat-related functions
-clearstatcache();
-// update
+subsection('validate behaviour');
 $projectManager->updateRepository($repo, 'jim');
-clearstatcache();
 
 // test the result
-test_existent($autosavedFile, 'Autosaved (uncommitted) files should remain after an update');
+test_existent($newFile, 'Autosaved (uncommitted) files should remain after an update');
 test_existent($folder, 'Empty folders should remain after an update');
 
-test_equal($repo->getFile('autosave'), $autosaveContent, 'Content of autosaved (uncommitted) file should be preserved');
-test_equal($repo->getFile('committed-autosave'), $committedContent, 'Content of committed file plus an autosave should be preserved');
+test_existent($otherFile, 'File added upstream should now be present');
 
-test_equal(filemtime($autosavedFile), $autosavedCTime, 'Autosaved (uncommitted) file should have its modified time preserved through an update');
-test_equal(filemtime($committedFile), $committedCTime, 'Committed file plus an autosave should have its modified time preserved through an update');
+test_equal($repo->getFile('new-file'), $newFileContent, 'Content of new (uncommitted) file should be preserved');
+test_equal($repo->getFile('committed-changed'), $changedContent, 'Content of committed file with changes should be preserved');
+test_equal($repo->getFile('other-file'), $otherContent, 'Content of upstream file');

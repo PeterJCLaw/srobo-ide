@@ -356,14 +356,6 @@ class ReadOnlyGitRepository
 	}
 
 	/**
-	 * Gets the modification time of a file
-	 */
-	public function fileMTime($path)
-	{
-		return filemtime($this->workingPath() . '/' . $path);
-	}
-
-	/**
 	 * Gets a diff:
 	 *  that a log entry provides,
 	 *  between two commits,
@@ -435,7 +427,7 @@ class ReadOnlyGitRepository
 	{
 		$s_pattern = escapeshellarg($pattern);
 		$s_regex = $regex ? '' : '-F';
-		$ret = $this->gitExecute(true, "grep -n $s_regex -e $s_pattern");
+		$ret = $this->gitExecute(false, "grep -n $s_regex -e $s_pattern HEAD");
 		if ($ret === FALSE)
 		{
 			return array();
@@ -444,7 +436,7 @@ class ReadOnlyGitRepository
 		$outputLines = explode(PHP_EOL, trim($ret));
 		foreach ($outputLines as $lineText)
 		{
-			list($fname, $lineNo, $match) = explode(':', $lineText, 3);
+			list($rev, $fname, $lineNo, $match) = explode(':', $lineText, 4);
 			$matches[$fname][] = array('line' => $lineNo, 'text' => $match);
 		}
 		return $matches;
@@ -735,7 +727,6 @@ class GitRepository extends ReadOnlyGitRepository
 		}
 
 		$result = array();
-		$unstagedChanges = $this->unstagedChanges();
 		for ($iterator = new FilesystemIterator($this->workingPath() . "/$subpath");
 		     $iterator->valid();
 		     $iterator->next())
@@ -754,12 +745,11 @@ class GitRepository extends ReadOnlyGitRepository
 
 			if ($fileinfo->isFile())
 			{
-				$autosave = in_array($realpath, $unstagedChanges) ? $iterator->getMTime() : 0;
 				$result[] = array('kind'     => 'FILE',
 				                  'name'     => $filename,
 				                  'path'     => "/$base/$realpath",
 				                  'children' => array(),
-				                  'autosave' => $autosave);
+				                 );
 			}
 			elseif ($fileinfo->isDir())
 			{

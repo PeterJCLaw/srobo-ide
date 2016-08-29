@@ -49,23 +49,30 @@ $repo->commit('message', 'test-name', 'test@email.tld');
 
 section("good file, committed");
 $output->setOutput('errors', null);
-$input->setInput('autosave', null);
 $file->dispatchCommand('lint');
 test_equal($output->getOutput('errors'), array(), 'Reported false errors');
 
-section("really bad file, committed");
+section("provided code");
+$badCode1 = 'bananas';
 $output->setOutput('errors', null);
-$input->setInput('data', 'bananas');
-$file->dispatchCommand('put');
-$repo->stage($input->getInput('path'));
-$repo->commit('message', 'test-name', 'test@email.tld');
-$firstBadCommit = $repo->getCurrentRevision();
+$input->setInput('code', $badCode1);
 $file->dispatchCommand('lint');
 $expectedError1 = new StdClass;
 $expectedError1->file = 'robot.py';
 $expectedError1->lineNumber = 1;
 $expectedError1->message = "Undefined variable 'bananas'";
 $expectedError1->level = 'error';
+test_equal($output->getOutput('errors'), array($expectedError1), 'Failed to report errors correctly');
+
+section("really bad file, committed");
+$input->setInput('code', null);
+$output->setOutput('errors', null);
+$repo->putFile($input->getInput('path'), $badCode1);
+$repo->stage($input->getInput('path'));
+$repo->commit('message', 'test-name', 'test@email.tld');
+$firstBadCommit = $repo->getCurrentRevision();
+var_dump($firstBadCommit);
+$file->dispatchCommand('lint');
 test_equal($output->getOutput('errors'), array($expectedError1), 'Failed to report errors correctly');
 
 section("other bad file, committed");

@@ -149,7 +149,7 @@ Browser.prototype._getFileTree = function(project, tm) {
 		return;
 	}
 
-	this._receiveTree({tree:[{autosave:0,children:[],kind:'FOLDER',name:'Loading...',path:'@',rev:-1}]});
+	this._receiveTree({tree:[{children:[],kind:'FOLDER',name:'Loading...',path:'@',rev:-1}]});
 	getElement('save-new-file').disabled = true;
 
 	IDE_backend_request("file/compat-tree", {team: tm, project: project},

@@ -26,12 +26,12 @@ describe("The errors model:", function() {
 			project: 'project',
 			path: 'robot.py',
 			rev: 'rev',
-			autosave: 'auto',
+			code: 'code',
 		};
 
 		var em = new model.ErrorsModel(helpers, 'ABC');
 		var file_to_check = '/project/robot.py';
-		em.check(file_to_check, null, 'auto', 'rev');
+		em.check(file_to_check, null, 'rev', 'code');
 
 		expect(pgf).toHaveBeenCalledWith(file_to_check);
 		expect(pgp).toHaveBeenCalledWith(file_to_check);

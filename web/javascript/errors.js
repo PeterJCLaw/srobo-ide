@@ -137,16 +137,16 @@ function ErrorsPage() {
 	};
 
 	/**
-	 * use autosave parameter if to check against autosave or normal save
+	 * Perform a syntax check against the given revision and/or source code.
 	 */
-	this.check = function(file, opts, autosave, revision) {
+	this.check = function(file, opts, revision, code) {
 		if (!this.can_check(file)) {
 			logError("Should not be attempting to check a file that cannot be checked: " + file);
 			return;
 		}
 		var callback = bind(this._done_check, this, file, opts);
 		var em = ErrorsModel.GetInstance();
-		em.check(file, callback, autosave, revision);
+		em.check(file, callback, revision, code);
 	};
 
 	this._done_check = function(file, opts, result_type, detail) {
@@ -304,7 +304,7 @@ function ErrorFile(name) {
 	};
 
 	this._view_onclick = function(line) {
-		var etab = editpage.edit_file( team, IDE_path_get_project(this.label), this.label, null, 'REPO' );
+		var etab = editpage.edit_file( team, IDE_path_get_project(this.label), this.label );
 		if (etab.rev != 'HEAD') {
 			etab.open_revision('HEAD');
 		}
