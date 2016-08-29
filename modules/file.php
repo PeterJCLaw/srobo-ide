@@ -110,7 +110,7 @@ class FileModule extends Module
 
 			if ($success)
 			{
-				$output->setOutput('$paths', $paths);
+				$output->setOutput('paths', $paths);
 			}
 		}
 		return $success;
