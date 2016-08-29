@@ -64,10 +64,6 @@ $repo->putFile('autosave', $autosaveContent = 'some autosaved content');
 $folder = $repo->workingPath().'/some-folder';
 
 $autosavedFile = $repo->workingPath().'/autosave';
-$autosavedCTime = filemtime($autosavedFile);
-
-$committedFile = $repo->workingPath().'/committed-autosave';
-$committedCTime = filemtime($committedFile);
 
 // update
 $projectManager->updateRepository($repo, 'jim');
