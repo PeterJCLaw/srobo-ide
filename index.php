@@ -31,7 +31,8 @@ try
 	header("Content-Security-Policy: default-src 'self';" .
 	                                "img-src 'self' data:;" .
 	                                "style-src 'self' 'unsafe-inline';" .
-	                                "script-src 'self' 'unsafe-eval' ajax.googleapis.com/ajax/libs/ 'sha256-cGG4us2djtknhpitJBrPLUVJnGysVgkKIyL/tBN5Dls=';");
+	                                "script-src 'self' 'unsafe-eval' ajax.googleapis.com/ajax/libs/ " .
+	                                            "www.studentrobotics.org/piwik/ 'sha256-cGG4us2djtknhpitJBrPLUVJnGysVgkKIyL/tBN5Dls=';");
 
 	// If the user is logged in give them the main index page
 	// Else give them the login page
