@@ -30,7 +30,6 @@
 	$styleSheets[] = "web/css/chosen.min.css";
 
 	// Javascript Source Files
-	$javaScripts[] = "web/javascript/json2.js";
 	$javaScripts[] = "web/javascript/ide.js";
 	$javaScripts[] = "web/javascript/MochiKit.js";
 	$javaScripts[] = "web/javascript/gui.js";
