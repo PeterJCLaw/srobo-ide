@@ -11,7 +11,6 @@
 <?php
 	require_once('include/html-utils.php');
 	require_once('web/common-defines.php');
-	$javaScripts[] = "web/javascript/json2.js";
 	$javaScripts[] = "web/javascript/ide.js";
 	$javaScripts[] = "web/javascript/MochiKit.js";
 	$javaScripts[] = "web/javascript/status.js";
