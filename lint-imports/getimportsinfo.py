@@ -16,7 +16,7 @@ def invertBadmodules(finder):
 	return missing
 
 def getMissingImports(allMissingImports, module, filename):
-	with file(filename, 'r') as f:
+	with open(filename, 'r') as f:
 		code = f.read()
 
 #	print '---------', filename, '---------'
