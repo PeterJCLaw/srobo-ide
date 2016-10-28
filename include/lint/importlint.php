@@ -3,6 +3,7 @@
 class ImportLint extends Lint
 {
 	private $binary = null;
+	private $pythonPath = null;
 	private $script = 'lint-imports/getimportsinfo.py';
 	private $touched = array();
 
@@ -22,6 +23,8 @@ class ImportLint extends Lint
 		{
 			throw new Exception('Import checking helper missing', E_NOT_IMPL);
 		}
+
+		$this->pythonPath = self::getReferenceDirectory();
 	}
 
 	public function getTouchedFiles()
@@ -53,7 +56,8 @@ class ImportLint extends Lint
 		$s_pythonBinary = escapeshellarg($this->binary);
 		$s_script = escapeshellarg($this->script);
 		$s_cmd = "$s_pythonBinary $s_script $s_file";
-		$output = proc_exec($s_cmd, $s_working, null, array(), true);
+		$s_env = array('PYTHONPATH' => $this->pythonPath);
+		$output = proc_exec($s_cmd, $s_working, null, $s_env, true);
 
 		// status code non-zero says something went very wrong
 		// probably threw an exception (will have been logged by proc_exec)

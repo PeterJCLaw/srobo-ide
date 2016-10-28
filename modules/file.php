@@ -376,13 +376,6 @@ class FileModule extends Module
 		$dirName = $splitPath["dirname"];
 		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
 
-		// check for the reference file
-		$dummy = $config->getConfig('pylint.reference_file');
-		if (!file_exists($dummy))
-		{
-			throw new Exception('Could not find dummy pyenv', E_NOT_IMPL);
-		}
-
 		//base dir might need changing with alistair's new git situation
 		$base = $this->repository()->workingPath();
 
@@ -424,12 +417,6 @@ class FileModule extends Module
 
 			unset($repo);
 
-			// Copy the reference file to the temp folder
-			$dummy_copy = $working.'/'.basename($dummy);
-			//echo "dummy copy\n";
-			//var_dump($dummy_copy);
-			copy_recursive($dummy, $dummy_copy);
-
 			$errors = array();
 
 			$importErrors = $importlint->lintFile($working, $path);
@@ -453,13 +440,6 @@ class FileModule extends Module
 			{
 				$errors = $importErrors;
 				$more_files = $importlint->getTouchedFiles();
-
-				// Don't bother to check the reference file
-				$dummy_key = array_search(basename($dummy), $more_files);
-				if ($dummy_key !== False)
-				{
-					unset($more_files[$dummy_key]);
-				}
 
 				$pyErrors = $pylint->lintFiles($working, $more_files);
 				if ($pyErrors !== False)

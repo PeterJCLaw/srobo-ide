@@ -86,4 +86,20 @@ abstract class Lint
 	 * @returns: An array of LintMessages representing the issues found, or False if something went wrong.
 	 */
 	abstract function lintFiles($working, $files);
+
+	/**
+	 * Returns the directory which contains the configured lint reference.
+	 */
+	public static function getReferenceDirectory()
+	{
+		$config = Configuration::getInstance();
+		$referenceDir = $config->getConfig('pylint.reference_dir');
+
+		if (!file_exists($referenceDir))
+		{
+			throw new Exception('Could not find dummy pyenv', E_NOT_IMPL);
+		}
+
+		return realpath($referenceDir);
+	}
 }

@@ -4,6 +4,7 @@ class PyLint extends Lint
 {
 	private $binary = null;
 	private $pylintHome = null;
+	private $pythonPath = null;
 	private $maxDuration = null;
 
 	public function __construct()
@@ -25,6 +26,7 @@ class PyLint extends Lint
 		}
 
 		$this->maxDuration = $config->getConfig('pylint.max_duration');
+		$this->pythonPath = self::getReferenceDirectory();
 	}
 
 	public function lintFiles($working, $files)
@@ -63,6 +65,7 @@ class PyLint extends Lint
 		$s_cmd = "$s_pylintBinary --rcfile=/dev/null --errors-only $s_msg_template --reports=n $s_file";
 		$s_env = array(
 			'PYLINTHOME' => $this->pylintHome,
+			'PYTHONPATH' => $this->pythonPath,
 		);
 		$s_timeout = $this->maxDuration;
 		$output = proc_exec($s_cmd, $s_working, null, $s_env, true, $s_timeout);
