@@ -370,12 +370,6 @@ class FileModule extends Module
 		$config = Configuration::getInstance();
 		$path   = $input->getInput('path');
 
-		//this occurs because someone decided it would be a good idea to split
-		//these up here instead of javascript, makes this function hideous
-		$splitPath = pathinfo($path);
-		$dirName = $splitPath["dirname"];
-		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
-
 		//base dir might need changing with alistair's new git situation
 		$base = $this->repository()->workingPath();
 
