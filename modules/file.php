@@ -377,7 +377,7 @@ class FileModule extends Module
 		$fileName = $splitPath["filename"] . "." . $splitPath["extension"];
 
 		// check for the reference file
-		$dummy = $config->getConfig('pylint.referenceFile');
+		$dummy = $config->getConfig('pylint.reference_file');
 		if (!file_exists($dummy))
 		{
 			throw new Exception('Could not find dummy pyenv', E_NOT_IMPL);

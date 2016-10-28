@@ -24,7 +24,7 @@ class PyLint extends Lint
 			mkdir($this->pylintHome);
 		}
 
-		$this->maxDuration = $config->getConfig('pylint.maxDuration');
+		$this->maxDuration = $config->getConfig('pylint.max_duration');
 	}
 
 	public function lintFiles($working, $files)
