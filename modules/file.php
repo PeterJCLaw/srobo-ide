@@ -373,104 +373,99 @@ class FileModule extends Module
 		//base dir might need changing with alistair's new git situation
 		$base = $this->repository()->workingPath();
 
-		//if the file exists, lint it otherwise return a dictionary explaining
-		//that the file doesn't exist, shouldn't happen when users interface
-		//with software because check syntax button always points at an existing file
-		if (file_exists("$base/$path"))
-		{
-			$pylint = new PyLint();
-			$importlint = new ImportLint();
-
-			$newCode = $input->getInput('code', true);
-			$revision = $input->getInput('rev', true);
-
-			// Grab a temp folder that we can work in. We'll remove it later.
-			$tmpDir = tmpdir();
-			//echo "base, path, tmp\n";
-			//var_dump($base, $path, $tmpDir);
-
-			// Copy the user's files to the temp folder
-			copy_recursive($base, $tmpDir);
-
-			$working = $tmpDir.'/'.basename($base);
-
-			// Tidy up the repo
-			$repo = GitRepository::GetOrCreate($working);
-			$repo->reset();
-
-			// fixed revision
-			if ($revision !== null)
-			{
-				$repo->checkoutRepo($revision);
-			}
-
-			if ($newCode !== null)
-			{
-				$repo->putFile($path, $newCode);
-			}
-
-			unset($repo);
-
-			$errors = array();
-
-			$importErrors = $importlint->lintFile($working, $path);
-			if ($importErrors === False)
-			{
-				$pyErrors = $pylint->lintFile($working, $path);
-				if ($pyErrors !== False)
-				{
-					$errors = $pyErrors;
-				}
-				else
-				{
-					// remove the temporary folder
-					delete_recursive($tmpDir);
-
-					// Both sets of linting failed, so fail overall.
-					return False;
-				}
-			}
-			else
-			{
-				$errors = $importErrors;
-				$more_files = $importlint->getTouchedFiles();
-
-				$pyErrors = $pylint->lintFiles($working, $more_files);
-				if ($pyErrors !== False)
-				{
-					$errors = array_merge($errors, $pyErrors);
-				}
-				else
-				{
-					// remove the temporary folder
-					delete_recursive($tmpDir);
-
-					// Code linting failed, so fail overall.
-					return False;
-				}
-			}
-
-			// remove the temporary folder
-			delete_recursive($tmpDir);
-
-			// Sort & convert to jsonables if needed.
-			// This (latter) step necessary currently since JSONSerializeable doesn't exist yet.
-			if (count($errors) > 0)
-			{
-				usort($errors, function($a, $b) {
-						if ($a->lineNumber == $b->lineNumber) return 0;
-						return $a->lineNumber > $b->lineNumber ? 1 : -1;
-					});
-				$errors = array_map(function($lm) { return $lm->toJSONable(); }, $errors);
-			}
-
-			$output->setOutput("errors", $errors);
-			return true;
-		}
-		else
+		if (!file_exists("$base/$path"))
 		{
 			$output->setOutput('error', 'file does not exist');
 			return false;
 		}
+
+		$pylint = new PyLint();
+		$importlint = new ImportLint();
+
+		$newCode = $input->getInput('code', true);
+		$revision = $input->getInput('rev', true);
+
+		// Grab a temp folder that we can work in. We'll remove it later.
+		$tmpDir = tmpdir();
+		//echo "base, path, tmp\n";
+		//var_dump($base, $path, $tmpDir);
+
+		// Copy the user's files to the temp folder
+		copy_recursive($base, $tmpDir);
+
+		$working = $tmpDir.'/'.basename($base);
+
+		// Tidy up the repo
+		$repo = GitRepository::GetOrCreate($working);
+		$repo->reset();
+
+		// fixed revision
+		if ($revision !== null)
+		{
+			$repo->checkoutRepo($revision);
+		}
+
+		if ($newCode !== null)
+		{
+			$repo->putFile($path, $newCode);
+		}
+
+		unset($repo);
+
+		$errors = array();
+
+		$importErrors = $importlint->lintFile($working, $path);
+		if ($importErrors === False)
+		{
+			$pyErrors = $pylint->lintFile($working, $path);
+			if ($pyErrors !== False)
+			{
+				$errors = $pyErrors;
+			}
+			else
+			{
+				// remove the temporary folder
+				delete_recursive($tmpDir);
+
+				// Both sets of linting failed, so fail overall.
+				return False;
+			}
+		}
+		else
+		{
+			$errors = $importErrors;
+			$more_files = $importlint->getTouchedFiles();
+
+			$pyErrors = $pylint->lintFiles($working, $more_files);
+			if ($pyErrors !== False)
+			{
+				$errors = array_merge($errors, $pyErrors);
+			}
+			else
+			{
+				// remove the temporary folder
+				delete_recursive($tmpDir);
+
+				// Code linting failed, so fail overall.
+				return False;
+			}
+		}
+
+		// remove the temporary folder
+		delete_recursive($tmpDir);
+
+		// Sort & convert to jsonables if needed.
+		// This (latter) step necessary currently since JSONSerializeable doesn't exist yet.
+		if (count($errors) > 0)
+		{
+			usort($errors, function($a, $b) {
+					if ($a->lineNumber == $b->lineNumber) return 0;
+					return $a->lineNumber > $b->lineNumber ? 1 : -1;
+				});
+			$errors = array_map(function($lm) { return $lm->toJSONable(); }, $errors);
+		}
+
+		$output->setOutput("errors", $errors);
+		return true;
 	}
 }
