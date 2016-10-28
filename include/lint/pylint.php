@@ -61,7 +61,9 @@ class PyLint extends Lint
 		// '--output-format=parseable', and to match the below regex which parses it.
 		$s_msg_template = '--msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"';
 		$s_cmd = "$s_pylintBinary --rcfile=/dev/null --errors-only $s_msg_template --reports=n $s_file";
-		$s_env = array('PYLINTHOME' => $this->pylintHome);
+		$s_env = array(
+			'PYLINTHOME' => $this->pylintHome,
+		);
 		$s_timeout = $this->maxDuration;
 		$output = proc_exec($s_cmd, $s_working, null, $s_env, true, $s_timeout);
 
