@@ -370,12 +370,30 @@ class FileModule extends Module
 		$config = Configuration::getInstance();
 		$path   = $input->getInput('path');
 
-		//base dir might need changing with alistair's new git situation
-		$base = $this->repository()->workingPath();
+		$this->verifyTeam();
+		$userName = AuthBackend::getInstance()->getCurrentUserName();
 
-		if (!file_exists("$base/$path"))
+		$pm = ProjectManager::getInstance();
+		$masterRepoPath = $pm->getMasterRepoPath($this->team, $this->projectName);
+
+		// While we could in theory use the persistent per-user working
+		// directory for this, the linting can take a while so it's better
+		// to have an isolated copy which avoids the need to lock the
+		// per-user clone for a long time.
+		$tmpDir = tmpdir();
+
+		$working = $tmpDir . '/' . $this->projectName;
+
+		$repo = GitRepository::cloneRepository($masterRepoPath, $working);
+
+		// TODO: there might be performance advantage in checking this
+		// against the master repo before the above clone, but it seems
+		// an unlikely error to actually occur.
+		if (!file_exists("$working/$path"))
 		{
 			$output->setOutput('error', 'file does not exist');
+			unset($repo); // release lock
+			delete_recursive($tmpDir);
 			return false;
 		}
 
@@ -384,20 +402,6 @@ class FileModule extends Module
 
 		$newCode = $input->getInput('code', true);
 		$revision = $input->getInput('rev', true);
-
-		// Grab a temp folder that we can work in. We'll remove it later.
-		$tmpDir = tmpdir();
-		//echo "base, path, tmp\n";
-		//var_dump($base, $path, $tmpDir);
-
-		// Copy the user's files to the temp folder
-		copy_recursive($base, $tmpDir);
-
-		$working = $tmpDir.'/'.basename($base);
-
-		// Tidy up the repo
-		$repo = GitRepository::GetOrCreate($working);
-		$repo->reset();
 
 		// fixed revision
 		if ($revision !== null)
