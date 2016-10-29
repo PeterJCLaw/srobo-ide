@@ -65,7 +65,7 @@ commitData($repo, 'other.py', '#Nothing here');
 $file->dispatchCommand('lint');
 test_equal($output->getOutput('errors'), array(), 'Reported false errors');
 
-section("robot.py with bad import");
+section("robot.py with bad indent");
 $output->setOutput('errors', null);
 commitData($repo, 'other.py', "if False:\nprint False");
 $file->dispatchCommand('lint');
