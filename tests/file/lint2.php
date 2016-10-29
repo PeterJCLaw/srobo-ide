@@ -46,6 +46,7 @@ function commitData($repo, $file, $data)
 	$fileModule->dispatchCommand('put');
 	$repo->stage($input->getInput('path'));
 	$repo->commit('message', 'test-name', 'test@email.tld');
+	$repo->push();
 }
 
 section("robot.py with missing import");
