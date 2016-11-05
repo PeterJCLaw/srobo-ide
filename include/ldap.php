@@ -27,7 +27,7 @@ class LDAPManager
 		{
 			$ldap_filter = "(&($ldap_filter)(cn=$filter))";
 		}
-		$groups = $this->cnSearch($ldap_filter);
+		$groups = $this->groupCnSearch($ldap_filter);
 		return $groups;
 	}
 
@@ -38,15 +38,15 @@ class LDAPManager
 	public function getGroups($filter)
 	{
 		$ldap_filter = "cn=$filter";
-		$groups = $this->cnSearch($ldap_filter);
+		$groups = $this->groupCnSearch($ldap_filter);
 		return $groups;
 	}
 
 	/**
-	 * Get "cn"s of all the items that match the given filter.
+	 * Get "cn"s of all the groups that match the given filter.
 	 * @param filter: filter of items to search for, applied in LDAP.
 	 */
-	private function cnSearch($ldap_filter)
+	private function groupCnSearch($ldap_filter)
 	{
 		if (!$this->authed)
 			throw new Exception('cannot search groups, not authed to ldap', E_LDAP_NOT_AUTHED);
