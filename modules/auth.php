@@ -53,7 +53,7 @@ class AuthModule extends Module
 			throw new Exception('authentication failed', E_AUTH_DENIED);
 		}
 		getDefaultTokenStrategy()->setNextAuthToken($this->authModule->getNextAuthToken());
-		$output->setOutput('display-name', $this->authModule->displayNameForUser($username));
+		$output->setOutput('display-name', $this->authModule->displayNameForUser($this->authModule->getCurrentUserName()));
 		return true;
 	}
 
