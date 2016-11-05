@@ -16,6 +16,20 @@ class LDAPManager
 	}
 
 	/**
+	 * Get the username(s) which uses the given email address.
+	 *
+	 * @param email: the email address to lookup.
+	 */
+	public function getUsernamesForEmail($email)
+	{
+		$ldap_filter = "(&(objectClass=inetOrgPerson)(mail=$email))";
+		$attrs = array('uid');
+		$results = $this->search('ou=users,o=sr', $ldap_filter, $attrs);
+		$user_ids = $this->extractSingleAttr($results, 'uid');
+		return $user_ids;
+	}
+
+	/**
 	 * Get the groups that the user is in, optionally pre-filtered.
 	 * @param user: the uid of the user to lookup.
 	 * @param filter: optional filter to the groups, applied in LDAP.

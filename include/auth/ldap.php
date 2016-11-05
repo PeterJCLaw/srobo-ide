@@ -27,16 +27,45 @@ class LDAPAuth extends SecureTokenAuth
 		{
 			return false;
 		}
+
+		if (self::isEmailAddress($username))
+		{
+			$username = $this->usernameFromEmailAddress($username);
+		}
+
 		$config = Configuration::getInstance();
 		$this->ldapManager = new LDAPManager($config->getConfig("ldap.host"), $username, $password);
 		return $this->ldapManager->getAuthed();
 	}
 
-	/**
-	 * Override to use LDAP casing.
-	 */
+	private static function isEmailAddress($maybeEmailAddress)
+	{
+		return strpos($maybeEmailAddress, '@') !== false;
+	}
+
+	private function usernameFromEmailAddress($email)
+	{
+		$s_email = ldap_escape($email, null, LDAP_ESCAPE_FILTER);
+
+		$ldapManager = $this->getIDELDAPManager();
+		$usernames = $ldapManager->getUsernamesForEmail($s_email);
+		if (count($usernames) != 1)
+		{
+			return null;
+		}
+		else
+		{
+			return $usernames[0];
+		}
+	}
+
 	protected function normaliseUsername($username)
 	{
+		if (self::isEmailAddress($username))
+		{
+			return $this->usernameFromEmailAddress($username);
+		}
+
 		if (!$this->ldapManager->getAuthed())
 		{
 			throw new Exception('Cannot normalise username without LDAP authentication.', E_INTERNAL_ERROR);

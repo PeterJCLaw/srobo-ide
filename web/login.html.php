@@ -36,7 +36,7 @@
 	<form id="login-box" method="POST" action="./">
 		<strong id="login-title">Student Robotics IDE Login:</strong>
 		<em id="login-feedback">You must be logged in to use the IDE</em>
-		<input type="text" name="username" value="username" id="username">
+		<input type="text" name="username" value="username or email" id="username">
 		<input type="password" name="password" id="password">
 		<button type="submit" id="login-button">Log In</button>
 		<br />
