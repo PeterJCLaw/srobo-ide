@@ -48,22 +48,52 @@ class LDAPManager
 	 */
 	private function groupCnSearch($ldap_filter)
 	{
-		if (!$this->authed)
-			throw new Exception('cannot search groups, not authed to ldap', E_LDAP_NOT_AUTHED);
-		if ($this->user != 'ide')
-			throw new Exception('cannot search groups, not the IDE user', E_LDAP_NOT_AUTHED);
-		//do an ldap search
 		$attrs = array('cn');
-		$resultsID = ldap_search($this->connection,'ou=groups,o=sr', $ldap_filter, $attrs, 0, 0);
+		$results = $this->search('ou=groups,o=sr', $ldap_filter, $attrs);
+		$groups = $this->extractSingleAttr($results, 'cn');
+		return $groups;
+	}
+
+	/**
+	 * Perform a search against our LDAP connection.
+	 *
+	 * @param base_dn: the base DN to search within.
+	 * @param filter: filter of items to search for, applied in LDAP.
+	 * @param attrs: attributes to fetch.
+	 * @returns: The matching entries.
+	 */
+	private function search($base_dn, $ldap_filter, $attrs)
+	{
+		if (!$this->authed)
+			throw new Exception('cannot search ldap, not authed', E_LDAP_NOT_AUTHED);
+		if ($this->user != 'ide')
+			throw new Exception('cannot search ldap, not the IDE user', E_LDAP_NOT_AUTHED);
+
+		$resultsID = ldap_search($this->connection, $base_dn, $ldap_filter, $attrs, 0, 0);
 		$results = ldap_get_entries($this->connection, $resultsID);
-		$saneGroups = array();
+
+		return $results;
+	}
+
+	/**
+	 * Given the results of an LDAP search, extract a single attribute
+	 * from each result and return an array of just those attribtue values.
+	 *
+	 * @param results: the result entries from a search.
+	 * @param attr: the name of the attribute to extract.
+	 * @returns: an array containing the value of the given attribute
+	 *           from each of the results. Result ordering is preserved.
+	 */
+	private function extractSingleAttr($results, $attr)
+	{
+		$flattened = array();
 		for ($i = 0; $i < $results['count']; $i++)
 		{
-			$group = $results[$i];
-			$saneGroups[] = $group['cn'][0];
+			$item = $results[$i];
+			$flattened[] = $item[$attr][0];
 		}
 
-		return $saneGroups;
+		return $flattened;
 	}
 
 	public function getUserInfo($user)
