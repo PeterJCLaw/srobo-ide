@@ -103,3 +103,99 @@ abstract class Lint
 		return realpath($referenceDir);
 	}
 }
+
+class LintHelper
+{
+	private $projectName;
+	private $sourceRepoPath;
+
+	public function __construct($sourceRepoPath, $projectName)
+	{
+		$this->projectName = $projectName;
+		$this->sourceRepoPath = $sourceRepoPath;
+	}
+
+	public function lintFile($path, $revision=null, $newCode=null)
+	{
+		// While we could in theory use the persistent per-user working
+		// directory for this, the linting can take a while so it's better
+		// to have an isolated copy which avoids the need to lock the
+		// per-user clone for a long time.
+		$tmpDir = tmpdir();
+
+		$working = $tmpDir . '/' . $this->projectName;
+
+		$repo = GitRepository::cloneRepository($this->sourceRepoPath, $working);
+
+		// TODO: there might be performance advantage in checking this
+		// against the master repo before the above clone, but it seems
+		// an unlikely error to actually occur.
+		if (!file_exists("$working/$path"))
+		{
+			unset($repo); // release lock
+			delete_recursive($tmpDir);
+
+			throw new Exception('file does not exist', E_MALFORMED_REQUEST);
+		}
+
+		$pylint = new PyLint();
+		$importlint = new ImportLint();
+
+		// fixed revision
+		if ($revision !== null)
+		{
+			$repo->checkoutRepo($revision);
+		}
+
+		if ($newCode !== null)
+		{
+			$repo->putFile($path, $newCode);
+		}
+
+		unset($repo);
+
+		$errors = array();
+
+		$importErrors = $importlint->lintFile($working, $path);
+		if ($importErrors === False)
+		{
+			$pyErrors = $pylint->lintFile($working, $path);
+			if ($pyErrors !== False)
+			{
+				$errors = $pyErrors;
+			}
+			else
+			{
+				// remove the temporary folder
+				delete_recursive($tmpDir);
+
+				// Both sets of linting failed, so fail overall.
+				return False;
+			}
+		}
+		else
+		{
+			$errors = $importErrors;
+			$more_files = $importlint->getTouchedFiles();
+
+			$pyErrors = $pylint->lintFiles($working, $more_files);
+			if ($pyErrors !== False)
+			{
+				$errors = array_merge($errors, $pyErrors);
+			}
+			else
+			{
+				// remove the temporary folder
+				delete_recursive($tmpDir);
+
+				// Code linting failed, so fail overall.
+				return False;
+			}
+		}
+
+		// remove the temporary folder
+		delete_recursive($tmpDir);
+
+		return $errors;
+	}
+}

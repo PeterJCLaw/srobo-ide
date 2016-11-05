@@ -376,87 +376,25 @@ class FileModule extends Module
 		$pm = ProjectManager::getInstance();
 		$masterRepoPath = $pm->getMasterRepoPath($this->team, $this->projectName);
 
-		// While we could in theory use the persistent per-user working
-		// directory for this, the linting can take a while so it's better
-		// to have an isolated copy which avoids the need to lock the
-		// per-user clone for a long time.
-		$tmpDir = tmpdir();
-
-		$working = $tmpDir . '/' . $this->projectName;
-
-		$repo = GitRepository::cloneRepository($masterRepoPath, $working);
-
-		// TODO: there might be performance advantage in checking this
-		// against the master repo before the above clone, but it seems
-		// an unlikely error to actually occur.
-		if (!file_exists("$working/$path"))
-		{
-			$output->setOutput('error', 'file does not exist');
-			unset($repo); // release lock
-			delete_recursive($tmpDir);
-			return false;
-		}
-
-		$pylint = new PyLint();
-		$importlint = new ImportLint();
+		$helper = new LintHelper($masterRepoPath, $this->projectName);
 
 		$newCode = $input->getInput('code', true);
 		$revision = $input->getInput('rev', true);
 
-		// fixed revision
-		if ($revision !== null)
+		try
 		{
-			$repo->checkoutRepo($revision);
-		}
-
-		if ($newCode !== null)
-		{
-			$repo->putFile($path, $newCode);
-		}
-
-		unset($repo);
-
-		$errors = array();
-
-		$importErrors = $importlint->lintFile($working, $path);
-		if ($importErrors === False)
-		{
-			$pyErrors = $pylint->lintFile($working, $path);
-			if ($pyErrors !== False)
+			$errors = $helper->lintFile($path, $revision, $newCode);
+			if ($errors === false)
 			{
-				$errors = $pyErrors;
-			}
-			else
-			{
-				// remove the temporary folder
-				delete_recursive($tmpDir);
-
-				// Both sets of linting failed, so fail overall.
-				return False;
+				// something went badly wrong
+				return false;
 			}
 		}
-		else
+		catch (Exception $e)
 		{
-			$errors = $importErrors;
-			$more_files = $importlint->getTouchedFiles();
-
-			$pyErrors = $pylint->lintFiles($working, $more_files);
-			if ($pyErrors !== False)
-			{
-				$errors = array_merge($errors, $pyErrors);
-			}
-			else
-			{
-				// remove the temporary folder
-				delete_recursive($tmpDir);
-
-				// Code linting failed, so fail overall.
-				return False;
-			}
+			$output->setOutput('error', $e->getMessage());
+			return false;
 		}
-
-		// remove the temporary folder
-		delete_recursive($tmpDir);
 
 		// Sort & convert to jsonables if needed.
 		// This (latter) step necessary currently since JSONSerializeable doesn't exist yet.
