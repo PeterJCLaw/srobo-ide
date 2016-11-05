@@ -102,6 +102,12 @@ class LDAPManager
 		{
 			$resultsID = ldap_search($this->connection, "uid=$user,ou=users,o=sr", 'uid=*');
 			$results = ldap_get_entries($this->connection, $resultsID);
+
+			if ($results['count'] != 1)
+			{
+				throw new Exception('failed to get user info', E_INTERNAL_ERROR);
+			}
+
 			$saneResults = array();
 			$saneResults['email']      = $results[0]['mail'][0];
 			$saneResults['username']   = $results[0]['uid'][0];
