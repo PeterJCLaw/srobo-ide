@@ -123,6 +123,20 @@ class LintHelper
 		// per-user clone for a long time.
 		$tmpDir = tmpdir();
 
+		try
+		{
+			$working = $this->makeWorkingDir($tmpDir, $path, $revision, $newCode);
+			$errors = $this->doLint($working, $path);
+			return $errors;
+		}
+		finally
+		{
+			delete_recursive($tmpDir);
+		}
+	}
+
+	private function makeWorkingDir($tmpDir, $path, $revision, $newCode)
+	{
 		$working = $tmpDir . '/' . $this->projectName;
 
 		$repo = GitRepository::cloneRepository($this->sourceRepoPath, $working);
@@ -132,14 +146,8 @@ class LintHelper
 		// an unlikely error to actually occur.
 		if (!file_exists("$working/$path"))
 		{
-			unset($repo); // release lock
-			delete_recursive($tmpDir);
-
 			throw new Exception('file does not exist', E_MALFORMED_REQUEST);
 		}
-
-		$pylint = new PyLint();
-		$importlint = new ImportLint();
 
 		// fixed revision
 		if ($revision !== null)
@@ -152,9 +160,15 @@ class LintHelper
 			$repo->putFile($path, $newCode);
 		}
 
-		unset($repo);
+		return $working;
+	}
 
+	private function doLint($working, $path)
+	{
 		$errors = array();
+
+		$pylint = new PyLint();
+		$importlint = new ImportLint();
 
 		$importErrors = $importlint->lintFile($working, $path);
 		if ($importErrors === False)
@@ -166,9 +180,6 @@ class LintHelper
 			}
 			else
 			{
-				// remove the temporary folder
-				delete_recursive($tmpDir);
-
 				// Both sets of linting failed, so fail overall.
 				return False;
 			}
@@ -185,16 +196,10 @@ class LintHelper
 			}
 			else
 			{
-				// remove the temporary folder
-				delete_recursive($tmpDir);
-
 				// Code linting failed, so fail overall.
 				return False;
 			}
 		}
-
-		// remove the temporary folder
-		delete_recursive($tmpDir);
 
 		return $errors;
 	}
