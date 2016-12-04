@@ -76,6 +76,13 @@ class LDAPAuth extends SecureTokenAuth
 		return $info['username'];
 	}
 
+	private static function stripPrefix($array, $prefix)
+	{
+		return array_map(function($str) use ($prefix) {
+			return substr($str, strlen($prefix));
+		}, $array);
+	}
+
 	public function getWritableTeams($username)
 	{
 		ide_log(LOG_INFO, "Getting teams for '$username'.");
@@ -84,14 +91,8 @@ class LDAPAuth extends SecureTokenAuth
 
 		$ldapManager = $this->getIDELDAPManager();
 		$groups = $ldapManager->getGroupsForUser($username, $groupNamePrefix.'*');
-		$teams = array();
+		$teams = self::stripPrefix($groups, $groupNamePrefix);
 
-		ide_log(LOG_INFO, "Using prefix '$groupNamePrefix'.");
-		foreach ($groups as $group)
-		{
-			ide_log(LOG_DEBUG, "Got group '$group'.");
-			$teams[] = substr($group, strlen($groupNamePrefix));
-		}
 		ide_log(LOG_INFO, "Got teams: ". print_r($teams, true));
 
 		return $teams;
@@ -110,14 +111,8 @@ class LDAPAuth extends SecureTokenAuth
 		$ldapManager = $this->getIDELDAPManager();
 		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
 		$groups = $ldapManager->getGroups($groupNamePrefix.'*');
-		$teams = array();
+		$teams = self::stripPrefix($groups, $groupNamePrefix);
 
-		ide_log(LOG_INFO, "Using prefix '$groupNamePrefix'.");
-		foreach ($groups as $group)
-		{
-			ide_log(LOG_DEBUG, "Got group '$group'.");
-			$teams[] = substr($group, strlen($groupNamePrefix));
-		}
 		ide_log(LOG_INFO, "Got teams: ". print_r($teams, true));
 
 		return $teams;
