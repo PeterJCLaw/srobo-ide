@@ -83,7 +83,7 @@ class LDAPAuth extends SecureTokenAuth
 		}, $array);
 	}
 
-	public function getWritableTeams($username)
+	private function getUserKnownTeams($username)
 	{
 		ide_log(LOG_INFO, "Getting teams for '$username'.");
 		$config = Configuration::getInstance();
@@ -98,9 +98,13 @@ class LDAPAuth extends SecureTokenAuth
 		return $teams;
 	}
 
+	public function getWritableTeams($username)
+	{
+		return $this->getUserKnownTeams($username);
+	}
+
 	public function getReadableTeams($username)
 	{
-		ide_log(LOG_INFO, "Getting read-only teams for '$username'.");
 		$config = Configuration::getInstance();
 		$readAllGroup = $config->getConfig('ldap.read_all_group');
 		if (empty($readAllGroup) || !$this->inGroup($username, $readAllGroup))
@@ -108,15 +112,18 @@ class LDAPAuth extends SecureTokenAuth
 			return array();
 		}
 
+		return $this->getAllTeams();
+	}
+
+	private function getAllTeams()
+	{
+		$config = Configuration::getInstance();
 		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
 
 		$ldapManager = $this->getIDELDAPManager();
 		$groups = $ldapManager->getGroups($groupNamePrefix.'*');
 
 		$teams = self::stripPrefix($groups, $groupNamePrefix);
-
-		ide_log(LOG_INFO, "Got teams: ". print_r($teams, true));
-
 		return $teams;
 	}
 
