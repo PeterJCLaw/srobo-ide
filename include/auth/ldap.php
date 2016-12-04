@@ -108,9 +108,11 @@ class LDAPAuth extends SecureTokenAuth
 			return array();
 		}
 
-		$ldapManager = $this->getIDELDAPManager();
 		$groupNamePrefix = $config->getConfig("ldap.team.prefix");
+
+		$ldapManager = $this->getIDELDAPManager();
 		$groups = $ldapManager->getGroups($groupNamePrefix.'*');
+
 		$teams = self::stripPrefix($groups, $groupNamePrefix);
 
 		ide_log(LOG_INFO, "Got teams: ". print_r($teams, true));
