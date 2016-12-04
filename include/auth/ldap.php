@@ -112,6 +112,11 @@ class LDAPAuth extends SecureTokenAuth
 
 	public function getWritableTeams($username)
 	{
+		if ($this->userInConfiguredGroup($username, 'ldap.read_only_group'))
+		{
+			return array();
+		}
+
 		return $this->getUserKnownTeams($username);
 	}
 
@@ -120,6 +125,11 @@ class LDAPAuth extends SecureTokenAuth
 		if ($this->userInConfiguredGroup($username, 'ldap.read_all_group'))
 		{
 			return $this->getAllTeams();
+		}
+
+		if ($this->userInConfiguredGroup($username, 'ldap.read_only_group'))
+		{
+			return $this->getUserKnownTeams($username);
 		}
 
 		return array();
