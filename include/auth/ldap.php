@@ -98,6 +98,18 @@ class LDAPAuth extends SecureTokenAuth
 		return $teams;
 	}
 
+	private function userInConfiguredGroup($username, $group_config_name)
+	{
+		$config = Configuration::getInstance();
+		$ldapGroupName = $config->getConfig($group_config_name);
+
+		if (empty($ldapGroupName)) {
+			return false;
+		}
+
+		return $this->inGroup($username, $ldapGroupName);
+	}
+
 	public function getWritableTeams($username)
 	{
 		return $this->getUserKnownTeams($username);
@@ -105,9 +117,7 @@ class LDAPAuth extends SecureTokenAuth
 
 	public function getReadableTeams($username)
 	{
-		$config = Configuration::getInstance();
-		$readAllGroup = $config->getConfig('ldap.read_all_group');
-		if (empty($readAllGroup) || !$this->inGroup($username, $readAllGroup))
+		if (!$this->userInConfiguredGroup($username, 'ldap.read_all_group'))
 		{
 			return array();
 		}
