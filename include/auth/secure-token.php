@@ -3,8 +3,8 @@
 abstract class SecureTokenAuth extends AuthBackend
 {
 	private $user     = null;
-	private $teams    = array();
-	private $read_only_teams = array();
+	private $writable_teams	= array();
+	private $readable_teams = array();
 	private $key      = null;
 	private $iv       = null;
 	private $tok_next = null;
@@ -40,27 +40,27 @@ abstract class SecureTokenAuth extends AuthBackend
 
 	public function getCurrentUserTeams()
 	{
-		$all = array_merge($this->teams, $this->read_only_teams);
+		$all = array_merge($this->writable_teams, $this->readable_teams);
 		$distinct = array_unique($all);
 		return $distinct;
 	}
 
 	public function canCurrentUserWriteTeam($team)
 	{
-		$canWrite = in_array($team, $this->teams);
+		$canWrite = in_array($team, $this->writable_teams);
 		return $canWrite;
 	}
 
-	private function generateToken($username, $password, $teams, $read_only_teams)
+	private function generateToken($username, $password, $writable_teams, $readable_teams)
 	{
-		$teams = implode('|', $teams);
-		$read_only_teams = implode('|', $read_only_teams);
+		$writable_teams = implode('|', $writable_teams);
+		$readable_teams = implode('|', $readable_teams);
 		$parts = array();
 		$parts[0] = microtime(false);
 		$parts[1] = $username;
 		$parts[2] = $password;
-		$parts[3] = $teams;
-		$parts[4] = $read_only_teams;
+		$parts[3] = $writable_teams;
+		$parts[4] = $readable_teams;
 		$parts[5] = openssl_random_pseudo_bytes(mt_rand(2, 8));
 		$data = implode(chr(0), $parts);
 		return openssl_encrypt($data, self::METHOD, $this->key, self::RAW_OUTPUT, $this->iv);
@@ -86,17 +86,17 @@ abstract class SecureTokenAuth extends AuthBackend
 			return false;
 		$username = $this->normaliseUsername($username);
 		$this->user = $username;
-		$this->teams = $this->getTeams($username);
-		$this->read_only_teams = $this->getReadOnlyTeams($username);
-		$this->tok_next = $this->generateToken($username, $password, $this->teams, $this->read_only_teams);
+		$this->writable_teams = $this->getWritableTeams($username);
+		$this->readable_teams = $this->getReadableTeams($username);
+		$this->tok_next = $this->generateToken($username, $password, $this->writable_teams, $this->readable_teams);
 		return true;
 	}
 
 	public function deauthUser()
 	{
 		$this->user     = null;
-		$this->teams    = array();
-		$this->read_only_teams = array();
+		$this->writable_teams = array();
+		$this->readable_teams = array();
 		$this->tok_next = null;
 		$this->password = null;
 	}
@@ -122,9 +122,9 @@ abstract class SecureTokenAuth extends AuthBackend
 			return false;
 		}
 		$this->user = $username;
-		$this->teams = empty($parts[3]) ? array() : explode('|', $parts[3]);
-		$this->read_only_teams = empty($parts[4]) ? array() : explode('|', $parts[4]);
-		$this->tok_next = $this->generateToken($username, $password, $this->teams, $this->read_only_teams);
+		$this->writable_teams = empty($parts[3]) ? array() : explode('|', $parts[3]);
+		$this->readable_teams = empty($parts[4]) ? array() : explode('|', $parts[4]);
+		$this->tok_next = $this->generateToken($username, $password, $this->writable_teams, $this->readable_teams);
 		return true;
 	}
 

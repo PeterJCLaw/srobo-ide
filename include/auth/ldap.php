@@ -76,7 +76,7 @@ class LDAPAuth extends SecureTokenAuth
 		return $info['username'];
 	}
 
-	public function getTeams($username)
+	public function getWritableTeams($username)
 	{
 		ide_log(LOG_INFO, "Getting teams for '$username'.");
 		$config = Configuration::getInstance();
@@ -97,7 +97,7 @@ class LDAPAuth extends SecureTokenAuth
 		return $teams;
 	}
 
-	public function getReadOnlyTeams($username)
+	public function getReadableTeams($username)
 	{
 		ide_log(LOG_INFO, "Getting read-only teams for '$username'.");
 		$config = Configuration::getInstance();

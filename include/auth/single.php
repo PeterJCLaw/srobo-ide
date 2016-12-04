@@ -20,12 +20,12 @@ class SingleAuth extends SecureTokenAuth
 		return $username != null && $password != null;
 	}
 
-	public function getTeams($username)
+	public function getWritableTeams($username)
 	{
 		return Configuration::getInstance()->getConfig("user.default.teams");
 	}
 
-	public function getReadOnlyTeams($username)
+	public function getReadableTeams($username)
 	{
 		return Configuration::getInstance()->getConfig("user.default.read_only_teams");
 	}

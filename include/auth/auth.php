@@ -41,8 +41,16 @@ abstract class AuthBackend
 	 */
 	abstract public function getCurrentUserTeams();
 	abstract public function canCurrentUserWriteTeam($team);
-	abstract public function getTeams($username);
-	abstract public function getReadOnlyTeams($username);
+	/**
+	 * Returns the teams that the current user has write access to.
+	 * We assume that users having write access to a team also have read
+	 * access to that team.
+	 */
+	abstract public function getWritableTeams($username);
+	/**
+	 * Returns the teams that the current user has read access to.
+	 */
+	abstract public function getReadableTeams($username);
 	abstract public function isCurrentUserAdmin();
 	abstract public function authUser($username, $password);
 	abstract public function deauthUser();
