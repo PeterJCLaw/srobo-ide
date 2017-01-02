@@ -34,7 +34,7 @@ function ProjPage(team_selector) {
 
 	this.last_updated = new Date();
 
-	this._read_only = false;
+	this._read_only = null;
 
 	// listen for changes in the selected team
 	connect( team_selector, "onchange", bind(this.set_team, this) );
@@ -190,7 +190,7 @@ ProjPage.prototype.hide_filelist = function() {
 };
 
 ProjPage.prototype.project_readonly = function(pname) {
-	return this._read_only;
+	return this._read_only == true;
 };
 
 ProjPage.prototype.project_exists = function(pname) {
@@ -256,7 +256,7 @@ ProjPage.prototype.set_team = function(team) {
 };
 
 ProjPage.prototype._set_readonly = function(isReadOnly) {
-	if (this._read_only != isReadOnly) {
+	if (this._read_only !== isReadOnly) {
 		getElement('new-project').disabled = isReadOnly;
 		getElement('copy-project').disabled = isReadOnly;
 		this.selection_operations.set_readonly(isReadOnly);
