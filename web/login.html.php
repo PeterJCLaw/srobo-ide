@@ -33,7 +33,7 @@
 </head>
 <body id="login-back">
 
-	<form id="login-box" method="POST" action="./">
+	<form id="login-box" method="POST">
 		<strong id="login-title">Student Robotics IDE Login:</strong>
 		<em id="login-feedback">You must be logged in to use the IDE</em>
 		<input type="text" name="username" placeholder="username" value="username" id="username" autofocus required>
