@@ -364,7 +364,7 @@
 				<div class="ie6-prop-clear" style="clear:both;"></div>
 			</div>
 			<p class="info">
-				The following information will be publicly available on the SR website, in the <a href="<?=$root_url ?>/teams/">Teams Area</a>.
+				The following information will be publicly available on the SR website, in the Teams Area, and on various pages during the competition weekend.
 				Be sensible with the information you add on this page, avoid anything objectionable/obscene.
 				Please also ensure that you have permission to use the content you upload,
 					for example ensure that you either own the copyright, or have an appropriate license, for any images or text.
