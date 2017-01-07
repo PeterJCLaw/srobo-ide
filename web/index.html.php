@@ -414,7 +414,7 @@
 					<td>
 						<input type="text" name="team-status-url-input" id="team-status-url-input" />
 						<p class="info">
-							If you have a website please give us the full URL to it (including the http://).
+							If you have a website please give us the full URL to it (including the https://).
 							This should not be your school or college's website as that will appear on your team's page automatically.
 						</p>
 					</td>
@@ -424,8 +424,8 @@
 					<td>
 						<input type="text" name="team-status-feed-input" id="team-status-feed-input" />
 						<p class="info">
-							Enter the URL (including the http://) of your blog's RSS/Atom feed here to make it easier for other teams to find out about your progress.
-							If you do not have a blog there are many free sites where you can create one, such as <a href="http://www.blogger.com" target="_blank">Blogger</a> and <a href="http://wordpress.com/" target="_blank">Wordpress</a>.
+							Enter the URL (including the https://) of your blog's RSS/Atom feed here to make it easier for other teams to find out about your progress.
+							If you do not have a blog there are many free sites where you can create one, such as <a href="https://www.blogger.com" target="_blank">Blogger</a> and <a href="https://wordpress.com/" target="_blank">Wordpress</a>.
 							The most recent post from the blog will be shown on your teams' page.
 						</p>
 					</td>
@@ -433,7 +433,7 @@
 				<tr>
 					<td colspan="2">
 						<p class="info">
-							If you have accounts on any of the following services, please give us the full URL to it (including the http://).
+							If you have accounts on any of the following services, please give us the full URL to it (including the https://).
 							Please only use these for accounts on each service, as they will be represented using each service's icon.
 						</p>
 					</td>
