@@ -49,7 +49,5 @@
 		</p>
 	</form>
 
-	<iframe id="background-load"></iframe>
-
 </body>
 </html>
