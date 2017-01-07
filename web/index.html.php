@@ -412,7 +412,7 @@
 				<tr id="team-status-url">
 					<th>Website:</th>
 					<td>
-						<input type="text" name="team-status-url-input" id="team-status-url-input" />
+						<input type="text" name="team-status-url-input" id="team-status-url-input" placeholder="https://studentrobotics.org" />
 						<p class="info">
 							If you have a website please give us the full URL to it (including the https://).
 							This should not be your school or college's website as that will appear on your team's page automatically.
@@ -422,7 +422,7 @@
 				<tr id="team-status-feed">
 					<th>Blog Feed:</th>
 					<td>
-						<input type="text" name="team-status-feed-input" id="team-status-feed-input" />
+						<input type="text" name="team-status-feed-input" id="team-status-feed-input" placeholder="https://studentrobotics.org/feed.xml" />
 						<p class="info">
 							Enter the URL (including the https://) of your blog's RSS/Atom feed here to make it easier for other teams to find out about your progress.
 							If you do not have a blog there are many free sites where you can create one, such as <a href="https://www.blogger.com" target="_blank">Blogger</a> and <a href="https://wordpress.com/" target="_blank">Wordpress</a>.
@@ -446,7 +446,7 @@
 				<tr id="team-status-$brand">
 					<th>$brandUpper:</th>
 					<td>
-						<input type="text" name="team-status-$brand-input" id="team-status-$brand-input" />
+						<input type="text" name="team-status-$brand-input" id="team-status-$brand-input" placeholder="https://$brand.com/StudentRobotics" />
 					</td>
 				</tr>
 BRANDED;
