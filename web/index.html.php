@@ -206,7 +206,7 @@
 		<div id="search-page" class="page">
 			<!-- Search Page -->
 			<div class="menu-bar">
-				<form action="" id="search-form">
+				<form id="search-form">
 					<ul id="searchmenu">
 						<li><button type="button" id="search-clear-results" title="Clear all the search results.">Clear</button></li>
 						<li><input id="search-query" placeholder="Enter something to search for." title="Enter something to search for." /></li>
