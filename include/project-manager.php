@@ -72,6 +72,12 @@ class ProjectManager
 		//copy the master repository
 		$masterPathOld = $this->getMasterRepoPath($team, $project);
 		$masterPathNew = $this->getMasterRepoPath($team, $new);
+
+		if (is_dir($masterPathNew))
+		{
+			throw new Exception("Destination ($new) already exists!", E_MALFORMED_REQUEST);
+		}
+
 		copy_recursive($masterPathOld, $masterPathNew);
 		return;
 	}

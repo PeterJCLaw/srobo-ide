@@ -45,6 +45,17 @@ function copyAndAssertProject($projname)
 	test_true($proj->dispatchCommand("copy"), "Failed to copy project");
 
 	test_is_dir($repopath, "repo for proj '$projname' did not exist");
+
+	subsection("Testing copying project to '$projname' for team '$team' when target already exists");
+	// reload modules
+	$mm = ModuleManager::getInstance();
+	$mm->importModules();
+	test_true($mm->moduleExists("proj"), "proj module does not exist");
+
+	$proj = $mm->getModule("proj");
+	test_exception(function() use ($proj) {
+		$proj->dispatchCommand("copy");
+	}, E_MALFORMED_REQUEST, "Should reject creation of the project when target exists");
 }
 
 copyAndAssertProject('monkies');
