@@ -72,8 +72,8 @@ class ProjectManager
 		//copy the master repository
 		$masterPathOld = $this->getMasterRepoPath($team, $project);
 		$masterPathNew = $this->getMasterRepoPath($team, $new);
-		$ret = copy_recursive($masterPathOld, $masterPathNew);
-		return $ret;
+		copy_recursive($masterPathOld, $masterPathNew);
+		return;
 	}
 
 	public function getMasterRepoPath($team, $project)
