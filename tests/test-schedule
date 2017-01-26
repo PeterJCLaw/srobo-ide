@@ -38,6 +38,7 @@ TEST auth/read-only
 SKIP auth/ldap
 
 TEST proj/commit
+TEST proj/copy
 TEST proj/create
 TEST proj/cron
 TEST proj/info
