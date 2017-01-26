@@ -22,7 +22,7 @@ function createAndAssertProject($projname)
 	$config = Configuration::getInstance();
 	$input = Input::getInstance();
 
-	echo "Testing creatin of project '$projname' for team ", $input->getInput("team"), ".\n";
+	section("Testing creatin of project '$projname' for team " . $input->getInput("team"));
 	$input->setInput('project', $projname);
 
 	// need to do this each time since the modules are single-shot
