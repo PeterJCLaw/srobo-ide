@@ -62,3 +62,31 @@ foreach($unicodes as $char)
 {
 	copyAndAssertProject('char \''.$char.'\'.');
 }
+
+function checkNameRejected($projname)
+{
+	$config = Configuration::getInstance();
+	$input = Input::getInstance();
+	$team = $input->getInput("team");
+
+	section("Testing rejects invalid project name '$projname'");
+	$input->setInput('new-name', $projname);
+
+	// need to do this each time since the modules are single-shot
+	// that is, they only get one Input per instance, and may cache what it has to say.
+	$mm = ModuleManager::getInstance();
+	$mm->importModules();
+	test_true($mm->moduleExists("proj"), "proj module does not exist");
+
+	$proj = $mm->getModule("proj");
+	test_exception(function() use ($proj) {
+		$proj->dispatchCommand("copy");
+	}, E_MALFORMED_REQUEST, "Should not copy project");
+
+	$repopath = $config->getConfig("repopath") . "/$team/master/$projname.git";
+	test_nonexistent($repopath, "repo for proj '$projname' should not exist");
+}
+
+checkNameRejected('a/b');
+checkNameRejected('a:b');
+checkNameRejected('a"b');

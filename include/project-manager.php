@@ -68,10 +68,7 @@ class ProjectManager
 
 	public function copyRepository($team, $project, $new)
 	{
-		if (strpos($new, '/') !== FALSE)
-		{
-			return FALSE;
-		}
+		GitRepository::checkName($new);
 		//copy the master repository
 		$masterPathOld = $this->getMasterRepoPath($team, $project);
 		$masterPathNew = $this->getMasterRepoPath($team, $new);
