@@ -30,9 +30,10 @@ $repopath2 = $config->getConfig("repopath") . "/1/master/" . $srcName . ".git";
 $projectManager->createRepository(1, $srcName);
 test_true(is_dir($repopath2), 'Failed to create repo to copy');
 
-$ret = $projectManager->copyRepository(1, $srcName, $projName);
+test_exception(function () use ($projectManager, $srcName, $projName) {
+    $projectManager->copyRepository(1, $srcName, $projName);
+}, E_MALFORMED_REQUEST, "Should reject project name containting slash: $projName.");
 
-test_false($ret, 'did not block copying of a project with / in the name');
 test_false(is_dir($repopath), 'copied repo with / in the name!');
 
 section('Check updateRepository merges local changes with upstream');
