@@ -49,6 +49,19 @@ class TeamStatus
 		return null;
 	}
 
+	public function getAllLive()
+	{
+		$items = array();
+		foreach ($this->statusData as $item => $values)
+		{
+			if (!empty($values->live))
+			{
+				$items[$item] = $values->live;
+			}
+		}
+		return $items;
+	}
+
 	public function getDraftOrLive($name)
 	{
 		if (isset($this->statusData->$name))

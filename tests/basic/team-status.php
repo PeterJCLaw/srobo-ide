@@ -139,6 +139,35 @@ $status->save($user);
 $data = json_decode(file_get_contents($status->getStatusPath()));
 test_equal($data->$field2->live, $content, "Valid review should not set the live value");
 
+section('Get live data');
+
+subsection('missing field');
+$status_live_testing = new TeamStatus('LIV');
+test_equal($status_live_testing->getLive('missing'), null, "Missing field should return empty value");
+
+subsection('draft only');
+$status_live_testing->setDraft('draft-only', 'draft_content');
+test_equal($status_live_testing->getLive('draft-only'), null, "Unreviewed field should return empty value");
+
+subsection('live field');
+$status_live_testing->setDraft('live-field', 'live-content');
+$status_live_testing->setReviewState('live-field', 'live-content', true);
+test_equal($status_live_testing->getLive('live-field'), 'live-content', "Reviewed field should return live value");
+
+subsection('live fieldw with different draft');
+$status_live_testing->setDraft('live-with-draft', 'live-content');
+$status_live_testing->setReviewState('live-with-draft', 'live-content', true);
+$status_live_testing->setDraft('live-with-draft', 'draft_content');
+test_equal($status_live_testing->getLive('live-with-draft'), 'live-content', "Reviewed field should return live value, even when another draft exists");
+
+subsection('all fields');
+$all_live = $status_live_testing->getAllLive();
+$expected_live = array(
+	'live-field' => 'live-content',
+	'live-with-draft' => 'live-content',
+);
+test_equal($all_live, $expected_live, "Wrong live content");
+
 section('All teams listing');
 $teams = array($team, 'bacon', 'foo ?');
 
