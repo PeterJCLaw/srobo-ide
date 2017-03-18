@@ -154,6 +154,9 @@ Admin.prototype._receiveGetItemsToReview = function(nodes) {
 			content = IMG(opts);
 		}
 		content = TD(null, content);
+		if (field == 'description') {
+			setStyle(content, {'white-space': 'pre'});
+		}
 
 		var accept = BUTTON(null, 'Accept');
 		var reject = BUTTON(null, 'Reject');
