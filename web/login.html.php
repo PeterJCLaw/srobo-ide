@@ -24,7 +24,6 @@
 	prefetch_tag(JQUERY_MIN_JS);
 	prefetch_tag(ACE_JS);
 
-	prefetch_tag('web/images/tabcorner_nofocus.png');
 	prefetch_tag('web/images/static.png');
 	prefetch_tag('web/images/anim.gif');
 

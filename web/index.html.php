@@ -79,9 +79,6 @@
 
 	output_statics($javaScripts, 'js_tag', COMBINED_JS);
 
-	// no need to prefetch the focus variant since that's used immediately
-	prefetch_tag('web/images/tabcorner_nofocus.png');
-
 	$root_url = $config->getConfig('host_root_url');
 
 	if ($config->getConfig('usage_tracking')): ?>

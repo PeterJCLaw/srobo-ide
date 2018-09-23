@@ -129,14 +129,17 @@ iframe { display: none; }
 }
 
 #tabs li.focus a {
-	background: #ffffff url(../images/tabcorner_focus.png) no-repeat top right;
+	background: #ffffff;
+	border-top-right-radius: 10px;
 }
 #tabs li.nofocus a {
-	background: #DFDBD8 url(../images/tabcorner_nofocus.png) no-repeat top right;
+	background: #DFDBD8;
+	border-top-right-radius: 10px;
 }
 
 #tabs li a:hover {
-	background: #ffffff url(../images/tabcorner_focus.png) no-repeat top right;
+	background: #ffffff;
+	border-top-right-radius: 10px;
 }
 
 
@@ -161,6 +164,7 @@ iframe { display: none; }
 	background: #DFDBD8;
 	font-size: 80%;
 	font-weight: normal;
+	border-radius: 0;
 }
 
 #tabs li a.shortcutButton:hover {
