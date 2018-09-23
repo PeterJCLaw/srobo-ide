@@ -39,7 +39,7 @@
 	height: 200px;
 	overflow-y: scroll;
 	overflow-x: hidden;
-	background-color: #DFDBD8;
+	background-color: rgba(224, 224, 224, 1);
 	margin: 10px 2.5%;
 	border: 5px solid #ffffff;
 	float: left;
@@ -58,7 +58,7 @@
 }
 #left-pane li, #right-pane li {
 	padding: 1px 0 1px 5px;
-	border-bottom: 1px dashed #DFDBD8;
+	border-bottom: 1px dashed rgba(224, 224, 224, 1);
 }
 #left-pane li:hover {
 	background-color: #ffffff;
@@ -96,7 +96,7 @@
 #new-commit-msg, #browser-diff {
 	display: block;
 	width: 87.5%;
-	background-color: #DFDBD8;
+	background-color: rgba(224, 224, 224, 1);
 	color: #000;
 	margin: 10px 2.5%;
 	border: 5px solid #ffffff;

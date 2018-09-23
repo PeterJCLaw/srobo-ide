@@ -48,7 +48,7 @@
 }
 #errors-listing ul li {
 	list-style-type: none;
-	background-color: #DFDBD8;
+	background-color: rgba(224, 224, 224, 1);
 	font-family: 'Courier New',monospace;
 	padding: 0.5em;
 	margin: 0.8em;
