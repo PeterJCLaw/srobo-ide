@@ -12,7 +12,7 @@ body {
 iframe { display: none; }
 
 #top {
-	background-color: #253571;
+	background-color: rgba(50, 112, 237, 1);
 	color: #FFFFFF;
 	/* TODO: Internet explorer thing? */
 	margin-top: -1px;
@@ -35,20 +35,20 @@ iframe { display: none; }
 }
 #top ul li {
 	display: inline;
-	background-color: #253571;
+	background-color: rgba(50, 112, 237, 1);
 	line-height: 1.5em;
 }
 #top ul li a {
 	text-decoration: none;
 	font-weight: bold;
 	padding: 5px;
-	background-color: #253571;
+	background-color: rgba(50, 112, 237, 1);
 	color: #ffffff;
 	margin-right: 20px;
 }
 #top ul li a:hover {
 	background-color: #ffffff;
-	color: #253571;
+	color: rgba(50, 112, 237, 1);
 }
 #top ul#top-links {
 	text-align: right;
@@ -61,7 +61,7 @@ iframe { display: none; }
 #tabs {
 	padding: 0;
 	width: 100%;
-	background-color: #253571;
+	background-color: rgba(50, 112, 237, 1);
 	text-align: left;
 	overflow: auto;
 }
@@ -89,7 +89,7 @@ iframe { display: none; }
 	font-weight: bold;
 	text-decoration: none;
 	border: none;
-	color: #253571;
+	color: rgba(50, 112, 237, 1);
 	position: relative;
 }
 
@@ -104,7 +104,7 @@ iframe { display: none; }
 	padding: 0;
 	text-align: left;
 	list-style-type: none;
-	border: 0.3em solid #253571;
+	border: 0.3em solid rgba(50, 112, 237, 1);
 	border-top: none;
 }
 
@@ -120,7 +120,7 @@ iframe { display: none; }
 
 #dropShortcuts ul li a {
 	text-decoration: none;
-	color: #253571;
+	color: rgba(50, 112, 237, 1);
 	font-weight: bold;
 }
 
@@ -239,7 +239,7 @@ iframe { display: none; }
 #login-box {
 	margin: 150px 25% 0 25%;
 	padding: 20px;
-	background-color: #253571;
+	background-color: rgba(50, 112, 237, 1);
 	border: none;
 	color: #ffffff;
 	font-size: 1.5em;
@@ -262,12 +262,12 @@ iframe { display: none; }
 	padding: 2px 4px;
 }
 #login-box a:hover {
-	color: #253571;
+	color: rgba(50, 112, 237, 1);
 	background-color: #fff;
 }
 #login-box input {
 	background-color: #ffffff;
-	color: #253571;
+	color: rgba(50, 112, 237, 1);
 	padding: 5px;
 	display: block;
 	border: none;
@@ -296,12 +296,12 @@ a.button, #login-box #login-button {
 	white-space: nowrap;
 }
 #login-box #login-button {
-	background-color: #253571;
+	background-color: rgba(50, 112, 237, 1);
 	width: 50%;
 	margin: 10px auto;
 }
 a.button:hover, #login-box #login-button:hover {
-	color: #253571;
+	color: rgba(50, 112, 237, 1);
 	background-color: #ffffff;
 }
 
@@ -316,7 +316,7 @@ a.button:hover, #login-box #login-button:hover {
 
 #about-box {
 	background-color: #DFDBD8;
-	border: 4px solid #253571;
+	border: 4px solid rgba(50, 112, 237, 1);
 	color: #000;
 	left: 32%;
 	padding: 4px;

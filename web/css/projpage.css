@@ -51,7 +51,7 @@
 }
 
 #proj-fileops li a:hover {
-  background-color: #253571;
+  background-color: rgba(50, 112, 237, 1);
   color: #ffffff;
 }
 
@@ -123,7 +123,7 @@
 }
 
 #proj-filelist li.selected {
-  background-color: #253571;
+  background-color: rgba(50, 112, 237, 1);
 }
 
 /* The "loading" DIV displayed whilst the filelist is loading  */
