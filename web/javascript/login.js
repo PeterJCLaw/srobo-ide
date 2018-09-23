@@ -19,22 +19,6 @@ function Login() {
 		// Show the user some help when the click the forgotten password link
 		disconnectAll( "forgotten-password-button" );
 		connect( "forgotten-password-button", "onclick", bind(this._forgotten_password_help, this) );
-
-		var userBox = getElement("username");
-
-		//clear box on focus, replace with 'username' on blur.
-		connect("username","onfocus",function(){
-			if (userBox.value == userBox.defaultValue) {
-				userBox.value='';
-			}
-		});
-		connect("username","onblur",function(){
-			if (!userBox.value) {
-				userBox.value = userBox.defaultValue;
-			}
-		});
-		//and focus the username
-		userBox.focus();
 	};
 
 	// Grab the username and password from the login form and start the login
