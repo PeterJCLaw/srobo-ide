@@ -217,10 +217,12 @@ function populate_shortcuts_box() {
 		bind(searchpage.init, searchpage)
 	));
 
-	shortcuts.push(newShortcut( "Team Status",
-		"Information about your team",
-		bind(teamstatuspage.init, teamstatuspage)
-	));
+	if (user.show_team_status) {
+		shortcuts.push(newShortcut( "Team Status",
+			"Information about your team",
+			bind(teamstatuspage.init, teamstatuspage)
+		));
+	}
 
 	shortcuts.push(newShortcut( "About",
 		"View information about the RoboIDE",
@@ -320,6 +322,8 @@ function User() {
 	// List of team numbers
 	this.teams = null;
 
+	this.show_team_status = false;
+
 	// The user's settings
 	this._settings = null;
 
@@ -355,6 +359,10 @@ function User() {
 
 		if (info["is-admin"]) {
 			this.can_admin = function() { return true; };
+		}
+
+		if (info["show-team-status"]) {
+			this.show_team_status = true;
 		}
 
 		// Connect up the logout button

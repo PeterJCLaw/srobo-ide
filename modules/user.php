@@ -48,6 +48,8 @@ class UserModule extends Module
 		$output->setOutput('email', $auth->emailForUser($this->username));
 		$output->setOutput('teams', $teams);
 		$output->setOutput('is-admin', $auth->isCurrentUserAdmin());
+		$config = Configuration::getInstance();
+		$output->setOutput('show-team-status', $config->getConfig('gui.team_status_enabled'));
 		$settingsManager = Settings::getInstance();
 		$settings = $settingsManager->getSettings($this->username);
 		$output->setOutput('settings', $settings);
