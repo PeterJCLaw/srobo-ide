@@ -130,16 +130,16 @@ iframe { display: none; }
 
 #tabs li.focus a {
 	background: #ffffff;
-	border-top-right-radius: 10px;
 }
 #tabs li.nofocus a {
 	background: rgba(224, 224, 224, 1);
-	border-top-right-radius: 10px;
 }
 
+#tabs li > a {
+	border-top-right-radius: 10px;
+}
 #tabs li a:hover {
 	background: #ffffff;
-	border-top-right-radius: 10px;
 }
 
 
