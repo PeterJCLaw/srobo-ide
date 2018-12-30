@@ -52,7 +52,7 @@ in /etc/apache2/mods-available/php5.conf
 
 You'll then need to restart apache for those changes to take effect..
 
-
+```
                                   ...vvvv)))))).
        /~~\               ,,,c(((((((((((((((((/
       /~~c \.         .vv)))))))))))))))))))\``
@@ -67,3 +67,4 @@ You'll then need to restart apache for those changes to take effect..
          ]/                 ~=Xm_       '~=(Gm_.
 
     i'm covered in beeeees and ldap
+```
