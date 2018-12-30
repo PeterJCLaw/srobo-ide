@@ -17,7 +17,11 @@ jobs:
             lint-venv/bin/python --version
 
       - run: sudo npm install --global jasmine-node
-      - run: sudo docker-php-ext-install pcntl
+      - run:
+          name: PHP things
+          command: |
+            sudo apt install libpng-dev
+            sudo docker-php-ext-install gd pcntl
 
       # Config
       - run:
