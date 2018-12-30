@@ -9,8 +9,6 @@ jobs:
       - checkout
 
       # Dependencies
-      - run: sudo apt install php-gd
-
       - run: make lint-venv
 
       # Config
