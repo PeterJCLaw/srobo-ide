@@ -9,6 +9,7 @@ jobs:
       - checkout
 
       # Dependencies
+      - run: sudo apt install python python-virtualenv
       - run: make lint-venv
 
       # Config
