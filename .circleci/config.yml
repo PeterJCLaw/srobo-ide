@@ -11,6 +11,7 @@ jobs:
       # Dependencies
       - run: sudo apt install python-virtualenv
       - run: make lint-venv
+      - run: lint-venv/bin/python --version
 
       # Config
       - run:
