@@ -24,10 +24,10 @@ Trailing whitespace should be avoided, ideally being removed before committing.
 Variables that are going to be used for passing out to a command line must be prefixed with `$s_` giving the form `$s_my_variable`.
 There is a test for this.
 
-Once upon a time, in a temporal nexus that has since been removed, [http://teaisaweso.me/ someone], that shall remain nameless, committed a vast quantity of binary files to the IDE repo so that we could use the selenium testing suite.
+Once upon a time, in a temporal nexus that has since been removed, [someone](http://teaisaweso.me/), that shall remain nameless, committed a vast quantity of binary files to the IDE repo so that we could use the selenium testing suite.
 This was not the right way to include this, and was fixed by rewriting the history.
 Unfortunately, as happens when you mess with time, all was not well until we eventually deleted all clones of the repo that contained the commit.
 Do not do this.
 Even for laughs.
-The correct way to have included this would have been to use a [http://book.git-scm.com/5_submodules.html submodule].
+The correct way to have included this would have been to use a [submodule](https://book.git-scm.com/book/en/v2/Git-Tools-Submodules).
 There is also a test that this commit has not been reintroduced into the source tree.
