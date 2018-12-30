@@ -12,11 +12,12 @@ jobs:
       - run: make lint-venv
 
       # Config
-      - run: Create Config
-        command: |
-          . lint-venv/bin/activate
-          make config
-          cat config/automagic.ini
+      - run:
+          name: Create Config
+          command: |
+            . lint-venv/bin/activate
+            make config
+            cat config/automagic.ini
 
       # Tests
       - run: ./run-tests --full-output
