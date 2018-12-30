@@ -10,9 +10,9 @@ jobs:
 
       # Dependencies
       - run:
-          name: Linting Virtualenv
+          name: Python things
           command: |
-            sudo apt install python-virtualenv
+            sudo apt install python-virtualenv python-yaml
             make lint-venv
             lint-venv/bin/python --version
 
