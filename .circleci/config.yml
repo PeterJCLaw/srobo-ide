@@ -9,8 +9,7 @@ jobs:
       - checkout
 
       # Dependencies
-      - run: make deb
-      - run: sudo apt install ./srobo-ide.deb
+      - run: sudo apt install php7.1-gd
 
       - run: make lint-venv
 
