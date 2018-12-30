@@ -9,10 +9,7 @@ If you're using devmode and you hate apache for development then you'll find a l
 configuration file in this directory. Just run `lighttpd -f lighttpd.config -D` to get
 devmode.
 
-A guide for getting it running will be found here:
-https://www.studentrobotics.org/trac/wiki/CyanIDE
-
-In the mean time here's some basic info about the make targets:
+Here's some basic info about the make targets:
 
 `dev`: Sets up the base folders you'll need for the repos etc.
 
@@ -51,6 +48,10 @@ public_html folders. This can be resolved by following the instructions
 in /etc/apache2/mods-available/php5.conf
 
 You'll then need to restart apache for those changes to take effect..
+
+Other useful files:
+ * [CONTRIBUTING.md](./CONTRIBUTING.md)
+ * [DESIGN.md](./DESIGN.md)
 
 ```
                                   ...vvvv)))))).
