@@ -49,9 +49,10 @@ in /etc/apache2/mods-available/php5.conf
 
 You'll then need to restart apache for those changes to take effect..
 
-Other useful files:
+Useful links:
  * [CONTRIBUTING.md](./CONTRIBUTING.md)
- * [DESIGN.md](./DESIGN.md)
+ * [DESIGN.md](./DESIGN.md) (backend design notes)
+ * [IDE research: putting objects in databases](https://groups.google.com/forum/#!topic/srobo-devel/vvKaEUQVOXo/discussion) (experimentation towards a MySQL backend for the git repos)
 
 ```
                                   ...vvvv)))))).
