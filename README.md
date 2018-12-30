@@ -1,9 +1,9 @@
-This is Student Robotics CyanIDE.
+# Student Robotics CyanIDE
 
 [![Travis CI](https://travis-ci.org/PeterJCLaw/srobo-ide.svg?branch=master)](https://travis-ci.org/PeterJCLaw/srobo-ide)
 [![CircleCI](https://circleci.com/gh/PeterJCLaw/srobo-ide.svg?style=svg)](https://circleci.com/gh/PeterJCLaw/srobo-ide)
 
-It is a web-based IDE for developing code for Student Robotics robots.
+**CyanIDE** is a web-based IDE for developing code for Student Robotics robots.
 
 If you're using devmode and you hate apache for development then you'll find a lighttpd
 configuration file in this directory. Just run `lighttpd -f lighttpd.config -D` to get
@@ -22,7 +22,7 @@ Here's some basic info about the make targets:
 
 You can run tests on CyanIDE by running `./run-tests`.
 
-Dependencies:
+## Dependencies
  * A web server
  * PHP 5.5+
  * PHP-GD # for uploaded image resizing
@@ -38,22 +38,24 @@ Dependencies:
  * Jasmine Node   # for running JS tests
 
 In Ubuntu these can be achieved by installing the following packages:
- apache2 php5 php5-gd doxygen php5-cli git-core pylint nodejs
+ `apache2 php5 php5-gd doxygen php5-cli git-core pylint nodejs`
 
 Jasmine Node can be installed via npm:
- npm install jasmine-node -g
+ `npm install jasmine-node -g`
 
 Note that by default Ubuntu Lucid will not execute PHP files in
-public_html folders. This can be resolved by following the instructions
-in /etc/apache2/mods-available/php5.conf
+`public_html` folders. This can be resolved by following the instructions
+in `/etc/apache2/mods-available/php5.conf`
 
 You'll then need to restart apache for those changes to take effect..
 
-Useful links:
+## Useful links
  * [CONTRIBUTING.md](./CONTRIBUTING.md)
  * [DESIGN.md](./DESIGN.md) (backend design notes)
  * [IDE research: putting objects in databases](https://groups.google.com/forum/#!topic/srobo-devel/vvKaEUQVOXo/discussion) (experimentation towards a MySQL backend for the git repos)
 
+
+## Bee
 ```
                                   ...vvvv)))))).
        /~~\               ,,,c(((((((((((((((((/
