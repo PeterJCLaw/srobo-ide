@@ -1,5 +1,8 @@
 This is Student Robotics CyanIDE.
 
+[![Travis CI](https://travis-ci.org/PeterJCLaw/srobo-ide.svg?branch=master)](https://travis-ci.org/PeterJCLaw/srobo-ide)
+[![CircleCI](https://circleci.com/gh/PeterJCLaw/srobo-ide.svg?style=svg)](https://circleci.com/gh/PeterJCLaw/srobo-ide)
+
 It is a web-based IDE for developing code for Student Robotics robots.
 
 If you're using devmode and you hate apache for development then you'll find a lighttpd
