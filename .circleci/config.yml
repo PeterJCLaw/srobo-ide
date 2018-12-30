@@ -13,6 +13,8 @@ jobs:
       - run: make lint-venv
       - run: lint-venv/bin/python --version
 
+      - run: sudo docker-php-ext-install pcntl
+
       # Config
       - run:
           name: Create Config
