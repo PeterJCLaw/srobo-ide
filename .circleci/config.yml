@@ -9,9 +9,12 @@ jobs:
       - checkout
 
       # Dependencies
-      - run: sudo apt install python-virtualenv
-      - run: make lint-venv
-      - run: lint-venv/bin/python --version
+      - run:
+          name: Linting Virtualenv
+          command: |
+            sudo apt install python-virtualenv
+            make lint-venv
+            lint-venv/bin/python --version
 
       - run: sudo docker-php-ext-install pcntl
 
