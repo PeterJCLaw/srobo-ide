@@ -9,7 +9,7 @@ jobs:
       - checkout
 
       # Dependencies
-      - run: sudo apt install php7.1-gd
+      - run: sudo apt install php-gd
 
       - run: make lint-venv
 
