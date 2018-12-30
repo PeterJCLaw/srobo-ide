@@ -31,6 +31,7 @@ Dependencies:
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
  * python-poster # for running HTTP tests.
+ * python-yaml # for building the export ZIPs
  * pylint  # syntax checker
  * php-ldap
  * NodeJS         # for running JS tests
