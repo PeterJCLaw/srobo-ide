@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/php:7.1
+      - image: circleci/php:7.1-node
 
     steps:
       - checkout
@@ -16,6 +16,7 @@ jobs:
             make lint-venv
             lint-venv/bin/python --version
 
+      - run: sudo npm install --global jasmine-node
       - run: sudo docker-php-ext-install pcntl
 
       # Config
