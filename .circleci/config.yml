@@ -1,0 +1,21 @@
+version: 2
+
+jobs:
+  test:
+    docker:
+      - image: circleci/php:7.1
+
+    steps:
+      - checkout
+
+      # Dependencies
+      - run: make deb
+      - run: sudo apt install ./srobo-ide.deb
+
+      - run: make lint-venv
+
+      # Config
+      - run: make config
+
+      # Tests
+      - run: ./run-tests --full-output
