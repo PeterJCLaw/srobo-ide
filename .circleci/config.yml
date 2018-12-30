@@ -26,5 +26,8 @@ jobs:
             make config
             cat config/automagic.ini
 
+      # Local Setup
+      - run: make dev
+
       # Tests
       - run: ./run-tests --full-output
