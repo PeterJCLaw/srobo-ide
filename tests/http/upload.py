@@ -3,7 +3,6 @@ Check that we can upload images to the Team Status area.
 """
 
 # External
-import json
 import os.path
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
