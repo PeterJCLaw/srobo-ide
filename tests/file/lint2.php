@@ -73,6 +73,6 @@ $file->dispatchCommand('lint');
 $expectedError2 = new StdClass;
 $expectedError2->file = 'other.py';
 $expectedError2->lineNumber = 2;
-$expectedError2->message = "expected an indented block";
+$expectedError2->message = "expected an indented block (<string>, line 2)";
 $expectedError2->level = 'error';
 test_equal($output->getOutput('errors'), array($expectedError2), 'Failed to report errors correctly');
