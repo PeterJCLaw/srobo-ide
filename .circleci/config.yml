@@ -1,7 +1,15 @@
 version: 2
 
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test-python-2
+      - test-python-3-development
+      - test-fully-python-3
+
 jobs:
-  build:
+  test-python-2:
     docker:
       - image: circleci/php:7.2-node
 
@@ -36,3 +44,84 @@ jobs:
 
       # Tests
       - run: ./run-tests --full-output
+
+  # Validate that the IDE can be used to develop Python 3 code
+  test-python-3-development:
+    docker:
+      - image: circleci/php:7.2-node
+
+    steps:
+      - checkout
+
+      # Dependencies
+      - run:
+          name: Python things
+          command: |
+            sudo apt install python-requests python3-venv python-yaml
+            python3 -m venv lint-venv
+            lint-venv/bin/pip install -r pylint-requirements.txt
+            lint-venv/bin/python --version
+
+      - run: sudo npm install --global jasmine-node
+      - run:
+          name: PHP things
+          command: |
+            sudo apt install libpng-dev
+            sudo docker-php-ext-install gd pcntl
+
+      # Config
+      - run:
+          name: Create Config
+          command: |
+            . lint-venv/bin/activate
+            make config
+            cat config/automagic.ini
+
+      # Local Setup
+      - run: make dev
+
+      # Tests
+      - run: ./run-tests --full-output
+
+  # Validate that the IDE can be configured where Python 3 is the only Python available
+  test-fully-python-3:
+    docker:
+      - image: circleci/php:7.2-node
+
+    steps:
+      - checkout
+
+      # Dependencies
+      - run:
+          name: Python things
+          command: |
+            sudo apt install python3-venv python3-dev libyaml-dev
+            python3 -m venv venv
+            . venv/bin/activate
+            python --version
+            pip install PyYAML requests -r pylint-requirements.txt
+
+      - run: sudo npm install --global jasmine-node
+      - run:
+          name: PHP things
+          command: |
+            sudo apt install libpng-dev
+            sudo docker-php-ext-install gd pcntl
+
+      # Config
+      - run:
+          name: Create Config
+          command: |
+            . venv/bin/activate
+            make config
+            cat config/automagic.ini
+
+      # Local Setup
+      - run: make dev
+
+      # Tests
+      - run:
+          name: Tests
+          command: |
+            . venv/bin/activate
+            ./run-tests --full-output
