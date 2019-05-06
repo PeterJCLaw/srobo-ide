@@ -6,7 +6,7 @@ import string
 
 import requests
 
-import config
+from . import config
 
 loginEndPoint = "auth/authenticate"
 

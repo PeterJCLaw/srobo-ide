@@ -6,8 +6,8 @@ Tests project actions.
 import unittest
 
 # Local
-import util
-import config
+from . import util
+from . import config
 
 class ProjTests(unittest.TestCase):
 

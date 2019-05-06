@@ -13,7 +13,7 @@ password = 'py-test'
 # You can add a file called localconfig.py next to this one and override
 # or add any options that you want.
 try:
-	from localconfig import *
+	from .localconfig import *
 except ImportError:
 	# Duplicate the skip code here, because util imports skip.
 	print('___SKIP_TEST')
