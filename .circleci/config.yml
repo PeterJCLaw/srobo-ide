@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Python things
           command: |
-            sudo apt install python-poster python-virtualenv python-yaml
+            sudo apt install python-requests python-virtualenv python-yaml
             make lint-venv
             lint-venv/bin/python --version
 

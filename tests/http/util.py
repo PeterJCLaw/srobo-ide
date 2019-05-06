@@ -1,23 +1,13 @@
 
-import urllib2
-import Cookie
 import json
 import random
 import string
 
+import requests
+
 import config
 
 loginEndPoint = "auth/authenticate"
-
-def extractToken(response):
-	info = response.info()
-#	print "info:", info
-	cookie = info['Set-Cookie']
-	cookie = Cookie.BaseCookie(cookie)
-#	print "cookie:", cookie
-	token = cookie['token']
-#	print "token:", token.value
-	return token.value
 
 _token = None
 def getCurrentToken():
@@ -52,28 +42,28 @@ def makeIDERequest(endPoint, data = None):
 
 	return makeIDERequest2(url, data_string)
 
-def makeIDERequest2(url, data = None, headers = None):
+def makeIDERequest2(url, data = None, files = None):
 
 	auth_token = getCurrentToken()
-	headers = headers or {}
+	headers = {}
 
 	if auth_token is not None:
 		headers['Cookie'] = 'token=%s' % auth_token
 
-	req = urllib2.Request(url, data, headers)
-
 #	print "Requesting '%s'." % endPoint
-	response = urllib2.urlopen(req)
+	response = requests.post(url, data, headers=headers, files=files)
 
-	data = response.read()
+	data = response.text
 	print "data: '%s'" % data
+
+	response.raise_for_status()
 
 	response_data = json.loads(data)
 #	print "Got data from '%s'." % endPoint
 	#print 'response_data:', json.dumps(response_data, sort_keys = True, indent = 4)
 	raiseOnRequestError(response_data)
 
-	auth_token = extractToken(response)
+	auth_token = response.cookies['token']
 	saveCurrentToken(auth_token)
 
 	return response_data

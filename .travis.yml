@@ -8,7 +8,7 @@ before_install:
 install:
   # PHP-CLI, Git & NodeJS are pre-installed, no need to include them
   # PyYaml needed for the real 'make-zip' script
-  - sudo apt-get install -y python-poster python-yaml
+  - sudo apt-get install -y python-requests python-yaml
   - npm install --global jasmine-node
   # Pylint from pip to ensure the same version as deployed
   - sudo apt-get install -y python-virtualenv

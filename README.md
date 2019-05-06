@@ -30,7 +30,7 @@ You can run tests on CyanIDE by running `./run-tests`.
  * Git
  * doxygen # for building the docs.
  * PHP CLI # for running the tests.
- * python-poster # for running HTTP tests.
+ * python-requests # for running HTTP tests.
  * python-yaml # for building the export ZIPs
  * pylint  # syntax checker
  * php-ldap

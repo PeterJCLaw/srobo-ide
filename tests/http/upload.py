@@ -4,10 +4,9 @@ Check that we can upload images to the Team Status area.
 
 # External
 import os.path
-from poster.encode import multipart_encode
-from poster.streaminghttp import register_openers
 import unittest
-import urllib2
+
+import requests
 
 # Local
 import util
@@ -33,8 +32,6 @@ class UploadTests(unittest.TestCase):
 
 		cls._team = teams[0]['id']
 
-		register_openers()
-
 	def get_imageData(self, image):
 		root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 		images_dir = os.path.join(root_dir, 'web/images')
@@ -42,13 +39,11 @@ class UploadTests(unittest.TestCase):
 		return open(image_path, 'rb')
 
 	def do_upload(self, image):
-		values = dict(team = self._team, _command = 'team/status-put-image')
-		values['team-status-image-input'] = self.get_imageData(image)
-
-		data, headers = multipart_encode(values)
+		data = dict(team = self._team, _command = 'team/status-put-image')
+		files = {'team-status-image-input': self.get_imageData(image)}
 
 		url = config.URL + 'upload.php'
-		resp = util.makeIDERequest2(url, data, headers)
+		resp = util.makeIDERequest2(url, data, files=files)
 
 		expected_image_path = os.path.join(config.team_status_image_dir, self._team + '.png')
 		exists = os.path.exists(expected_image_path)
