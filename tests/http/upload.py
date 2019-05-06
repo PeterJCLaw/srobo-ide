@@ -40,7 +40,7 @@ class UploadTests(unittest.TestCase):
 		root_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 		images_dir = os.path.join(root_dir, 'web/images')
 		image_path = os.path.join(images_dir, image)
-		return open(image_path, 'r')
+		return open(image_path, 'rb')
 
 	def do_upload(self, image):
 		values = dict(team = self._team, _command = 'team/status-put-image')
