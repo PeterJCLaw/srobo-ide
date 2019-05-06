@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 import json
 import random
@@ -54,13 +55,13 @@ def makeIDERequest2(url, data = None, files = None):
 	response = requests.post(url, data, headers=headers, files=files)
 
 	data = response.text
-	print "data: '%s'" % data
+	print("data: '%s'" % data)
 
 	response.raise_for_status()
 
 	response_data = json.loads(data)
-#	print "Got data from '%s'." % endPoint
-	#print 'response_data:', json.dumps(response_data, sort_keys = True, indent = 4)
+#	print("Got data from '%s'." % endPoint)
+#	print('response_data:', json.dumps(response_data, sort_keys = True, indent = 4))
 	raiseOnRequestError(response_data)
 
 	auth_token = response.cookies['token']
@@ -76,12 +77,12 @@ def idGenerator(size=6, chars=string.ascii_uppercase + string.digits):
 ### Pretty Printing
 
 def printDict(data):
-	print json.dumps(data, sort_keys = True, indent = 4)
+	print(json.dumps(data, sort_keys = True, indent = 4))
 
 ### Test Helper
 
 def skip():
-	print '___SKIP_TEST'
+	print('___SKIP_TEST')
 	exit(0)
 
 ### Nicer Assertions than pyUnit

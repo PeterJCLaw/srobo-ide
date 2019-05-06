@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 # The base path to the version of the IDE to test.
 # You'll almost definitely want to override this one -- see below for details.
@@ -15,5 +16,5 @@ try:
 	from localconfig import *
 except ImportError:
 	# Duplicate the skip code here, because util imports skip.
-	print '___SKIP_TEST'
+	print('___SKIP_TEST')
 	exit(0)

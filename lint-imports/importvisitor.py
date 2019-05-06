@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 import ast
 
@@ -36,16 +37,16 @@ def foo():
 	import bacon as face, nose
 a = b + 5
 """
-	print code
-	print '----'
+	print(code)
+	print('----')
 
 	tree = ast.parse(code)
-#	print dir(tree)
-#	print tree.__class__
+#	print(dir(tree))
+#	print(tree.__class__)
 	iv = ImportVisitor(['bacon', 'bananas', 'pounds.pence'])
 	iv.visit(tree)
 
-	print iv.getImportsInfo()
+	print(iv.getImportsInfo())
 
 if __name__ == '__main__':
 	_test()
