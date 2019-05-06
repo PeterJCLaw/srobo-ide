@@ -99,6 +99,7 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             python --version
+            pip install -U setuptools pip
             pip install PyYAML requests -r pylint-requirements.txt
 
       - run: sudo npm install --global jasmine-node
