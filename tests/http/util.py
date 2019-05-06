@@ -57,9 +57,10 @@ def makeIDERequest2(url, data = None, headers = None):
 	auth_token = getCurrentToken()
 	headers = headers or {}
 
-	req = urllib2.Request(url, data, headers)
 	if auth_token is not None:
-		req.add_header('Cookie', 'token=%s' % auth_token)
+		headers['Cookie'] = 'token=%s' % auth_token
+
+	req = urllib2.Request(url, data, headers)
 
 #	print "Requesting '%s'." % endPoint
 	response = urllib2.urlopen(req)
