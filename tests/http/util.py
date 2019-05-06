@@ -30,7 +30,7 @@ def getURLForEnpoint(endPoint):
 	return url
 
 def raiseOnRequestError(response_data):
-	if response_data.has_key('error'):
+	if 'error' in response_data:
 		raise Exception('Server error: %s' % response_data['error'][1])
 
 def makeIDERequest(endPoint, data = None):
