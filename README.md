@@ -23,7 +23,7 @@ Here's some basic info about the make targets:
 You can run tests on CyanIDE by running `./run-tests`.
 
 ## Dependencies
- * A web server
+ * A web server (the PHP development one is fine for development)
  * PHP 5.5+
  * PHP-GD # for uploaded image resizing
  * PHP-LDAP # if using LDAP authentication
@@ -38,14 +38,18 @@ You can run tests on CyanIDE by running `./run-tests`.
  * Jasmine Node   # for running JS tests
 
 In Ubuntu these can be achieved by installing the following packages:
- `apache2 php5 php5-gd doxygen php5-cli git-core pylint nodejs`
+ `php5 php5-gd doxygen php5-cli git-core pylint nodejs`
 
 Jasmine Node can be installed via npm:
  `npm install jasmine-node -g`
 
-Note that by default Ubuntu Lucid will not execute PHP files in
-`public_html` folders. This can be resolved by following the instructions
-in `/etc/apache2/mods-available/php5.conf`
+The PHP [development server][php-web-server] can be run via `php -S localhost:8000`.
+
+[php-web-server]: https://www.php.net/manual/en/features.commandline.webserver.php
+
+If you're using Apache HTTPD, note that by default Ubuntu Lucid will not execute
+PHP files in `public_html` folders. This can be resolved by following the
+instructions in `/etc/apache2/mods-available/php5.conf`
 
 You'll then need to restart apache for those changes to take effect..
 

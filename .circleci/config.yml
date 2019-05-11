@@ -38,11 +38,22 @@ jobs:
             make config
             cat config/automagic.ini
 
+      - run:
+          name: Create Test Config
+          command: |
+            echo 'URL = "http://localhost:8000/"' > tests/http/localconfig.py
+
       # Local Setup
       - run: make dev
 
       # Tests
-      - run: ./run-tests --full-output
+      - run:
+          name: Run Tests
+          command: |
+            php -S localhost:8000 2> server-log.txt &
+            server_pid=$!
+            trap "kill -SIGINT $server_pid" exit INT TERM
+            ./run-tests --full-output
 
   # Validate that the IDE can be used to develop Python 3 code
   test-python-3-development:
@@ -76,8 +87,19 @@ jobs:
             make config
             cat config/automagic.ini
 
+      - run:
+          name: Create Test Config
+          command: |
+            echo 'URL = "http://localhost:8000/"' > tests/http/localconfig.py
+
       # Local Setup
       - run: make dev
 
       # Tests
-      - run: ./run-tests --full-output
+      - run:
+          name: Run Tests
+          command: |
+            php -S localhost:8000 2> server-log.txt &
+            server_pid=$!
+            trap "kill -SIGINT $server_pid" exit INT TERM
+            ./run-tests --full-output
