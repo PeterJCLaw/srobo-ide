@@ -9,8 +9,8 @@ import unittest
 import requests
 
 # Local
-import util
-import config
+from . import util
+from . import config
 
 class UploadTests(unittest.TestCase):
 

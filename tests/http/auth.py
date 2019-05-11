@@ -6,8 +6,8 @@ Very simple test that we can login to the IDE, and get a non-empty token.
 import unittest
 
 # Local
-import util
-import config
+from . import util
+from . import config
 
 class AuthTests(unittest.TestCase):
 

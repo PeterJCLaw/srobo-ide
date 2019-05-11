@@ -7,8 +7,8 @@ import unittest
 import threading
 
 # Local
-import util
-import config
+from . import util
+from . import config
 
 class FilesTests(unittest.TestCase):
 

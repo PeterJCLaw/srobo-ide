@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 import ast
 import json
@@ -8,8 +9,8 @@ from importvisitor import ImportVisitor
 
 def invertBadmodules(finder):
 	missing = {}
-	for mod, where in finder.badmodules.iteritems():
-		for name in where.iterkeys():
+	for mod, where in finder.badmodules.items():
+		for name in where.keys():
 			if name not in missing:
 				missing[name] = []
 			missing[name].append(mod)
@@ -19,15 +20,15 @@ def getMissingImports(allMissingImports, module, filename):
 	with open(filename, 'r') as f:
 		code = f.read()
 
-#	print '---------', filename, '---------'
-#	print code
+#	print('---------', filename, '---------')
+#	print(code)
 
 	tree = ast.parse(code, filename)
 	modules = allMissingImports.get(module, [])
 	# Ignore missing submodules -- these get picked up by pylint
 	modules = [m for m in modules if m.find('.') == -1]
 
-#	print 'Missing imports:', modules
+#	print('Missing imports:', modules)
 	iv = ImportVisitor(modules)
 	iv.visit(tree)
 	info = iv.getImportsInfo()
@@ -39,7 +40,7 @@ def getLocalPath(mod):
 	if modPath is None or not modPath.startswith(basePath):
 		return False
 	path = modPath[len(basePath)+1:]
-#	print name, '   \t', path
+#	print(name, '   \t', path)
 	return path
 
 # Bodge the path setup for finding the imports in the file in question
@@ -68,17 +69,17 @@ except Exception as ex:
 includeOriginal = True
 allMissingImports = invertBadmodules(finder)
 
-#print 'All missing imports nice:\n', json.dumps(allMissingImports).replace(']', ']\n')
+#print('All missing imports nice:\n', json.dumps(allMissingImports).replace(']', ']\n'))
 
 if includeOriginal:
 	missingIncludes[mainName] = getMissingImports(allMissingImports, '__main__', mainName)
 
-#print 'All imports:'
-for name, mod in finder.modules.iteritems():
+#print('All imports:')
+for name, mod in finder.modules.items():
 	filename = getLocalPath(mod)
 	if filename is not False:
 		missingIncludes[filename] = getMissingImports(allMissingImports, name, filename)
 
-print json.dumps(missingIncludes).replace('}', '}\n')
+print(json.dumps(missingIncludes).replace('}', '}\n'))
 
 #finder.report()

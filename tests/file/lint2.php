@@ -68,7 +68,7 @@ test_equal($output->getOutput('errors'), array(), 'Reported false errors');
 
 section("robot.py with bad indent");
 $output->setOutput('errors', null);
-commitData($repo, 'other.py', "if False:\nprint False");
+commitData($repo, 'other.py', "if False:\nprint(False)");
 $file->dispatchCommand('lint');
 $expectedError2 = new StdClass;
 $expectedError2->file = 'other.py';
