@@ -6,10 +6,10 @@
 	url = git://git.srobo.org/pipebot.git
 [submodule "web/javascript/ace"]
 	path = web/javascript/ace
-	url = git://github.com/ajaxorg/ace-builds.git
+	url = https://github.com/ajaxorg/ace-builds.git
 [submodule "tests/js/jasmine-data-provider"]
 	path = tests/js/jasmine-data-provider
-	url = git://github.com/PeterJCLaw/jasmine-data-provider.git
+	url = https://github.com/PeterJCLaw/jasmine-data-provider.git
 [submodule "zip-packager"]
 	path = zip-packager
 	url = git://git.srobo.org/brain/zip-packager.git
