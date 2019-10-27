@@ -24,7 +24,7 @@ You can run tests on CyanIDE by running `./run-tests`.
 
 ## Dependencies
  * A web server (the PHP development one is fine for development)
- * PHP 5.5+
+ * PHP 7+ (likely works on PHP 5)
  * PHP-GD # for uploaded image resizing
  * PHP-LDAP # if using LDAP authentication
  * Git
