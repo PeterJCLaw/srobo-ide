@@ -19,6 +19,7 @@ jobs:
       - run:
           name: Python things
           command: |
+            sudo apt update
             sudo apt install python-requests python-virtualenv python-yaml
             make lint-venv
             lint-venv/bin/python --version
@@ -67,6 +68,7 @@ jobs:
       - run:
           name: Python things
           command: |
+            sudo apt update
             sudo apt install python-requests python3-venv python-yaml
             python3 -m venv lint-venv
             lint-venv/bin/pip install -r pylint-requirements.txt
