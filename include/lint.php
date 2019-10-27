@@ -52,6 +52,11 @@ class LintMessage //extends JsonSerializable
 	{
 	}
 
+	public function __toString()
+	{
+		return "$this->file:$this->lineNumber: $this->level: $this->message";
+	}
+
 	public function toJSONable()
 	{
 		$parts = $this->jsonSerialize();
@@ -201,6 +206,6 @@ class LintHelper
 			}
 		}
 
-		return $errors;
+		return array_unique($errors);
 	}
 }
