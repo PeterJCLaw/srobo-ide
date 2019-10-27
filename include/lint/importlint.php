@@ -79,7 +79,7 @@ class ImportLint extends Lint
 			$this->touched[] = $file;
 			foreach ($imports as $import => $line)
 			{
-				$errors[] = new LintMessage($file, $line, "Could not import '$import'");
+				$errors[] = new LintMessage($file, $line, "Unable to import '$import'");
 			}
 		}
 

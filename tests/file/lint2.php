@@ -56,7 +56,7 @@ $file->dispatchCommand('lint');
 $expectedError1 = new StdClass;
 $expectedError1->file = 'robot.py';
 $expectedError1->lineNumber = 3;
-$expectedError1->message = "Could not import 'other'";
+$expectedError1->message = "Unable to import 'other'";
 $expectedError1->level = 'error';
 test_equal($output->getOutput('errors'), array($expectedError1), 'Failed to report errors correctly');
 
