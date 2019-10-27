@@ -1,2 +1,2 @@
-astroid==1.5.2
-pylint==1.7.5
+astroid==1.6.6
+pylint==1.9.5
