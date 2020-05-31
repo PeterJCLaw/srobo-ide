@@ -57,6 +57,7 @@ function delete_recursive($path)
 
 function mkdir_full($path, $mode = 0755)
 {
+	ide_log(LOG_DEBUG, 'mkdir_full: ' . $path);
 	return mkdir($path, $mode, true);
 }
 
