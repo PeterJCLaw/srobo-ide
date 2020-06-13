@@ -43,6 +43,11 @@ In Ubuntu these can be achieved by installing the following packages:
 Jasmine Node can be installed via npm:
  `npm install jasmine-node -g`
 
+## Development Setup
+
+You'll need to run `make dev` before the IDE will run correctly.
+Default credentials are set up in `config/config.ini` (`test-user:test-user` by default).
+
 The PHP [development server][php-web-server] can be run via `php -S localhost:8000`.
 
 [php-web-server]: https://www.php.net/manual/en/features.commandline.webserver.php
