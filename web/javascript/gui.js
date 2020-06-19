@@ -117,7 +117,7 @@ function load_gui() {
 
 	// Shortcut button
 	var shortcuts = new dropDownBox("dropShortcuts", shortcutsList);
-	var sbutton = new Tab( "v", {can_close:false,title:'See more options'} ); // TODO: find something like this
+	var sbutton = new Tab( "▼", {can_close:false,title:'See more options'} ); // TODO: find something like this
 	sbutton.can_focus = false;
 	connect( sbutton, "onclick", function(){shortcuts.toggleBox();} ) ;
 	removeElementClass(sbutton._a ,"nofocus"); /* remove nofocus class */
