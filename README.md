@@ -12,6 +12,8 @@ Here's some basic info about the make targets:
 `docs`: Builds the docs according to the doxyfile.
         Currently this means html docs in html/ and latex docs in latex/
 
+`lint-venv-config`: Creates a Python virtualenv at `lint-venv` with the linting
+        requirements in and configures the IDE to use those for linting.
 
 `package`: Creates a .deb that installs all the dependencies for srobo-ide
 
@@ -36,7 +38,12 @@ You can run tests on CyanIDE by running `./run-tests`.
  * Jasmine Node   # for running JS tests
 
 In Ubuntu these can be achieved by installing the following packages:
- `php5 php5-gd doxygen php5-cli git-core pylint nodejs`
+ `php5 php5-gd doxygen php5-cli git-core nodejs`
+
+While `pylint` can be installed globally, it is often preferable to install it
+from PyPI to ensure you have a recent version. The easiest way to do this is
+using a virtualenv. In Ubuntu this can be done by installing `python-virtualenv`
+and then running `make lint-venv-config`.
 
 Jasmine Node can be installed via npm:
  `npm install jasmine-node -g`

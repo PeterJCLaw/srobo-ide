@@ -1,6 +1,6 @@
 _FOLDERS = settings repos zips notifications web/cache
 
-.PHONY: all default dev docs check clean folders config submodules
+.PHONY: all default dev docs check clean folders config submodules lint-venv-config
 
 # Useful groupings
 default: dev
@@ -27,6 +27,10 @@ lint-reference/sr.py: submodules
 lint-venv:
 	virtualenv $@
 	$@/bin/pip install -r pylint-requirements.txt
+
+lint-venv-config: lint-venv
+	/bin/echo 'pylint.path = "${PWD}/lint-venv/bin/pylint"' > config/automagic.ini
+	/bin/echo 'python.path = "${PWD}/lint-venv/bin/python"' >> config/automagic.ini
 
 config/automagic.ini:
 	/bin/echo -n "pylint.path = " > $@
