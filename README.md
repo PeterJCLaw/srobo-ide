@@ -5,10 +5,6 @@
 
 **CyanIDE** is a web-based IDE for developing code for Student Robotics robots.
 
-If you're using devmode and you hate apache for development then you'll find a lighttpd
-configuration file in this directory. Just run `lighttpd -f lighttpd.config -D` to get
-devmode.
-
 Here's some basic info about the make targets:
 
 `dev`: Sets up the base folders you'll need for the repos etc.
