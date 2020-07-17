@@ -12,9 +12,10 @@ Here's some basic info about the make targets:
 `docs`: Builds the docs according to the doxyfile.
         Currently this means html docs in html/ and latex docs in latex/
 
-`clean`: Removes both of the above.
 
 `package`: Creates a .deb that installs all the dependencies for srobo-ide
+
+`clean`: Removes all of the above.
 
 You can run tests on CyanIDE by running `./run-tests`.
 
