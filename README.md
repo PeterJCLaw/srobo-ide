@@ -51,9 +51,10 @@ Jasmine Node can be installed via npm:
 ## Development Setup
 
 You'll need to run `make dev` before the IDE will run correctly.
-Default credentials are set up in `config/config.ini` (`test-user:test-user` by default).
 
 The PHP [development server][php-web-server] can be run via `php -S localhost:8000`.
+
+By default you can login with any non-empty username and password.
 
 [php-web-server]: https://www.php.net/manual/en/features.commandline.webserver.php
 
@@ -64,6 +65,24 @@ IDE will move to using a standalone PHP server (likely php-fpm directly behind
 NGINX) as Apache is complicated to configure.
 
 It is possible to use Apache HTTPD for development, however this is not encouraged.
+
+## Authentication backends
+
+There are three auth backends, configurable via the `auth_module` config key:
+
+- `auto`: you are automatically logged in; there is only one user at a time,
+  configured by `user.default`
+- `single`: any non-empty username & password will log you in
+- `ldap`: uses an LDAP server for authentication; configure using the various
+  `ldap.*` configuration variables (see [`config/config.ini`](./config/config.ini)
+  for configuration details).
+
+  The easiest way to get a suitable LDAP server is to run either the
+  [sr-dev-ldap][sr-dev-ldap] docker image or a local instance of the SR puppeted
+  [volunteer services VM][server-puppet].
+
+[server-puppet]: https://github.com/srobo/server-puppet/
+[sr-dev-ldap]: https://hub.docker.com/r/peterjclaw/sr-dev-ldap
 
 ## Useful links
 
