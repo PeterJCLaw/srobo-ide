@@ -23,6 +23,7 @@ Here's some basic info about the make targets:
 You can run tests on CyanIDE by running `./run-tests`.
 
 ## Dependencies
+
  * A web server (the PHP development one is fine for development)
  * PHP 7+ (likely works on PHP 5)
  * PHP-GD # for uploaded image resizing
@@ -59,12 +60,14 @@ instructions in `/etc/apache2/mods-available/php5.conf`
 You'll then need to restart apache for those changes to take effect..
 
 ## Useful links
+
  * [CONTRIBUTING.md](./CONTRIBUTING.md)
  * [DESIGN.md](./DESIGN.md) (backend design notes)
  * [IDE research: putting objects in databases](https://groups.google.com/forum/#!topic/srobo-devel/vvKaEUQVOXo/discussion) (experimentation towards a MySQL backend for the git repos)
 
 
 ## Bee
+
 ```
                                   ...vvvv)))))).
        /~~\               ,,,c(((((((((((((((((/
