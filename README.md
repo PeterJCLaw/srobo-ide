@@ -57,11 +57,13 @@ The PHP [development server][php-web-server] can be run via `php -S localhost:80
 
 [php-web-server]: https://www.php.net/manual/en/features.commandline.webserver.php
 
-If you're using Apache HTTPD, note that by default Ubuntu Lucid will not execute
-PHP files in `public_html` folders. This can be resolved by following the
-instructions in `/etc/apache2/mods-available/php5.conf`
+### Apache HTTPD
 
-You'll then need to restart apache for those changes to take effect..
+Apache HTTPD is currently used for deployment, though it is expected that the
+IDE will move to using a standalone PHP server (likely php-fpm directly behind
+NGINX) as Apache is complicated to configure.
+
+It is possible to use Apache HTTPD for development, however this is not encouraged.
 
 ## Useful links
 
